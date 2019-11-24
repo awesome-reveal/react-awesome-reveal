@@ -1,16 +1,14 @@
 import * as React from 'react';
 import { Animated } from 'react-animated-css';
 import { useInView } from 'react-intersection-observer';
-import { Direction } from '../const';
 
-interface FadeOptions {
-  direction?: Direction;
+interface ShakeOptions {
   duration?: number;
   delay?: number;
   style?: React.CSSProperties;
 }
 
-export const Shake: React.FC<FadeOptions> = ({
+export const Shake: React.FC<ShakeOptions> = ({
   children,
   delay,
   duration,
