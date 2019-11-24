@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Animated, AnimationString } from 'react-animated-css';
 import { useInView } from 'react-intersection-observer';
-import { Direction } from 'const';
+import { Direction } from '../const';
 
 interface SlideOptions {
   direction?: Direction;
