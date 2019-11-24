@@ -1,0 +1,66 @@
+{
+  "name": "react-reveal-next",
+  "description": "React components to add reveal animations using Intersection Observer API.",
+  "version": "0.1.0",
+  "license": "MIT",
+  "author": "Dennis Morello <dennismorello@gmail.com>",
+  "keywords": [
+    "react",
+    "reveal",
+    "react-reveal",
+    "scroll",
+    "typescript",
+    "intersection",
+    "intersection-observer",
+    "animations"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dennismorello/react-reveal-next"
+  },
+  "bugs": {
+    "url": "https://github.com/dennismorello/react-reveal-next/issues"
+  },
+  "main": "dist/index.js",
+  "module": "dist/react-reveal.esm.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "tsdx watch",
+    "build": "tsdx build",
+    "test": "tsdx test --env=jsdom",
+    "lint": "tsdx lint"
+  },
+  "peerDependencies": {
+    "react": ">=16"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "prettier": {
+    "printWidth": 80,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "devDependencies": {
+    "@types/jest": "^24.0.23",
+    "@types/react": "^16.9.12",
+    "@types/react-dom": "^16.9.4",
+    "husky": "^3.1.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "tsdx": "^0.11.0",
+    "tslib": "^1.10.0",
+    "typescript": "^3.7.2"
+  },
+  "dependencies": {
+    "animate.css": "^3.7.2",
+    "react-animated-css": "^1.2.1",
+    "react-intersection-observer": "^8.25.1"
+  }
+}
