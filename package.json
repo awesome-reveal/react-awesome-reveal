@@ -60,7 +60,6 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "animate.css": "^3.7.2",
     "react-animated-css": "^1.2.1",
     "react-intersection-observer": "^8.25.1"
   }

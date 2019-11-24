@@ -18,6 +18,17 @@ or, if you are using Yarn (as I strongly suggest):
 yarn add react-reveal-next
 ```
 
+You must then include [Animated.css](https://daneden.github.io/animate.css/) in your HTML file:
+
+```html
+<head>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css"
+  />
+</head>
+```
+
 ## Quick Start
 
 Import effects from [React Reveal Next](https://www.npmjs.com/package/react-reveal-next) to your React component, for example the `Fade` effect:
