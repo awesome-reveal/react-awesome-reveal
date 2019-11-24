@@ -1,7 +1,7 @@
 {
   "name": "react-reveal-next",
   "description": "React components to add reveal animations using Intersection Observer API.",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "license": "MIT",
   "author": "Dennis Morello <dennismorello@gmail.com>",
   "keywords": [
