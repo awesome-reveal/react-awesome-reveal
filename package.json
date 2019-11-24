@@ -49,6 +49,7 @@
     "trailingComma": "es5"
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.9",
     "@types/jest": "^24.0.23",
     "@types/react": "^16.9.12",
     "@types/react-dom": "^16.9.4",
@@ -60,7 +61,7 @@
     "typescript": "^3.7.2"
   },
   "dependencies": {
-    "react-animated-css": "^1.2.1",
+    "classnames": "^2.2.6",
     "react-intersection-observer": "^8.25.1"
   }
 }

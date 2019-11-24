@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { Animated, AnimationString } from 'react-animated-css';
+import classNames from 'classnames';
 import { useInView } from 'react-intersection-observer';
-import { Direction, CommonProps } from '../const';
+import { AnimationString, CommonProps, Direction } from '../const';
 
 interface SlideOptions {
   direction?: Direction;
 }
 
-function getSlideInAnimationString(direction: Direction): AnimationString {
+function getSlideAnimationString(direction: Direction): AnimationString {
   switch (direction) {
     case 'top':
       return 'slideInUp';
@@ -22,26 +22,11 @@ function getSlideInAnimationString(direction: Direction): AnimationString {
   }
 }
 
-function getSlideOutAnimationString(direction: Direction): AnimationString {
-  switch (direction) {
-    case 'top':
-      return 'slideOutUp';
-    case 'left':
-      return 'slideOutLeft';
-    case 'bottom':
-      return 'slideOutDown';
-    case 'right':
-      return 'slideOutRight';
-    default:
-      return 'slideOutRight';
-  }
-}
-
 export const Slide: React.FC<SlideOptions & CommonProps> = ({
   children,
   direction,
-  delay,
-  duration,
+  delay = 0,
+  duration = 1000,
   count = 1,
   className,
   style,
@@ -49,19 +34,20 @@ export const Slide: React.FC<SlideOptions & CommonProps> = ({
   const [ref, inView] = useInView({ triggerOnce: true });
 
   return (
-    <div ref={ref}>
-      <Animated
-        animationIn={getSlideInAnimationString(direction)}
-        animationOut={getSlideOutAnimationString(direction)}
-        animationInDuration={duration}
-        animationOutDuration={duration}
-        animationInDelay={delay}
-        isVisible={inView}
-        className={className}
-        style={{ ...style, animationIterationCount: count }}
-      >
-        {children}
-      </Animated>
+    <div
+      ref={ref}
+      className={classNames('animated', className, {
+        [getSlideAnimationString(direction)]: inView,
+      })}
+      style={{
+        ...style,
+        animationDelay: `${delay}ms`,
+        animationDuration: `${duration}ms`,
+        animationIterationCount: count,
+        visibility: inView ? 'visible' : 'hidden',
+      }}
+    >
+      {children}
     </div>
   );
 };

@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { Animated, AnimationString } from 'react-animated-css';
+import classNames from 'classnames';
 import { useInView } from 'react-intersection-observer';
-import { FlipDirection, CommonProps } from '../const';
+import { AnimationString, CommonProps, FlipDirection } from '../const';
 
 interface FlipOptions {
   direction?: FlipDirection;
 }
 
-function getFlipInAnimationString(direction: FlipDirection): AnimationString {
+function getFlipAnimationString(direction: FlipDirection): AnimationString {
   switch (direction) {
     case 'vertical':
       return 'flipInX';
@@ -18,22 +18,11 @@ function getFlipInAnimationString(direction: FlipDirection): AnimationString {
   }
 }
 
-function getFlipOutAnimationString(direction: FlipDirection): AnimationString {
-  switch (direction) {
-    case 'vertical':
-      return 'flipOutX';
-    case 'horizontal':
-      return 'flipOutY';
-    default:
-      return 'flipOutX';
-  }
-}
-
 export const Flip: React.FC<FlipOptions & CommonProps> = ({
   children,
   direction,
-  delay,
-  duration,
+  delay = 0,
+  duration = 1000,
   count = 1,
   className,
   style,
@@ -41,19 +30,20 @@ export const Flip: React.FC<FlipOptions & CommonProps> = ({
   const [ref, inView] = useInView({ triggerOnce: true });
 
   return (
-    <div ref={ref}>
-      <Animated
-        animationIn={getFlipInAnimationString(direction)}
-        animationOut={getFlipOutAnimationString(direction)}
-        animationInDuration={duration}
-        animationOutDuration={duration}
-        animationInDelay={delay}
-        isVisible={inView}
-        className={className}
-        style={{ ...style, animationIterationCount: count }}
-      >
-        {children}
-      </Animated>
+    <div
+      ref={ref}
+      className={classNames('animated', className, {
+        [getFlipAnimationString(direction)]: inView,
+      })}
+      style={{
+        ...style,
+        animationDelay: `${delay}ms`,
+        animationDuration: `${duration}ms`,
+        animationIterationCount: count,
+        visibility: inView ? 'visible' : 'hidden',
+      }}
+    >
+      {children}
     </div>
   );
 };

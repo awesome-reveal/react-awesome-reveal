@@ -1,15 +1,13 @@
 import * as React from 'react';
-import { Animated, AnimationString } from 'react-animated-css';
+import classNames from 'classnames';
 import { useInView } from 'react-intersection-observer';
-import { RotateDirection, CommonProps } from '../const';
+import { AnimationString, CommonProps, RotateDirection } from '../const';
 
 interface RotateOptions {
   direction?: RotateDirection;
 }
 
-function getRotateInAnimationString(
-  direction: RotateDirection
-): AnimationString {
+function getRotateAnimationString(direction: RotateDirection): AnimationString {
   switch (direction) {
     case 'top-left':
       return 'rotateInUpLeft';
@@ -24,28 +22,11 @@ function getRotateInAnimationString(
   }
 }
 
-function getRotateOutAnimationString(
-  direction: RotateDirection
-): AnimationString {
-  switch (direction) {
-    case 'top-left':
-      return 'rotateOutUpLeft';
-    case 'top-right':
-      return 'rotateOutUpRight';
-    case 'bottom-left':
-      return 'rotateOutDownLeft';
-    case 'bottom-right':
-      return 'rotateOutDownRight';
-    default:
-      return 'rotateOut';
-  }
-}
-
 export const Rotate: React.FC<RotateOptions & CommonProps> = ({
   children,
   direction,
-  delay,
-  duration,
+  delay = 0,
+  duration = 1000,
   count = 1,
   className,
   style,
@@ -53,19 +34,20 @@ export const Rotate: React.FC<RotateOptions & CommonProps> = ({
   const [ref, inView] = useInView({ triggerOnce: true });
 
   return (
-    <div ref={ref}>
-      <Animated
-        animationIn={getRotateInAnimationString(direction)}
-        animationOut={getRotateOutAnimationString(direction)}
-        animationInDuration={duration}
-        animationOutDuration={duration}
-        animationInDelay={delay}
-        isVisible={inView}
-        className={className}
-        style={{ ...style, animationIterationCount: count }}
-      >
-        {children}
-      </Animated>
+    <div
+      ref={ref}
+      className={classNames('animated', className, {
+        [getRotateAnimationString(direction)]: inView,
+      })}
+      style={{
+        ...style,
+        animationDelay: `${delay}ms`,
+        animationDuration: `${duration}ms`,
+        animationIterationCount: count,
+        visibility: inView ? 'visible' : 'hidden',
+      }}
+    >
+      {children}
     </div>
   );
 };
