@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Direction, Fade } from '../../.';
+import { Fade, Direction } from '../../src/index';
 
 interface SectionProps {
   direction?: Direction;
