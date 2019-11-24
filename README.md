@@ -2,7 +2,7 @@
 
 [React Reveal Next](https://github.com/dennismorello/react-reveal-next) is a library for React apps written in TypeScript that adds reveal animations using the Intersection Observer API to detect when the elements appear in the viewport. It then uses [react-animated-css](https://github.com/digital-flowers/react-animated-css) to execute the animations on the GPU.
 
-This library has been inspired by [React Reveal](https://github.com/rnosov/react-reveal), which has more features but it is heavier and less performant.
+This project has been inspired by [React Reveal](https://github.com/rnosov/react-reveal), which is good and mature but it is no longer maintained and it uses synchronous listeners on scroll and window resize events. Instead, this library asynchronously detects when an observed element enters or exits the viewport, which leads to more fluid interactions.
 
 ## Installation
 
