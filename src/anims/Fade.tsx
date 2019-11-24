@@ -44,7 +44,7 @@ export const Fade: React.FC<FadeOptions> = ({
   children,
   direction,
   delay,
-  duration = 500,
+  duration,
   style,
 }) => {
   const [ref, inView] = useInView({ triggerOnce: true });

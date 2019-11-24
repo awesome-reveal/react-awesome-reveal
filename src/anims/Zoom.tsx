@@ -44,7 +44,7 @@ export const Zoom: React.FC<ZoomOptions> = ({
   children,
   direction,
   delay,
-  duration = 500,
+  duration,
   style,
 }) => {
   const [ref, inView] = useInView({ triggerOnce: true });

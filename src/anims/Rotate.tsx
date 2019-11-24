@@ -48,7 +48,7 @@ export const Rotate: React.FC<RotateOptions> = ({
   children,
   direction,
   delay,
-  duration = 500,
+  duration,
   style,
 }) => {
   const [ref, inView] = useInView({ triggerOnce: true });

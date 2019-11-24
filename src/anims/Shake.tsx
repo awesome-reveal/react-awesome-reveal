@@ -13,7 +13,7 @@ interface FadeOptions {
 export const Shake: React.FC<FadeOptions> = ({
   children,
   delay,
-  duration = 500,
+  duration,
   style,
 }) => {
   const [ref, inView] = useInView({ triggerOnce: true });

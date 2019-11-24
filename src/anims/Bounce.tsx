@@ -44,7 +44,7 @@ export const Bounce: React.FC<BounceOptions> = ({
   children,
   direction,
   delay,
-  duration = 500,
+  duration,
   style,
 }) => {
   const [ref, inView] = useInView({ triggerOnce: true });

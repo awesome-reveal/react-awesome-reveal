@@ -44,7 +44,7 @@ export const Slide: React.FC<SlideOptions> = ({
   children,
   direction,
   delay,
-  duration = 500,
+  duration,
   style,
 }) => {
   const [ref, inView] = useInView({ triggerOnce: true });
