@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { Animated, AnimationString } from 'react-animated-css';
 import { useInView } from 'react-intersection-observer';
-import { RotateDirection } from '../const';
+import { RotateDirection, CommonProps } from '../const';
 
 interface RotateOptions {
   direction?: RotateDirection;
-  duration?: number;
-  delay?: number;
-  style?: React.CSSProperties;
 }
 
 function getRotateInAnimationString(
@@ -44,11 +41,13 @@ function getRotateOutAnimationString(
   }
 }
 
-export const Rotate: React.FC<RotateOptions> = ({
+export const Rotate: React.FC<RotateOptions & CommonProps> = ({
   children,
   direction,
   delay,
   duration,
+  count = 1,
+  className,
   style,
 }) => {
   const [ref, inView] = useInView({ triggerOnce: true });
@@ -62,7 +61,8 @@ export const Rotate: React.FC<RotateOptions> = ({
         animationOutDuration={duration}
         animationInDelay={delay}
         isVisible={inView}
-        style={style}
+        className={className}
+        style={{ ...style, animationIterationCount: count }}
       >
         {children}
       </Animated>

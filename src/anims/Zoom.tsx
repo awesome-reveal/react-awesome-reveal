@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { Animated, AnimationString } from 'react-animated-css';
 import { useInView } from 'react-intersection-observer';
-import { Direction } from '../const';
+import { Direction, CommonProps } from '../const';
 
 interface ZoomOptions {
   direction?: Direction;
-  duration?: number;
-  delay?: number;
-  style?: React.CSSProperties;
 }
 
 function getZoomInAnimationString(direction: Direction): AnimationString {
@@ -40,11 +37,13 @@ function getZoomOutAnimationString(direction: Direction): AnimationString {
   }
 }
 
-export const Zoom: React.FC<ZoomOptions> = ({
+export const Zoom: React.FC<ZoomOptions & CommonProps> = ({
   children,
   direction,
   delay,
   duration,
+  count = 1,
+  className,
   style,
 }) => {
   const [ref, inView] = useInView({ triggerOnce: true });
@@ -58,7 +57,9 @@ export const Zoom: React.FC<ZoomOptions> = ({
         animationOutDuration={duration}
         animationInDelay={delay}
         isVisible={inView}
-        style={style}
+        className={className}
+        innerRef={null}
+        style={{ ...style, animationIterationCount: count }}
       >
         {children}
       </Animated>

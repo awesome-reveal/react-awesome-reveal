@@ -3,7 +3,7 @@ import { Animated } from 'react-animated-css';
 import { useInView } from 'react-intersection-observer';
 import { CommonProps } from '../const';
 
-export const Shake: React.FC<CommonProps> = ({
+export const HeadShake: React.FC<CommonProps> = ({
   children,
   delay,
   duration,
@@ -16,8 +16,8 @@ export const Shake: React.FC<CommonProps> = ({
   return (
     <div ref={ref}>
       <Animated
-        animationIn="shake"
-        animationOut="shake"
+        animationIn="headShake"
+        animationOut="headShake"
         animationInDuration={duration}
         animationOutDuration={duration}
         animationInDelay={delay}

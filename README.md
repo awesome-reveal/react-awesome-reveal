@@ -34,13 +34,14 @@ Then place the following code somewhere in your `render` method:
 </Fade>
 ```
 
-The effects currently supported are `Bounce`, `Fade`, `Rotate`, `Shake`, `Slide` and `Zoom`.
+The effects currently supported are `Bounce`, `Fade`, `Flash`, `Flip`, `HeadShake`, `Jello`, `LightSpeed`, `Pulse`, `Rotate`, `Shake`, `Slide`, `Swing`, `Tada`, `Wobble` and `Zoom`.
 
 You can pass the following properties to the animation components to customize the behavior:
 
 - `direction`: can be `"top"`, `"left"`, `"bottom"` or `"right"`. If no direction is passed, the animation happens in place (default to `undefined`)
+- `delay`: the amount of time to wait in milliseconds before the animation starts (default to `0`)
 - `duration`: the animation duration expressed in milliseconds (default to `1000`)
-- `delay`: amount of time in milliseconds to wait before the animation starts (default to `0`)
+- `count`: the number of times the animation must run. Can be a finite number or `"infinite"` (default to `1`)
 
 ## License
 

@@ -1,13 +1,10 @@
 import * as React from 'react';
 import { Animated, AnimationString } from 'react-animated-css';
 import { useInView } from 'react-intersection-observer';
-import { Direction } from '../const';
+import { Direction, CommonProps } from '../const';
 
 interface FadeOptions {
   direction?: Direction;
-  duration?: number;
-  delay?: number;
-  style?: React.CSSProperties;
 }
 
 function getFadeInAnimationString(direction: Direction): AnimationString {
@@ -40,11 +37,13 @@ function getFadeOutAnimationString(direction: Direction): AnimationString {
   }
 }
 
-export const Fade: React.FC<FadeOptions> = ({
+export const Fade: React.FC<FadeOptions & CommonProps> = ({
   children,
   direction,
   delay,
   duration,
+  count = 1,
+  className,
   style,
 }) => {
   const [ref, inView] = useInView({ triggerOnce: true });
@@ -58,7 +57,8 @@ export const Fade: React.FC<FadeOptions> = ({
         animationOutDuration={duration}
         animationInDelay={delay}
         isVisible={inView}
-        style={style}
+        className={className}
+        style={{ ...style, animationIterationCount: count }}
       >
         {children}
       </Animated>
