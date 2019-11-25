@@ -1,10 +1,22 @@
 # React Reveal Next
 
-[![Version](https://badgen.net/npm/v/react-reveal-next)](https://www.npmjs.com/package/react-reveal-next/v/latest) [![Last Commit](https://badgen.net/github/last-commit/dennismorello/react-reveal-next)](https://github.com/dennismorello/react-reveal-next/commits/master) [![Downloads](https://badgen.net/npm/dt/react-reveal-next)](https://www.npmjs.com/package/react-reveal-next/v/latest) [![Size](https://badgen.net/bundlephobia/minzip/react-reveal-next)](https://bundlephobia.com/result?p=react-reveal-next@latest) [![License](https://badgen.net/npm/license/react-reveal-next)](https://www.npmjs.com/package/react-reveal-next/v/latest)
+[![Version](https://badgen.net/npm/v/react-reveal-next)](https://www.npmjs.com/package/react-reveal-next/v/latest)
+[![Last Commit](https://badgen.net/github/last-commit/dennismorello/react-reveal-next)](https://github.com/dennismorello/react-reveal-next/commits/master)
+[![Downloads](https://badgen.net/npm/dt/react-reveal-next)](https://www.npmjs.com/package/react-reveal-next/v/latest)
+[![Size](https://badgen.net/bundlephobia/minzip/react-reveal-next)](https://bundlephobia.com/result?p=react-reveal-next@latest)
+[![License](https://badgen.net/npm/license/react-reveal-next)](https://www.npmjs.com/package/react-reveal-next/v/latest)
 
 [React Reveal Next](https://github.com/dennismorello/react-reveal-next) is a library for React apps written in TypeScript that adds reveal animations using the Intersection Observer API to detect when the elements appear in the viewport. Animations are provided by [Animate.css](https://github.com/daneden/animate.css) to benefit from hardware acceleration.
 
 This project has been inspired by [React Reveal](https://github.com/rnosov/react-reveal), which is good and mature but it is no longer maintained and it uses synchronous listeners on scroll and window resize events. Instead, this library asynchronously detects when an observed element enters or exits the viewport, which leads to more fluid interactions.
+
+## Features
+
+- 🎁 **Modern stack** - It is built for modern React
+- 🍃 **Lightweight** - Very little footprint on your project ([~1kB gzipped](https://bundlephobia.com/result?p=react-reveal-next))
+- ⚙️ **Uses native APIs** - Intersection Observer and CSS Animations are now supported by all major browsers
+- 🚀 **Fast** - Buttery smooth experience thanks to the use of native asynchronous APIs and hardware acceleration
+- 🌳 **Tree-shakeable** - Only the parts you use will be included in your final bundle
 
 ## Installation
 
