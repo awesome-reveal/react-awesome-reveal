@@ -6,7 +6,7 @@ import { CommonProps } from '../const';
 export const HeadShake: React.FC<CommonProps> = ({
   children,
   delay = 0,
-  duration = 1000,
+  speed,
   triggerOnce = false,
   className,
   style,
@@ -16,13 +16,12 @@ export const HeadShake: React.FC<CommonProps> = ({
   return (
     <div
       ref={ref}
-      className={classNames('animated', className, {
+      className={classNames('animated', className, speed, {
         headShake: inView,
       })}
       style={{
         ...style,
         animationDelay: `${delay}ms`,
-        animationDuration: `${duration}ms`,
         visibility: inView ? 'visible' : 'hidden',
       }}
     >

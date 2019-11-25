@@ -87,9 +87,11 @@ export type RotateDirection =
   | 'bottom-right'
   | undefined;
 
+export type Speed = 'slower' | 'slow' | 'fast' | 'faster' | undefined;
+
 export interface CommonProps {
-  delay?: number;
-  duration?: number;
+  delay?: string;
+  speed?: Speed;
   triggerOnce?: boolean;
   className?: string;
   style?: React.CSSProperties;

@@ -26,7 +26,7 @@ export const Rotate: React.FC<RotateOptions & CommonProps> = ({
   children,
   direction,
   delay = 0,
-  duration = 1000,
+  speed,
   triggerOnce = false,
   className,
   style,
@@ -36,13 +36,12 @@ export const Rotate: React.FC<RotateOptions & CommonProps> = ({
   return (
     <div
       ref={ref}
-      className={classNames('animated', className, {
+      className={classNames('animated', className, speed, {
         [getRotateAnimationString(direction)]: inView,
       })}
       style={{
         ...style,
         animationDelay: `${delay}ms`,
-        animationDuration: `${duration}ms`,
         visibility: inView ? 'visible' : 'hidden',
       }}
     >

@@ -6,7 +6,7 @@ import { CommonProps } from '../const';
 export const LightSpeed: React.FC<CommonProps> = ({
   children,
   delay = 0,
-  duration = 1000,
+  speed,
   triggerOnce = false,
   className,
   style,
@@ -16,13 +16,12 @@ export const LightSpeed: React.FC<CommonProps> = ({
   return (
     <div
       ref={ref}
-      className={classNames('animated', className, {
+      className={classNames('animated', className, speed, {
         lightSpeedIn: inView,
       })}
       style={{
         ...style,
         animationDelay: `${delay}ms`,
-        animationDuration: `${duration}ms`,
         visibility: inView ? 'visible' : 'hidden',
       }}
     >

@@ -22,7 +22,7 @@ export const Flip: React.FC<FlipOptions & CommonProps> = ({
   children,
   direction,
   delay = 0,
-  duration = 1000,
+  speed,
   triggerOnce = false,
   className,
   style,
@@ -32,13 +32,12 @@ export const Flip: React.FC<FlipOptions & CommonProps> = ({
   return (
     <div
       ref={ref}
-      className={classNames('animated', className, {
+      className={classNames('animated', className, speed, {
         [getFlipAnimationString(direction)]: inView,
       })}
       style={{
         ...style,
         animationDelay: `${delay}ms`,
-        animationDuration: `${duration}ms`,
         visibility: inView ? 'visible' : 'hidden',
       }}
     >
