@@ -45,7 +45,7 @@ Then place the following code somewhere in your `render` method:
 </Fade>
 ```
 
-The effects currently supported are `Bounce`, `Fade`, `Flash`, `Flip`, `HeadShake`, `JackInTheBox`, `Jello`, `LightSpeed`, `Pulse`, `Rotate`, `Shake`, `Slide`, `Swing`, `Tada`, `Wobble` and `Zoom`.
+The effects currently supported are `Bounce`, `Fade`, `Flash`, `Flip`, `HeadShake`, `HeartBeat`, `JackInTheBox`, `Jello`, `LightSpeed`, `Pulse`, `Rotate`, `RubberBand`, `Shake`, `Slide`, `Swing`, `Tada`, `Wobble` and `Zoom`.
 
 You can pass the following properties to the animation components to customize the behavior:
 
