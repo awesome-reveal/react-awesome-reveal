@@ -18,7 +18,7 @@ or, if you are using Yarn (as I strongly suggest):
 yarn add react-reveal-next
 ```
 
-You must then include [Animated.css](https://daneden.github.io/animate.css/) in your HTML file:
+You must also include [Animated.css](https://daneden.github.io/animate.css/) in your HTML file:
 
 ```html
 <head>
@@ -45,7 +45,7 @@ Then place the following code somewhere in your `render` method:
 </Fade>
 ```
 
-The effects currently supported are `Bounce`, `Fade`, `Flash`, `Flip`, `HeadShake`, `Jello`, `LightSpeed`, `Pulse`, `Rotate`, `Shake`, `Slide`, `Swing`, `Tada`, `Wobble` and `Zoom`.
+The effects currently supported are `Bounce`, `Fade`, `Flash`, `Flip`, `HeadShake`, `JackInTheBox`, `Jello`, `LightSpeed`, `Pulse`, `Rotate`, `Shake`, `Slide`, `Swing`, `Tada`, `Wobble` and `Zoom`.
 
 You can pass the following properties to the animation components to customize the behavior:
 
