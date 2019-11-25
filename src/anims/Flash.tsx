@@ -7,11 +7,11 @@ export const Flash: React.FC<CommonProps> = ({
   children,
   delay = 0,
   duration = 1000,
-  count = 1,
+  triggerOnce = false,
   className,
   style,
 }) => {
-  const [ref, inView] = useInView({ triggerOnce: true });
+  const [ref, inView] = useInView({ triggerOnce });
 
   return (
     <div
@@ -23,7 +23,6 @@ export const Flash: React.FC<CommonProps> = ({
         ...style,
         animationDelay: `${delay}ms`,
         animationDuration: `${duration}ms`,
-        animationIterationCount: count,
         visibility: inView ? 'visible' : 'hidden',
       }}
     >

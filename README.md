@@ -52,7 +52,7 @@ You can pass the following properties to the animation components to customize t
 - `direction`: can be `"top"`, `"left"`, `"bottom"` or `"right"`. If no direction is passed, the animation happens in place (default to `undefined`)
 - `delay`: the amount of time to wait in milliseconds before the animation starts (default to `0`)
 - `duration`: the animation duration expressed in milliseconds (default to `1000`)
-- `count`: the number of times the animation must run. Can be a finite number or `"infinite"` (default to `1`)
+- `triggerOnce`: specifies if the animation should run only once or everytime an element enters/exits/re-enters the viewport (default to `false`)
 
 ## License
 

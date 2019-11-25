@@ -90,7 +90,7 @@ export type RotateDirection =
 export interface CommonProps {
   delay?: number;
   duration?: number;
-  count?: number | 'infinite';
+  triggerOnce?: boolean;
   className?: string;
   style?: React.CSSProperties;
 }
