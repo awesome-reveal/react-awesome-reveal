@@ -16,7 +16,7 @@ const Section: React.FC<SectionProps> = ({ direction = 'left' }) => {
       }}
     >
       <Fade direction={direction} triggerOnce style={{ textAlign: 'center' }}>
-        <h1>React Reveal Next</h1>
+        <h1>React Awesome Reveal</h1>
         <h2>Dennis Morello</h2>
         <h3>Front-End Engineer</h3>
       </Fade>

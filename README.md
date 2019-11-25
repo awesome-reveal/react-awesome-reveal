@@ -1,14 +1,14 @@
-# React Reveal Next
+# React Awesome Reveal
 
-[![Version](https://badgen.net/npm/v/react-reveal-next)](https://www.npmjs.com/package/react-reveal-next/v/latest)
-[![Last Commit](https://badgen.net/github/last-commit/dennismorello/react-reveal-next)](https://github.com/dennismorello/react-reveal-next/commits/master)
-[![Downloads](https://badgen.net/npm/dt/react-reveal-next)](https://www.npmjs.com/package/react-reveal-next/v/latest)
-[![Size](https://badgen.net/bundlephobia/minzip/react-reveal-next)](https://bundlephobia.com/result?p=react-reveal-next@latest)
-[![License](https://badgen.net/npm/license/react-reveal-next)](https://www.npmjs.com/package/react-reveal-next/v/latest)
+[![Version](https://badgen.net/npm/v/react-awesome-reveal)](https://www.npmjs.com/package/react-awesome-reveal/v/latest)
+[![Last Commit](https://badgen.net/github/last-commit/dennismorello/react-awesome-reveal)](https://github.com/dennismorello/react-awesome-reveal/commits/master)
+[![Downloads](https://badgen.net/npm/dt/react-awesome-reveal)](https://www.npmjs.com/package/react-awesome-reveal/v/latest)
+[![Size](https://badgen.net/bundlephobia/minzip/react-awesome-reveal)](https://bundlephobia.com/result?p=react-awesome-reveal@latest)
+[![License](https://badgen.net/npm/license/react-awesome-reveal)](https://www.npmjs.com/package/react-awesome-reveal/v/latest)
 
-[React Reveal Next](https://github.com/dennismorello/react-reveal-next) is a library for React apps written in TypeScript that adds reveal animations using the Intersection Observer API to detect when the elements appear in the viewport. Animations are provided by [Animate.css](https://github.com/daneden/animate.css) to benefit from hardware acceleration.
+[React Awesome Reveal](https://github.com/dennismorello/react-awesome-reveal) is a library for React apps written in TypeScript that adds reveal animations using the Intersection Observer API to detect when the elements appear in the viewport. Animations are provided by [Animate.css](https://github.com/daneden/animate.css) to benefit from hardware acceleration.
 
-![Demo](./doc/react-reveal-next-demo.gif)
+![Demo](./doc/react-awesome-reveal-demo.gif)
 
 This project has been inspired by [React Reveal](https://github.com/rnosov/react-reveal), which is good and mature but it is no longer maintained and it uses synchronous listeners on scroll and window resize events. Instead, this library asynchronously detects when an observed element enters or exits the viewport, which leads to more fluid interactions.
 
@@ -16,7 +16,7 @@ This project has been inspired by [React Reveal](https://github.com/rnosov/react
 
 - 🎁 **Modern stack** - It is built for modern React
 - 🏷 **TypeScript support** - It is written in TypeScript to make it easier and faster to use the library
-- 🍃 **Lightweight** - Very little footprint on your project ([~1kB gzipped](https://bundlephobia.com/result?p=react-reveal-next))
+- 🍃 **Lightweight** - Very little footprint on your project ([~1kB gzipped](https://bundlephobia.com/result?p=react-awesome-reveal))
 - ⚙️ **Uses native APIs** - Intersection Observer and CSS Animations are now supported by all major browsers
 - 🚀 **Fast** - Buttery smooth experience thanks to the use of native asynchronous APIs and hardware acceleration
 - 🌳 **Tree-shakeable** - Only the parts you use will be included in your final bundle
@@ -26,13 +26,13 @@ This project has been inspired by [React Reveal](https://github.com/rnosov/react
 To add this package as a dependency to your app, simply run
 
 ```sh
-npm install react-reveal-next --save
+npm install react-awesome-reveal --save
 ```
 
 or, if you are using Yarn (as I strongly suggest):
 
 ```sh
-yarn add react-reveal-next
+yarn add react-awesome-reveal
 ```
 
 You must also include [Animated.css](https://daneden.github.io/animate.css/) in your HTML file:
@@ -48,10 +48,10 @@ You must also include [Animated.css](https://daneden.github.io/animate.css/) in 
 
 ## Quick Start
 
-Import effects from [React Reveal Next](https://www.npmjs.com/package/react-reveal-next) to your React component, for example the `Fade` effect:
+Import effects from [React Awesome Reveal](https://www.npmjs.com/package/react-awesome-reveal) to your React component, for example the `Fade` effect:
 
 ```js
-import { Fade } from 'react-reveal-next';
+import { Fade } from 'react-awesome-reveal';
 ```
 
 Then place the following code somewhere in your `render` method:

@@ -1,5 +1,5 @@
 {
-  "name": "react-reveal-next",
+  "name": "react-awesome-reveal",
   "description": "React components to add reveal animations using Intersection Observer API and CSS Animations.",
   "version": "1.4.2",
   "license": "MIT",
@@ -16,10 +16,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/dennismorello/react-reveal-next"
+    "url": "https://github.com/dennismorello/react-awesome-reveal"
   },
   "bugs": {
-    "url": "https://github.com/dennismorello/react-reveal-next/issues"
+    "url": "https://github.com/dennismorello/react-awesome-reveal/issues"
   },
   "main": "dist/index.js",
   "module": "dist/react-reveal.esm.js",
