@@ -50,9 +50,9 @@ The effects currently supported are `Bounce`, `Fade`, `Flash`, `Flip`, `HeadShak
 You can pass the following properties to the animation components to customize the behavior:
 
 - `direction`: can be `"top"`, `"left"`, `"bottom"` or `"right"`. If no direction is passed, the animation happens in place (default to `undefined`)
-- `delay`: the amount of time to wait in milliseconds before the animation starts (default to `0`)
+- `delay`: the amount of time to wait before the animation starts. Can be a number (in milliseconds) or one of the following presets: `"1s"`, `"2s"`, `"3s"`, `"4s"`, `"5s"`. Default to `undefined`, meaning that no delay will be present
 - `fraction`: number between `0` and `1` indicating how much an element should be in viewport before triggering the animation (default to `0`)
-- `speed`: affects the animation duration. Can be `"slower"` (3s), `"slow"` (2s), `"fast"` (800ms) or `"faster"` (500ms). If not specified, the animation lasts 1s.
+- `speed`: affects the animation duration. Can be a number (in milliseconds) or one of the following presets: `"slower"` (3s), `"slow"` (2s), `"fast"` (800ms) or `"faster"` (500ms). If not specified, the animation lasts 1s.
 - `triggerOnce`: specifies if the animation should run only once or everytime an element enters/exits/re-enters the viewport (default to `false`)
 
 ## License

@@ -87,10 +87,12 @@ export type RotateDirection =
   | 'bottom-right'
   | undefined;
 
-export type Speed = 'slower' | 'slow' | 'fast' | 'faster' | undefined;
+export type Delay = '1s' | '2s' | '3s' | '4s' | '5s' | number | undefined;
+
+export type Speed = 'slower' | 'slow' | 'fast' | 'faster' | number | undefined;
 
 export interface CommonProps {
-  delay?: string;
+  delay?: Delay;
   fraction?: number;
   speed?: Speed;
   triggerOnce?: boolean;

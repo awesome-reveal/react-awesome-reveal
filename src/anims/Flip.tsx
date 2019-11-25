@@ -21,7 +21,7 @@ function getFlipAnimationString(direction: FlipDirection): AnimationString {
 export const Flip: React.FC<FlipOptions & CommonProps> = ({
   children,
   direction,
-  delay = 0,
+  delay,
   fraction,
   speed,
   triggerOnce = false,
@@ -33,12 +33,15 @@ export const Flip: React.FC<FlipOptions & CommonProps> = ({
   return (
     <div
       ref={ref}
-      className={classNames('animated', className, speed, {
+      className={classNames('animated', className, {
         [getFlipAnimationString(direction)]: inView,
+        [`delay-${delay}`]: typeof delay === 'string',
+        [`${speed}`]: typeof speed === 'string',
       })}
       style={{
         ...style,
-        animationDelay: `${delay}ms`,
+        animationDelay: typeof delay === 'number' ? `${delay}ms` : undefined,
+        animationDuration: typeof speed === 'number' ? `${speed}ms` : undefined,
         visibility: inView ? 'visible' : 'hidden',
       }}
     >

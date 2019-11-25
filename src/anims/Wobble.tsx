@@ -5,7 +5,7 @@ import { CommonProps } from '../const';
 
 export const Wobble: React.FC<CommonProps> = ({
   children,
-  delay = 0,
+  delay,
   fraction,
   speed,
   triggerOnce = false,
@@ -17,12 +17,15 @@ export const Wobble: React.FC<CommonProps> = ({
   return (
     <div
       ref={ref}
-      className={classNames('animated', className, speed, {
+      className={classNames('animated', className, {
         wobble: inView,
+        [`delay-${delay}`]: typeof delay === 'string',
+        [`${speed}`]: typeof speed === 'string',
       })}
       style={{
         ...style,
-        animationDelay: `${delay}ms`,
+        animationDelay: typeof delay === 'number' ? `${delay}ms` : undefined,
+        animationDuration: typeof speed === 'number' ? `${speed}ms` : undefined,
         visibility: inView ? 'visible' : 'hidden',
       }}
     >

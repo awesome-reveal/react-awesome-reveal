@@ -25,7 +25,7 @@ function getRotateAnimationString(direction: RotateDirection): AnimationString {
 export const Rotate: React.FC<RotateOptions & CommonProps> = ({
   children,
   direction,
-  delay = 0,
+  delay,
   fraction,
   speed,
   triggerOnce = false,
@@ -37,12 +37,15 @@ export const Rotate: React.FC<RotateOptions & CommonProps> = ({
   return (
     <div
       ref={ref}
-      className={classNames('animated', className, speed, {
+      className={classNames('animated', className, {
         [getRotateAnimationString(direction)]: inView,
+        [`delay-${delay}`]: typeof delay === 'string',
+        [`${speed}`]: typeof speed === 'string',
       })}
       style={{
         ...style,
-        animationDelay: `${delay}ms`,
+        animationDelay: typeof delay === 'number' ? `${delay}ms` : undefined,
+        animationDuration: typeof speed === 'number' ? `${speed}ms` : undefined,
         visibility: inView ? 'visible' : 'hidden',
       }}
     >
