@@ -22,12 +22,13 @@ export const Flip: React.FC<FlipOptions & CommonProps> = ({
   children,
   direction,
   delay = 0,
+  fraction,
   speed,
   triggerOnce = false,
   className,
   style,
 }) => {
-  const [ref, inView] = useInView({ triggerOnce });
+  const [ref, inView] = useInView({ threshold: fraction, triggerOnce });
 
   return (
     <div

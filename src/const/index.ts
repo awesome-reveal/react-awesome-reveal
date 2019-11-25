@@ -91,6 +91,7 @@ export type Speed = 'slower' | 'slow' | 'fast' | 'faster' | undefined;
 
 export interface CommonProps {
   delay?: string;
+  fraction?: number;
   speed?: Speed;
   triggerOnce?: boolean;
   className?: string;

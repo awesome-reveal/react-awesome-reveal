@@ -6,12 +6,13 @@ import { CommonProps } from '../const';
 export const Shake: React.FC<CommonProps> = ({
   children,
   delay = 0,
+  fraction,
   speed,
   triggerOnce = false,
   className,
   style,
 }) => {
-  const [ref, inView] = useInView({ triggerOnce });
+  const [ref, inView] = useInView({ threshold: fraction, triggerOnce });
 
   return (
     <div
