@@ -13,6 +13,7 @@ This project has been inspired by [React Reveal](https://github.com/rnosov/react
 ## Features
 
 - 🎁 **Modern stack** - It is built for modern React
+- 🏷 **TypeScript support** - It is written in TypeScript to make it easier and faster to use the library
 - 🍃 **Lightweight** - Very little footprint on your project ([~1kB gzipped](https://bundlephobia.com/result?p=react-reveal-next))
 - ⚙️ **Uses native APIs** - Intersection Observer and CSS Animations are now supported by all major browsers
 - 🚀 **Fast** - Buttery smooth experience thanks to the use of native asynchronous APIs and hardware acceleration
