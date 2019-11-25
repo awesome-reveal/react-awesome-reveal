@@ -1,7 +1,6 @@
 import * as React from 'react';
-import classNames from 'classnames';
-import { useInView } from 'react-intersection-observer';
 import { AnimationString, CommonProps, Direction } from '../const';
+import { Reveal } from '../Reveal';
 
 interface ZoomOptions {
   direction?: Direction;
@@ -28,28 +27,18 @@ export const Zoom: React.FC<ZoomOptions & CommonProps> = ({
   delay,
   fraction,
   speed,
-  triggerOnce = false,
+  triggerOnce,
   className,
   style,
-}) => {
-  const [ref, inView] = useInView({ threshold: fraction, triggerOnce });
-
-  return (
-    <div
-      ref={ref}
-      className={classNames('animated', className, {
-        [getZoomAnimationString(direction)]: inView,
-        [`delay-${delay}`]: typeof delay === 'string',
-        [`${speed}`]: typeof speed === 'string',
-      })}
-      style={{
-        ...style,
-        animationDelay: typeof delay === 'number' ? `${delay}ms` : undefined,
-        animationDuration: typeof speed === 'number' ? `${speed}ms` : undefined,
-        visibility: inView ? 'visible' : 'hidden',
-      }}
-    >
-      {children}
-    </div>
-  );
-};
+}) => (
+  <Reveal
+    children={children}
+    animation={getZoomAnimationString(direction)}
+    delay={delay}
+    fraction={fraction}
+    speed={speed}
+    triggerOnce={triggerOnce}
+    className={className}
+    style={style}
+  />
+);
