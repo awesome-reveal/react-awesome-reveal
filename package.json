@@ -1,7 +1,7 @@
 {
   "name": "react-awesome-reveal",
   "description": "React components to add reveal animations using Intersection Observer API and CSS Animations.",
-  "version": "1.5.3",
+  "version": "1.6.0",
   "license": "MIT",
   "author": "Dennis Morello <dennismorello@gmail.com>",
   "homepage": "https://react-awesome-reveal.now.sh/docs",
