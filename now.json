@@ -1,7 +1,7 @@
 {
   "builds": [
     {
-      "src": "website/package.json",
+      "src": "docs/package.json",
       "use": "@now/static-build"
     }
   ]

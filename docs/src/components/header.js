@@ -1,5 +1,5 @@
 import React from "react"
-import { Link as GatsbyLink } from "gatsby"
+import { Link as GatsbyLink, withPrefix } from "gatsby"
 import { Flex, Button, Box, useColorMode } from "@chakra-ui/core"
 import { Fade } from "react-awesome-reveal"
 
@@ -11,7 +11,7 @@ const NavLink = ({ to, location, ...props }) => (
     borderRadius={20}
     to={to}
     mx={2}
-    isActive={to === location.pathname}
+    isActive={location.pathname === withPrefix(to)}
     {...props}
   />
 )

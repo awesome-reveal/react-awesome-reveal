@@ -1,10 +1,9 @@
 import React from "react"
-import { Heading, Grid } from "@chakra-ui/core"
+import { Grid } from "@chakra-ui/core"
 
 // Components
 import Card from "../components/card"
 import Layout from "../components/layout"
-import SEO from "../components/seo"
 
 export default ({ location }) => (
   <Layout location={location} title="Flip">
