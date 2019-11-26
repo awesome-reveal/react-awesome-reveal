@@ -50,13 +50,15 @@ Import effects from [React Awesome Reveal](https://www.npmjs.com/package/react-a
 import { Fade } from 'react-awesome-reveal';
 ```
 
-Then place the following code somewhere in your `render` method:
+Then simply wrap the components you want to animate:
 
 ```jsx
 <Fade>
   <p>I will gently appear as I enter the viewport</p>
 </Fade>
 ```
+
+## Supported Effects
 
 The effects currently supported are `Bounce`, `Fade`, `Flash`, `Flip`, `HeadShake`, `HeartBeat`, `JackInTheBox`, `Jello`, `LightSpeed`, `Pulse`, `Rotate`, `RubberBand`, `Shake`, `Slide`, `Swing`, `Tada`, `Wobble` and `Zoom`.
 
@@ -67,6 +69,30 @@ You can pass the following properties to the animation components to customize t
 - `fraction`: number between `0` and `1` indicating how much an element should be in viewport before triggering the animation (default to `0`)
 - `speed`: affects the animation duration. Can be a number (in milliseconds) or one of the following presets: `"slower"` (3s), `"slow"` (2s), `"fast"` (800ms) or `"faster"` (500ms). If not specified, the animation lasts 1s.
 - `triggerOnce`: specifies if the animation should run only once or everytime an element enters/exits/re-enters the viewport (default to `false`)
+
+For example, to trigger the animation only the first time an element enters the viewport:
+
+```jsx
+<Slide triggerOnce>
+  <p>I will animate only the first time you see me </p>
+</Slide>
+```
+
+### Chaining Multiple Animations
+
+To chain together multiple animation, you can play with the `delay` prop:
+
+```jsx
+<Fade>
+  <p>I enter first...</p>
+</Fade>
+<Fade delay="1s">
+  <p>...then comes my turn...</p>
+</Fade>
+<Fade delay="2s">
+  <p>...and finally you see me!</p>
+</Fade>
+```
 
 ## License
 
