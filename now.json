@@ -4,6 +4,5 @@
       "src": "website/package.json",
       "use": "@now/static-build"
     }
-  ],
-  "routes": [{ "src": "/website", "dest": "/" }]
+  ]
 }

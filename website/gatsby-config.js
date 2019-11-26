@@ -4,6 +4,7 @@ module.exports = {
     description: `Playground to test React Awesome Reveal features.`,
     author: `@dennismorello`,
   },
+  pathPrefix: `/website`,
   plugins: [
     `gatsby-plugin-react-helmet`,
     {
