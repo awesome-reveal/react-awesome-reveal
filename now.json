@@ -1,8 +1,8 @@
 {
   "builds": [
     {
-      "src": "website/package.json",
-      "dest": "/"
+      "src": "website/package.json"
     }
-  ]
+  ],
+  "routes": [{ "src": "/website", "dest": "/" }]
 }
