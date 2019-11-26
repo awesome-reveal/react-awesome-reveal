@@ -1,0 +1,9 @@
+{
+  "builds": [
+    {
+      "src": "website/package.json",
+      "use": "@now/static-build",
+      "config": { "distDir": "public" }
+    }
+  ]
+}
