@@ -7,10 +7,8 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 
 const NotFoundPage = ({ location }) => (
-  <Layout showNavbar={false}>
-    <SEO title="404: Not found" />
-    <Heading mb={4}>Not Found</Heading>
-    <Heading mb={8} size="md">
+  <Layout showNavbar={false} title="Not Found">
+    <Heading my={8} size="md">
       Page <code>{location.pathname}</code> does not exist
     </Heading>
     <Button as={GatsbyLink}>Home</Button>

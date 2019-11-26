@@ -1,6 +1,7 @@
 import React from "react"
 import PropTypes from "prop-types"
 import { Box, Heading } from "@chakra-ui/core"
+import { Fade } from "react-awesome-reveal"
 
 import Header from "./header"
 import SEO from "./seo"
@@ -17,7 +18,9 @@ const Layout = ({ children, location, title, showNavbar = true }) => (
       minH="200vh"
       width={["100%", "100%", "100%", "66.667%"]}
     >
-      <Heading mt={[2, 4, 8, 16]}>{title}</Heading>
+      <Fade direction="bottom" triggerOnce>
+        <Heading mt={[2, 4, 8, 16]}>{title}</Heading>
+      </Fade>
       {children}
     </Box>
   </>

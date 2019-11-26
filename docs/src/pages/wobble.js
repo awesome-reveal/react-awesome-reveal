@@ -6,7 +6,7 @@ import Card from "../components/card"
 import Layout from "../components/layout"
 
 export default ({ location }) => (
-  <Layout location={location} title="Light Speed">
+  <Layout location={location} title="Wobble">
     <Grid
       templateColumns={[
         "repeat(1, 1fr)",
@@ -18,7 +18,7 @@ export default ({ location }) => (
       my={8}
     >
       {Array.from({ length: 120 }).map((_, index) => (
-        <Card key={index} animation="lightSpeed" />
+        <Card key={index} animation="wobble" />
       ))}
     </Grid>
   </Layout>

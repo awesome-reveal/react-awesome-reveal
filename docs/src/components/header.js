@@ -41,24 +41,49 @@ const Header = ({ location }) => {
       height={16}
       alignItems="center"
       justifyContent="space-between"
-      overflow="hidden"
+      overflowX="auto"
+      overflowY="hidden"
     >
       <Fade direction="left">
-        <Box as="nav">
+        <Flex as="nav">
           <NavLink to="/" location={location}>
             Fade
           </NavLink>
           <NavLink to="/bounce" location={location}>
             Bounce
           </NavLink>
+          <NavLink to="/flash" location={location}>
+            Flash
+          </NavLink>
           <NavLink to="/flip" location={location}>
             Flip
           </NavLink>
+          <NavLink to="/headshake" location={location}>
+            Head Shake
+          </NavLink>
+          <NavLink to="/heartbeat" location={location}>
+            Heart Beat
+          </NavLink>
+          <NavLink to="/jackinthebox" location={location}>
+            Jack In The Box
+          </NavLink>
+          <NavLink to="/jello" location={location}>
+            Jello
+          </NavLink>
           <NavLink to="/lightspeed" location={location}>
-            LightSpeed
+            Light Speed
+          </NavLink>
+          <NavLink to="/pulse" location={location}>
+            Pulse
           </NavLink>
           <NavLink to="/rotate" location={location}>
             Rotate
+          </NavLink>
+          <NavLink to="/rubberband" location={location}>
+            Rubber Band
+          </NavLink>
+          <NavLink to="/shake" location={location}>
+            Shake
           </NavLink>
           <NavLink to="/slide" location={location}>
             Slide
@@ -69,10 +94,13 @@ const Header = ({ location }) => {
           <NavLink to="/tada" location={location}>
             Tada
           </NavLink>
+          <NavLink to="/wobble" location={location}>
+            Wobble
+          </NavLink>
           <NavLink to="/zoom" location={location}>
             Zoom
           </NavLink>
-        </Box>
+        </Flex>
         <Box>{/** Put here right content */}</Box>
       </Fade>
     </Flex>
