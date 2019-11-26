@@ -71,8 +71,8 @@ You can pass the following properties to the animation components to customize t
 | `fraction`    | How much an element should be in viewport before the animation is triggered                                 | `number` between `0` and `1`                                                                       | `0`         |
 | `speed`       | Affects the animation duration                                                                              | `"slower"` (3s), `"slow"` (2s), `"fast"` (800ms), `"faster"` (500ms) or a `number` in milliseconds | `1000`      |
 | `triggerOnce` | Specifies if the animation should run only once or everytime an element enters/exits/re-enters the viewport | `true` or `false`                                                                                  | `false`     |
-| `className`   | Class names to add to the wrapper element (e.g. to add custom animations)                                   | `string` value                                                                                     | `undefined` |
-| `style`       | Style object to add inline styles to the wrapper element                                                    | `object` value                                                                                     | `undefined` |
+| `className`   | Class names to add to the wrapper element (e.g. to specify custom animations)                               | `string` value                                                                                     | `undefined` |
+| `style`       | Object to add inline styles to the wrapper element                                                          | `object` value                                                                                     | `undefined` |
 
 ### Example
 
@@ -80,7 +80,7 @@ To trigger the animation only the first time an element enters the viewport:
 
 ```jsx
 <Slide triggerOnce>
-  <p>I will animate only the first time you see me </p>
+  <p>I will animate only the first time you see me</p>
 </Slide>
 ```
 
