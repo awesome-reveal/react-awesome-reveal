@@ -1,11 +1,6 @@
 import * as React from 'react';
-import { Fade, Direction } from '../../src/index';
 
-interface SectionProps {
-  direction?: Direction;
-}
-
-const Section: React.FC<SectionProps> = ({ direction = 'left' }) => {
+const Section: React.FC = ({ children }) => {
   return (
     <div
       style={{
@@ -13,13 +8,10 @@ const Section: React.FC<SectionProps> = ({ direction = 'left' }) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        flexDirection: 'column',
       }}
     >
-      <Fade direction={direction} triggerOnce style={{ textAlign: 'center' }}>
-        <h1>React Awesome Reveal</h1>
-        <h2>Dennis Morello</h2>
-        <h3>Front-End Engineer</h3>
-      </Fade>
+      {children}
     </div>
   );
 };

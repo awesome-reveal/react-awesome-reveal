@@ -64,13 +64,19 @@ The effects currently supported are `Bounce`, `Fade`, `Flash`, `Flip`, `HeadShak
 
 You can pass the following properties to the animation components to customize the behavior:
 
-- `direction`: can be `"top"`, `"left"`, `"bottom"` or `"right"`. If no direction is passed, the animation happens in place (default to `undefined`)
-- `delay`: the amount of time to wait before the animation starts. Can be a number (in milliseconds) or one of the following presets: `"1s"`, `"2s"`, `"3s"`, `"4s"`, `"5s"`. Default to `undefined`, meaning that no delay will be present
-- `fraction`: number between `0` and `1` indicating how much an element should be in viewport before triggering the animation (default to `0`)
-- `speed`: affects the animation duration. Can be a number (in milliseconds) or one of the following presets: `"slower"` (3s), `"slow"` (2s), `"fast"` (800ms) or `"faster"` (500ms). If not specified, the animation lasts 1s.
-- `triggerOnce`: specifies if the animation should run only once or everytime an element enters/exits/re-enters the viewport (default to `false`)
+| Prop          | Description                                                                                                 | Values                                                                                             | Default     |
+| ------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ----------- |
+| `direction`   | Origin of the animation                                                                                     | `"top"`, `"left"`, `"bottom"` or `"right"`                                                         | `undefined` |
+| `delay`       | Milliseconds to wait before the animation starts                                                            | `"1s"`, `"2s"`, `"3s"`, `"4s"`, `"5s"` or a `number` in milliseconds                               | `undefined` |
+| `fraction`    | How much an element should be in viewport before the animation is triggered                                 | `number` between `0` and `1`                                                                       | `0`         |
+| `speed`       | Affects the animation duration                                                                              | `"slower"` (3s), `"slow"` (2s), `"fast"` (800ms), `"faster"` (500ms) or a `number` in milliseconds | `1000`      |
+| `triggerOnce` | Specifies if the animation should run only once or everytime an element enters/exits/re-enters the viewport | `true` or `false`                                                                                  | `false`     |
+| `className`   | Class names to add to the wrapper element (e.g. to add custom animations)                                   | `string` value                                                                                     | `undefined` |
+| `style`       | Style object to add inline styles to the wrapper element                                                    | `object`                                                                                           | `undefined` |
 
-For example, to trigger the animation only the first time an element enters the viewport:
+### Example
+
+To trigger the animation only the first time an element enters the viewport:
 
 ```jsx
 <Slide triggerOnce>
@@ -93,6 +99,8 @@ To chain together multiple animations, you can play with the `delay` prop:
   <p>...and finally you see me!</p>
 </Fade>
 ```
+
+> In the future, chained animations will be handled by a specific API – stay tuned!
 
 ## License
 
