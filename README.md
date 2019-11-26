@@ -72,7 +72,7 @@ You can pass the following properties to the animation components to customize t
 | `speed`       | Affects the animation duration                                                                              | `"slower"` (3s), `"slow"` (2s), `"fast"` (800ms), `"faster"` (500ms) or a `number` in milliseconds | `1000`      |
 | `triggerOnce` | Specifies if the animation should run only once or everytime an element enters/exits/re-enters the viewport | `true` or `false`                                                                                  | `false`     |
 | `className`   | Class names to add to the wrapper element (e.g. to add custom animations)                                   | `string` value                                                                                     | `undefined` |
-| `style`       | Style object to add inline styles to the wrapper element                                                    | `object`                                                                                           | `undefined` |
+| `style`       | Style object to add inline styles to the wrapper element                                                    | `object` value                                                                                     | `undefined` |
 
 ### Example
 
