@@ -80,7 +80,7 @@ For example, to trigger the animation only the first time an element enters the 
 
 ### Chaining Multiple Animations
 
-To chain together multiple animation, you can play with the `delay` prop:
+To chain together multiple animations, you can play with the `delay` prop:
 
 ```jsx
 <Fade>
