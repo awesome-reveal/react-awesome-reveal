@@ -4,7 +4,6 @@ import { Heading, Button } from "@chakra-ui/core"
 
 // Components
 import Layout from "../components/layout"
-import SEO from "../components/seo"
 
 const NotFoundPage = ({ location }) => (
   <Layout showNavbar={false} title="Not Found">

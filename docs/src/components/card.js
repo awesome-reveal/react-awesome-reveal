@@ -45,7 +45,6 @@ const Card = ({ animation, ...rest }) => {
       return <LightSpeed>{box}</LightSpeed>
     case "pulse":
       return <Pulse>{box}</Pulse>
-    case "rubberBand":
     case "rotate":
       return <Rotate>{box}</Rotate>
     case "rubberBand":
