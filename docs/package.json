@@ -4,6 +4,9 @@
   "description": "A demonstration website for React Awesome Reveal.",
   "version": "0.1.0",
   "author": "Dennis Morello <dennismorello@gmail.com>",
+  "engines": {
+    "node": ">=8"
+  },
   "dependencies": {
     "@chakra-ui/core": "0.4.1",
     "@emotion/core": "10.0.22",
