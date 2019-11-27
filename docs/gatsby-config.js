@@ -47,7 +47,7 @@ module.exports = {
       options: {
         name: `React Awesome Reveal`,
         short_name: `reveal`,
-        start_url: `/react-awesome-reveal`,
+        start_url: `docs/`,
         background_color: `#663399`,
         theme_color: `#663399`,
         display: `minimal-ui`,
@@ -56,6 +56,15 @@ module.exports = {
     },
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
-    `gatsby-plugin-offline`,
+    {
+      resolve: `gatsby-plugin-offline`,
+      options: {
+        workboxConfig: {
+          modifyURLPrefix: {
+            "/": `docs/`,
+          },
+        },
+      },
+    },
   ],
 }
