@@ -8,6 +8,17 @@
 
 [React Awesome Reveal](https://github.com/dennismorello/react-awesome-reveal) is a library for React apps written in TypeScript that adds reveal animations using the Intersection Observer API to detect when the elements appear in the viewport. Animations are provided by [Animate.css](https://github.com/daneden/animate.css) to benefit from hardware acceleration.
 
+## Table Of Contents
+
+- [Features](#features)
+- [Demo](#demo)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Supported Effects](#supported-effects)
+  - [Example](#example)
+  - [Chaining Multiple Animations](#chaining-multiple-animations)
+- [License](#license)
+
 ## Features
 
 - 🎁 **Modern stack** - It is built for modern React
@@ -16,6 +27,10 @@
 - ⚙️ **Uses native APIs** - Intersection Observer and CSS Animations are now supported by all major browsers
 - 🚀 **Fast** - Buttery smooth experience thanks to the use of native asynchronous APIs and hardware acceleration
 - 🌳 **Tree-shakeable** - Only the parts you use will be included in your final bundle
+
+## Demo
+
+You can find a stress-test demo [here](https://react-awesome-reveal.morello.dev).
 
 ## Installation
 
