@@ -3,7 +3,11 @@
   "private": true,
   "description": "A demonstration website for React Awesome Reveal.",
   "version": "0.1.0",
-  "author": "Dennis Morello <dennismorello@gmail.com>",
+  "author": {
+    "name": "Dennis Morello",
+    "email": "dennismorello@gmail.com",
+    "url": "https://react-awesome-reveal.morello.dev"
+  },
   "engines": {
     "node": ">=8"
   },
