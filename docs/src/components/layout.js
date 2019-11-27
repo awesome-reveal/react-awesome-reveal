@@ -10,7 +10,7 @@ const Layout = ({ children, location, title, showNavbar = true }) => (
   <DarkMode>
     <SEO title={title} />
     {showNavbar && <Header location={location} />}
-    <Box overflowX="hidden">
+    <Box overflowX="hidden" bg="gray.800">
       <Box
         as="main"
         px={4}

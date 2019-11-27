@@ -15,6 +15,7 @@
     "@chakra-ui/core": "0.4.1",
     "@emotion/core": "10.0.22",
     "@emotion/styled": "10.0.23",
+    "animate.css": "^3.7.2",
     "emotion-theming": "10.0.19",
     "gatsby": "2.18.3",
     "gatsby-image": "2.2.33",
@@ -41,7 +42,7 @@
     "develop": "gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
     "start": "npm run develop",
-    "serve": "gatsby serve",
+    "serve": "gatsby serve --prefix-paths",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
   },
   "repository": {
