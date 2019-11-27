@@ -23,7 +23,7 @@ import {
 
 const Card = ({ animation, ...rest }) => {
   const box = (
-    <Box w="100%" h={64} as={Button} variantColor="purple" {...rest} />
+    <Button w="100%" h={64} variantColor="purple" as={Box} {...rest} />
   )
 
   switch (animation) {

@@ -1,6 +1,6 @@
 import React from "react"
 import { Link as GatsbyLink, withPrefix } from "gatsby"
-import { Flex, Button, Box, Stack, useColorMode } from "@chakra-ui/core"
+import { Flex, Button, Box, Stack } from "@chakra-ui/core"
 
 const NavLink = ({ to, location, ...props }) => (
   <Button
@@ -16,13 +16,11 @@ const NavLink = ({ to, location, ...props }) => (
 )
 
 const Header = ({ location }) => {
-  const { colorMode } = useColorMode()
-
   return (
     <Flex
       as="header"
       boxShadow="sm"
-      backgroundColor={colorMode === "dark" ? "gray.800" : "white"}
+      backgroundColor="gray.800"
       p={2}
       position="fixed"
       zIndex="sticky"
