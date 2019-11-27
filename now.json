@@ -1,4 +1,9 @@
 {
+  "build": {
+    "env": {
+      "GA_TRACKID": "@ga-react-awesome-reveal"
+    }
+  },
   "builds": [
     {
       "src": "docs/package.json",
