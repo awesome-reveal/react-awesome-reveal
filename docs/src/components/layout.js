@@ -15,8 +15,8 @@ const Layout = ({ children, location, title, showNavbar = true }) => (
       px={4}
       pt={showNavbar ? 20 : 4}
       mx="auto"
-      minH="200vh"
       width={["100%", "100%", "100%", "66.667%"]}
+      overflowX="hidden"
     >
       <Fade direction="bottom" triggerOnce>
         <Heading mt={[2, 4, 8, 16]}>{title}</Heading>
