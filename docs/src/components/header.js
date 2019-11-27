@@ -1,6 +1,6 @@
 import React from "react"
 import { Link as GatsbyLink, withPrefix } from "gatsby"
-import { Flex, Button, Box, useColorMode } from "@chakra-ui/core"
+import { Flex, Button, Box, Stack, useColorMode } from "@chakra-ui/core"
 
 const NavLink = ({ to, location, ...props }) => (
   <Button
@@ -22,15 +22,7 @@ const Header = ({ location }) => {
     <Flex
       as="header"
       boxShadow="sm"
-      backgroundColor={
-        colorMode === "dark"
-          ? "rgba(26, 32, 44, 0.867)"
-          : "rgba(255, 255, 255, 0.7)"
-      }
-      style={{
-        backdropFilter: "saturate(50%) blur(20px)",
-        WebkitBackdropFilter: "saturate(50%) blur(20px)",
-      }}
+      backgroundColor={colorMode === "dark" ? "gray.800" : "white"}
       p={2}
       position="fixed"
       zIndex="sticky"
@@ -38,12 +30,13 @@ const Header = ({ location }) => {
       left={0}
       right={0}
       height={16}
+      maxW="100%"
       alignItems="center"
       justifyContent="space-between"
       overflowX="auto"
       overflowY="hidden"
     >
-      <Flex as="nav">
+      <Stack as="nav" shouldWrapChildren isInline>
         <NavLink to="/" location={location}>
           Fade
         </NavLink>
@@ -98,7 +91,7 @@ const Header = ({ location }) => {
         <NavLink to="/zoom" location={location}>
           Zoom
         </NavLink>
-      </Flex>
+      </Stack>
       <Box>{/** Put here right content */}</Box>
     </Flex>
   )
