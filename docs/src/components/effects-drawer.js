@@ -33,10 +33,10 @@ const EffectsDrawer = ({ isOpen, onClose, drawerButtonRef, location }) => {
       finalFocusRef={drawerButtonRef}
     >
       <DrawerOverlay />
-      <DrawerContent>
-        <DrawerCloseButton />
+      <DrawerContent color="purple.50" bg="gray.800">
+        <DrawerCloseButton color="purple.50" borderRadius="50%" />
         <DrawerHeader>Effects</DrawerHeader>
-        <DrawerBody overflowY="auto" pb={4}>
+        <DrawerBody overflowY="auto" pb={8}>
           <Stack as="nav" shouldWrapChildren spacing={4}>
             <NavLink to="/bounce" location={location}>
               Bounce

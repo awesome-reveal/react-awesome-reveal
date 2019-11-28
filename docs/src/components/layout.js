@@ -18,7 +18,12 @@ const Layout = ({
 }) => (
   <DarkMode>
     <SEO title={title} />
-    <Box overflowX="hidden" bg="gray.800" mt={showNavbar ? 16 : 0}>
+    <Box
+      overflowX="hidden"
+      bg="gray.800"
+      color="purple.50"
+      mt={showNavbar ? 16 : 0}
+    >
       {showNavbar && (
         <Header
           location={location}
