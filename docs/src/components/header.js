@@ -40,6 +40,7 @@ const Header = ({
         <IconButton
           onClick={onOpen}
           ref={drawerButtonRef}
+          aria-label="Open Effects Drawer"
           variantColor="purple"
           icon="search-2"
           variant="ghost"
