@@ -24,22 +24,9 @@ module.exports = {
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
     {
-      resolve: `gatsby-plugin-google-analytics`,
+      resolve: `gatsby-plugin-google-tagmanager`,
       options: {
-        // The property ID; the tracking code won't be generated without it
-        trackingId: process.env.GA_TRACKID,
-        // Defines where to place the tracking script - `true` in the head and `false` in the body
-        head: false,
-        // Avoids sending pageview hits from custom paths
-        exclude: [],
-        // Delays sending pageview hits on route update (in milliseconds)
-        pageTransitionDelay: 0,
-        // Enables Google Optimize using your container Id
-        optimizeId: null,
-        // Enables Google Optimize Experiment ID
-        experimentId: null,
-        // Set Variation ID. 0 for original 1,2,3....
-        variationId: null,
+        id: process.env.GTM_ID,
       },
     },
     {

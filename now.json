@@ -1,7 +1,7 @@
 {
   "build": {
     "env": {
-      "GA_TRACKID": "@ga-react-awesome-reveal"
+      "GTM_ID": "@gtm-react-awesome-reveal"
     }
   },
   "builds": [
