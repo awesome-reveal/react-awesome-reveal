@@ -1,25 +1,66 @@
-import React from "react"
-import { Grid } from "@chakra-ui/core"
+import React, { useRef } from "react"
+import { useStaticQuery, graphql } from "gatsby"
+import { Heading, Button, useDisclosure } from "@chakra-ui/core"
+import { Zoom } from "react-awesome-reveal"
 
 // Components
-import Card from "../components/card"
+import EffectsDrawer from "../components/effects-drawer"
 import Layout from "../components/layout"
+import Section from "../components/section"
 
-export default ({ location }) => (
-  <Layout location={location} title="Fade">
-    <Grid
-      templateColumns={[
-        "repeat(1, 1fr)",
-        "repeat(2, 1fr)",
-        "repeat(3, 1fr)",
-        "repeat(4, 1fr)",
-      ]}
-      gap={8}
-      my={8}
+export default ({ location }) => {
+  const { site } = useStaticQuery(
+    graphql`
+      query {
+        site {
+          siteMetadata {
+            title
+          }
+        }
+      }
+    `
+  )
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const drawerButtonRef = useRef()
+
+  return (
+    <Layout
+      location={location}
+      title="Home"
+      showTitle={false}
+      animateHeader
+      showNavbarLeftContent={false}
     >
-      {Array.from({ length: 120 }).map((_, index) => (
-        <Card key={index} />
-      ))}
-    </Grid>
-  </Layout>
-)
+      <EffectsDrawer
+        isOpen={isOpen}
+        onClose={onClose}
+        drawerButtonRef={drawerButtonRef}
+        location={location}
+      />
+      <Section>
+        <Zoom triggerOnce>
+          <Heading
+            textAlign="center"
+            size="2xl"
+            fontWeight={900}
+            letterSpacing="tighter"
+          >
+            {site.siteMetadata.title}
+          </Heading>
+        </Zoom>
+        <Zoom direction="bottom" triggerOnce>
+          <Button
+            ref={drawerButtonRef}
+            mt={16}
+            size="lg"
+            variantColor="purple"
+            onClick={onOpen}
+          >
+            Get Started
+          </Button>
+        </Zoom>
+      </Section>
+    </Layout>
+  )
+}

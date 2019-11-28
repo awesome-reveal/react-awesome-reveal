@@ -3,6 +3,7 @@ module.exports = {
     title: `React Awesome Reveal`,
     description: `Playground to test React Awesome Reveal features.`,
     author: `@dennismorello`,
+    githubUrl: `https://github.com/dennismorello/react-awesome-reveal`,
   },
   pathPrefix: `/docs`,
   plugins: [

@@ -6,21 +6,40 @@ import { Fade } from "react-awesome-reveal"
 import Header from "./header"
 import SEO from "./seo"
 
-const Layout = ({ children, location, title, showNavbar = true }) => (
+const Layout = ({
+  children,
+  location,
+  title,
+  animateHeader = false,
+  showNavbar = true,
+  showNavbarLeftContent = true,
+  showNavbarRightContent = true,
+  showTitle = true,
+}) => (
   <DarkMode>
     <SEO title={title} />
-    {showNavbar && <Header location={location} />}
-    <Box overflowX="hidden" bg="gray.800">
+    <Box overflowX="hidden" bg="gray.800" mt={showNavbar ? 16 : 0}>
+      {showNavbar && (
+        <Header
+          location={location}
+          animateHeader={animateHeader}
+          showLeft={showNavbarLeftContent}
+          showRight={showNavbarRightContent}
+        />
+      )}
       <Box
         as="main"
         px={4}
-        pt={showNavbar ? 20 : 4}
         mx="auto"
         width={["100%", "100%", "100%", "66.667%"]}
       >
-        <Fade direction="bottom" triggerOnce>
-          <Heading mt={[2, 4, 8, 16]}>{title}</Heading>
-        </Fade>
+        {showTitle && (
+          <Fade direction="bottom" triggerOnce>
+            <Heading mt={[2, 4, 8, 16]} size="2xl">
+              {title}
+            </Heading>
+          </Fade>
+        )}
         {children}
       </Box>
     </Box>

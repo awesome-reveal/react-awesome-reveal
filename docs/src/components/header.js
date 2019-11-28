@@ -1,96 +1,97 @@
-import React from "react"
-import { Link as GatsbyLink, withPrefix } from "gatsby"
-import { Flex, Button, Box, Stack } from "@chakra-ui/core"
+import React, { useRef } from "react"
+import { useStaticQuery, graphql } from "gatsby"
+import {
+  Box,
+  Button,
+  Flex,
+  Stack,
+  IconButton,
+  useDisclosure,
+} from "@chakra-ui/core"
+import { Fade } from "react-awesome-reveal"
 
-const NavLink = ({ to, location, ...props }) => (
-  <Button
-    as={GatsbyLink}
-    variant="ghost"
-    variantColor="purple"
-    borderRadius={20}
-    to={to}
-    mx={2}
-    isActive={location.pathname === withPrefix(to)}
-    {...props}
-  />
-)
+// Components
+import EffectsDrawer from "./effects-drawer"
 
-const Header = ({ location }) => {
+const Header = ({
+  location,
+  animateHeader,
+  showLeft = true,
+  showRight = true,
+}) => {
+  const { site } = useStaticQuery(
+    graphql`
+      query {
+        site {
+          siteMetadata {
+            githubUrl
+          }
+        }
+      }
+    `
+  )
+
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const drawerButtonRef = useRef()
+
+  const headerContent = (
+    <Stack isInline alignItems="center">
+      {showLeft && (
+        <IconButton
+          onClick={onOpen}
+          ref={drawerButtonRef}
+          variantColor="purple"
+          icon="search-2"
+          variant="ghost"
+          isRound
+        />
+      )}
+      {showLeft && (
+        <EffectsDrawer
+          isOpen={isOpen}
+          onClose={onClose}
+          drawerButtonRef={drawerButtonRef}
+          location={location}
+        />
+      )}
+
+      <Box flexGrow={1} />
+
+      {showRight && (
+        <Button
+          variantColor="purple"
+          variant="outline"
+          as="a"
+          target="_blank"
+          href={site.siteMetadata.githubUrl}
+        >
+          GitHub
+        </Button>
+      )}
+    </Stack>
+  )
+
   return (
     <Flex
       as="header"
       boxShadow="sm"
       backgroundColor="gray.800"
-      p={2}
+      py={2}
+      px={4}
       position="fixed"
       zIndex="sticky"
       top={0}
       left={0}
       right={0}
       height={16}
-      maxW="100%"
-      alignItems="center"
-      justifyContent="space-between"
-      overflowX="auto"
-      overflowY="hidden"
+      flexDirection="column"
+      justifyContent="center"
     >
-      <Stack as="nav" shouldWrapChildren isInline>
-        <NavLink to="/" location={location}>
-          Fade
-        </NavLink>
-        <NavLink to="/bounce" location={location}>
-          Bounce
-        </NavLink>
-        <NavLink to="/flash" location={location}>
-          Flash
-        </NavLink>
-        <NavLink to="/flip" location={location}>
-          Flip
-        </NavLink>
-        <NavLink to="/headshake" location={location}>
-          Head Shake
-        </NavLink>
-        <NavLink to="/heartbeat" location={location}>
-          Heart Beat
-        </NavLink>
-        <NavLink to="/jackinthebox" location={location}>
-          Jack In The Box
-        </NavLink>
-        <NavLink to="/jello" location={location}>
-          Jello
-        </NavLink>
-        <NavLink to="/lightspeed" location={location}>
-          Light Speed
-        </NavLink>
-        <NavLink to="/pulse" location={location}>
-          Pulse
-        </NavLink>
-        <NavLink to="/rotate" location={location}>
-          Rotate
-        </NavLink>
-        <NavLink to="/rubberband" location={location}>
-          Rubber Band
-        </NavLink>
-        <NavLink to="/shake" location={location}>
-          Shake
-        </NavLink>
-        <NavLink to="/slide" location={location}>
-          Slide
-        </NavLink>
-        <NavLink to="/swing" location={location}>
-          Swing
-        </NavLink>
-        <NavLink to="/tada" location={location}>
-          Tada
-        </NavLink>
-        <NavLink to="/wobble" location={location}>
-          Wobble
-        </NavLink>
-        <NavLink to="/zoom" location={location}>
-          Zoom
-        </NavLink>
-      </Stack>
-      <Box>{/** Put here right content */}</Box>
+      {animateHeader ? (
+        <Fade direction="bottom">{headerContent}</Fade>
+      ) : (
+        headerContent
+      )}
     </Flex>
   )
 }
