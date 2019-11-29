@@ -1,7 +1,18 @@
-/**
- * Implement Gatsby's Node APIs in this file.
- *
- * See: https://www.gatsbyjs.org/docs/node-apis/
- */
+const path = require("path")
+const effects = require("./src/effects")
 
-// You can delete this file if you're not using it
+exports.createPages = ({ actions }) => {
+  const { createPage } = actions
+
+  effects.forEach(effect => {
+    createPage({
+      path: `/${effect.name}`,
+      component: path.resolve(`src/templates/effect-showcase.js`),
+      context: {
+        effect: effect.name,
+        title: effect.title,
+        directions: effect.directions,
+      },
+    })
+  })
+}

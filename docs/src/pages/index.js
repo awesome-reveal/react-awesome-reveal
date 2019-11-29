@@ -38,7 +38,7 @@ export default ({ location }) => {
         drawerButtonRef={drawerButtonRef}
         location={location}
       />
-      <Section>
+      <Section align="center" justify="center">
         <Zoom triggerOnce>
           <Heading
             textAlign="center"

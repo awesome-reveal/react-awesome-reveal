@@ -15,6 +15,7 @@ const Layout = ({
   showNavbarLeftContent = true,
   showNavbarRightContent = true,
   showTitle = true,
+  ...rest
 }) => (
   <DarkMode>
     <SEO title={title} />
@@ -37,6 +38,7 @@ const Layout = ({
         px={4}
         mx="auto"
         width={["100%", "100%", "100%", "66.667%"]}
+        {...rest}
       >
         {showTitle && (
           <Fade direction="bottom" triggerOnce>

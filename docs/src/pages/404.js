@@ -4,12 +4,15 @@ import { Heading, Button } from "@chakra-ui/core"
 
 // Components
 import Layout from "../components/layout"
+import Section from "../components/section"
 
 const NotFoundPage = ({ location }) => (
-  <Layout showNavbar={false} title="Not Found">
-    <Heading my={8} size="md">
-      Page <code>{location.pathname}</code> does not exist
-    </Heading>
+  <Layout location={location} title="Not Found">
+    <Section>
+      <Heading my={8} size="md">
+        Page <code>{location.pathname}</code> does not exist
+      </Heading>
+    </Section>
     <Button as={GatsbyLink}>Home</Button>
   </Layout>
 )

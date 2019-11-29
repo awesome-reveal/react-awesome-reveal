@@ -11,6 +11,9 @@ import {
   Button,
 } from "@chakra-ui/core"
 
+// Effects
+import effects from "../effects"
+
 const NavLink = ({ to, location, ...props }) => (
   <Button
     as={GatsbyLink}
@@ -38,60 +41,15 @@ const EffectsDrawer = ({ isOpen, onClose, drawerButtonRef, location }) => {
         <DrawerHeader>Effects</DrawerHeader>
         <DrawerBody overflowY="auto" pb={8}>
           <Stack as="nav" shouldWrapChildren spacing={4}>
-            <NavLink to="/bounce" location={location}>
-              Bounce
-            </NavLink>
-            <NavLink to="/fade" location={location}>
-              Fade
-            </NavLink>
-            <NavLink to="/flash" location={location}>
-              Flash
-            </NavLink>
-            <NavLink to="/flip" location={location}>
-              Flip
-            </NavLink>
-            <NavLink to="/headshake" location={location}>
-              Head Shake
-            </NavLink>
-            <NavLink to="/heartbeat" location={location}>
-              Heart Beat
-            </NavLink>
-            <NavLink to="/jackinthebox" location={location}>
-              Jack In The Box
-            </NavLink>
-            <NavLink to="/jello" location={location}>
-              Jello
-            </NavLink>
-            <NavLink to="/lightspeed" location={location}>
-              Light Speed
-            </NavLink>
-            <NavLink to="/pulse" location={location}>
-              Pulse
-            </NavLink>
-            <NavLink to="/rotate" location={location}>
-              Rotate
-            </NavLink>
-            <NavLink to="/rubberband" location={location}>
-              Rubber Band
-            </NavLink>
-            <NavLink to="/shake" location={location}>
-              Shake
-            </NavLink>
-            <NavLink to="/slide" location={location}>
-              Slide
-            </NavLink>
-            <NavLink to="/swing" location={location}>
-              Swing
-            </NavLink>
-            <NavLink to="/tada" location={location}>
-              Tada
-            </NavLink>
-            <NavLink to="/wobble" location={location}>
-              Wobble
-            </NavLink>
-            <NavLink to="/zoom" location={location}>
-              Zoom
-            </NavLink>
+            {effects.map(effect => (
+              <NavLink
+                key={effect.name}
+                to={`/${effect.name}`}
+                location={location}
+              >
+                {effect.title}
+              </NavLink>
+            ))}
           </Stack>
         </DrawerBody>
       </DrawerContent>
