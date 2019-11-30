@@ -24,7 +24,7 @@
 
 - 🎁 **Modern stack** - It is built for modern React
 - 🏷 **TypeScript support** - It is written in TypeScript to make it easier and faster to use the library
-- 🍃 **Lightweight** - Very little footprint on your project ([~1kB gzipped](https://bundlephobia.com/result?p=react-awesome-reveal)) and no other dependencies are required
+- 🍃 **Lightweight** - Very little footprint on your project and no other dependencies required
 - ⚙️ **Uses native APIs** - Intersection Observer and CSS Animations are now supported by all major browsers
 - 🚀 **Fast** - Buttery smooth experience thanks to the use of native asynchronous APIs and hardware acceleration
 - 🌳 **Tree-shakeable** - Only the parts you use will be included in your final bundle
