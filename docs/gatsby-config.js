@@ -2,8 +2,12 @@ module.exports = {
   siteMetadata: {
     title: `React Awesome Reveal`,
     description: `Playground to test React Awesome Reveal features.`,
-    author: `@dennismorello`,
     githubUrl: `https://github.com/dennismorello/react-awesome-reveal`,
+    year: 2019,
+    author: {
+      twitter: `@dennismorello`,
+      website: `https://morello.dev`,
+    },
   },
   pathPrefix: `/docs`,
   plugins: [

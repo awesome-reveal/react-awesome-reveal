@@ -3,6 +3,7 @@ import PropTypes from "prop-types"
 import { Box, Heading, DarkMode } from "@chakra-ui/core"
 import { Fade } from "react-awesome-reveal"
 
+import Footer from "./footer"
 import Header from "./header"
 import SEO from "./seo"
 
@@ -10,13 +11,14 @@ const Layout = ({
   children,
   location,
   title,
+  showTitle = true,
   animateHeader = false,
   showNavbar = true,
   showNavbarMenu = true,
   showNavbarLeftContent = true,
   showNavbarRightContent = true,
-  showTitle = true,
   navbarLeftContent,
+  showFooter = true,
   ...rest
 }) => (
   <DarkMode>
@@ -54,6 +56,7 @@ const Layout = ({
         )}
         {children}
       </Box>
+      {showFooter && <Footer />}
     </Box>
   </DarkMode>
 )
