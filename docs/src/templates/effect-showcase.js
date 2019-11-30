@@ -24,7 +24,7 @@ export default ({ location, pageContext }) => {
         <Section key={index} pb={0} justify="center">
           <Reveal animation={effect} direction={direction}>
             <Button
-              h="10vw"
+              h="20vw"
               maxH="calc(100vh - 4rem)"
               width="100%"
               variantColor="purple"
