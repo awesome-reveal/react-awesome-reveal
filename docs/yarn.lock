@@ -1812,11 +1812,6 @@ alphanum-sort@^1.0.0:
   resolved "https://registry.yarnpkg.com/alphanum-sort/-/alphanum-sort-1.0.2.tgz#97a1119649b211ad33691d9f9f486a8ec9fbe0a3"
   integrity sha1-l6ERlkmyEa0zaR2fn0hqjsn74KM=
 
-animate.css@^3.7.2:
-  version "3.7.2"
-  resolved "https://registry.yarnpkg.com/animate.css/-/animate.css-3.7.2.tgz#e73e0d50e92cb1cfef1597d9b38a9481020e08ea"
-  integrity sha512-0bE8zYo7C0KvgOYrSVfrzkbYk6IOTVPNqkiHg2cbyF4Pq/PXzilz4BRWA3hwEUBoMp5VBgrC29lQIZyhRWdBTw==
-
 ansi-align@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/ansi-align/-/ansi-align-3.0.0.tgz#b536b371cf687caaef236c18d3e21fe3797467cb"
@@ -10032,10 +10027,10 @@ react-animate-height@2.0.9:
     classnames "^2.2.5"
     prop-types "^15.6.1"
 
-react-awesome-reveal@latest:
-  version "1.6.5"
-  resolved "https://registry.yarnpkg.com/react-awesome-reveal/-/react-awesome-reveal-1.6.5.tgz#3aeecc5e7f83e95734c9e2f7695abcb688405000"
-  integrity sha512-3EsZynseS8hMkL5BVeTGHlxQVKCstTvk5VUB/YhkUg+r6WwzykORGhiRq63DrNOMAbE9V4fIiGP79g6L2Im8Ow==
+react-awesome-reveal@2.0.0-beta.0:
+  version "2.0.0-beta.0"
+  resolved "https://registry.yarnpkg.com/react-awesome-reveal/-/react-awesome-reveal-2.0.0-beta.0.tgz#6edb3c5f518af461b04a34580f841661d10ec022"
+  integrity sha512-hVPdLbHpNfxr/16O10PDtzKJO0MHyzEq4BGEtpsZJelGuhtG9M5wZUw6kJKg/CIDK91qEsuvjN1/u3eDlDFVDg==
   dependencies:
     classnames "^2.2.6"
     react-intersection-observer "^8.25.1"
