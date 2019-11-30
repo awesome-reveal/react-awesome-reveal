@@ -68,6 +68,7 @@ const Header = ({
           variant="outline"
           as="a"
           target="_blank"
+          rel="noopener"
           href={site.siteMetadata.githubUrl}
         >
           GitHub
