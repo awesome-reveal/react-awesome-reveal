@@ -21,8 +21,8 @@ export const Flip: React.FC<FlipOptions & CommonProps> = ({
   children,
   direction,
   delay,
+  duration,
   fraction,
-  speed,
   triggerOnce,
   className,
   style,
@@ -31,8 +31,8 @@ export const Flip: React.FC<FlipOptions & CommonProps> = ({
     children={children}
     animation={getFlipAnimationString(direction)}
     delay={delay}
+    duration={duration}
     fraction={fraction}
-    speed={speed}
     triggerOnce={triggerOnce}
     className={className}
     style={style}

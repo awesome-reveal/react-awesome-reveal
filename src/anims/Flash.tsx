@@ -5,8 +5,8 @@ import { Reveal } from '../Reveal';
 export const Flash: React.FC<CommonProps> = ({
   children,
   delay,
+  duration,
   fraction,
-  speed,
   triggerOnce,
   className,
   style,
@@ -15,8 +15,8 @@ export const Flash: React.FC<CommonProps> = ({
     children={children}
     animation="flash"
     delay={delay}
+    duration={duration}
     fraction={fraction}
-    speed={speed}
     triggerOnce={triggerOnce}
     className={className}
     style={style}

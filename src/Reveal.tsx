@@ -3,6 +3,8 @@ import classNames from 'classnames';
 import { useInView } from 'react-intersection-observer';
 import { AnimationString, CommonProps } from './const';
 
+import './animate.css';
+
 interface RevealProps extends CommonProps {
   animation: AnimationString;
 }
@@ -11,8 +13,8 @@ export const Reveal: React.FC<RevealProps> = ({
   children,
   animation,
   delay,
+  duration,
   fraction,
-  speed,
   triggerOnce = false,
   className,
   style,
@@ -22,17 +24,20 @@ export const Reveal: React.FC<RevealProps> = ({
   return (
     <div ref={ref}>
       <div
-        className={classNames('animated', className, {
-          [animation]: inView,
-          [`delay-${delay}`]: typeof delay === 'string',
-          [`${speed}`]: typeof speed === 'string',
-        })}
+        className={classNames(
+          'animated',
+          {
+            [animation]: inView,
+            [`delay-${delay}`]: typeof delay === 'string',
+            [`${duration}`]: typeof duration === 'string',
+          },
+          className
+        )}
         style={{
-          ...style,
           animationDelay: typeof delay === 'number' ? `${delay}ms` : undefined,
           animationDuration:
-            typeof speed === 'number' ? `${speed}ms` : undefined,
-          visibility: inView ? 'visible' : 'hidden',
+            typeof duration === 'number' ? `${duration}ms` : undefined,
+          ...style,
         }}
       >
         {children}

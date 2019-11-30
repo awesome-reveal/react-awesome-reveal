@@ -57,12 +57,18 @@ export type RotateDirection =
 
 export type Delay = '1s' | '2s' | '3s' | '4s' | '5s' | number | undefined;
 
-export type Speed = 'slower' | 'slow' | 'fast' | 'faster' | number | undefined;
+export type Duration =
+  | 'slower'
+  | 'slow'
+  | 'fast'
+  | 'faster'
+  | number
+  | undefined;
 
 export interface CommonProps {
   delay?: Delay;
+  duration?: Duration;
   fraction?: number;
-  speed?: Speed;
   triggerOnce?: boolean;
   className?: string;
   style?: React.CSSProperties;
