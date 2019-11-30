@@ -37,7 +37,6 @@ export const Reveal: React.FC<RevealProps> = ({
           animationDelay: typeof delay === 'number' ? `${delay}ms` : undefined,
           animationDuration:
             typeof duration === 'number' ? `${duration}ms` : undefined,
-          visibility: inView ? 'visible' : 'hidden',
           ...style,
         }}
       >
