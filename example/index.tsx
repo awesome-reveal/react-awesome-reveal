@@ -2,7 +2,7 @@ import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { Fade } from '../dist';
+import { Fade, Bounce } from '../src';
 import Section from './components/Section';
 
 const App = () => {
@@ -12,6 +12,19 @@ const App = () => {
         <Fade direction="top">
           <h2>Scroll down</h2>
         </Fade>
+      </Section>
+      <Section>
+        <Bounce direction="left" style={{ transformStyle: 'flat' }}>
+          <div
+            style={{
+              padding: '2rem 4rem',
+              background: 'pink',
+              borderRadius: 8,
+            }}
+          >
+            <h1>Bounce</h1>
+          </div>
+        </Bounce>
       </Section>
       <Section>
         <Fade>

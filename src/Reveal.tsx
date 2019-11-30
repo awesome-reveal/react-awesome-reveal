@@ -20,20 +20,23 @@ export const Reveal: React.FC<RevealProps> = ({
   const [ref, inView] = useInView({ threshold: fraction, triggerOnce });
 
   return (
-    <div
-      ref={ref}
-      className={classNames('animated', className, {
-        [animation]: inView,
-        [`delay-${delay}`]: typeof delay === 'string',
-        [`${speed}`]: typeof speed === 'string',
-      })}
-      style={{
-        ...style,
-        animationDelay: typeof delay === 'number' ? `${delay}ms` : undefined,
-        animationDuration: typeof speed === 'number' ? `${speed}ms` : undefined,
-      }}
-    >
-      {children}
+    <div ref={ref}>
+      <div
+        className={classNames('animated', className, {
+          [animation]: inView,
+          [`delay-${delay}`]: typeof delay === 'string',
+          [`${speed}`]: typeof speed === 'string',
+        })}
+        style={{
+          ...style,
+          animationDelay: typeof delay === 'number' ? `${delay}ms` : undefined,
+          animationDuration:
+            typeof speed === 'number' ? `${speed}ms` : undefined,
+          visibility: inView ? 'visible' : 'hidden',
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 };
