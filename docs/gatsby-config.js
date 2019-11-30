@@ -38,7 +38,7 @@ module.exports = {
         start_url: `docs/`,
         background_color: `#1A202C`,
         theme_color: `#1A202C`,
-        display: `minimal-ui`,
+        display: `standalone`,
         icon: `src/images/logo.png`, // This path is relative to the root of the site.
       },
     },
