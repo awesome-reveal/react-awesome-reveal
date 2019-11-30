@@ -25,8 +25,8 @@ export const Bounce: React.FC<BounceOptions & CommonProps> = ({
   children,
   direction,
   delay,
+  duration,
   fraction,
-  speed,
   triggerOnce,
   className,
   style,
@@ -35,8 +35,8 @@ export const Bounce: React.FC<BounceOptions & CommonProps> = ({
     children={children}
     animation={getBounceAnimationString(direction)}
     delay={delay}
+    duration={duration}
     fraction={fraction}
-    speed={speed}
     triggerOnce={triggerOnce}
     className={className}
     style={style}

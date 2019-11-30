@@ -25,8 +25,8 @@ export const Slide: React.FC<SlideOptions & CommonProps> = ({
   children,
   direction,
   delay,
+  duration,
   fraction,
-  speed,
   triggerOnce,
   className,
   style,
@@ -35,8 +35,8 @@ export const Slide: React.FC<SlideOptions & CommonProps> = ({
     children={children}
     animation={getSlideAnimationString(direction)}
     delay={delay}
+    duration={duration}
     fraction={fraction}
-    speed={speed}
     triggerOnce={triggerOnce}
     className={className}
     style={style}

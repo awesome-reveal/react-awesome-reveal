@@ -2,7 +2,7 @@ import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { Fade, Bounce } from '../src';
+import { Fade, Bounce } from '../dist';
 import Section from './components/Section';
 
 const App = () => {

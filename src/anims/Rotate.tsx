@@ -25,8 +25,8 @@ export const Rotate: React.FC<RotateOptions & CommonProps> = ({
   children,
   direction,
   delay,
+  duration,
   fraction,
-  speed,
   triggerOnce,
   className,
   style,
@@ -35,8 +35,8 @@ export const Rotate: React.FC<RotateOptions & CommonProps> = ({
     children={children}
     animation={getRotateAnimationString(direction)}
     delay={delay}
+    duration={duration}
     fraction={fraction}
-    speed={speed}
     triggerOnce={triggerOnce}
     className={className}
     style={style}
