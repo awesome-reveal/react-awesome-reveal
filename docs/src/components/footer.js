@@ -18,7 +18,7 @@ const Footer = () => {
   `)
 
   return (
-    <Box as="footer" backgroundColor="gray.900" p={[2, 4, 8, 16]}>
+    <Box as="footer" backgroundColor="gray.900" p={[8, 16]} overflow="hidden">
       <Fade direction="top">
         <Stack color="gray.400">
           <Text textAlign="center">

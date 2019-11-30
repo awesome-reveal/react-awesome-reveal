@@ -21,10 +21,11 @@ export default ({ location, pageContext }) => {
       }
     >
       {directions.map((direction, index) => (
-        <Section key={index} pb={0} justify="center">
+        <Section key={index} px={[4, 12]} pb={0} justify="center">
           <Reveal animation={effect} direction={direction}>
             <Button
               h="15vw"
+              minH={32}
               maxH="calc(100vh - 4rem)"
               width="100%"
               variantColor="purple"
