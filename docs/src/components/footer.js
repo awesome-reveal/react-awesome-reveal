@@ -27,7 +27,11 @@ const Footer = () => {
           </Text>
           <Text textAlign="center" mt={[0, 0, 2, 2]}>
             Copyright &copy; {site.siteMetadata.year}{" "}
-            <Link href={site.siteMetadata.author.website} target="_blank">
+            <Link
+              href={site.siteMetadata.author.website}
+              target="_blank"
+              rel="noopener"
+            >
               Dennis Morello
             </Link>
           </Text>
