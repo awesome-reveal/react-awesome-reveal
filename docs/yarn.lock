@@ -10033,9 +10033,9 @@ react-animate-height@2.0.9:
     prop-types "^15.6.1"
 
 react-awesome-reveal@^1.6.3:
-  version "1.6.3"
-  resolved "https://registry.yarnpkg.com/react-awesome-reveal/-/react-awesome-reveal-1.6.3.tgz#4221440eb12d62e16af4b61693e663c3dc859a2f"
-  integrity sha512-FZFkLfqsUW8qz0n7inPFFOv9bXg/swYZujUBALLaOIz2b75xSyhcyEbLBf2BQezk5hKIEKBGUbUfJsQICg8TCQ==
+  version "1.6.5"
+  resolved "https://registry.yarnpkg.com/react-awesome-reveal/-/react-awesome-reveal-1.6.5.tgz#3aeecc5e7f83e95734c9e2f7695abcb688405000"
+  integrity sha512-3EsZynseS8hMkL5BVeTGHlxQVKCstTvk5VUB/YhkUg+r6WwzykORGhiRq63DrNOMAbE9V4fIiGP79g6L2Im8Ow==
   dependencies:
     classnames "^2.2.6"
     react-intersection-observer "^8.25.1"
@@ -10128,9 +10128,9 @@ react-hot-loader@^4.12.16:
     source-map "^0.7.3"
 
 react-intersection-observer@^8.25.1:
-  version "8.25.1"
-  resolved "https://registry.yarnpkg.com/react-intersection-observer/-/react-intersection-observer-8.25.1.tgz#26049fbbd9fbed10121552d220c5b433b041fd60"
-  integrity sha512-JKCQ1R4Ch/dnuwkOwKpfgz5oDy4jLdJBC2Vp2dbqm/PIhKV8aKfgvrCT3fL9CvKzo2pXWh2R/oA1yspIYN9kcg==
+  version "8.25.2"
+  resolved "https://registry.yarnpkg.com/react-intersection-observer/-/react-intersection-observer-8.25.2.tgz#be165f4827dc8f1927ab68ecb837efe913d94909"
+  integrity sha512-KymKTOQK0TxQFW/Km80oS8VVOZAX8nt74fsYEGw6pqBLSJlqBXEhdFpyPcBa08GiGnup8lrFRkSY4JioP+pqww==
   dependencies:
     tiny-invariant "^1.0.6"
 
