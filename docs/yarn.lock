@@ -10032,7 +10032,7 @@ react-animate-height@2.0.9:
     classnames "^2.2.5"
     prop-types "^15.6.1"
 
-react-awesome-reveal@^1.6.3:
+react-awesome-reveal@latest:
   version "1.6.5"
   resolved "https://registry.yarnpkg.com/react-awesome-reveal/-/react-awesome-reveal-1.6.5.tgz#3aeecc5e7f83e95734c9e2f7695abcb688405000"
   integrity sha512-3EsZynseS8hMkL5BVeTGHlxQVKCstTvk5VUB/YhkUg+r6WwzykORGhiRq63DrNOMAbE9V4fIiGP79g6L2Im8Ow==
