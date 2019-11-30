@@ -22,7 +22,7 @@ export const Reveal: React.FC<RevealProps> = ({
   const [ref, inView] = useInView({ threshold: fraction, triggerOnce });
 
   return (
-    <div ref={ref}>
+    <div ref={ref} style={{ visibility: inView ? 'visible' : 'hidden' }}>
       <div
         className={classNames(
           'animated',
