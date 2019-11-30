@@ -6,7 +6,7 @@
 [![Size](https://badgen.net/bundlephobia/minzip/react-awesome-reveal)](https://bundlephobia.com/result?p=react-awesome-reveal@latest)
 [![License](https://badgen.net/npm/license/react-awesome-reveal)](https://www.npmjs.com/package/react-awesome-reveal/v/latest)
 
-[React Awesome Reveal](https://github.com/dennismorello/react-awesome-reveal) is a library for React apps written in TypeScript that adds reveal animations using the Intersection Observer API to detect when the elements appear in the viewport. Animations are provided by [Animate.css](https://github.com/daneden/animate.css) to benefit from hardware acceleration.
+[React Awesome Reveal](https://github.com/dennismorello/react-awesome-reveal) is a library for React apps written in TypeScript that adds reveal animations using the Intersection Observer API to detect when the elements appear in the viewport. Animations are internally provided by [Animate.css](https://github.com/daneden/animate.css) to benefit from hardware acceleration.
 
 ## Table Of Contents
 
@@ -24,14 +24,14 @@
 
 - 🎁 **Modern stack** - It is built for modern React
 - 🏷 **TypeScript support** - It is written in TypeScript to make it easier and faster to use the library
-- 🍃 **Lightweight** - Very little footprint on your project ([~1kB gzipped](https://bundlephobia.com/result?p=react-awesome-reveal))
+- 🍃 **Lightweight** - Very little footprint on your project ([~1kB gzipped](https://bundlephobia.com/result?p=react-awesome-reveal)) and no other dependencies are required
 - ⚙️ **Uses native APIs** - Intersection Observer and CSS Animations are now supported by all major browsers
 - 🚀 **Fast** - Buttery smooth experience thanks to the use of native asynchronous APIs and hardware acceleration
 - 🌳 **Tree-shakeable** - Only the parts you use will be included in your final bundle
 
 ## Demo
 
-You can find a stress-test demo [here](https://react-awesome-reveal.morello.dev).
+You can find a demo website [here](https://react-awesome-reveal.morello.dev).
 
 ## Installation
 
@@ -73,8 +73,8 @@ You can pass the following properties to the animation components to customize t
 | ------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ----------- |
 | `direction`   | Origin of the animation                                                                                     | `"top"`, `"left"`, `"bottom"` or `"right"`                                                         | `undefined` |
 | `delay`       | Milliseconds to wait before the animation starts                                                            | `"1s"`, `"2s"`, `"3s"`, `"4s"`, `"5s"` or a `number` in milliseconds                               | `undefined` |
-| `fraction`    | How much an element should be in viewport before the animation is triggered                                 | `number` between `0` and `1`                                                                       | `0`         |
 | `duration`    | The animation duration                                                                                      | `"slower"` (3s), `"slow"` (2s), `"fast"` (800ms), `"faster"` (500ms) or a `number` in milliseconds | `1000`      |
+| `fraction`    | How much an element should be in viewport before the animation is triggered                                 | `number` between `0` and `1`                                                                       | `0`         |
 | `triggerOnce` | Specifies if the animation should run only once or everytime an element enters/exits/re-enters the viewport | `true` or `false`                                                                                  | `false`     |
 | `className`   | Class names to add to the wrapper element (e.g. to specify custom animations)                               | `string` value                                                                                     | `undefined` |
 | `style`       | Object to add inline styles to the wrapper element                                                          | `object` value                                                                                     | `undefined` |
