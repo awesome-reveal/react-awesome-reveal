@@ -13,8 +13,8 @@ export const Reveal: React.FC<RevealProps> = ({
   children,
   animation,
   delay,
+  duration,
   fraction,
-  speed,
   triggerOnce = false,
   className,
   style,
@@ -29,14 +29,14 @@ export const Reveal: React.FC<RevealProps> = ({
           {
             [animation]: inView,
             [`delay-${delay}`]: typeof delay === 'string',
-            [`${speed}`]: typeof speed === 'string',
+            [`${duration}`]: typeof duration === 'string',
           },
           className
         )}
         style={{
           animationDelay: typeof delay === 'number' ? `${delay}ms` : undefined,
           animationDuration:
-            typeof speed === 'number' ? `${speed}ms` : undefined,
+            typeof duration === 'number' ? `${duration}ms` : undefined,
           visibility: inView ? 'visible' : 'hidden',
           ...style,
         }}
