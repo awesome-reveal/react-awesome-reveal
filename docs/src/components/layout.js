@@ -12,15 +12,18 @@ const Layout = ({
   title,
   animateHeader = false,
   showNavbar = true,
+  showNavbarMenu = true,
   showNavbarLeftContent = true,
   showNavbarRightContent = true,
   showTitle = true,
+  navbarLeftContent,
   ...rest
 }) => (
   <DarkMode>
     <SEO title={title} />
     <Box
       overflowX="hidden"
+      overflowY="scroll"
       bg="gray.800"
       color="purple.50"
       mt={showNavbar ? 16 : 0}
@@ -29,6 +32,8 @@ const Layout = ({
         <Header
           location={location}
           animateHeader={animateHeader}
+          leftContent={navbarLeftContent}
+          showMenu={showNavbarMenu}
           showLeft={showNavbarLeftContent}
           showRight={showNavbarRightContent}
         />

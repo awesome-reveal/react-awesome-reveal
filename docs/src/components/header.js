@@ -16,6 +16,8 @@ import EffectsDrawer from "./effects-drawer"
 const Header = ({
   location,
   animateHeader,
+  leftContent,
+  showMenu = true,
   showLeft = true,
   showRight = true,
 }) => {
@@ -36,18 +38,18 @@ const Header = ({
 
   const headerContent = (
     <Stack isInline alignItems="center">
-      {showLeft && (
+      {showMenu && (
         <IconButton
           onClick={onOpen}
           ref={drawerButtonRef}
           aria-label="Open Effects Drawer"
           variantColor="purple"
-          icon="search-2"
+          icon="hamburger"
           variant="ghost"
           isRound
         />
       )}
-      {showLeft && (
+      {showMenu && (
         <EffectsDrawer
           isOpen={isOpen}
           onClose={onClose}
@@ -55,6 +57,8 @@ const Header = ({
           location={location}
         />
       )}
+
+      {showLeft && leftContent}
 
       <Box flexGrow={1} />
 

@@ -30,7 +30,7 @@ export default ({ location }) => {
       title="Home"
       showTitle={false}
       animateHeader
-      showNavbarLeftContent={false}
+      showNavbarMenu={false}
     >
       <EffectsDrawer
         isOpen={isOpen}
