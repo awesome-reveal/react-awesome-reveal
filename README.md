@@ -17,7 +17,7 @@
 - [Supported Effects](#supported-effects)
   - [Example](#example)
   - [Chaining Multiple Animations](#chaining-multiple-animations)
-- [Version 1.x](#version-1.x)
+- [Version 1.x](#version-1x)
 - [License](#license)
 
 ## Features
