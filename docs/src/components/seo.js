@@ -11,7 +11,10 @@ function SEO({ description, lang, meta, title }) {
           siteMetadata {
             title
             description
+            siteUrl
+            keywords
             author {
+              name
               twitter
             }
           }
@@ -21,22 +24,27 @@ function SEO({ description, lang, meta, title }) {
   )
 
   const metaDescription = description || site.siteMetadata.description
+  const metaTitle = title || site.siteMetadata.title
 
   return (
     <Helmet
       htmlAttributes={{
         lang,
       }}
-      title={title}
-      titleTemplate={`%s | ${site.siteMetadata.title}`}
+      title={metaTitle}
+      titleTemplate={title ? `%s | ${site.siteMetadata.title}` : null}
       meta={[
         {
           name: `description`,
           content: metaDescription,
         },
         {
+          name: `author`,
+          content: site.siteMetadata.author.name,
+        },
+        {
           property: `og:title`,
-          content: title,
+          content: metaTitle,
         },
         {
           property: `og:description`,
@@ -45,6 +53,14 @@ function SEO({ description, lang, meta, title }) {
         {
           property: `og:type`,
           content: `website`,
+        },
+        {
+          property: `og:url`,
+          content: site.siteMetadata.siteUrl,
+        },
+        {
+          property: `og:locale`,
+          content: `en_US`,
         },
         {
           name: `twitter:card`,
@@ -56,13 +72,22 @@ function SEO({ description, lang, meta, title }) {
         },
         {
           name: `twitter:title`,
-          content: title,
+          content: metaTitle,
         },
         {
           name: `twitter:description`,
           content: metaDescription,
         },
-      ].concat(meta)}
+      ]
+        .concat(
+          site.siteMetadata.keywords.length > 0
+            ? {
+                name: `keywords`,
+                content: site.siteMetadata.keywords.join(`, `),
+              }
+            : []
+        )
+        .concat(meta)}
     ></Helmet>
   )
 }

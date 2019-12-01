@@ -27,7 +27,6 @@ export default ({ location }) => {
   return (
     <Layout
       location={location}
-      title="Home"
       showTitle={false}
       animateHeader
       showNavbarMenu={false}
