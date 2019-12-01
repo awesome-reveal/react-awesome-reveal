@@ -117,8 +117,6 @@ This is equivalent to
 </Fade>
 ```
 
-> In the future, chained animations will be handled by a specific API – stay tuned!
-
 ## Past Releases
 
 ### Version 1.x
