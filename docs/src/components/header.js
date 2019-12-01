@@ -65,7 +65,7 @@ const Header = ({
       {showRight && (
         <Button
           variantColor="purple"
-          variant="outline"
+          variant="ghost"
           as="a"
           target="_blank"
           rel="noopener"

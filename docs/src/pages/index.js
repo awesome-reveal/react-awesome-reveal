@@ -1,10 +1,11 @@
 import React, { useRef } from "react"
 import { useStaticQuery, graphql } from "gatsby"
-import { Heading, Button, useDisclosure } from "@chakra-ui/core"
+import { Heading, Button, Flex, useDisclosure } from "@chakra-ui/core"
 import { Zoom } from "react-awesome-reveal"
 
 // Components
 import EffectsDrawer from "../components/effects-drawer"
+import GetStartedModal from "../components/get-started-modal"
 import Layout from "../components/layout"
 import Section from "../components/section"
 
@@ -21,8 +22,20 @@ export default ({ location }) => {
     `
   )
 
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const drawerButtonRef = useRef()
+  const {
+    isOpen: isGetStartedModalOpen,
+    onOpen: onGetStartedModalOpen,
+    onClose: onGetStartedModalClose,
+  } = useDisclosure()
+
+  const {
+    isOpen: isEffectsDrawerOpen,
+    onOpen: onEffectsDrawerOpen,
+    onClose: onEffectsDrawerClose,
+  } = useDisclosure()
+
+  const getStartedButtonRef = useRef()
+  const effectsDrawerButtonRef = useRef()
 
   return (
     <Layout
@@ -32,10 +45,15 @@ export default ({ location }) => {
       showNavbarMenu={false}
     >
       <EffectsDrawer
-        isOpen={isOpen}
-        onClose={onClose}
-        drawerButtonRef={drawerButtonRef}
+        isOpen={isEffectsDrawerOpen}
+        onClose={onEffectsDrawerClose}
+        referrer={effectsDrawerButtonRef}
         location={location}
+      />
+      <GetStartedModal
+        isOpen={isGetStartedModalOpen}
+        onClose={onGetStartedModalClose}
+        referrer={getStartedButtonRef}
       />
       <Section align="center" justify="center">
         <Zoom triggerOnce>
@@ -50,15 +68,29 @@ export default ({ location }) => {
           </Heading>
         </Zoom>
         <Zoom direction="bottom" triggerOnce>
-          <Button
-            ref={drawerButtonRef}
-            mt={16}
-            size="lg"
-            variantColor="purple"
-            onClick={onOpen}
-          >
-            Get Started
-          </Button>
+          <Flex mt={16} direction={{ sm: "column", md: "row" }}>
+            <Button
+              ref={getStartedButtonRef}
+              size="lg"
+              variantColor="purple"
+              onClick={onGetStartedModalOpen}
+              mr={{ sm: 0, md: 4 }}
+              mb={{ sm: 4, md: 0 }}
+              width={{ sm: "full" }}
+            >
+              Get Started
+            </Button>
+            <Button
+              ref={effectsDrawerButtonRef}
+              size="lg"
+              variantColor="purple"
+              onClick={onEffectsDrawerOpen}
+              variant="outline"
+              width={{ sm: "full" }}
+            >
+              Browse
+            </Button>
+          </Flex>
         </Zoom>
       </Section>
     </Layout>
