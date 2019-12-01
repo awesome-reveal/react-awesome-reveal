@@ -22,23 +22,6 @@ function getRotateAnimationString(direction: RotateDirection): AnimationString {
 }
 
 export const Rotate: React.FC<RotateOptions & CommonProps> = ({
-  children,
   direction,
-  delay,
-  duration,
-  fraction,
-  triggerOnce,
-  className,
-  style,
-}) => (
-  <Reveal
-    children={children}
-    animation={getRotateAnimationString(direction)}
-    delay={delay}
-    duration={duration}
-    fraction={fraction}
-    triggerOnce={triggerOnce}
-    className={className}
-    style={style}
-  />
-);
+  ...props
+}) => <Reveal animation={getRotateAnimationString(direction)} {...props} />;

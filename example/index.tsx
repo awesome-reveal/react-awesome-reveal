@@ -2,7 +2,7 @@ import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { Fade, Bounce } from '../dist';
+import { Fade, Flip, Bounce } from '../dist';
 import Section from './components/Section';
 
 const App = () => {
@@ -27,15 +27,22 @@ const App = () => {
         </Bounce>
       </Section>
       <Section>
-        <Fade>
-          <p>I enter first...</p>
-        </Fade>
-        <Fade delay="1s">
-          <p>...then comes my turn...</p>
-        </Fade>
-        <Fade delay="2s">
-          <p>...and finally you see me!</p>
-        </Fade>
+        <Flip
+          chain
+          direction="horizontal"
+          duration={1000}
+          style={{ textAlign: 'center' }}
+        >
+          <h1>I enter first...</h1>
+          <h1>...then comes my turn...</h1>
+          <h1>...and finally you see me!</h1>
+          <h1>I enter first...</h1>
+          <h1>...then comes my turn...</h1>
+          <h1>...and finally you see me!</h1>
+          <h1>I enter first...</h1>
+          <h1>...then comes my turn...</h1>
+          <h1>...and finally you see me!</h1>
+        </Flip>
       </Section>
     </>
   );

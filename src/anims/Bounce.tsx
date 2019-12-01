@@ -22,23 +22,6 @@ function getBounceAnimationString(direction: Direction): AnimationString {
 }
 
 export const Bounce: React.FC<BounceOptions & CommonProps> = ({
-  children,
   direction,
-  delay,
-  duration,
-  fraction,
-  triggerOnce,
-  className,
-  style,
-}) => (
-  <Reveal
-    children={children}
-    animation={getBounceAnimationString(direction)}
-    delay={delay}
-    duration={duration}
-    fraction={fraction}
-    triggerOnce={triggerOnce}
-    className={className}
-    style={style}
-  />
-);
+  ...props
+}) => <Reveal animation={getBounceAnimationString(direction)} {...props} />;

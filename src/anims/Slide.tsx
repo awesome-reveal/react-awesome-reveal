@@ -22,23 +22,6 @@ function getSlideAnimationString(direction: Direction): AnimationString {
 }
 
 export const Slide: React.FC<SlideOptions & CommonProps> = ({
-  children,
   direction,
-  delay,
-  duration,
-  fraction,
-  triggerOnce,
-  className,
-  style,
-}) => (
-  <Reveal
-    children={children}
-    animation={getSlideAnimationString(direction)}
-    delay={delay}
-    duration={duration}
-    fraction={fraction}
-    triggerOnce={triggerOnce}
-    className={className}
-    style={style}
-  />
-);
+  ...props
+}) => <Reveal animation={getSlideAnimationString(direction)} {...props} />;

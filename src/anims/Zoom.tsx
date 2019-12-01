@@ -22,23 +22,6 @@ function getZoomAnimationString(direction: Direction): AnimationString {
 }
 
 export const Zoom: React.FC<ZoomOptions & CommonProps> = ({
-  children,
   direction,
-  delay,
-  duration,
-  fraction,
-  triggerOnce,
-  className,
-  style,
-}) => (
-  <Reveal
-    children={children}
-    animation={getZoomAnimationString(direction)}
-    delay={delay}
-    duration={duration}
-    fraction={fraction}
-    triggerOnce={triggerOnce}
-    className={className}
-    style={style}
-  />
-);
+  ...props
+}) => <Reveal animation={getZoomAnimationString(direction)} {...props} />;

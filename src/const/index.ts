@@ -55,19 +55,10 @@ export type RotateDirection =
   | 'bottom-right'
   | undefined;
 
-export type Delay = '1s' | '2s' | '3s' | '4s' | '5s' | number | undefined;
-
-export type Duration =
-  | 'slower'
-  | 'slow'
-  | 'fast'
-  | 'faster'
-  | number
-  | undefined;
-
 export interface CommonProps {
-  delay?: Delay;
-  duration?: Duration;
+  chain?: boolean;
+  delay?: number;
+  duration?: number;
   fraction?: number;
   triggerOnce?: boolean;
   className?: string;

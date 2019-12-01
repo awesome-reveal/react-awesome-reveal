@@ -18,23 +18,6 @@ function getFlipAnimationString(direction: FlipDirection): AnimationString {
 }
 
 export const Flip: React.FC<FlipOptions & CommonProps> = ({
-  children,
   direction,
-  delay,
-  duration,
-  fraction,
-  triggerOnce,
-  className,
-  style,
-}) => (
-  <Reveal
-    children={children}
-    animation={getFlipAnimationString(direction)}
-    delay={delay}
-    duration={duration}
-    fraction={fraction}
-    triggerOnce={triggerOnce}
-    className={className}
-    style={style}
-  />
-);
+  ...props
+}) => <Reveal animation={getFlipAnimationString(direction)} {...props} />;

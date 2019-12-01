@@ -17,7 +17,8 @@
 - [Supported Effects](#supported-effects)
   - [Example](#example)
   - [Chaining Multiple Animations](#chaining-multiple-animations)
-- [Version 1.x](#version-1x)
+- [Past Releases](#past-releases)
+  - [Version 1.x](#version-1x)
 - [License](#license)
 
 ## Features
@@ -69,15 +70,16 @@ The effects currently supported are `Bounce`, `Fade`, `Flash`, `Flip`, `HeadShak
 
 You can pass the following properties to the animation components to customize the behavior:
 
-| Prop          | Description                                                                                                 | Values                                                                                             | Default     |
-| ------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- | ----------- |
-| `direction`   | Origin of the animation                                                                                     | `"top"`, `"left"`, `"bottom"` or `"right"`                                                         | `undefined` |
-| `delay`       | Milliseconds to wait before the animation starts                                                            | `"1s"`, `"2s"`, `"3s"`, `"4s"`, `"5s"` or a `number` in milliseconds                               | `undefined` |
-| `duration`    | The animation duration                                                                                      | `"slower"` (3s), `"slow"` (2s), `"fast"` (800ms), `"faster"` (500ms) or a `number` in milliseconds | `1000`      |
-| `fraction`    | How much an element should be in viewport before the animation is triggered                                 | `number` between `0` and `1`                                                                       | `0`         |
-| `triggerOnce` | Specifies if the animation should run only once or everytime an element enters/exits/re-enters the viewport | `true` or `false`                                                                                  | `false`     |
-| `className`   | Class names to add to the wrapper element (e.g. to specify custom animations)                               | `string` value                                                                                     | `undefined` |
-| `style`       | Object to add inline styles to the wrapper element                                                          | `object` value                                                                                     | `undefined` |
+| Prop          | Description                                                                                                                                                                                                            | Values                                     | Default     |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------ | ----------- |
+| `chain`       | If set, each child of a reveal animation automatically get assigned a delay that takes into account their predecessor (child `i` enters the viewport after `i * delay` milliseconds) – useful for animating list items | `true` or `false`                          | `false`     |
+| `direction`   | Origin of the animation                                                                                                                                                                                                | `"top"`, `"left"`, `"bottom"` or `"right"` | `undefined` |
+| `delay`       | Time to wait before the animation starts                                                                                                                                                                               | `number` value (milliseconds)              | `0`         |
+| `duration`    | The animation duration                                                                                                                                                                                                 | `number` value (milliseconds)              | `1000`      |
+| `fraction`    | How much an element should be in viewport before the animation is triggered                                                                                                                                            | `number` between `0` and `1`               | `0`         |
+| `triggerOnce` | Specifies if the animation should run only once or everytime an element enters/exits/re-enters the viewport                                                                                                            | `true` or `false`                          | `false`     |
+| `className`   | Class names to add to the wrapper element                                                                                                                                                                              | `string` value                             | `undefined` |
+| `style`       | Object to add inline styles to the wrapper element                                                                                                                                                                     | `object` value                             | `undefined` |
 
 ### Example
 
@@ -91,23 +93,35 @@ To trigger the animation only the first time an element enters the viewport:
 
 ### Chaining Multiple Animations
 
-To chain together multiple animations, you can play with the `delay` prop:
+To chain together multiple animations, set the `chain` prop to `true`:
+
+```jsx
+<Fade chain>
+  <p>I enter first...</p>
+  <p>...then comes my turn...</p>
+  <p>...and finally you see me!</p>
+</Fade>
+```
+
+This is equivalent to
 
 ```jsx
 <Fade>
   <p>I enter first...</p>
 </Fade>
-<Fade delay="1s">
+<Fade delay={1000}>
   <p>...then comes my turn...</p>
 </Fade>
-<Fade delay="2s">
+<Fade delay={2000}>
   <p>...and finally you see me!</p>
 </Fade>
 ```
 
 > In the future, chained animations will be handled by a specific API – stay tuned!
 
-## Version 1.x
+## Past Releases
+
+### Version 1.x
 
 Version 1.x required to manually include [Animate.css](https://github.com/daneden/animate.css) in your HTML file(s):
 

@@ -11,10 +11,11 @@ interface RevealProps extends CommonProps {
 
 export const Reveal: React.FC<RevealProps> = ({
   children,
+  chain = false,
   animation,
-  delay,
-  duration,
-  fraction,
+  delay = 0,
+  duration = 1000,
+  fraction = 0,
   triggerOnce = false,
   className,
   style,
@@ -22,26 +23,26 @@ export const Reveal: React.FC<RevealProps> = ({
   const [ref, inView] = useInView({ threshold: fraction, triggerOnce });
 
   return (
-    <div ref={ref} style={{ visibility: inView ? 'visible' : 'hidden' }}>
-      <div
-        className={classNames(
-          'animated',
-          {
-            [animation]: inView,
-            [`delay-${delay}`]: typeof delay === 'string',
-            [`${duration}`]: typeof duration === 'string',
-          },
-          className
-        )}
-        style={{
-          animationDelay: typeof delay === 'number' ? `${delay}ms` : undefined,
-          animationDuration:
-            typeof duration === 'number' ? `${duration}ms` : undefined,
-          ...style,
-        }}
-      >
-        {children}
-      </div>
+    <div
+      ref={ref}
+      className={className}
+      style={{ visibility: inView ? 'visible' : 'hidden', ...style }}
+    >
+      {React.Children.map(children, (child, index) => {
+        return (
+          <div
+            className={classNames('animated', {
+              [animation]: inView,
+            })}
+            style={{
+              animationDelay: chain ? `${index * duration}ms` : `${delay}ms`,
+              animationDuration: `${duration}ms`,
+            }}
+          >
+            {child}
+          </div>
+        );
+      })}
     </div>
   );
 };
