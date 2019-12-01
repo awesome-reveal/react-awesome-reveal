@@ -68,14 +68,14 @@ export default ({ location }) => {
           </Heading>
         </Zoom>
         <Zoom direction="bottom" triggerOnce>
-          <Flex mt={16} direction={{ sm: "column", md: "row" }}>
+          <Flex mt={16} direction={{ xs: "column", sm: "row" }}>
             <Button
               ref={getStartedButtonRef}
               size="lg"
               variantColor="purple"
               onClick={onGetStartedModalOpen}
-              mr={{ sm: 0, md: 4 }}
-              mb={{ sm: 4, md: 0 }}
+              mr={{ xs: 0, sm: 4 }}
+              mb={{ xs: 4, sm: 0 }}
               width={{ sm: "full" }}
             >
               Get Started
