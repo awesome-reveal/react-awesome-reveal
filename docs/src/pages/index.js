@@ -41,8 +41,9 @@ export default ({ location }) => {
       <Section align="center" justify="center">
         <Zoom triggerOnce>
           <Heading
-            textAlign="center"
+            as="h1"
             size="2xl"
+            textAlign="center"
             fontWeight={900}
             letterSpacing="tighter"
           >

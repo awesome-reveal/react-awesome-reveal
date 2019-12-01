@@ -10,6 +10,7 @@ const Footer = () => {
         siteMetadata {
           year
           author {
+            name
             website
           }
         }
@@ -32,7 +33,7 @@ const Footer = () => {
               target="_blank"
               rel="noopener"
             >
-              Dennis Morello
+              {site.siteMetadata.author.name}
             </Link>
           </Text>
         </Stack>

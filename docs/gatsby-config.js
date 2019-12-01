@@ -1,10 +1,12 @@
 module.exports = {
   siteMetadata: {
     title: `React Awesome Reveal`,
-    description: `Playground to test React Awesome Reveal features.`,
+    description: `Playground to showcase React Awesome Reveal effects and features.`,
     githubUrl: `https://github.com/dennismorello/react-awesome-reveal`,
+    siteUrl: `https://react-awesome-reveal.morello.dev`,
     year: 2019,
     author: {
+      name: `Dennis Morello`,
       twitter: `@dennismorello`,
       website: `https://morello.dev`,
     },
@@ -46,6 +48,8 @@ module.exports = {
         icon: `src/images/logo.png`, // This path is relative to the root of the site.
       },
     },
+    `gatsby-plugin-sitemap`,
+    `gatsby-plugin-robots-txt`,
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     /*{
