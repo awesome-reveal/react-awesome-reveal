@@ -10,7 +10,6 @@ interface RevealProps extends CommonProps {
 }
 
 export const Reveal: React.FC<RevealProps> = ({
-  as = 'div',
   chain = false,
   animation,
   damping = 0.5,
@@ -18,6 +17,7 @@ export const Reveal: React.FC<RevealProps> = ({
   duration = 1000,
   fraction = 0,
   triggerOnce = false,
+  wrapperAs = 'div',
   children,
   className,
   style,
@@ -26,7 +26,7 @@ export const Reveal: React.FC<RevealProps> = ({
   const [ref, inView] = useInView({ threshold: fraction, triggerOnce });
 
   return React.createElement(
-    as,
+    wrapperAs,
     {
       ref,
       className,
@@ -36,22 +36,33 @@ export const Reveal: React.FC<RevealProps> = ({
     React.Children.map(children, (child, index) => {
       const childElement = child as React.ReactElement;
 
-      return React.cloneElement(childElement, {
-        className: classNames(
-          'animated',
-          {
-            [animation]: inView,
-          },
-          childElement.props.className
-        ),
-        style: {
-          animationDelay: chain
-            ? `${index * duration * damping}ms`
-            : `${delay}ms`,
-          animationDuration: `${duration}ms`,
-          ...childElement.props.style,
+      const classes = [
+        'animated',
+        {
+          [animation]: inView,
         },
-      });
+      ];
+
+      const style = {
+        animationDelay: chain
+          ? `${index * duration * damping}ms`
+          : `${delay}ms`,
+        animationDuration: `${duration}ms`,
+      };
+
+      return typeof childElement === 'string' ? (
+        <div className={classNames(...classes)} style={style}>
+          {childElement}
+        </div>
+      ) : (
+        React.cloneElement(childElement, {
+          className: classNames(...classes, childElement.props.className),
+          style: {
+            ...style,
+            ...childElement.props.style,
+          },
+        })
+      );
     })
   );
 };

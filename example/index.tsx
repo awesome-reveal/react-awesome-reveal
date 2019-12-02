@@ -28,7 +28,7 @@ const App = () => {
       </Section>
       <Section>
         <Flip
-          as="ul"
+          wrapperAs="ul"
           chain
           damping={1 / 10}
           direction="horizontal"
