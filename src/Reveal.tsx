@@ -30,7 +30,7 @@ export const Reveal: React.FC<RevealProps> = ({
     {
       ref,
       className,
-      style,
+      style: { visibility: inView ? 'visible' : 'hidden', ...style },
       ...rest,
     },
     React.Children.map(children, (child, index) => {
