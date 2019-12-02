@@ -56,7 +56,9 @@ export type RotateDirection =
   | undefined;
 
 export interface CommonProps {
+  as?: string | React.FunctionComponent<any> | React.ComponentClass<any, any>;
   chain?: boolean;
+  damping?: number;
   delay?: number;
   duration?: number;
   fraction?: number;

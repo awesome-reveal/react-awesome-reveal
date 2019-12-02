@@ -15,33 +15,34 @@ const App = () => {
       </Section>
       <Section>
         <Bounce direction="left" style={{ transformStyle: 'flat' }}>
-          <div
+          <h1
             style={{
               padding: '2rem 4rem',
               background: 'pink',
               borderRadius: 8,
             }}
           >
-            <h1>Bounce</h1>
-          </div>
+            Bounce
+          </h1>
         </Bounce>
       </Section>
       <Section>
         <Flip
+          as="ul"
           chain
+          damping={1 / 10}
           direction="horizontal"
-          duration={1000}
-          style={{ textAlign: 'center' }}
+          style={{ textAlign: 'center', listStyle: 'none' }}
         >
-          <h1>I enter first...</h1>
-          <h1>...then comes my turn...</h1>
-          <h1>...and finally you see me!</h1>
-          <h1>I enter first...</h1>
-          <h1>...then comes my turn...</h1>
-          <h1>...and finally you see me!</h1>
-          <h1>I enter first...</h1>
-          <h1>...then comes my turn...</h1>
-          <h1>...and finally you see me!</h1>
+          <li>I enter first...</li>
+          <li>...then comes my turn...</li>
+          <li>...and finally you see me!</li>
+          <li>I enter first...</li>
+          <li>...then comes my turn...</li>
+          <li>...and finally you see me!</li>
+          <li>I enter first...</li>
+          <li>...then comes my turn...</li>
+          <li>...and finally you see me!</li>
         </Flip>
       </Section>
     </>

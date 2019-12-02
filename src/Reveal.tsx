@@ -10,39 +10,48 @@ interface RevealProps extends CommonProps {
 }
 
 export const Reveal: React.FC<RevealProps> = ({
-  children,
+  as = 'div',
   chain = false,
   animation,
+  damping = 0.5,
   delay = 0,
   duration = 1000,
   fraction = 0,
   triggerOnce = false,
+  children,
   className,
   style,
+  ...rest
 }) => {
   const [ref, inView] = useInView({ threshold: fraction, triggerOnce });
 
-  return (
-    <div
-      ref={ref}
-      className={className}
-      style={{ visibility: inView ? 'visible' : 'hidden', ...style }}
-    >
-      {React.Children.map(children, (child, index) => {
-        return (
-          <div
-            className={classNames('animated', {
-              [animation]: inView,
-            })}
-            style={{
-              animationDelay: chain ? `${index * duration}ms` : `${delay}ms`,
-              animationDuration: `${duration}ms`,
-            }}
-          >
-            {child}
-          </div>
-        );
-      })}
-    </div>
+  return React.createElement(
+    as,
+    {
+      ref,
+      className,
+      style,
+      ...rest,
+    },
+    React.Children.map(children, (child, index) => {
+      const childElement = child as React.ReactElement;
+
+      return React.cloneElement(childElement, {
+        className: classNames(
+          'animated',
+          {
+            [animation]: inView,
+          },
+          childElement.props.className
+        ),
+        style: {
+          animationDelay: chain
+            ? `${index * duration * damping}ms`
+            : `${delay}ms`,
+          animationDuration: `${duration}ms`,
+          ...childElement.props.style,
+        },
+      });
+    })
   );
 };
