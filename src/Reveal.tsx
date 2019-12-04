@@ -21,7 +21,6 @@ export const Reveal: React.FC<RevealProps> = ({
   children,
   className,
   style,
-  ...rest
 }) => {
   const [ref, inView] = useInView({ threshold: fraction, triggerOnce });
 
@@ -31,7 +30,6 @@ export const Reveal: React.FC<RevealProps> = ({
       ref,
       className,
       style: { visibility: inView ? 'visible' : 'hidden', ...style },
-      ...rest,
     },
     React.Children.map(children, (child, index) => {
       const childElement = child as React.ReactElement;
@@ -50,19 +48,28 @@ export const Reveal: React.FC<RevealProps> = ({
         animationDuration: `${duration}ms`,
       };
 
-      return typeof childElement === 'string' ? (
-        <div className={classNames(...classes)} style={style}>
-          {childElement}
-        </div>
-      ) : (
-        React.cloneElement(childElement, {
-          className: classNames(...classes, childElement.props.className),
-          style: {
-            ...style,
-            ...childElement.props.style,
-          },
-        })
-      );
+      return typeof childElement === 'string'
+        ? (childElement as string).split('').map((char, position) => (
+            <div
+              key={position}
+              className={classNames(...classes)}
+              style={{
+                animationDelay: `${position * duration * damping}ms`,
+                animationDuration: `${duration}ms`,
+                display: 'inline-block',
+                whiteSpace: 'pre',
+              }}
+            >
+              {char}
+            </div>
+          ))
+        : React.cloneElement(childElement, {
+            className: classNames(...classes, childElement.props.className),
+            style: {
+              ...style,
+              ...childElement.props.style,
+            },
+          });
     })
   );
 };

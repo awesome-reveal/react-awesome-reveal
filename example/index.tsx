@@ -2,7 +2,7 @@ import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { Fade, Flip, Bounce } from '../dist';
+import { Fade, Flip, Bounce, Zoom } from '../src';
 import Section from './components/Section';
 
 const App = () => {
@@ -18,7 +18,7 @@ const App = () => {
           <h1
             style={{
               padding: '2rem 4rem',
-              background: 'pink',
+              background: 'lightgrey',
               borderRadius: 8,
             }}
           >
@@ -30,6 +30,7 @@ const App = () => {
         <Flip
           wrapperAs="ul"
           chain
+          duration={800}
           damping={1 / 10}
           direction="horizontal"
           style={{ textAlign: 'center', listStyle: 'none' }}
@@ -44,6 +45,11 @@ const App = () => {
           <li>...then comes my turn...</li>
           <li>...and finally you see me!</li>
         </Flip>
+      </Section>
+      <Section>
+        <Zoom duration={800} damping={1 / 10} direction="top">
+          Ciao mondo
+        </Zoom>
       </Section>
     </>
   );
