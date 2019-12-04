@@ -10,7 +10,7 @@ const App = () => {
     <>
       <Section>
         <Fade direction="top">
-          <h2>Scroll down</h2>
+          <h1>Scroll down</h1>
         </Fade>
       </Section>
       <Section>
@@ -47,9 +47,15 @@ const App = () => {
         </Flip>
       </Section>
       <Section>
-        <Zoom duration={800} damping={1 / 10} direction="top">
-          Ciao mondo
-        </Zoom>
+        <Fade
+          wrapperAs="h1"
+          direction="bottom"
+          chain
+          duration={500}
+          damping={1 / 10}
+        >
+          Chaining plain text
+        </Fade>
       </Section>
     </>
   );

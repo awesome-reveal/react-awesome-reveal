@@ -48,9 +48,10 @@ export const Reveal: React.FC<RevealProps> = ({
         animationDuration: `${duration}ms`,
       };
 
-      return typeof childElement === 'string'
-        ? (childElement as string).split('').map((char, position) => (
-            <div
+      return typeof childElement === 'string' ? (
+        chain ? (
+          (childElement as string).split('').map((char, position) => (
+            <span
               key={position}
               className={classNames(...classes)}
               style={{
@@ -61,15 +62,22 @@ export const Reveal: React.FC<RevealProps> = ({
               }}
             >
               {char}
-            </div>
+            </span>
           ))
-        : React.cloneElement(childElement, {
-            className: classNames(...classes, childElement.props.className),
-            style: {
-              ...style,
-              ...childElement.props.style,
-            },
-          });
+        ) : (
+          <div className={classNames(classes)} style={style}>
+            {childElement}
+          </div>
+        )
+      ) : (
+        React.cloneElement(childElement, {
+          className: classNames(...classes, childElement.props.className),
+          style: {
+            ...style,
+            ...childElement.props.style,
+          },
+        })
+      );
     })
   );
 };

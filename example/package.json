@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "components": "^0.1.0",
-    "react-app-polyfill": "^1.0.0"
+    "react-app-polyfill": "^1.0.4"
   },
   "alias": {
     "react": "../node_modules/react",
