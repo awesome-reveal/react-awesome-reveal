@@ -4624,6 +4624,11 @@ eslint-plugin-react-hooks@^1.7.0:
   resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-1.7.0.tgz#6210b6d5a37205f0b92858f895a4e827020a7d04"
   integrity sha512-iXTCFcOmlWvw4+TOE8CLWj6yX1GwzT0Y6cUfHHZqWnSk144VmVIRcVGtUAzrLES7C798lmvnt02C7rxaOX1HNA==
 
+eslint-plugin-react-hooks@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-2.3.0.tgz#53e073961f1f5ccf8dd19558036c1fac8c29d99a"
+  integrity sha512-gLKCa52G4ee7uXzdLiorca7JIQZPPXRAQDXV83J4bUEeUuc5pIEyZYAZ45Xnxe5IuupxEqHS+hUhSLIimK1EMw==
+
 eslint-plugin-react@^7.16.0:
   version "7.16.0"
   resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.16.0.tgz#9928e4f3e2122ed3ba6a5b56d0303ba3e41d8c09"
@@ -10127,10 +10132,10 @@ react-animate-height@2.0.9:
     classnames "^2.2.5"
     prop-types "^15.6.1"
 
-react-awesome-reveal@^2.3.0-beta.1:
-  version "2.3.0-beta.1"
-  resolved "https://registry.yarnpkg.com/react-awesome-reveal/-/react-awesome-reveal-2.3.0-beta.1.tgz#dfb99ffdd3821c4fdc2f9a388e6a3a98224d01a5"
-  integrity sha512-G/Ax1EpIcXCRyzEj+zeR7M8B2wLzm5Ms/GUVP0mXjG6uMZVauF7ok1/cDjignS9N47AX3hwoezaTsO6xoY8Erg==
+react-awesome-reveal@^2.3.0-beta.2:
+  version "2.3.0-beta.2"
+  resolved "https://registry.yarnpkg.com/react-awesome-reveal/-/react-awesome-reveal-2.3.0-beta.2.tgz#756f84ffb79bf01fed581447a599c79dcd1ddacd"
+  integrity sha512-hNyeJrxRAP0C6rCqVLdKXu6EUuFYlNAnrW62LLQtrIrtTlqf4MvoTyRO76jS4k+HkRL0oaJRI6GutiC4ei5yow==
   dependencies:
     classnames "^2.2.6"
     react-intersection-observer "^8.25.1"
