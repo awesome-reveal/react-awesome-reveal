@@ -9,53 +9,26 @@ const App = () => {
   return (
     <>
       <Section>
-        <Fade direction="top">
-          <h1>Scroll down</h1>
-        </Fade>
+        <Fade direction="left">Scroll down</Fade>
       </Section>
       <Section>
-        <Bounce direction="left" style={{ transformStyle: 'flat' }}>
-          <h1
-            style={{
-              padding: '2rem 4rem',
-              background: 'lightgrey',
-              borderRadius: 8,
-            }}
-          >
-            Bounce
-          </h1>
-        </Bounce>
+        <Fade cascade direction="left">
+          <p>Sono un mona</p>
+          <p>Sono un mona</p>
+        </Fade>
       </Section>
       <Section>
         <Flip
-          wrapperAs="ul"
-          chain
-          duration={800}
-          damping={1 / 10}
+          cascade
           direction="horizontal"
           style={{ textAlign: 'center', listStyle: 'none' }}
         >
-          <li>I enter first...</li>
-          <li>...then comes my turn...</li>
-          <li>...and finally you see me!</li>
-          <li>I enter first...</li>
-          <li>...then comes my turn...</li>
-          <li>...and finally you see me!</li>
-          <li>I enter first...</li>
-          <li>...then comes my turn...</li>
-          <li>...and finally you see me!</li>
+          <ul>
+            <li>I enter first...</li>
+            <li>...then comes my turn...</li>
+            <li>...and finally you see me!</li>
+          </ul>
         </Flip>
-      </Section>
-      <Section>
-        <Fade
-          wrapperAs="h1"
-          direction="bottom"
-          chain
-          duration={500}
-          damping={1 / 10}
-        >
-          Chaining plain text
-        </Fade>
       </Section>
     </>
   );

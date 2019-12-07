@@ -10,74 +10,90 @@ interface RevealProps extends CommonProps {
 }
 
 export const Reveal: React.FC<RevealProps> = ({
-  chain = false,
   animation,
+  cascade = false,
   damping = 0.5,
   delay = 0,
   duration = 1000,
   fraction = 0,
   triggerOnce = false,
-  wrapperAs = 'div',
   children,
   className,
   style,
 }) => {
   const [ref, inView] = useInView({ threshold: fraction, triggerOnce });
 
-  return React.createElement(
-    wrapperAs,
-    {
-      ref,
-      className,
-      style: { visibility: inView ? 'visible' : 'hidden', ...style },
-    },
-    React.Children.map(children, (child, index) => {
-      const childElement = child as React.ReactElement;
+  function makeAnimated(nodes: React.ReactNode): React.ReactNode {
+    if (!nodes) {
+      return null;
+    }
 
-      const classes = [
-        'animated',
-        {
-          [animation]: inView,
-        },
-      ];
+    if (typeof nodes === 'string') {
+      return makeAnimatedText(nodes);
+    }
 
-      const style = {
-        animationDelay: chain
-          ? `${index * duration * damping}ms`
-          : `${delay}ms`,
-        animationDuration: `${duration}ms`,
-      };
+    return React.Children.map(nodes, (node, index) => {
+      const childElement = node as React.ReactElement;
 
-      return typeof childElement === 'string' ? (
-        chain ? (
-          (childElement as string).split('').map((char, position) => (
-            <span
-              key={position}
-              className={classNames(...classes)}
-              style={{
-                animationDelay: `${position * duration * damping}ms`,
-                animationDuration: `${duration}ms`,
-                display: 'inline-block',
-                whiteSpace: 'pre',
-              }}
-            >
-              {char}
-            </span>
-          ))
-        ) : (
-          <div className={classNames(classes)} style={style}>
-            {childElement}
-          </div>
-        )
-      ) : (
-        React.cloneElement(childElement, {
-          className: classNames(...classes, childElement.props.className),
-          style: {
-            ...style,
-            ...childElement.props.style,
-          },
-        })
-      );
-    })
+      switch (childElement.type) {
+        case 'ol':
+        case 'ul':
+          return makeAnimated(childElement.props.children);
+        default:
+          return React.cloneElement(childElement, {
+            className: classNames(
+              'animated',
+              { [animation]: inView },
+              childElement.props.className
+            ),
+            style: {
+              animationDelay: cascade
+                ? `${index * duration * damping}ms`
+                : `${delay}ms`,
+              animationDuration: `${duration}ms`,
+              ...childElement.props.style,
+            },
+          });
+      }
+    });
+  }
+
+  function makeAnimatedText(text: string): React.ReactNode {
+    return cascade ? (
+      text.split('').map((char, index) => (
+        <span
+          key={index}
+          className={classNames('animated', { [animation]: inView })}
+          style={{
+            animationDelay: `${index * duration * damping}ms`,
+            animationDuration: `${duration}ms`,
+            display: 'inline-block',
+            whiteSpace: 'pre',
+          }}
+        >
+          {char}
+        </span>
+      ))
+    ) : (
+      <div
+        className={classNames('animated', { [animation]: inView })}
+        style={{
+          animationDelay: `${delay}ms`,
+          animationDuration: `${duration}ms`,
+        }}
+      >
+        {text}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{ visibility: inView ? 'visible' : 'hidden', ...style }}
+    >
+      {makeAnimated(children)}
+    </div>
   );
 };

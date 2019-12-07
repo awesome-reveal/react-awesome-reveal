@@ -56,16 +56,12 @@ export type RotateDirection =
   | undefined;
 
 export interface CommonProps {
-  chain?: boolean;
+  cascade?: boolean;
   damping?: number;
   delay?: number;
   duration?: number;
   fraction?: number;
   triggerOnce?: boolean;
-  wrapperAs?:
-    | string
-    | React.FunctionComponent<any>
-    | React.ComponentClass<any, any>;
   className?: string;
   style?: React.CSSProperties;
 }
