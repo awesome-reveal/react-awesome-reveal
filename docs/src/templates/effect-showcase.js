@@ -31,8 +31,11 @@ export default ({ location, pageContext }) => {
               variantColor="purple"
             >
               <Heading size="lg">
-                Direction ={" "}
-                <code>{direction ? `"${direction}"` : `${direction}`}</code>
+                {direction && (
+                  <span>
+                    Direction = <code>{`"${direction}"`}</code>
+                  </span>
+                )}
               </Heading>
             </Button>
           </Reveal>
