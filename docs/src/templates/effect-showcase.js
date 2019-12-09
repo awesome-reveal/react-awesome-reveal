@@ -30,13 +30,13 @@ export default ({ location, pageContext }) => {
               width="100%"
               variantColor="purple"
             >
-              <Heading size="lg">
-                {direction && (
+              {direction && (
+                <Heading size="lg">
                   <span>
                     Direction = <code>{`"${direction}"`}</code>
                   </span>
-                )}
-              </Heading>
+                </Heading>
+              )}
             </Button>
           </Reveal>
         </Section>
