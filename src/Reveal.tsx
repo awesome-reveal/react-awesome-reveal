@@ -10,29 +10,20 @@ interface RevealProps extends CommonProps {
   animationOut?: AnimationString;
 }
 
-let renderCountBecauseOfWhenChanged = -1;
-
 export const Reveal: React.FC<RevealProps> = ({
   animationIn,
-  animationOut,
+  //animationOut,
   cascade = false,
   damping = 0.5,
   delay = 0,
   duration = 1000,
   fraction = 0,
   triggerOnce = false,
-  when,
   children,
   className,
   style,
 }) => {
   const [ref, inView] = useInView({ threshold: fraction, triggerOnce });
-
-  React.useEffect(() => {
-    if (typeof when === 'boolean') {
-      renderCountBecauseOfWhenChanged++;
-    }
-  }, [when]);
 
   function makeAnimated(nodes: React.ReactNode): React.ReactNode {
     if (!nodes) {
@@ -55,12 +46,8 @@ export const Reveal: React.FC<RevealProps> = ({
             className: classNames(
               'animated',
               {
-                [animationIn]:
-                  inView && typeof when === 'boolean'
-                    ? renderCountBecauseOfWhenChanged > 0
-                    : true,
+                [animationIn]: inView,
               },
-              { [animationOut || '']: when === false },
               childElement.props.className
             ),
             style: {
@@ -80,16 +67,9 @@ export const Reveal: React.FC<RevealProps> = ({
       text.split('').map((char, index) => (
         <span
           key={index}
-          className={classNames(
-            'animated',
-            {
-              [animationIn]:
-                inView && typeof when === 'boolean'
-                  ? renderCountBecauseOfWhenChanged > 0
-                  : true,
-            },
-            { [animationOut || '']: when === false }
-          )}
+          className={classNames('animated', {
+            [animationIn]: inView,
+          })}
           style={{
             animationDelay: `${index * duration * damping}ms`,
             animationDuration: `${duration}ms`,
@@ -102,16 +82,9 @@ export const Reveal: React.FC<RevealProps> = ({
       ))
     ) : (
       <div
-        className={classNames(
-          'animated',
-          {
-            [animationIn]:
-              inView && typeof when === 'boolean'
-                ? renderCountBecauseOfWhenChanged > 0
-                : true,
-          },
-          { [animationOut || '']: when === false }
-        )}
+        className={classNames('animated', {
+          [animationIn]: inView,
+        })}
         style={{
           animationDelay: `${delay}ms`,
           animationDuration: `${duration}ms`,
@@ -127,8 +100,7 @@ export const Reveal: React.FC<RevealProps> = ({
       ref={ref}
       className={className}
       style={{
-        visibility:
-          typeof when === 'boolean' ? 'visible' : inView ? 'visible' : 'hidden',
+        visibility: inView ? 'visible' : 'hidden',
         ...style,
       }}
     >

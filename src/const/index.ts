@@ -94,7 +94,6 @@ export interface CommonProps {
   duration?: number;
   fraction?: number;
   triggerOnce?: boolean;
-  when?: boolean;
   className?: string;
   style?: React.CSSProperties;
 }

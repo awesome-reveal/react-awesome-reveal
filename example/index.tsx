@@ -6,24 +6,17 @@ import { Fade, Flip } from '../src';
 import Section from './components/Section';
 
 const App = () => {
-  const [when, setWhen] = React.useState<boolean>(true);
-
-  function toggleWhen() {
-    setWhen(previousWhen => !previousWhen);
-  }
-
   return (
     <>
       <Section>
-        <Fade direction="left" when={when}>
-          <p>Text with when</p>
+        <Fade direction="left">
+          <h1>Title</h1>
         </Fade>
-        <button onClick={toggleWhen}>{when === true ? 'true' : 'false'}</button>
       </Section>
       <Section>
         <Fade cascade direction="left">
-          <p>Sono un mona</p>
-          <p>Sono un mona</p>
+          <p>Line 1</p>
+          <p>Line 2</p>
         </Fade>
       </Section>
       <Section>
