@@ -2,14 +2,23 @@ import 'react-app-polyfill/ie11';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 
-import { Fade, Flip, Bounce, Zoom } from '../src';
+import { Fade, Flip } from '../src';
 import Section from './components/Section';
 
 const App = () => {
+  const [when, setWhen] = React.useState<boolean>(true);
+
+  function toggleWhen() {
+    setWhen(previousWhen => !previousWhen);
+  }
+
   return (
     <>
       <Section>
-        <Fade direction="left">Scroll down</Fade>
+        <Fade direction="left" when={when}>
+          <p>Text with when</p>
+        </Fade>
+        <button onClick={toggleWhen}>{when === true ? 'true' : 'false'}</button>
       </Section>
       <Section>
         <Fade cascade direction="left">

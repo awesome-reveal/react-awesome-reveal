@@ -3,5 +3,5 @@ import { CommonProps } from '../const';
 import { Reveal } from '../Reveal';
 
 export const LightSpeed: React.FC<CommonProps> = ({ ...props }) => (
-  <Reveal animation="lightSpeedIn" {...props} />
+  <Reveal animationIn="lightSpeedIn" animationOut="lightSpeedOut" {...props} />
 );

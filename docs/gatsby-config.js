@@ -4,7 +4,6 @@ module.exports = {
     description: `Playground to showcase React Awesome Reveal effects and features.`,
     githubUrl: `https://github.com/dennismorello/react-awesome-reveal`,
     siteUrl: `https://react-awesome-reveal.morello.dev`,
-    year: 2019,
     author: {
       name: `Dennis Morello`,
       twitter: `@dennismorello`,

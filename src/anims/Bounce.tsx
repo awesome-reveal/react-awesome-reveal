@@ -6,7 +6,7 @@ interface BounceOptions {
   direction?: Direction;
 }
 
-function getBounceAnimationString(direction: Direction): AnimationString {
+function getBounceInAnimationString(direction: Direction): AnimationString {
   switch (direction) {
     case 'top':
       return 'bounceInUp';
@@ -21,7 +21,28 @@ function getBounceAnimationString(direction: Direction): AnimationString {
   }
 }
 
+function getBounceOutAnimationString(direction: Direction): AnimationString {
+  switch (direction) {
+    case 'top':
+      return 'bounceOutDown';
+    case 'left':
+      return 'bounceOutRight';
+    case 'bottom':
+      return 'bounceOutUp';
+    case 'right':
+      return 'bounceOutLeft';
+    default:
+      return 'bounceOut';
+  }
+}
+
 export const Bounce: React.FC<BounceOptions & CommonProps> = ({
   direction,
   ...props
-}) => <Reveal animation={getBounceAnimationString(direction)} {...props} />;
+}) => (
+  <Reveal
+    animationIn={getBounceInAnimationString(direction)}
+    animationOut={getBounceOutAnimationString(direction)}
+    {...props}
+  />
+);

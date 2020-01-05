@@ -6,7 +6,9 @@ interface RotateOptions {
   direction?: RotateDirection;
 }
 
-function getRotateAnimationString(direction: RotateDirection): AnimationString {
+function getRotateInAnimationString(
+  direction: RotateDirection
+): AnimationString {
   switch (direction) {
     case 'top-left':
       return 'rotateInUpLeft';
@@ -21,7 +23,30 @@ function getRotateAnimationString(direction: RotateDirection): AnimationString {
   }
 }
 
+function getRotateOutAnimationString(
+  direction: RotateDirection
+): AnimationString {
+  switch (direction) {
+    case 'top-left':
+      return 'rotateOutDownRight';
+    case 'top-right':
+      return 'rotateOutDownLeft';
+    case 'bottom-left':
+      return 'rotateOutUpRight';
+    case 'bottom-right':
+      return 'rotateOutUpLeft';
+    default:
+      return 'rotateOut';
+  }
+}
+
 export const Rotate: React.FC<RotateOptions & CommonProps> = ({
   direction,
   ...props
-}) => <Reveal animation={getRotateAnimationString(direction)} {...props} />;
+}) => (
+  <Reveal
+    animationIn={getRotateInAnimationString(direction)}
+    animationOut={getRotateOutAnimationString(direction)}
+    {...props}
+  />
+);

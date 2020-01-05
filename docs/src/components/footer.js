@@ -8,7 +8,6 @@ const Footer = () => {
     query {
       site {
         siteMetadata {
-          year
           author {
             name
             website
@@ -27,7 +26,7 @@ const Footer = () => {
             <Icon name="heart" color="red.600" aria-label="Heart" />
           </Text>
           <Text textAlign="center" mt={[0, 0, 2, 2]}>
-            Copyright &copy; {site.siteMetadata.year}{" "}
+            Copyright &copy; {new Date().getFullYear()}{" "}
             <Link
               href={site.siteMetadata.author.website}
               target="_blank"

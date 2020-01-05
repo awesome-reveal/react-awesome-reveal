@@ -6,7 +6,7 @@ interface SlideOptions {
   direction?: Direction;
 }
 
-function getSlideAnimationString(direction: Direction): AnimationString {
+function getSlideInAnimationString(direction: Direction): AnimationString {
   switch (direction) {
     case 'top':
       return 'slideInUp';
@@ -21,7 +21,28 @@ function getSlideAnimationString(direction: Direction): AnimationString {
   }
 }
 
+function getSlideOutAnimationString(direction: Direction): AnimationString {
+  switch (direction) {
+    case 'top':
+      return 'slideOutDown';
+    case 'left':
+      return 'slideOutRight';
+    case 'bottom':
+      return 'slideOutUp';
+    case 'right':
+      return 'slideOutLeft';
+    default:
+      return 'slideOutRight';
+  }
+}
+
 export const Slide: React.FC<SlideOptions & CommonProps> = ({
   direction,
   ...props
-}) => <Reveal animation={getSlideAnimationString(direction)} {...props} />;
+}) => (
+  <Reveal
+    animationIn={getSlideInAnimationString(direction)}
+    animationOut={getSlideOutAnimationString(direction)}
+    {...props}
+  />
+);

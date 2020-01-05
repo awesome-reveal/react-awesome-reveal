@@ -6,7 +6,7 @@ interface FlipOptions {
   direction?: FlipDirection;
 }
 
-function getFlipAnimationString(direction: FlipDirection): AnimationString {
+function getFlipInAnimationString(direction: FlipDirection): AnimationString {
   switch (direction) {
     case 'vertical':
       return 'flipInX';
@@ -17,7 +17,24 @@ function getFlipAnimationString(direction: FlipDirection): AnimationString {
   }
 }
 
+function getFlipOutAnimationString(direction: FlipDirection): AnimationString {
+  switch (direction) {
+    case 'vertical':
+      return 'flipOutX';
+    case 'horizontal':
+      return 'flipOutY';
+    default:
+      return 'flipOutX';
+  }
+}
+
 export const Flip: React.FC<FlipOptions & CommonProps> = ({
   direction,
   ...props
-}) => <Reveal animation={getFlipAnimationString(direction)} {...props} />;
+}) => (
+  <Reveal
+    animationIn={getFlipInAnimationString(direction)}
+    animationOut={getFlipOutAnimationString(direction)}
+    {...props}
+  />
+);
