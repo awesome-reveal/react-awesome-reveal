@@ -3,7 +3,11 @@
   "description": "React components to add reveal animations using Intersection Observer API and CSS Animations.",
   "version": "2.3.0",
   "license": "MIT",
-  "author": "Dennis Morello <dennismorello@gmail.com>",
+  "author": {
+    "name": "Dennis Morello",
+    "email": "dennismorello@gmail.com",
+    "url": "https://morello.dev"
+  },
   "homepage": "https://react-awesome-reveal.morello.dev",
   "keywords": [
     "react",
@@ -31,8 +35,9 @@
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
+    "test": "tsdx test --passWithNoTests",
     "lint": "tsdx lint",
-    "prepublishOnly": "tsdx build",
+    "prepare": "tsdx build",
     "postpublish": "PACKAGE_VERSION=$(cat package.json | grep \\\"version\\\" | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && git tag v$PACKAGE_VERSION && git push --tags"
   },
   "peerDependencies": {
