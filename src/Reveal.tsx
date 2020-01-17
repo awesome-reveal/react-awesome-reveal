@@ -40,7 +40,11 @@ export const Reveal: React.FC<RevealProps> = ({
       switch (childElement.type) {
         case 'ol':
         case 'ul':
-          return makeAnimated(childElement.props.children);
+          return React.createElement(
+            childElement.type,
+            childElement.props,
+            makeAnimated(childElement.props.children)
+          );
         default:
           return React.cloneElement(childElement, {
             className: classNames(
