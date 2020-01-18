@@ -32,6 +32,9 @@
   "files": [
     "dist"
   ],
+  "sideEffects": [
+    "./src/animate.css"
+  ],
   "scripts": {
     "start": "tsdx watch",
     "build": "tsdx build",
