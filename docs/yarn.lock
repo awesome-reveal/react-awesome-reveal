@@ -743,9 +743,9 @@
     regenerator-runtime "^0.13.2"
 
 "@babel/runtime@^7.7.6":
-  version "7.7.7"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.7.7.tgz#194769ca8d6d7790ec23605af9ee3e42a0aa79cf"
-  integrity sha512-uCnC2JEVAu8AKB5do1WRIsvrdJ0flYx/A/9f/6chdacnEZ7LmavjdsDXr5ksYBegxtuTPR5Va9/+13QF/kFkCA==
+  version "7.8.3"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.8.3.tgz#0811944f73a6c926bb2ad35e918dcc1bfab279f1"
+  integrity sha512-fVHx1rzEmwB130VTkLnxR+HmxcTjGzH12LYQcFFoBwakMd3aOMD4OsRN7tGG/UOYE2ektgFrS8uACAoRk1CY0w==
   dependencies:
     regenerator-runtime "^0.13.2"
 
@@ -5603,9 +5603,9 @@ gatsby-plugin-chakra-ui@0.1.0:
   integrity sha512-mEWYliZtFHsyiJzZ55PE+R3JVf1hAMfo9bNt/7PBEK1BMcbZHnj2Rx3cMhOkK4cDghYcej0oEXje6TrWEiUafQ==
 
 gatsby-plugin-google-tagmanager@^2.1.18:
-  version "2.1.20"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-google-tagmanager/-/gatsby-plugin-google-tagmanager-2.1.20.tgz#3d79de1c79005a2a5fa36fc6f6e5e92a6176a585"
-  integrity sha512-q0gOIIjsQYtuaNsRkwrD+ivXE6FA20Fgs6C77m97QMswet2xEZt+hUn3snHb84jjenRk9kac5Df8cpTlZ3kBCA==
+  version "2.1.24"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-google-tagmanager/-/gatsby-plugin-google-tagmanager-2.1.24.tgz#503177aa210f051bc9347e5f46d982343f8caa94"
+  integrity sha512-LgYCuvQ46LF5dL4OZfGBzmKXI7PfHougjKKJv3IYO8CBbjOgXzOGgabO4ppdc+wuI59YBUZyTuCU7GC7NSZcCA==
   dependencies:
     "@babel/runtime" "^7.7.6"
 
@@ -5687,9 +5687,9 @@ gatsby-plugin-sharp@2.3.3:
     uuid "^3.3.3"
 
 gatsby-plugin-sitemap@^2.2.22:
-  version "2.2.24"
-  resolved "https://registry.yarnpkg.com/gatsby-plugin-sitemap/-/gatsby-plugin-sitemap-2.2.24.tgz#42d3f2c6a2202f88c80492a256d495c5be95d3b4"
-  integrity sha512-Qzf3m1EBkDPxBIzW7mRZJ4HysY7bcF0JrHezx/t0VISACNzgma4WQ9heVc6CcgL/uv7ArZ2NHTm8WJ1wo1wSQQ==
+  version "2.2.26"
+  resolved "https://registry.yarnpkg.com/gatsby-plugin-sitemap/-/gatsby-plugin-sitemap-2.2.26.tgz#d0b9a9064966fd31b9ae46e769b05c904c20fd2f"
+  integrity sha512-0kqMM6zD4IWha7Af6kfzwk78870S8XGpOVNJojgtQ83eUu6mKQXdRuae/i52hjclSDsEprbvUfQT0yMxgOotGw==
   dependencies:
     "@babel/runtime" "^7.7.6"
     minimatch "^3.0.4"
@@ -10140,12 +10140,13 @@ react-animate-height@2.0.9:
     prop-types "^15.6.1"
 
 react-awesome-reveal@^2.3.0-beta.2:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/react-awesome-reveal/-/react-awesome-reveal-2.3.0.tgz#0f90233424ca9551aa57e616c1f8c2efc53c1732"
-  integrity sha512-Dzv+uZlRbCX+iCmB4Ij3/6KyMiQjSQpife8IAG4nekJZWD0UDu7bOCv0FEjppDuVh8og3kPZW+cqRlYe0eBMOw==
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/react-awesome-reveal/-/react-awesome-reveal-2.3.1.tgz#490df91a8ce0cecc53061893899cb2ad04471ce2"
+  integrity sha512-bGdDnFQDmMmFgYmMuBUQOalIGGeAoy1SBdIzZZH1qhska8sMu1CYeZmFVty/jQwEdefhlxeqbd1MG4I6oO2J4w==
   dependencies:
     classnames "^2.2.6"
     react-intersection-observer "^8.25.1"
+    react-is "^16.12.0"
 
 react-clientside-effect@^1.2.2:
   version "1.2.2"
@@ -10241,7 +10242,7 @@ react-intersection-observer@^8.25.1:
   dependencies:
     tiny-invariant "^1.0.6"
 
-react-is@^16.7.0, react-is@^16.8.1:
+react-is@^16.12.0, react-is@^16.7.0, react-is@^16.8.1:
   version "16.12.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
   integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
@@ -12182,9 +12183,9 @@ unc-path-regex@^0.1.2:
   integrity sha1-5z3T17DXxe2G+6xrCufYxqadUPo=
 
 underscore@^1.7.0:
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.9.1.tgz#06dce34a0e68a7babc29b365b8e74b8925203961"
-  integrity sha512-5/4etnCkd9c8gwgowi5/om/mYO5ajCaOgdzj/oW+0eQV9WxKBDZw5+ycmKmeaTXjInS/W0BzpGLo2xR2aBwZdg==
+  version "1.9.2"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.9.2.tgz#0c8d6f536d6f378a5af264a72f7bec50feb7cf2f"
+  integrity sha512-D39qtimx0c1fI3ya1Lnhk3E9nONswSKhnffBI0gME9C99fYOkNi04xs8K6pePLhvl1frbDemkaBQ5ikWllR2HQ==
 
 unicode-canonical-property-names-ecmascript@^1.0.4:
   version "1.0.4"
