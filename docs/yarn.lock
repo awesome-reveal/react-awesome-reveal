@@ -10139,10 +10139,10 @@ react-animate-height@2.0.9:
     classnames "^2.2.5"
     prop-types "^15.6.1"
 
-react-awesome-reveal@^2.3.0-beta.2:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/react-awesome-reveal/-/react-awesome-reveal-2.3.1.tgz#490df91a8ce0cecc53061893899cb2ad04471ce2"
-  integrity sha512-bGdDnFQDmMmFgYmMuBUQOalIGGeAoy1SBdIzZZH1qhska8sMu1CYeZmFVty/jQwEdefhlxeqbd1MG4I6oO2J4w==
+react-awesome-reveal@^2.4.0-beta.0:
+  version "2.4.0-beta.0"
+  resolved "https://registry.yarnpkg.com/react-awesome-reveal/-/react-awesome-reveal-2.4.0-beta.0.tgz#17e2a765cb9003ff481a48e10795e521a4ed5206"
+  integrity sha512-BCAcRTPCS5S+y0nR6pTb+aHsXIcDDa/jANNeMbccW/2gnK2Pj/gzOQQ4z/o3UjZpjBnEpe2/bTsq5weinJxhDQ==
   dependencies:
     classnames "^2.2.6"
     react-intersection-observer "^8.25.1"
