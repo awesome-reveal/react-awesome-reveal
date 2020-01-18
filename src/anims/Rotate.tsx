@@ -4,6 +4,7 @@ import { Reveal } from '../Reveal';
 
 interface RotateOptions {
   direction?: RotateDirection;
+  reverse?: boolean;
 }
 
 function getRotateInAnimationString(
@@ -40,13 +41,19 @@ function getRotateOutAnimationString(
   }
 }
 
+function getRotateAnimationString(
+  direction: RotateDirection,
+  reverse: boolean
+): AnimationString {
+  return reverse
+    ? getRotateOutAnimationString(direction)
+    : getRotateInAnimationString(direction);
+}
+
 export const Rotate: React.FC<RotateOptions & CommonProps> = ({
   direction,
+  reverse = false,
   ...props
 }) => (
-  <Reveal
-    animationIn={getRotateInAnimationString(direction)}
-    animationOut={getRotateOutAnimationString(direction)}
-    {...props}
-  />
+  <Reveal animation={getRotateAnimationString(direction, reverse)} {...props} />
 );

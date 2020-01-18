@@ -3,5 +3,5 @@ import { CommonProps } from '../const';
 import { Reveal } from '../Reveal';
 
 export const JackInTheBox: React.FC<CommonProps> = ({ ...props }) => (
-  <Reveal animationIn="jackInTheBox" {...props} />
+  <Reveal animation="jackInTheBox" {...props} />
 );

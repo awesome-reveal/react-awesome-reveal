@@ -4,6 +4,7 @@ import { Reveal } from '../Reveal';
 
 interface ZoomOptions {
   direction?: Direction;
+  reverse?: boolean;
 }
 
 function getZoomInAnimationString(direction: Direction): AnimationString {
@@ -36,13 +37,19 @@ function getZoomOutAnimationString(direction: Direction): AnimationString {
   }
 }
 
+function getZoomAnimationString(
+  direction: Direction,
+  reverse: boolean
+): AnimationString {
+  return reverse
+    ? getZoomOutAnimationString(direction)
+    : getZoomInAnimationString(direction);
+}
+
 export const Zoom: React.FC<ZoomOptions & CommonProps> = ({
   direction,
+  reverse = false,
   ...props
 }) => (
-  <Reveal
-    animationIn={getZoomInAnimationString(direction)}
-    animationOut={getZoomOutAnimationString(direction)}
-    {...props}
-  />
+  <Reveal animation={getZoomAnimationString(direction, reverse)} {...props} />
 );

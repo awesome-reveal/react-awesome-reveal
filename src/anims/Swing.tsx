@@ -3,5 +3,5 @@ import { CommonProps } from '../const';
 import { Reveal } from '../Reveal';
 
 export const Swing: React.FC<CommonProps> = ({ ...props }) => (
-  <Reveal animationIn="swing" {...props} />
+  <Reveal animation="swing" {...props} />
 );

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { isFragment } from 'react-is';
 import classNames from 'classnames';
 import { useInView } from 'react-intersection-observer';
 import { AnimationString, CommonProps } from './const';
@@ -6,13 +7,11 @@ import { AnimationString, CommonProps } from './const';
 import './animate.css';
 
 interface RevealProps extends CommonProps {
-  animationIn: AnimationString;
-  animationOut?: AnimationString;
+  animation: AnimationString;
 }
 
 export const Reveal: React.FC<RevealProps> = ({
-  animationIn,
-  //animationOut,
+  animation,
   cascade = false,
   damping = 0.5,
   delay = 0,
@@ -34,6 +33,20 @@ export const Reveal: React.FC<RevealProps> = ({
       return makeAnimatedText(nodes);
     }
 
+    if (isFragment(nodes)) {
+      return React.createElement(
+        'div',
+        {
+          className: classNames('animated', { [animation]: inView }),
+          style: {
+            animationDelay: `${delay}ms`,
+            animationDuration: `${duration}ms`,
+          },
+        },
+        nodes
+      );
+    }
+
     return React.Children.map(nodes, (node, index) => {
       const childElement = node as React.ReactElement;
 
@@ -50,7 +63,7 @@ export const Reveal: React.FC<RevealProps> = ({
             className: classNames(
               'animated',
               {
-                [animationIn]: inView,
+                [animation]: inView,
               },
               childElement.props.className
             ),
@@ -72,7 +85,7 @@ export const Reveal: React.FC<RevealProps> = ({
         <span
           key={index}
           className={classNames('animated', {
-            [animationIn]: inView,
+            [animation]: inView,
           })}
           style={{
             animationDelay: `${index * duration * damping}ms`,
@@ -87,7 +100,7 @@ export const Reveal: React.FC<RevealProps> = ({
     ) : (
       <div
         className={classNames('animated', {
-          [animationIn]: inView,
+          [animation]: inView,
         })}
         style={{
           animationDelay: `${delay}ms`,

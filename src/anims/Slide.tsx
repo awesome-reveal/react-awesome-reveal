@@ -4,6 +4,7 @@ import { Reveal } from '../Reveal';
 
 interface SlideOptions {
   direction?: Direction;
+  reverse?: boolean;
 }
 
 function getSlideInAnimationString(direction: Direction): AnimationString {
@@ -36,13 +37,19 @@ function getSlideOutAnimationString(direction: Direction): AnimationString {
   }
 }
 
+function getSlideAnimationString(
+  direction: Direction,
+  reverse: boolean
+): AnimationString {
+  return reverse
+    ? getSlideOutAnimationString(direction)
+    : getSlideInAnimationString(direction);
+}
+
 export const Slide: React.FC<SlideOptions & CommonProps> = ({
   direction,
+  reverse = false,
   ...props
 }) => (
-  <Reveal
-    animationIn={getSlideInAnimationString(direction)}
-    animationOut={getSlideOutAnimationString(direction)}
-    {...props}
-  />
+  <Reveal animation={getSlideAnimationString(direction, reverse)} {...props} />
 );

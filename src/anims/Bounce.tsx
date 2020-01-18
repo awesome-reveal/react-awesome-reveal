@@ -4,6 +4,7 @@ import { Reveal } from '../Reveal';
 
 interface BounceOptions {
   direction?: Direction;
+  reverse?: boolean;
 }
 
 function getBounceInAnimationString(direction: Direction): AnimationString {
@@ -36,13 +37,19 @@ function getBounceOutAnimationString(direction: Direction): AnimationString {
   }
 }
 
+function getBounceAnimationString(
+  direction: Direction,
+  reverse: boolean
+): AnimationString {
+  return reverse
+    ? getBounceOutAnimationString(direction)
+    : getBounceInAnimationString(direction);
+}
+
 export const Bounce: React.FC<BounceOptions & CommonProps> = ({
   direction,
+  reverse = false,
   ...props
 }) => (
-  <Reveal
-    animationIn={getBounceInAnimationString(direction)}
-    animationOut={getBounceOutAnimationString(direction)}
-    {...props}
-  />
+  <Reveal animation={getBounceAnimationString(direction, reverse)} {...props} />
 );

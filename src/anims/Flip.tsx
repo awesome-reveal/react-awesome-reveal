@@ -4,6 +4,7 @@ import { Reveal } from '../Reveal';
 
 interface FlipOptions {
   direction?: FlipDirection;
+  reverse?: boolean;
 }
 
 function getFlipInAnimationString(direction: FlipDirection): AnimationString {
@@ -28,13 +29,19 @@ function getFlipOutAnimationString(direction: FlipDirection): AnimationString {
   }
 }
 
+function getFlipAnimationString(
+  direction: FlipDirection,
+  reverse: boolean
+): AnimationString {
+  return reverse
+    ? getFlipOutAnimationString(direction)
+    : getFlipInAnimationString(direction);
+}
+
 export const Flip: React.FC<FlipOptions & CommonProps> = ({
   direction,
+  reverse = false,
   ...props
 }) => (
-  <Reveal
-    animationIn={getFlipInAnimationString(direction)}
-    animationOut={getFlipOutAnimationString(direction)}
-    {...props}
-  />
+  <Reveal animation={getFlipAnimationString(direction, reverse)} {...props} />
 );

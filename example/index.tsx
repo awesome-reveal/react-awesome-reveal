@@ -10,7 +10,19 @@ const App = () => {
     <>
       <Section>
         <Fade direction="left">
-          <h1>Title</h1>
+          <ul>
+            <li>A</li>
+            <li>B</li>
+            <li>C</li>
+          </ul>
+        </Fade>
+      </Section>
+      <Section>
+        <Fade direction="left" className="foo" style={{ textAlign: 'center' }}>
+          <>
+            <h1>Title</h1>
+            <h2>Subtitle</h2>
+          </>
         </Fade>
       </Section>
       <Section>

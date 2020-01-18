@@ -4,6 +4,7 @@ import { Reveal } from '../Reveal';
 
 interface FadeOptions {
   direction?: Direction;
+  reverse?: boolean;
 }
 
 function getFadeInAnimationString(direction: Direction): AnimationString {
@@ -36,13 +37,19 @@ function getFadeOutAnimationString(direction: Direction): AnimationString {
   }
 }
 
+function getFadeAnimationString(
+  direction: Direction,
+  reverse: boolean
+): AnimationString {
+  return reverse
+    ? getFadeOutAnimationString(direction)
+    : getFadeInAnimationString(direction);
+}
+
 export const Fade: React.FC<FadeOptions & CommonProps> = ({
   direction,
+  reverse = false,
   ...props
 }) => (
-  <Reveal
-    animationIn={getFadeInAnimationString(direction)}
-    animationOut={getFadeOutAnimationString(direction)}
-    {...props}
-  />
+  <Reveal animation={getFadeAnimationString(direction, reverse)} {...props} />
 );
