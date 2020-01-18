@@ -88,7 +88,7 @@ export default ({ location }) => {
               variant="outline"
               width={{ sm: "full" }}
             >
-              Browse
+              Effects
             </Button>
           </Flex>
         </Zoom>

@@ -1,4 +1,4 @@
-import React, { useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import {
   Box,
@@ -33,8 +33,21 @@ const Header = ({
     `
   )
 
+  const [showHeaderShadow, setShowHeaderShadow] = useState(false)
   const { isOpen, onOpen, onClose } = useDisclosure()
   const drawerButtonRef = useRef()
+
+  useEffect(() => {
+    function onScrollHandler() {
+      setShowHeaderShadow(window.scrollY > 64)
+    }
+
+    window.addEventListener("scroll", onScrollHandler)
+
+    return () => {
+      window.removeEventListener("scroll", onScrollHandler)
+    }
+  }, [])
 
   const headerContent = (
     <Stack isInline alignItems="center">
@@ -80,7 +93,7 @@ const Header = ({
   return (
     <Flex
       as="header"
-      boxShadow="sm"
+      boxShadow={showHeaderShadow ? "sm" : null}
       backgroundColor="gray.800"
       py={2}
       px={4}
