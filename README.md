@@ -16,6 +16,7 @@
 - [Quick Start](#quick-start)
 - [Supported Effects](#supported-effects)
   - [Example](#example)
+  - [Generic Animations](#generic-animations)
   - [Chaining Multiple Animations](#chaining-multiple-animations)
 - [Past Releases](#past-releases)
   - [Version 1.x](#version-1x)
@@ -92,6 +93,22 @@ To trigger the animation only the first time an element enters the viewport:
   <p>I will animate only the first time you see me</p>
 </Slide>
 ```
+
+### Generic Animations
+
+Starting from version `2.4.1`, you can use the default export to specify arbitrary animations through the `animation` prop:
+
+```jsx
+import Reveal from 'react-awesome-reveal';
+
+const MyComponent = () => {
+  return <Reveal animation="fade">{/* Content here */}</Reveal>;
+};
+```
+
+Note that the possible values for the `animation` prop are automatically suggested by your IDE if it supports TypeScript.
+
+Of course, you can pass to it all the props described in the [Supported Effects](#supported-effects) section.
 
 ### Chaining Multiple Animations
 
