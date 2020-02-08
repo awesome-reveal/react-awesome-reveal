@@ -113,14 +113,7 @@ export const Reveal: React.FC<RevealProps> = ({
   }
 
   return (
-    <div
-      ref={ref}
-      className={className}
-      style={{
-        visibility: inView ? 'visible' : 'hidden',
-        ...style,
-      }}
-    >
+    <div ref={ref} className={className} style={style}>
       {makeAnimated(children)}
     </div>
   );
