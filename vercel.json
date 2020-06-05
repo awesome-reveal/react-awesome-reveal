@@ -1,4 +1,6 @@
 {
+  "name": "react-awesome-reveal",
+  "version": 2,
   "build": {
     "env": {
       "GTM_ID": "@gtm-react-awesome-reveal"
@@ -10,5 +12,5 @@
       "use": "@now/static"
     }
   ],
-  "routes": [{ "src": "/(.*)", "dest": "docs/$1" }]
+  "routes": [{ "src": "/(.*)", "dest": "/docs/$1" }]
 }
