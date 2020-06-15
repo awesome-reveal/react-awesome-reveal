@@ -39,7 +39,7 @@
     "start": "tsdx watch",
     "build": "tsdx build",
     "test": "tsdx test --passWithNoTests",
-    "lint": "tsdx lint",
+    "lint": "tsdx lint src",
     "prepare": "tsdx build",
     "postpublish": "PACKAGE_VERSION=$(cat package.json | grep \\\"version\\\" | head -1 | awk -F: '{ print $2 }' | sed 's/[\",]//g' | tr -d '[[:space:]]') && git tag v$PACKAGE_VERSION && git push --tags"
   },
@@ -48,7 +48,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint src"
+      "pre-commit": "tsdx lint"
     }
   },
   "prettier": {
