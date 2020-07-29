@@ -8,34 +8,47 @@ import {
   slideInRight,
   slideInUp
 } from "../animations/sliding_entrances";
+import {
+  slideOutDown,
+  slideOutLeft,
+  slideOutRight,
+  slideOutUp
+} from "../animations/sliding_exits";
 
 type SlideDirection = "down" | "left" | "right" | "up";
 
-interface ZoomProps extends Omit<RevealProps, "animation"> {
+interface SlideProps extends Omit<RevealProps, "animation"> {
   /**
    * Origin of the animation.
    * @default undefined
    */
-  direction?: SlideDirection;
+  direction: SlideDirection;
+  /**
+   * Specifies if the animation should make element(s) disappear.
+   * @default false
+   */
+  reverse?: boolean;
 }
 
-function getSlideKeyframes(direction?: SlideDirection) {
+function getSlideKeyframes(reverse: boolean, direction: SlideDirection) {
   switch (direction) {
     case "down":
-      return slideInDown;
+      return reverse ? slideOutDown : slideInDown;
     case "left":
-      return slideInLeft;
+      return reverse ? slideOutLeft : slideInLeft;
     case "right":
-      return slideInRight;
+      return reverse ? slideOutRight : slideInRight;
     case "up":
-      return slideInUp;
-    default:
-      return slideInLeft;
+      return reverse ? slideOutUp : slideInUp;
   }
 }
 
-const Slide: React.FC<ZoomProps> = ({ direction, ...rest }) => {
-  return <Reveal animation={getSlideKeyframes(direction)} {...rest} />;
+const Slide: React.FC<SlideProps> = ({
+  direction,
+  reverse = false,
+  ...rest
+}) => {
+  return <Reveal animation={getSlideKeyframes(reverse, direction)} {...rest} />;
 };
 
 export default Slide;
