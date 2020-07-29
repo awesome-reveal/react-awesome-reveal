@@ -10,27 +10,33 @@ import {
   bounceInUp
 } from "../animations/bouncing_entrances";
 
+type BounceDirection = "down" | "left" | "right" | "up";
+
 interface BounceProps extends Omit<RevealProps, "animation"> {
   /**
    * Origin of the animation.
    * @default undefined
    */
-  direction?: "down" | "left" | "right" | "up";
+  direction?: BounceDirection;
+}
+
+function getBounceKeyframes(direction?: BounceDirection) {
+  switch (direction) {
+    case "down":
+      return bounceInDown;
+    case "left":
+      return bounceInLeft;
+    case "right":
+      return bounceInRight;
+    case "up":
+      return bounceInUp;
+    default:
+      return bounceIn;
+  }
 }
 
 const Bounce: React.FC<BounceProps> = ({ direction, ...rest }) => {
-  switch (direction) {
-    case "down":
-      return <Reveal animation={bounceInDown} {...rest} />;
-    case "left":
-      return <Reveal animation={bounceInLeft} {...rest} />;
-    case "right":
-      return <Reveal animation={bounceInRight} {...rest} />;
-    case "up":
-      return <Reveal animation={bounceInUp} {...rest} />;
-    default:
-      return <Reveal animation={bounceIn} {...rest} />;
-  }
+  return <Reveal animation={getBounceKeyframes(direction)} {...rest} />;
 };
 
 export default Bounce;

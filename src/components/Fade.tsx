@@ -18,55 +18,54 @@ import {
   fadeInUpBig
 } from "../animations/fading_entrances";
 
+type FadeDirection =
+  | "bottom-left"
+  | "bottom-right"
+  | "down"
+  | "left"
+  | "right"
+  | "top-left"
+  | "top-right"
+  | "up";
+
 interface FadeProps extends Omit<RevealProps, "animation"> {
+  /**
+   * Causes the animation to start farther. Only works with "down", "left", "right" and "up" directions.
+   * @default false
+   */
+  big?: boolean;
   /**
    * Origin of the animation.
    * @default undefined
    */
-  direction?:
-    | "bottom-left"
-    | "bottom-right"
-    | "down"
-    | "down-big"
-    | "left"
-    | "left-big"
-    | "right"
-    | "right-big"
-    | "top-left"
-    | "top-right"
-    | "up"
-    | "up-big";
+  direction?: FadeDirection;
 }
 
-const Fade: React.FC<FadeProps> = ({ direction, ...rest }) => {
+function getFadeKeyframes(big: boolean, direction?: FadeDirection) {
   switch (direction) {
     case "bottom-left":
-      return <Reveal animation={fadeInBottomLeft} {...rest} />;
+      return fadeInBottomLeft;
     case "bottom-right":
-      return <Reveal animation={fadeInBottomRight} {...rest} />;
+      return fadeInBottomRight;
     case "down":
-      return <Reveal animation={fadeInDown} {...rest} />;
-    case "down-big":
-      return <Reveal animation={fadeInDownBig} {...rest} />;
+      return big ? fadeInDownBig : fadeInDown;
     case "left":
-      return <Reveal animation={fadeInLeft} {...rest} />;
-    case "left-big":
-      return <Reveal animation={fadeInLeftBig} {...rest} />;
+      return big ? fadeInLeftBig : fadeInLeft;
     case "right":
-      return <Reveal animation={fadeInRight} {...rest} />;
-    case "right-big":
-      return <Reveal animation={fadeInRightBig} {...rest} />;
+      return big ? fadeInRightBig : fadeInRight;
     case "top-left":
-      return <Reveal animation={fadeInTopLeft} {...rest} />;
+      return fadeInTopLeft;
     case "top-right":
-      return <Reveal animation={fadeInTopRight} {...rest} />;
+      return fadeInTopRight;
     case "up":
-      return <Reveal animation={fadeInUp} {...rest} />;
-    case "up-big":
-      return <Reveal animation={fadeInUpBig} {...rest} />;
+      return big ? fadeInUpBig : fadeInUp;
     default:
-      return <Reveal animation={fadeIn} {...rest} />;
+      return fadeIn;
   }
+}
+
+const Fade: React.FC<FadeProps> = ({ big = false, direction, ...rest }) => {
+  return <Reveal animation={getFadeKeyframes(big, direction)} {...rest} />;
 };
 
 export default Fade;
