@@ -1,6 +1,4 @@
-import { Reveal } from './Reveal';
+export { default as Bounce } from "./components/Bounce";
+export { default as Fade } from "./components/Fade";
 
-export * from './anims';
-export * from './const';
-
-export default Reveal;
+export default "./Reveal";

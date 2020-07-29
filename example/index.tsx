@@ -1,31 +1,25 @@
-import 'react-app-polyfill/ie11';
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import "react-app-polyfill/ie11";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
 
-import { Fade, Flip } from '../src';
-import Section from './components/Section';
+import Fade from "../src/components/Fade";
+import Section from "./components/Section";
 
 const App = () => {
   return (
     <>
       <Section>
-        <Fade direction="left">
-          <ul>
-            <li>A</li>
-            <li>B</li>
-            <li>C</li>
-          </ul>
-        </Fade>
+        <Fade cascade>Mona de cojon</Fade>
       </Section>
       <Section>
-        <Fade direction="left" className="foo" style={{ textAlign: 'center' }}>
+        <Fade>
           <>
             <h1>Title</h1>
             <h2>Subtitle</h2>
           </>
         </Fade>
       </Section>
-      <Section>
+      {/*<Section>
         <Fade cascade direction="left">
           <p>Line 1</p>
           <p>Line 2</p>
@@ -43,9 +37,9 @@ const App = () => {
             <li>...and finally you see me!</li>
           </ul>
         </Flip>
-      </Section>
+      </Section>*/}
     </>
   );
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById("root"));
