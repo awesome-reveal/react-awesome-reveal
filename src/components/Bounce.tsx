@@ -10,7 +10,7 @@ import bounceInUp from "../animations/bouncing_entrances/bounceInUp";
 
 interface BounceProps extends Omit<RevealProps, "animation"> {
   /**
-   * The origin of the animation.
+   * Origin of the animation.
    * @default undefined
    */
   direction?: "down" | "left" | "right" | "up";

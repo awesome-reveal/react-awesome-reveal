@@ -18,7 +18,7 @@ import fadeInUpBig from "../animations/fading_entrances/fadeInUpBig";
 
 interface FadeProps extends Omit<RevealProps, "animation"> {
   /**
-   * The origin of the animation.
+   * Origin of the animation.
    * @default undefined
    */
   direction?:

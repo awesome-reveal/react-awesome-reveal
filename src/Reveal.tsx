@@ -22,7 +22,7 @@ export interface RevealProps {
    */
   cascade?: boolean;
   /**
-   * Makes the stagger animation slower.
+   * Factor that affects the delay that each animated element in a cascade animation will be assigned.
    * @default 0.5
    */
   damping?: number;
