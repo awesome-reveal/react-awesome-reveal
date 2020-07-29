@@ -22,7 +22,7 @@ interface SlideProps extends Omit<RevealProps, "animation"> {
    * Origin of the animation.
    * @default undefined
    */
-  direction: SlideDirection;
+  direction?: SlideDirection;
   /**
    * Specifies if the animation should make element(s) disappear.
    * @default false
@@ -30,16 +30,17 @@ interface SlideProps extends Omit<RevealProps, "animation"> {
   reverse?: boolean;
 }
 
-function getSlideKeyframes(reverse: boolean, direction: SlideDirection) {
+function getSlideKeyframes(reverse: boolean, direction?: SlideDirection) {
   switch (direction) {
     case "down":
       return reverse ? slideOutDown : slideInDown;
-    case "left":
-      return reverse ? slideOutLeft : slideInLeft;
     case "right":
       return reverse ? slideOutRight : slideInRight;
     case "up":
       return reverse ? slideOutUp : slideInUp;
+    case "left":
+    default:
+      return reverse ? slideOutLeft : slideInLeft;
   }
 }
 

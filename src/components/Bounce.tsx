@@ -9,6 +9,13 @@ import {
   bounceInRight,
   bounceInUp
 } from "../animations/bouncing_entrances";
+import {
+  bounceOut,
+  bounceOutDown,
+  bounceOutLeft,
+  bounceOutRight,
+  bounceOutUp
+} from "../animations/bouncing_exits";
 
 type BounceDirection = "down" | "left" | "right" | "up";
 
@@ -18,25 +25,36 @@ interface BounceProps extends Omit<RevealProps, "animation"> {
    * @default undefined
    */
   direction?: BounceDirection;
+  /**
+   * Specifies if the animation should make element(s) disappear.
+   * @default false
+   */
+  reverse?: boolean;
 }
 
-function getBounceKeyframes(direction?: BounceDirection) {
+function getBounceKeyframes(reverse: boolean, direction?: BounceDirection) {
   switch (direction) {
     case "down":
-      return bounceInDown;
+      return reverse ? bounceOutDown : bounceInDown;
     case "left":
-      return bounceInLeft;
+      return reverse ? bounceOutLeft : bounceInLeft;
     case "right":
-      return bounceInRight;
+      return reverse ? bounceOutRight : bounceInRight;
     case "up":
-      return bounceInUp;
+      return reverse ? bounceOutUp : bounceInUp;
     default:
-      return bounceIn;
+      return reverse ? bounceOut : bounceIn;
   }
 }
 
-const Bounce: React.FC<BounceProps> = ({ direction, ...rest }) => {
-  return <Reveal animation={getBounceKeyframes(direction)} {...rest} />;
+const Bounce: React.FC<BounceProps> = ({
+  direction,
+  reverse = false,
+  ...rest
+}) => {
+  return (
+    <Reveal animation={getBounceKeyframes(reverse, direction)} {...rest} />
+  );
 };
 
 export default Bounce;
