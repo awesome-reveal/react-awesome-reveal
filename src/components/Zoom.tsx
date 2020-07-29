@@ -9,6 +9,13 @@ import {
   zoomInRight,
   zoomInUp
 } from "../animations/zooming_entrances";
+import {
+  zoomOut,
+  zoomOutDown,
+  zoomOutLeft,
+  zoomOutRight,
+  zoomOutUp
+} from "../animations/zooming_exits";
 
 type ZoomDirection = "down" | "left" | "right" | "up";
 
@@ -18,25 +25,30 @@ interface ZoomProps extends Omit<RevealProps, "animation"> {
    * @default undefined
    */
   direction?: ZoomDirection;
+  /**
+   * Specifies if the animation should make element(s) disappear.
+   * @default false
+   */
+  reverse?: boolean;
 }
 
-function getZoomKeyframes(direction?: ZoomDirection) {
+function getZoomKeyframes(reverse: boolean, direction?: ZoomDirection) {
   switch (direction) {
     case "down":
-      return zoomInDown;
+      return reverse ? zoomOutDown : zoomInDown;
     case "left":
-      return zoomInLeft;
+      return reverse ? zoomOutLeft : zoomInLeft;
     case "right":
-      return zoomInRight;
+      return reverse ? zoomOutRight : zoomInRight;
     case "up":
-      return zoomInUp;
+      return reverse ? zoomOutUp : zoomInUp;
     default:
-      return zoomIn;
+      return reverse ? zoomOut : zoomIn;
   }
 }
 
-const Zoom: React.FC<ZoomProps> = ({ direction, ...rest }) => {
-  return <Reveal animation={getZoomKeyframes(direction)} {...rest} />;
+const Zoom: React.FC<ZoomProps> = ({ direction, reverse = false, ...rest }) => {
+  return <Reveal animation={getZoomKeyframes(reverse, direction)} {...rest} />;
 };
 
 export default Zoom;
