@@ -46,7 +46,6 @@ export interface RevealProps {
    * @default false
    */
   triggerOnce?: boolean;
-  children?: React.ReactNode | React.ReactNode[];
 }
 
 export const Reveal: React.FC<RevealProps> = ({
@@ -74,7 +73,7 @@ export const Reveal: React.FC<RevealProps> = ({
       return jsx(
         "div",
         {
-          css: getAnimationCss({ keyframes: animation, delay })
+          css: getAnimationCss({ animation, delay, duration })
         },
         nodes
       );
@@ -82,12 +81,12 @@ export const Reveal: React.FC<RevealProps> = ({
 
     return React.Children.map(nodes, (node, index) => {
       const childElement = node as React.ReactElement;
-      const css = childElement.props?.css ? [childElement.props?.css] : [];
+      const css = childElement.props.css ? [childElement.props.css] : [];
 
       if (inView) {
         css.push(
           getAnimationCss({
-            keyframes: animation,
+            animation,
             delay: delay + (cascade ? index * duration * damping : 0),
             duration
           })
@@ -103,17 +102,6 @@ export const Reveal: React.FC<RevealProps> = ({
             childElement.type,
             childElement.props,
             makeAnimated(childElement.props.children)
-          );
-        case "li":
-          css.push(
-            getAnimationCss({
-              delay: delay + index * duration * damping
-            })
-          );
-          return jsx(
-            childElement.type,
-            { ...childElement.props, css },
-            childElement.props.children
           );
         default:
           return jsx(
@@ -131,33 +119,29 @@ export const Reveal: React.FC<RevealProps> = ({
       white-space: pre;
     `;
 
-    return cascade
-      ? text.split("").map((char, index) => (
-          <span
-            key={index}
-            css={[
-              baseCss,
-              getAnimationCss({
-                keyframes: animation,
-                delay: delay + index * duration * damping,
-                duration
-              })
-            ]}
-          >
-            {char}
-          </span>
-        ))
-      : jsx(
-          "div",
-          {
-            css: getAnimationCss({
-              keyframes: animation,
-              delay,
-              duration
-            })
-          },
-          text
+    return text.split("").map((char, index) => {
+      const textCss = [baseCss];
+
+      if (inView) {
+        textCss.push(
+          getAnimationCss({
+            animation,
+            delay: delay + (cascade ? index * duration * damping : 0),
+            duration
+          })
         );
+      } else {
+        textCss.push(css`
+          opacity: 0;
+        `);
+      }
+
+      return (
+        <span key={index} css={textCss}>
+          {char}
+        </span>
+      );
+    });
   }
 
   return <div ref={ref}>{makeAnimated(children)}</div>;

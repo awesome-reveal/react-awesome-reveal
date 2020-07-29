@@ -2,11 +2,13 @@ import * as React from "react";
 import { Reveal, RevealProps } from "../Reveal";
 
 // Animations
-import bounceIn from "../animations/bouncing_entrances/bounceIn";
-import bounceInDown from "../animations/bouncing_entrances/bounceInDown";
-import bounceInLeft from "../animations/bouncing_entrances/bounceInLeft";
-import bounceInRight from "../animations/bouncing_entrances/bounceInRight";
-import bounceInUp from "../animations/bouncing_entrances/bounceInUp";
+import {
+  bounceIn,
+  bounceInDown,
+  bounceInLeft,
+  bounceInRight,
+  bounceInUp
+} from "../animations/bouncing_entrances";
 
 interface BounceProps extends Omit<RevealProps, "animation"> {
   /**

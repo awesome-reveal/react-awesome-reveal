@@ -2,19 +2,21 @@ import * as React from "react";
 import { Reveal, RevealProps } from "../Reveal";
 
 // Animations
-import fadeIn from "../animations/fading_entrances/fadeIn";
-import fadeInBottomLeft from "../animations/fading_entrances/fadeInBottomLeft";
-import fadeInBottomRight from "../animations/fading_entrances/fadeInBottomRight";
-import fadeInDown from "../animations/fading_entrances/fadeInDown";
-import fadeInDownBig from "../animations/fading_entrances/fadeInDownBig";
-import fadeInLeft from "../animations/fading_entrances/fadeInLeft";
-import fadeInLeftBig from "../animations/fading_entrances/fadeInLeftBig";
-import fadeInRight from "../animations/fading_entrances/fadeInRight";
-import fadeInRightBig from "../animations/fading_entrances/fadeInRightBig";
-import fadeInTopLeft from "../animations/fading_entrances/fadeInTopLeft";
-import fadeInTopRight from "../animations/fading_entrances/fadeInTopRight";
-import fadeInUp from "../animations/fading_entrances/fadeInUp";
-import fadeInUpBig from "../animations/fading_entrances/fadeInUpBig";
+import {
+  fadeIn,
+  fadeInBottomLeft,
+  fadeInBottomRight,
+  fadeInDown,
+  fadeInDownBig,
+  fadeInLeft,
+  fadeInLeftBig,
+  fadeInRight,
+  fadeInRightBig,
+  fadeInTopLeft,
+  fadeInTopRight,
+  fadeInUp,
+  fadeInUpBig
+} from "../animations/fading_entrances";
 
 interface FadeProps extends Omit<RevealProps, "animation"> {
   /**
