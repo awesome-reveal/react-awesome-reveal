@@ -17,6 +17,21 @@ import {
   fadeInUp,
   fadeInUpBig
 } from "../animations/fading_entrances";
+import {
+  fadeOut,
+  fadeOutBottomLeft,
+  fadeOutBottomRight,
+  fadeOutDown,
+  fadeOutDownBig,
+  fadeOutLeft,
+  fadeOutLeftBig,
+  fadeOutRight,
+  fadeOutRightBig,
+  fadeOutTopLeft,
+  fadeOutTopRight,
+  fadeOutUp,
+  fadeOutUpBig
+} from "../animations/fading_exits";
 
 type FadeDirection =
   | "bottom-left"
@@ -39,33 +54,73 @@ interface FadeProps extends Omit<RevealProps, "animation"> {
    * @default undefined
    */
   direction?: FadeDirection;
+  /**
+   * Specifies if the animation should make element(s) disappear.
+   * @default false
+   */
+  reverse?: boolean;
 }
 
-function getFadeKeyframes(big: boolean, direction?: FadeDirection) {
+function getFadeKeyframes(
+  big: boolean,
+  reverse: boolean,
+  direction?: FadeDirection
+) {
   switch (direction) {
     case "bottom-left":
-      return fadeInBottomLeft;
+      return reverse ? fadeOutBottomLeft : fadeInBottomLeft;
     case "bottom-right":
-      return fadeInBottomRight;
+      return reverse ? fadeOutBottomRight : fadeInBottomRight;
     case "down":
-      return big ? fadeInDownBig : fadeInDown;
+      return big
+        ? reverse
+          ? fadeOutDownBig
+          : fadeInDownBig
+        : reverse
+        ? fadeOutDown
+        : fadeInDown;
     case "left":
-      return big ? fadeInLeftBig : fadeInLeft;
+      return big
+        ? reverse
+          ? fadeOutLeftBig
+          : fadeInLeftBig
+        : reverse
+        ? fadeOutLeft
+        : fadeInLeft;
     case "right":
-      return big ? fadeInRightBig : fadeInRight;
+      return big
+        ? reverse
+          ? fadeOutRightBig
+          : fadeInRightBig
+        : reverse
+        ? fadeOutRight
+        : fadeInRight;
     case "top-left":
-      return fadeInTopLeft;
+      return reverse ? fadeOutTopLeft : fadeInTopLeft;
     case "top-right":
-      return fadeInTopRight;
+      return reverse ? fadeOutTopRight : fadeInTopRight;
     case "up":
-      return big ? fadeInUpBig : fadeInUp;
+      return big
+        ? reverse
+          ? fadeOutUpBig
+          : fadeInUpBig
+        : reverse
+        ? fadeOutUp
+        : fadeInUp;
     default:
-      return fadeIn;
+      return reverse ? fadeOut : fadeIn;
   }
 }
 
-const Fade: React.FC<FadeProps> = ({ big = false, direction, ...rest }) => {
-  return <Reveal animation={getFadeKeyframes(big, direction)} {...rest} />;
+const Fade: React.FC<FadeProps> = ({
+  big = false,
+  direction,
+  reverse = false,
+  ...rest
+}) => {
+  return (
+    <Reveal animation={getFadeKeyframes(big, reverse, direction)} {...rest} />
+  );
 };
 
 export default Fade;
