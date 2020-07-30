@@ -109,11 +109,7 @@ export const Reveal: React.FC<RevealProps> = ({
             makeAnimated(childElement.props.children)
           );
         default:
-          return jsx(
-            childElement.type,
-            { ...childElement.props, css },
-            childElement.props.children
-          );
+          return jsx(childElement.type, { ...childElement.props, css });
       }
     });
   }
