@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import * as React from "react";
-import { InterpolationWithTheme, css as emotionCss, jsx } from "@emotion/core";
+import { Interpolation, jsx } from "@emotion/core";
 import { Keyframes } from "@emotion/serialize";
 import { isFragment } from "react-is";
 import { useInView } from "react-intersection-observer";
@@ -49,7 +49,7 @@ export interface RevealProps {
   /**
    * Custom Emotion styles.
    */
-  css?: InterpolationWithTheme<any>;
+  css?: Interpolation;
 }
 
 export const Reveal: React.FC<RevealProps> = ({
@@ -86,7 +86,9 @@ export const Reveal: React.FC<RevealProps> = ({
 
     return React.Children.map(nodes, (node, index) => {
       const childElement = node as React.ReactElement;
-      const css = childElement.props.css ? [childElement.props.css] : [];
+      const css: Interpolation[] = childElement.props.css
+        ? [childElement.props.css]
+        : [];
 
       if (inView) {
         css.push(
@@ -115,13 +117,13 @@ export const Reveal: React.FC<RevealProps> = ({
   }
 
   function makeAnimatedText(text: string): React.ReactNode {
-    const baseCss = emotionCss`
-      display: inline-block;
-      white-space: pre;
-    `;
+    const baseCss: Interpolation = {
+      display: "inline-block",
+      whiteSpace: "pre"
+    };
 
     return text.split("").map((char, index) => {
-      const textCss = [baseCss];
+      const textCss: Interpolation[] = [baseCss];
 
       if (inView) {
         textCss.push(
@@ -132,9 +134,7 @@ export const Reveal: React.FC<RevealProps> = ({
           })
         );
       } else {
-        textCss.push(emotionCss`
-          opacity: 0;
-        `);
+        textCss.push({ opacity: 0 });
       }
 
       return (
