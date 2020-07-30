@@ -9,6 +9,13 @@ import {
   rotateInUpLeft,
   rotateInUpRight
 } from "../animations/rotating_entrances";
+import {
+  rotateOut,
+  rotateOutDownLeft,
+  rotateOutDownRight,
+  rotateOutUpLeft,
+  rotateOutUpRight
+} from "../animations/rotating_exits";
 
 type RotateDirection =
   | "bottom-left"
@@ -22,25 +29,36 @@ interface RotateProps extends Omit<RevealProps, "animation"> {
    * @default undefined
    */
   direction?: RotateDirection;
+  /**
+   * Specifies if the animation should make element(s) disappear.
+   * @default false
+   */
+  reverse?: boolean;
 }
 
-function getRotateKeyframes(direction?: RotateDirection) {
+function getRotateKeyframes(reverse: boolean, direction?: RotateDirection) {
   switch (direction) {
     case "bottom-left":
-      return rotateInDownLeft;
+      return reverse ? rotateOutDownLeft : rotateInDownLeft;
     case "bottom-right":
-      return rotateInDownRight;
+      return reverse ? rotateOutDownRight : rotateInDownRight;
     case "top-left":
-      return rotateInUpLeft;
+      return reverse ? rotateOutUpLeft : rotateInUpLeft;
     case "top-right":
-      return rotateInUpRight;
+      return reverse ? rotateOutUpRight : rotateInUpRight;
     default:
-      return rotateIn;
+      return reverse ? rotateOut : rotateIn;
   }
 }
 
-const Rotate: React.FC<RotateProps> = ({ direction, ...rest }) => {
-  return <Reveal animation={getRotateKeyframes(direction)} {...rest} />;
+const Rotate: React.FC<RotateProps> = ({
+  direction,
+  reverse = false,
+  ...rest
+}) => {
+  return (
+    <Reveal animation={getRotateKeyframes(reverse, direction)} {...rest} />
+  );
 };
 
 export default Rotate;
