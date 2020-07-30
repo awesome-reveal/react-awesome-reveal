@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import * as React from "react";
-import { jsx, css } from "@emotion/core";
+import { InterpolationWithTheme, css as emotionCss, jsx } from "@emotion/core";
 import { Keyframes } from "@emotion/serialize";
 import { isFragment } from "react-is";
 import { useInView } from "react-intersection-observer";
@@ -46,6 +46,10 @@ export interface RevealProps {
    * @default false
    */
   triggerOnce?: boolean;
+  /**
+   * Custom Emotion styles.
+   */
+  css?: InterpolationWithTheme<any>;
 }
 
 export const Reveal: React.FC<RevealProps> = ({
@@ -56,6 +60,7 @@ export const Reveal: React.FC<RevealProps> = ({
   duration = 1000,
   fraction = 0,
   triggerOnce = false,
+  css,
   children
 }) => {
   const [ref, inView] = useInView({ threshold: fraction, triggerOnce });
@@ -114,7 +119,7 @@ export const Reveal: React.FC<RevealProps> = ({
   }
 
   function makeAnimatedText(text: string): React.ReactNode {
-    const baseCss = css`
+    const baseCss = emotionCss`
       display: inline-block;
       white-space: pre;
     `;
@@ -131,7 +136,7 @@ export const Reveal: React.FC<RevealProps> = ({
           })
         );
       } else {
-        textCss.push(css`
+        textCss.push(emotionCss`
           opacity: 0;
         `);
       }
@@ -144,5 +149,9 @@ export const Reveal: React.FC<RevealProps> = ({
     });
   }
 
-  return <div ref={ref}>{makeAnimated(children)}</div>;
+  return (
+    <div ref={ref} css={css}>
+      {makeAnimated(children)}
+    </div>
+  );
 };
