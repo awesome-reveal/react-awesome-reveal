@@ -6,7 +6,7 @@ import { isFragment } from "react-is";
 import { useInView } from "react-intersection-observer";
 
 // Animations
-import fadeInUp from "./animations/fading_entrances/fadeInUp";
+import fadeInLeft from "./animations/fading_entrances/fadeInLeft";
 
 // Utils
 import { getAnimationCss } from "./utils/animations";
@@ -53,7 +53,7 @@ export interface RevealProps {
 }
 
 export const Reveal: React.FC<RevealProps> = ({
-  animation = fadeInUp,
+  animation = fadeInLeft,
   cascade = false,
   damping = 0.5,
   delay = 0,

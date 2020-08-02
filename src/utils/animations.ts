@@ -1,13 +1,13 @@
 import { css } from "@emotion/core";
 
 // Animations
-import fadeInUp from "../animations/fading_entrances/fadeInUp";
+import fadeInLeft from "../animations/fading_entrances/fadeInLeft";
 
 export function getAnimationCss({
   duration = 1000,
   delay = 0,
   timingFunction = "ease",
-  animation = fadeInUp,
+  animation = fadeInLeft,
   iterationCount = 1
 }) {
   return css`
