@@ -17,7 +17,7 @@ import {
 
 type SlideDirection = "down" | "left" | "right" | "up";
 
-interface SlideProps extends Omit<RevealProps, "animation"> {
+interface SlideProps extends Omit<RevealProps, "keyframes"> {
   /**
    * Origin of the animation.
    * @default undefined
@@ -49,7 +49,7 @@ const Slide: React.FC<SlideProps> = ({
   reverse = false,
   ...rest
 }) => {
-  return <Reveal animation={getSlideKeyframes(reverse, direction)} {...rest} />;
+  return <Reveal keyframes={getSlideKeyframes(reverse, direction)} {...rest} />;
 };
 
 export default Slide;

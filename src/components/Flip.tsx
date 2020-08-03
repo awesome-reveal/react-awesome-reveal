@@ -12,7 +12,7 @@ import {
 
 type FlipDirection = "horizontal" | "vertical";
 
-interface FlipProps extends Omit<RevealProps, "animation"> {
+interface FlipProps extends Omit<RevealProps, "keyframes"> {
   /**
    * Axis direction of the animation.
    * @default undefined
@@ -37,7 +37,7 @@ function getFlipKeyframes(reverse: boolean, direction?: FlipDirection) {
 }
 
 const Flip: React.FC<FlipProps> = ({ direction, reverse = false, ...rest }) => {
-  return <Reveal animation={getFlipKeyframes(reverse, direction)} {...rest} />;
+  return <Reveal keyframes={getFlipKeyframes(reverse, direction)} {...rest} />;
 };
 
 export default Flip;

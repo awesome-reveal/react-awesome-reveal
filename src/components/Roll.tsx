@@ -4,7 +4,7 @@ import { Reveal, RevealProps } from "../Reveal";
 // Animations
 import { rollIn, rollOut } from "../animations/specials";
 
-interface RollProps extends Omit<RevealProps, "animation"> {
+interface RollProps extends Omit<RevealProps, "keyframes"> {
   /**
    * Specifies if the animation should make element(s) disappear.
    * @default false
@@ -17,7 +17,7 @@ function getRollKeyframes(reverse: boolean) {
 }
 
 const Roll: React.FC<RollProps> = ({ reverse = false, ...rest }) => {
-  return <Reveal animation={getRollKeyframes(reverse)} {...rest} />;
+  return <Reveal keyframes={getRollKeyframes(reverse)} {...rest} />;
 };
 
 export default Roll;

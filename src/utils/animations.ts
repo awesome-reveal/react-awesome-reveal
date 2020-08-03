@@ -7,14 +7,14 @@ export function getAnimationCss({
   duration = 1000,
   delay = 0,
   timingFunction = "ease",
-  animation = fadeInLeft,
+  keyframes = fadeInLeft,
   iterationCount = 1
 }) {
   return css`
     animation-duration: ${duration}ms;
     animation-timing-function: ${timingFunction};
     animation-delay: ${delay}ms;
-    animation-name: ${animation};
+    animation-name: ${keyframes};
     animation-direction: normal;
     animation-fill-mode: both;
     animation-iteration-count: ${iterationCount};

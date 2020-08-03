@@ -19,7 +19,7 @@ import {
 
 type ZoomDirection = "down" | "left" | "right" | "up";
 
-interface ZoomProps extends Omit<RevealProps, "animation"> {
+interface ZoomProps extends Omit<RevealProps, "keyframes"> {
   /**
    * Origin of the animation.
    * @default undefined
@@ -48,7 +48,7 @@ function getZoomKeyframes(reverse: boolean, direction?: ZoomDirection) {
 }
 
 const Zoom: React.FC<ZoomProps> = ({ direction, reverse = false, ...rest }) => {
-  return <Reveal animation={getZoomKeyframes(reverse, direction)} {...rest} />;
+  return <Reveal keyframes={getZoomKeyframes(reverse, direction)} {...rest} />;
 };
 
 export default Zoom;

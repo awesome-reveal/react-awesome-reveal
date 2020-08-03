@@ -13,10 +13,6 @@ import { getAnimationCss } from "./utils/animations";
 
 export interface RevealProps {
   /**
-   * Custom Emotion animation.
-   */
-  animation?: Keyframes;
-  /**
    * Stagger its children animations.
    * @default false
    */
@@ -42,6 +38,10 @@ export interface RevealProps {
    */
   fraction?: number;
   /**
+   * Custom Emotion animation keyframes.
+   */
+  keyframes?: Keyframes;
+  /**
    * Specifies if the animation should run only once or everytime the element enters/exits/re-enters the viewport.
    * @default false
    */
@@ -53,12 +53,12 @@ export interface RevealProps {
 }
 
 export const Reveal: React.FC<RevealProps> = ({
-  animation = fadeInLeft,
   cascade = false,
   damping = 0.5,
   delay = 0,
   duration = 1000,
   fraction = 0,
+  keyframes = fadeInLeft,
   triggerOnce = false,
   css,
   children
@@ -78,7 +78,7 @@ export const Reveal: React.FC<RevealProps> = ({
       return jsx(
         "div",
         {
-          css: getAnimationCss({ animation, delay, duration })
+          css: getAnimationCss({ keyframes, delay, duration })
         },
         nodes
       );
@@ -93,7 +93,7 @@ export const Reveal: React.FC<RevealProps> = ({
       if (inView) {
         css.push(
           getAnimationCss({
-            animation,
+            keyframes,
             delay: delay + (cascade ? index * duration * damping : 0),
             duration
           })
@@ -128,7 +128,7 @@ export const Reveal: React.FC<RevealProps> = ({
       if (inView) {
         textCss.push(
           getAnimationCss({
-            animation,
+            keyframes,
             delay: delay + (cascade ? index * duration * damping : 0),
             duration
           })

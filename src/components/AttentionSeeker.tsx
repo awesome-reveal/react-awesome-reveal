@@ -18,7 +18,7 @@ import {
   wobble
 } from "../animations/attention_seekers";
 
-type AttentionSeekerAnimation =
+type AttentionSeekerEffect =
   | "bounce"
   | "flash"
   | "headShake"
@@ -33,16 +33,16 @@ type AttentionSeekerAnimation =
   | "tada"
   | "wobble";
 
-interface AttentionSeekerProps extends Omit<RevealProps, "animation"> {
+interface AttentionSeekerProps extends Omit<RevealProps, "keyframes"> {
   /**
-   * The animation to use for this attention seeker.
+   * The animation effect to use for this attention seeker.
    * @default "bounce"
    */
-  animation?: AttentionSeekerAnimation;
+  effect?: AttentionSeekerEffect;
 }
 
-function getAttentionSeekerKeyframes(animation: AttentionSeekerAnimation) {
-  switch (animation) {
+function getAttentionSeekerKeyframes(effect: AttentionSeekerEffect) {
+  switch (effect) {
     case "flash":
       return flash;
     case "headShake":
@@ -74,12 +74,10 @@ function getAttentionSeekerKeyframes(animation: AttentionSeekerAnimation) {
 }
 
 const AttentionSeeker: React.FC<AttentionSeekerProps> = ({
-  animation = "bounce",
+  effect = "bounce",
   ...rest
 }) => {
-  return (
-    <Reveal animation={getAttentionSeekerKeyframes(animation)} {...rest} />
-  );
+  return <Reveal keyframes={getAttentionSeekerKeyframes(effect)} {...rest} />;
 };
 
 export default AttentionSeeker;

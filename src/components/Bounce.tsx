@@ -19,7 +19,7 @@ import {
 
 type BounceDirection = "down" | "left" | "right" | "up";
 
-interface BounceProps extends Omit<RevealProps, "animation"> {
+interface BounceProps extends Omit<RevealProps, "keyframes"> {
   /**
    * Origin of the animation.
    * @default undefined
@@ -53,7 +53,7 @@ const Bounce: React.FC<BounceProps> = ({
   ...rest
 }) => {
   return (
-    <Reveal animation={getBounceKeyframes(reverse, direction)} {...rest} />
+    <Reveal keyframes={getBounceKeyframes(reverse, direction)} {...rest} />
   );
 };
 

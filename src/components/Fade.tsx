@@ -43,7 +43,7 @@ type FadeDirection =
   | "top-right"
   | "up";
 
-interface FadeProps extends Omit<RevealProps, "animation"> {
+interface FadeProps extends Omit<RevealProps, "keyframes"> {
   /**
    * Causes the animation to start farther. Only works with "down", "left", "right" and "up" directions.
    * @default false
@@ -119,7 +119,7 @@ const Fade: React.FC<FadeProps> = ({
   ...rest
 }) => {
   return (
-    <Reveal animation={getFadeKeyframes(big, reverse, direction)} {...rest} />
+    <Reveal keyframes={getFadeKeyframes(big, reverse, direction)} {...rest} />
   );
 };
 

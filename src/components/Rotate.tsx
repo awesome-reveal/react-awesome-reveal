@@ -23,7 +23,7 @@ type RotateDirection =
   | "top-left"
   | "top-right";
 
-interface RotateProps extends Omit<RevealProps, "animation"> {
+interface RotateProps extends Omit<RevealProps, "keyframes"> {
   /**
    * Origin of the animation.
    * @default undefined
@@ -57,7 +57,7 @@ const Rotate: React.FC<RotateProps> = ({
   ...rest
 }) => {
   return (
-    <Reveal animation={getRotateKeyframes(reverse, direction)} {...rest} />
+    <Reveal keyframes={getRotateKeyframes(reverse, direction)} {...rest} />
   );
 };
 
