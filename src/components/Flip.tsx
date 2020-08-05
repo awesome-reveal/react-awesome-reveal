@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Interpolation } from "@emotion/core";
 import { Reveal, RevealProps } from "../Reveal";
 
 // Animations
@@ -36,8 +37,21 @@ function getFlipKeyframes(reverse: boolean, direction?: FlipDirection) {
   }
 }
 
-const Flip: React.FC<FlipProps> = ({ direction, reverse = false, ...rest }) => {
-  return <Reveal keyframes={getFlipKeyframes(reverse, direction)} {...rest} />;
+const Flip: React.FC<FlipProps> = ({
+  direction,
+  reverse = false,
+  css,
+  ...rest
+}) => {
+  const animationCss: Interpolation = { backfaceVisibility: "visible" };
+
+  return (
+    <Reveal
+      keyframes={getFlipKeyframes(reverse, direction)}
+      css={[css, animationCss]}
+      {...rest}
+    />
+  );
 };
 
 export default Flip;

@@ -1,4 +1,6 @@
 import * as React from "react";
+import { Interpolation } from "@emotion/core";
+import { Keyframes } from "@emotion/serialize";
 import { Reveal, RevealProps } from "../Reveal";
 
 // Animations
@@ -41,43 +43,48 @@ interface AttentionSeekerProps extends Omit<RevealProps, "keyframes"> {
   effect?: AttentionSeekerEffect;
 }
 
-function getAttentionSeekerKeyframes(effect: AttentionSeekerEffect) {
+function getAttentionSeekerKeyframesAndCss(
+  effect: AttentionSeekerEffect
+): [Keyframes, Interpolation?] {
   switch (effect) {
     case "flash":
-      return flash;
+      return [flash];
     case "headShake":
-      return headShake;
+      return [headShake, { animationTimingFunction: "ease-in-out" }];
     case "heartBeat":
-      return heartBeat;
+      return [heartBeat, { animationTimingFunction: "ease-in-out" }];
     case "jello":
-      return jello;
+      return [jello, { transformOrigin: "center" }];
     case "pulse":
-      return pulse;
+      return [pulse, { animationTimingFunction: "ease-in-out" }];
     case "rubberBand":
-      return rubberBand;
+      return [rubberBand];
     case "shake":
-      return shake;
+      return [shake];
     case "shakeX":
-      return shakeX;
+      return [shakeX];
     case "shakeY":
-      return shakeY;
+      return [shakeY];
     case "swing":
-      return swing;
+      return [swing, { transformOrigin: "top center" }];
     case "tada":
-      return tada;
+      return [tada];
     case "wobble":
-      return wobble;
+      return [wobble];
     case "bounce":
     default:
-      return bounce;
+      return [bounce, { transformOrigin: "center bottom" }];
   }
 }
 
 const AttentionSeeker: React.FC<AttentionSeekerProps> = ({
   effect = "bounce",
+  css,
   ...rest
 }) => {
-  return <Reveal keyframes={getAttentionSeekerKeyframes(effect)} {...rest} />;
+  const [keyframes, animationCss] = getAttentionSeekerKeyframesAndCss(effect);
+
+  return <Reveal keyframes={keyframes} css={[css, animationCss]} {...rest} />;
 };
 
 export default AttentionSeeker;

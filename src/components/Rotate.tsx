@@ -1,4 +1,6 @@
 import * as React from "react";
+import { Interpolation } from "@emotion/core";
+import { Keyframes } from "@emotion/serialize";
 import { Reveal, RevealProps } from "../Reveal";
 
 // Animations
@@ -36,29 +38,46 @@ interface RotateProps extends Omit<RevealProps, "keyframes"> {
   reverse?: boolean;
 }
 
-function getRotateKeyframes(reverse: boolean, direction?: RotateDirection) {
+function getRotateKeyframesAndCss(
+  reverse: boolean,
+  direction?: RotateDirection
+): [Keyframes, Interpolation?] {
   switch (direction) {
     case "bottom-left":
-      return reverse ? rotateOutDownLeft : rotateInDownLeft;
+      return reverse
+        ? [rotateOutDownLeft, { transformOrigin: "left bottom" }]
+        : [rotateInDownLeft, { transformOrigin: "left bottom" }];
     case "bottom-right":
-      return reverse ? rotateOutDownRight : rotateInDownRight;
+      return reverse
+        ? [rotateOutDownRight, { transformOrigin: "right bottom" }]
+        : [rotateInDownRight, { transformOrigin: "right bottom" }];
     case "top-left":
-      return reverse ? rotateOutUpLeft : rotateInUpLeft;
+      return reverse
+        ? [rotateOutUpLeft, { transformOrigin: "left bottom" }]
+        : [rotateInUpLeft, { transformOrigin: "left bottom" }];
     case "top-right":
-      return reverse ? rotateOutUpRight : rotateInUpRight;
+      return reverse
+        ? [rotateOutUpRight, { transformOrigin: "right bottom" }]
+        : [rotateInUpRight, { transformOrigin: "right bottom" }];
     default:
-      return reverse ? rotateOut : rotateIn;
+      return reverse
+        ? [rotateOut, { transformOrigin: "center" }]
+        : [rotateIn, { transformOrigin: "center" }];
   }
 }
 
 const Rotate: React.FC<RotateProps> = ({
   direction,
   reverse = false,
+  css,
   ...rest
 }) => {
-  return (
-    <Reveal keyframes={getRotateKeyframes(reverse, direction)} {...rest} />
+  const [keyframes, animationCss] = getRotateKeyframesAndCss(
+    reverse,
+    direction
   );
+
+  return <Reveal keyframes={keyframes} css={[css, animationCss]} {...rest} />;
 };
 
 export default Rotate;
