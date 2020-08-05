@@ -1,120 +1,165 @@
-import * as React from 'react';
-import { isFragment } from 'react-is';
-import classNames from 'classnames';
-import { useInView } from 'react-intersection-observer';
-import { AnimationString, CommonProps } from './const';
+/** @jsx jsx */
+import * as React from "react";
+import { Interpolation, jsx } from "@emotion/core";
+import { Keyframes } from "@emotion/serialize";
+import { isFragment } from "react-is";
+import { InView } from "react-intersection-observer";
 
-import './animate.css';
+// Animations
+import fadeInLeft from "./animations/fading_entrances/fadeInLeft";
 
-interface RevealProps extends CommonProps {
-  animation: AnimationString;
+// Utils
+import { getAnimationCss } from "./utils/animations";
+
+export interface RevealProps {
+  /**
+   * Stagger its children animations.
+   * @default false
+   */
+  cascade?: boolean;
+  /**
+   * Factor that affects the delay that each animated element in a cascade animation will be assigned.
+   * @default 0.5
+   */
+  damping?: number;
+  /**
+   * Initial delay, in milliseconds.
+   * @default 0
+   */
+  delay?: number;
+  /**
+   * Animation duration, in milliseconds.
+   * @default 1000
+   */
+  duration?: number;
+  /**
+   * Float number between 0 and 1 indicating how much the element should be in viewport before the animation is triggered.
+   * @default 0
+   */
+  fraction?: number;
+  /**
+   * Custom Emotion animation keyframes.
+   */
+  keyframes?: Keyframes;
+  /**
+   * Specifies if the animation should run only once or everytime the element enters/exits/re-enters the viewport.
+   * @default false
+   */
+  triggerOnce?: boolean;
+  /**
+   * Custom Emotion styles.
+   */
+  css?: Interpolation;
 }
 
 export const Reveal: React.FC<RevealProps> = ({
-  animation,
   cascade = false,
   damping = 0.5,
   delay = 0,
   duration = 1000,
   fraction = 0,
+  keyframes = fadeInLeft,
   triggerOnce = false,
-  children,
-  className,
-  style,
+  css,
+  children
 }) => {
-  const [ref, inView] = useInView({ threshold: fraction, triggerOnce });
-
   function makeAnimated(nodes: React.ReactNode): React.ReactNode {
     if (!nodes) {
       return null;
     }
 
-    if (typeof nodes === 'string') {
+    if (typeof nodes === "string") {
       return makeAnimatedText(nodes);
     }
 
     if (isFragment(nodes)) {
-      return React.createElement(
-        'div',
-        {
-          className: classNames('animated', { [animation]: inView }),
-          style: {
-            animationDelay: `${delay}ms`,
-            animationDuration: `${duration}ms`,
-          },
-        },
-        nodes
+      return (
+        <InView threshold={fraction} triggerOnce={triggerOnce}>
+          {({ inView, ref }) => (
+            <div
+              ref={ref}
+              css={
+                inView
+                  ? [css, getAnimationCss({ keyframes, delay, duration })]
+                  : { opacity: 0 }
+              }
+            >
+              {nodes}
+            </div>
+          )}
+        </InView>
       );
     }
 
     return React.Children.map(nodes, (node, index) => {
-      const childElement = node as React.ReactElement;
+      const nodeElement = node as React.ReactElement;
+      const nodeCss: Interpolation[] = nodeElement.props.css
+        ? [nodeElement.props.css]
+        : [];
 
-      switch (childElement.type) {
-        case 'ol':
-        case 'ul':
-          return React.createElement(
-            childElement.type,
-            childElement.props,
-            makeAnimated(childElement.props.children)
+      nodeCss.push(
+        getAnimationCss({
+          keyframes,
+          delay: delay + (cascade ? index * duration * damping : 0),
+          duration
+        })
+      );
+
+      switch (nodeElement.type) {
+        case "ol":
+        case "ul":
+          return jsx(
+            nodeElement.type,
+            nodeElement.props,
+            makeAnimated(nodeElement.props.children)
           );
         default:
-          return React.cloneElement(childElement, {
-            className: classNames(
-              'animated',
-              {
-                [animation]: inView,
-              },
-              childElement.props.className
-            ),
-            style: {
-              animationDelay: cascade
-                ? `${index * duration * damping}ms`
-                : `${delay}ms`,
-              animationDuration: `${duration}ms`,
-              ...childElement.props.style,
-            },
-          });
+          return (
+            <InView threshold={fraction} triggerOnce={triggerOnce}>
+              {({ inView, ref }) => (
+                <div
+                  ref={ref}
+                  css={inView ? [css, ...nodeCss] : { opacity: 0 }}
+                >
+                  {nodeElement}
+                </div>
+              )}
+            </InView>
+          );
       }
     });
   }
 
   function makeAnimatedText(text: string): React.ReactNode {
-    return cascade ? (
-      text.split('').map((char, index) => (
-        <span
-          key={index}
-          className={classNames('animated', {
-            [animation]: inView,
-          })}
-          style={{
-            animationDelay: `${index * duration * damping}ms`,
-            animationDuration: `${duration}ms`,
-            display: 'inline-block',
-            whiteSpace: 'pre',
-          }}
-        >
-          {char}
-        </span>
-      ))
-    ) : (
-      <div
-        className={classNames('animated', {
-          [animation]: inView,
-        })}
-        style={{
-          animationDelay: `${delay}ms`,
-          animationDuration: `${duration}ms`,
-        }}
-      >
-        {text}
-      </div>
+    const baseCss: Interpolation = {
+      display: "inline-block",
+      whiteSpace: "pre"
+    };
+
+    return (
+      <InView threshold={fraction} triggerOnce={triggerOnce}>
+        {({ inView, ref }) => (
+          <div ref={ref} css={[css, baseCss]}>
+            {text.split("").map((char, index) => {
+              const textCss = inView
+                ? getAnimationCss({
+                    keyframes,
+                    delay: delay + (cascade ? index * duration * damping : 0),
+                    duration
+                  })
+                : { opacity: 0 };
+
+              return (
+                <span key={index} css={textCss}>
+                  {char}
+                </span>
+              );
+            })}
+          </div>
+        )}
+      </InView>
     );
   }
 
-  return (
-    <div ref={ref} className={className} style={style}>
-      {makeAnimated(children)}
-    </div>
-  );
+  return <React.Fragment>{makeAnimated(children)}</React.Fragment>;
 };

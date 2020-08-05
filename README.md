@@ -6,7 +6,7 @@
 [![Size](https://badgen.net/bundlephobia/minzip/react-awesome-reveal)](https://bundlephobia.com/result?p=react-awesome-reveal@latest)
 [![License](https://badgen.net/npm/license/react-awesome-reveal)](https://www.npmjs.com/package/react-awesome-reveal/v/latest)
 
-[React Awesome Reveal](https://github.com/dennismorello/react-awesome-reveal) is a library for React apps written in TypeScript that adds reveal animations using the Intersection Observer API to detect when the elements appear in the viewport. Animations are internally provided by [Animate.css](https://github.com/daneden/animate.css) to benefit from hardware acceleration.
+[React Awesome Reveal](https://github.com/dennismorello/react-awesome-reveal) is a library for React apps written in TypeScript that adds reveal animations using the Intersection Observer API to detect when the elements appear in the viewport. Animations are internally provided by [Emotion](https://emotion.sh) and implemented as CSS Animations to benefit from hardware acceleration.
 
 ## Table Of Contents
 
@@ -19,13 +19,12 @@
   - [Generic Animations](#generic-animations)
   - [Chaining Multiple Animations](#chaining-multiple-animations)
 - [Past Releases](#past-releases)
-  - [Version 1.x](#version-1x)
 - [License](#license)
 
 ## Features
 
 - 🎁 **Modern stack** - It is built for modern React
-- 🏷 **TypeScript support** - It is written in TypeScript to make it easier and faster to use the library
+- 🏷 **TypeScript support** - It is written in TypeScript to improve the DX
 - 🍃 **Lightweight** - Very little footprint on your project and no other dependencies required
 - ⚙️ **Uses native APIs** - Intersection Observer and CSS Animations are now supported by all major browsers
 - 🚀 **Fast** - Buttery smooth experience thanks to the use of native asynchronous APIs and hardware acceleration
@@ -54,7 +53,7 @@ yarn add react-awesome-reveal
 Import effects from [React Awesome Reveal](https://www.npmjs.com/package/react-awesome-reveal) to your React component, for example the `Fade` effect:
 
 ```js
-import { Fade } from 'react-awesome-reveal';
+import { Fade } from "react-awesome-reveal";
 ```
 
 Then simply wrap the components you want to animate:
@@ -67,22 +66,19 @@ Then simply wrap the components you want to animate:
 
 ## Supported Effects
 
-The effects currently supported are `Bounce`, `Fade`, `Flash`, `Flip`, `HeadShake`, `HeartBeat`, `JackInTheBox`, `Jello`, `LightSpeed`, `Pulse`, `Rotate`, `RubberBand`, `Shake`, `Slide`, `Swing`, `Tada`, `Wobble` and `Zoom`.
+The effects currently supported are `AttentionSeekers`, `Bounce`, `Fade`, `Flip`, `Hinge`, `JackInTheBox`, `Roll`, `Rotate`, `Slide` and `Zoom`. Refer to the [Animate.css](https://animate.style) documentation for a comprehensive list.
 
 You can pass the following properties to the animation components to customize the behavior:
 
-| Prop          | Description                                                                                                                                                                                                                                                                                                                          | Values                                                                                          | Default                                                               |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `cascade`     | If set, each child of a reveal animation automatically get assigned a delay that takes into account their predecessor (child `i` enters the viewport after `i * delay * damping` milliseconds) – useful for animating list items.                                                                                                    | `true` or `false`                                                                               | `false`                                                               |
-| `damping`     | Factor that affects the delay that each animated component in a cascade animation will be assigned. If `damping = 1` then the delay will be equal to the animation duration; if `damping < 1` then the delay will be lower than the animation duration; if `damping > 1` then the delay will be greater than the animation duration. | `number` value                                                                                  | `0.5` (meaning that the delay will be half of the animation duration) |
-| `direction`   | Origin of the animation (where applicable).                                                                                                                                                                                                                                                                                          | Usually `"top"`, `"left"`, `"bottom"` or `"right"`, with some exceptions documented in the code | `undefined`                                                           |
-| `delay`       | Time to wait before the animation starts (in milliseconds).                                                                                                                                                                                                                                                                          | `number` value                                                                                  | `0`                                                                   |
-| `duration`    | The animation duration (milliseconds).                                                                                                                                                                                                                                                                                               | `number` value                                                                                  | `1000`                                                                |
-| `fraction`    | How much an element should be in viewport before the animation is triggered.                                                                                                                                                                                                                                                         | `number` between `0` and `1`                                                                    | `0`                                                                   |
-| `triggerOnce` | Specifies if the animation should run only once or everytime an element enters/exits/re-enters the viewport.                                                                                                                                                                                                                         | `true` or `false`                                                                               | `false`                                                               |
-| `reverse`     | Specifies if the animation should make the element(s) disappear. Set this to a state variable of your component to make the animation dynamic!                                                                                                                                                                                       | `true` or `false`                                                                               | `false`                                                               |
-| `className`   | Class names to add to the wrapper element.                                                                                                                                                                                                                                                                                           | `string` value                                                                                  | `undefined`                                                           |
-| `style`       | Object to add inline styles to the wrapper element.                                                                                                                                                                                                                                                                                  | `object` value                                                                                  | `undefined`                                                           |
+| Prop          | Description                                                                                                                                                                                                                                                                                                                          | Values                                                                                       | Default                                                               |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `cascade`     | If set, each child of a reveal animation automatically get assigned a delay that takes into account their predecessor (child `i` enters the viewport after `i * delay * damping` milliseconds) – useful for animating list items.                                                                                                    | `true` or `false`                                                                            | `false`                                                               |
+| `damping`     | Factor that affects the delay that each animated component in a cascade animation will be assigned. If `damping = 1` then the delay will be equal to the animation duration; if `damping < 1` then the delay will be lower than the animation duration; if `damping > 1` then the delay will be greater than the animation duration. | `number` value                                                                               | `0.5` (meaning that the delay will be half of the animation duration) |
+| `direction`   | Origin of the animation (where applicable).                                                                                                                                                                                                                                                                                          | Usually `"down"`, `"left"`, `"right"` or `"up"`, with some exceptions documented in the code | `undefined`                                                           |
+| `delay`       | Time to wait before the animation starts (in milliseconds).                                                                                                                                                                                                                                                                          | `number` value                                                                               | `0`                                                                   |
+| `duration`    | The animation duration (milliseconds).                                                                                                                                                                                                                                                                                               | `number` value                                                                               | `1000`                                                                |
+| `fraction`    | How much an element should be in viewport before the animation is triggered.                                                                                                                                                                                                                                                         | `number` between `0` and `1`                                                                 | `0`                                                                   |
+| `triggerOnce` | Specifies if the animation should run only once or everytime an element enters/exits/re-enters the viewport.                                                                                                                                                                                                                         | `true` or `false`                                                                            | `false`                                                               |
 
 ### Example
 
@@ -93,22 +89,6 @@ To trigger the animation only the first time an element enters the viewport:
   <p>I will animate only the first time you see me</p>
 </Slide>
 ```
-
-### Generic Animations
-
-Starting from version `2.4.1`, you can use the default export to specify arbitrary animations through the `animation` prop:
-
-```jsx
-import Reveal from 'react-awesome-reveal';
-
-const MyComponent = () => {
-  return <Reveal animation="fade">{/* Content here */}</Reveal>;
-};
-```
-
-Note that the possible values for the `animation` prop are automatically suggested by your IDE if it supports TypeScript.
-
-Of course, you can pass to it all the props described in the [Supported Effects](#supported-effects) section.
 
 ### Chaining Multiple Animations
 
@@ -140,20 +120,7 @@ with the exception that, since each `Fade` component creates an isolated visibil
 
 ## Past Releases
 
-### Version 1.x
-
-Version 1.x required to manually include [Animate.css](https://github.com/daneden/animate.css) in your HTML file(s):
-
-```html
-<head>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css"
-  />
-</head>
-```
-
-Moreover, the `duration` property was called `speed`.
+To see the documentation for previous versions, navigate through past tags in the GitHub's project repository and read the README for that specific version.
 
 ## License
 

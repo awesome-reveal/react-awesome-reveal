@@ -1,18 +1,18 @@
-import * as React from 'react';
+import * as React from "react";
 
 const Section: React.FC = ({ children }) => {
   return (
-    <div
+    <section
       style={{
-        height: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column',
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        flexDirection: "column"
       }}
     >
       {children}
-    </div>
+    </section>
   );
 };
 
