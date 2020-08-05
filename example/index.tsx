@@ -9,7 +9,7 @@ const App = () => {
   return (
     <>
       <Section>
-        <Fade cascade damping={0.05}>
+        <Fade cascade damping={0.1}>
           Mona de cojon
         </Fade>
       </Section>

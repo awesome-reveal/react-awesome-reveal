@@ -3,7 +3,7 @@ import * as React from "react";
 import { Interpolation, jsx } from "@emotion/core";
 import { Keyframes } from "@emotion/serialize";
 import { isFragment } from "react-is";
-import { useInView } from "react-intersection-observer";
+import { InView } from "react-intersection-observer";
 
 // Animations
 import fadeInLeft from "./animations/fading_entrances/fadeInLeft";
@@ -63,8 +63,6 @@ export const Reveal: React.FC<RevealProps> = ({
   css,
   children
 }) => {
-  const [ref, inView] = useInView({ threshold: fraction, triggerOnce });
-
   function makeAnimated(nodes: React.ReactNode): React.ReactNode {
     if (!nodes) {
       return null;
@@ -75,43 +73,59 @@ export const Reveal: React.FC<RevealProps> = ({
     }
 
     if (isFragment(nodes)) {
-      return jsx(
-        "div",
-        {
-          css: getAnimationCss({ keyframes, delay, duration })
-        },
-        nodes
+      return (
+        <InView threshold={fraction} triggerOnce={triggerOnce}>
+          {({ inView, ref }) => (
+            <div
+              ref={ref}
+              css={
+                inView
+                  ? [css, getAnimationCss({ keyframes, delay, duration })]
+                  : { opacity: 0 }
+              }
+            >
+              {nodes}
+            </div>
+          )}
+        </InView>
       );
     }
 
     return React.Children.map(nodes, (node, index) => {
-      const childElement = node as React.ReactElement;
-      const css: Interpolation[] = childElement.props.css
-        ? [childElement.props.css]
+      const nodeElement = node as React.ReactElement;
+      const nodeCss: Interpolation[] = nodeElement.props.css
+        ? [nodeElement.props.css]
         : [];
 
-      if (inView) {
-        css.push(
-          getAnimationCss({
-            keyframes,
-            delay: delay + (cascade ? index * duration * damping : 0),
-            duration
-          })
-        );
-      } else {
-        css.push({ opacity: 0 });
-      }
+      nodeCss.push(
+        getAnimationCss({
+          keyframes,
+          delay: delay + (cascade ? index * duration * damping : 0),
+          duration
+        })
+      );
 
-      switch (childElement.type) {
+      switch (nodeElement.type) {
         case "ol":
         case "ul":
           return jsx(
-            childElement.type,
-            childElement.props,
-            makeAnimated(childElement.props.children)
+            nodeElement.type,
+            nodeElement.props,
+            makeAnimated(nodeElement.props.children)
           );
         default:
-          return jsx(childElement.type, { ...childElement.props, css });
+          return (
+            <InView threshold={fraction} triggerOnce={triggerOnce}>
+              {({ inView, ref }) => (
+                <div
+                  ref={ref}
+                  css={inView ? [css, ...nodeCss] : { opacity: 0 }}
+                >
+                  {nodeElement}
+                </div>
+              )}
+            </InView>
+          );
       }
     });
   }
@@ -122,32 +136,30 @@ export const Reveal: React.FC<RevealProps> = ({
       whiteSpace: "pre"
     };
 
-    return text.split("").map((char, index) => {
-      const textCss: Interpolation[] = [baseCss];
+    return (
+      <InView threshold={fraction} triggerOnce={triggerOnce}>
+        {({ inView, ref }) => (
+          <div ref={ref} css={[css, baseCss]}>
+            {text.split("").map((char, index) => {
+              const textCss = inView
+                ? getAnimationCss({
+                    keyframes,
+                    delay: delay + (cascade ? index * duration * damping : 0),
+                    duration
+                  })
+                : { opacity: 0 };
 
-      if (inView) {
-        textCss.push(
-          getAnimationCss({
-            keyframes,
-            delay: delay + (cascade ? index * duration * damping : 0),
-            duration
-          })
-        );
-      } else {
-        textCss.push({ opacity: 0 });
-      }
-
-      return (
-        <span key={index} css={textCss}>
-          {char}
-        </span>
-      );
-    });
+              return (
+                <span key={index} css={textCss}>
+                  {char}
+                </span>
+              );
+            })}
+          </div>
+        )}
+      </InView>
+    );
   }
 
-  return (
-    <div ref={ref} css={css}>
-      {makeAnimated(children)}
-    </div>
-  );
+  return <React.Fragment>{makeAnimated(children)}</React.Fragment>;
 };
