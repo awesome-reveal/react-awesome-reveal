@@ -51,13 +51,21 @@ export interface RevealProps {
    */
   css?: Interpolation;
   /**
-   * Class names to add to the child element.
+   * Class names to add to the container element.
    */
   className?: string;
   /**
-   * Inline styles to add to the child element.
+   * Inline styles to add to the container element.
    */
   style?: React.CSSProperties;
+  /**
+   * Class names to add to the child element.
+   */
+  childClassName?: string;
+  /**
+   * Inline styles to add to the child element.
+   */
+  childStyle?: React.CSSProperties;
 }
 
 export const Reveal: React.FC<RevealProps> = ({
@@ -71,6 +79,8 @@ export const Reveal: React.FC<RevealProps> = ({
   css,
   className,
   style,
+  childClassName,
+  childStyle,
   children
 }) => {
   function makeAnimated(nodes: React.ReactNode): React.ReactNode {
@@ -125,6 +135,20 @@ export const Reveal: React.FC<RevealProps> = ({
             { className, style },
             makeAnimated(nodeElement.props.children)
           );
+        case "li":
+          return (
+            <InView threshold={fraction} triggerOnce={triggerOnce}>
+              {({ inView, ref }) =>
+                jsx(nodeElement.type, {
+                  ...nodeElement.props,
+                  ref,
+                  css: inView ? [css, ...nodeCss] : { opacity: 0 },
+                  className: childClassName,
+                  style: childStyle
+                })
+              }
+            </InView>
+          );
         default:
           return (
             <InView threshold={fraction} triggerOnce={triggerOnce}>
@@ -132,16 +156,13 @@ export const Reveal: React.FC<RevealProps> = ({
                 <div
                   ref={ref}
                   css={inView ? [css, ...nodeCss] : { opacity: 0 }}
+                  className={className}
+                  style={style}
                 >
-                  {React.cloneElement(
-                    nodeElement,
-                    nodeElement.type !== "li"
-                      ? {
-                          className,
-                          style
-                        }
-                      : undefined
-                  )}
+                  {React.cloneElement(nodeElement, {
+                    className: childClassName,
+                    style: childStyle
+                  })}
                 </div>
               )}
             </InView>
@@ -175,7 +196,12 @@ export const Reveal: React.FC<RevealProps> = ({
                 : { opacity: 0 };
 
               return (
-                <span key={index} css={textCss}>
+                <span
+                  key={index}
+                  css={textCss}
+                  className={childClassName}
+                  style={childStyle}
+                >
                   {char}
                 </span>
               );
