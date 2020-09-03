@@ -67,9 +67,17 @@ Then simply wrap the components you want to animate:
 
 ## Supported Effects
 
-The effects currently supported are `AttentionSeekers`, `Bounce`, `Fade`, `Flip`, `Hinge`, `JackInTheBox`, `Roll`, `Rotate`, `Slide` and `Zoom`. Refer to the [Animate.css](https://animate.style) documentation for a comprehensive list.
+The effects currently supported are `Bounce`, `Fade`, `Flip`, `Hinge`, `JackInTheBox`, `Roll`, `Rotate`, `Slide` and `Zoom`. Refer to the [Animate.css](https://animate.style) documentation for the details.
 
-You can pass the following properties to the animation components to customize the behavior:
+### Attention Seekers
+
+Since version 3, attention seeker animations are wrapped by the `AttentionSeeker` component, which accepts a prop called `effect` that specifies the animation to render (defaults to `"bounce”`). The supported effects are: `”bounce"`, `"flash"`, `"headShake”`, `"heartBeat"`, `"jello”`, `"pulse"`, `"rubberBand"`, `“shake”`, `“shakeX"`, `"shakeY”`, `"swing”`, `"tada"` and `“wobble”`.
+
+Again, refer to the [Animate.css](https://animate.style) documentation for the details.
+
+### Props
+
+You can pass the following props to the animation components to customize the behavior:
 
 | Prop            | Description                                                                                                                                                                                                                                                                                                                          | Values                                                                                       | Default                                                               |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
