@@ -50,6 +50,14 @@ export interface RevealProps {
    * Custom Emotion styles.
    */
   css?: Interpolation;
+  /**
+   * Class names to add to the child element.
+   */
+  className?: string;
+  /**
+   * Inline styles to add to the child element.
+   */
+  style?: React.CSSProperties;
 }
 
 export const Reveal: React.FC<RevealProps> = ({
@@ -61,6 +69,8 @@ export const Reveal: React.FC<RevealProps> = ({
   keyframes = fadeInLeft,
   triggerOnce = false,
   css,
+  className,
+  style,
   children
 }) => {
   function makeAnimated(nodes: React.ReactNode): React.ReactNode {
@@ -83,6 +93,8 @@ export const Reveal: React.FC<RevealProps> = ({
                   ? [css, getAnimationCss({ keyframes, delay, duration })]
                   : { opacity: 0 }
               }
+              className={className}
+              style={style}
             >
               {nodes}
             </div>
@@ -108,9 +120,9 @@ export const Reveal: React.FC<RevealProps> = ({
       switch (nodeElement.type) {
         case "ol":
         case "ul":
-          return jsx(
-            nodeElement.type,
-            nodeElement.props,
+          return React.cloneElement(
+            nodeElement,
+            { className, style },
             makeAnimated(nodeElement.props.children)
           );
         default:
@@ -121,7 +133,15 @@ export const Reveal: React.FC<RevealProps> = ({
                   ref={ref}
                   css={inView ? [css, ...nodeCss] : { opacity: 0 }}
                 >
-                  {nodeElement}
+                  {React.cloneElement(
+                    nodeElement,
+                    nodeElement.type !== "li"
+                      ? {
+                          className,
+                          style
+                        }
+                      : undefined
+                  )}
                 </div>
               )}
             </InView>
@@ -139,7 +159,12 @@ export const Reveal: React.FC<RevealProps> = ({
     return (
       <InView threshold={fraction} triggerOnce={triggerOnce}>
         {({ inView, ref }) => (
-          <div ref={ref} css={[css, baseCss]}>
+          <div
+            ref={ref}
+            css={[css, baseCss]}
+            className={className}
+            style={style}
+          >
             {text.split("").map((char, index) => {
               const textCss = inView
                 ? getAnimationCss({
