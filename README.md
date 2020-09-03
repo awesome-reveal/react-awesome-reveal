@@ -15,6 +15,8 @@
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Supported Effects](#supported-effects)
+  - [Attention Seekers](#attention-seekers)
+  - [Props](#props)
   - [Example](#example)
   - [Generic Animations](#generic-animations)
   - [Chaining Multiple Animations](#chaining-multiple-animations)
