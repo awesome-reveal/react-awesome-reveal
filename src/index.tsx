@@ -1,3 +1,5 @@
+import Reveal from "./Reveal";
+
 export { default as AttentionSeeker } from "./components/AttentionSeeker";
 export { default as Bounce } from "./components/Bounce";
 export { default as Fade } from "./components/Fade";
@@ -9,4 +11,4 @@ export { default as Rotate } from "./components/Rotate";
 export { default as Slide } from "./components/Slide";
 export { default as Zoom } from "./components/Zoom";
 
-export default "./Reveal";
+export default Reveal;

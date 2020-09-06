@@ -68,7 +68,7 @@ export interface RevealProps {
   childStyle?: React.CSSProperties;
 }
 
-export const Reveal: React.FC<RevealProps> = ({
+const Reveal: React.FC<RevealProps> = ({
   cascade = false,
   damping = 0.5,
   delay = 0,
@@ -214,3 +214,5 @@ export const Reveal: React.FC<RevealProps> = ({
 
   return <React.Fragment>{makeAnimated(children)}</React.Fragment>;
 };
+
+export default Reveal;
