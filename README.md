@@ -5,6 +5,7 @@
 [![Downloads](https://badgen.net/npm/dt/react-awesome-reveal)](https://www.npmjs.com/package/react-awesome-reveal/v/latest)
 [![Size](https://badgen.net/bundlephobia/minzip/react-awesome-reveal)](https://bundlephobia.com/result?p=react-awesome-reveal@latest)
 [![License](https://badgen.net/npm/license/react-awesome-reveal)](https://www.npmjs.com/package/react-awesome-reveal/v/latest)
+[![Rate on Openbase](https://badges.openbase.io/js/rating/react-awesome-reveal.svg)](https://openbase.io/js/react-awesome-reveal?utm_source=embedded&utm_medium=badge&utm_campaign=rate-badge)
 
 [React Awesome Reveal](https://github.com/dennismorello/react-awesome-reveal) is a library for React apps written in TypeScript that adds reveal animations using the Intersection Observer API to detect when the elements appear in the viewport. Animations are internally provided by [Emotion](https://emotion.sh) and implemented as CSS Animations to benefit from hardware acceleration.
 
@@ -31,6 +32,7 @@
 - 🍃 **Lightweight** – Very little footprint on your project and no other dependencies required
 - ⚙️ **Uses native APIs** – Intersection Observer and CSS Animations are now supported by all major browsers
 - 🚀 **Fast** – Buttery smooth experience thanks to the use of native asynchronous APIs and hardware acceleration
+- 💅 **Fully customizable** – Define custom animations and let the library render them
 - 💻 **SSR support** – Server Side Rendering works out-of-the-box
 - 🌳 **Tree-shakeable** – Only the parts you use will be included in your final bundle
 
