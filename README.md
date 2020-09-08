@@ -138,7 +138,7 @@ with the exception that, since each `Fade` component creates an isolated visibil
 
 ## Custom Animations
 
-Starting from version 3.2.0, you can define custom animations! Simply import the `Reveal` component (which is the default export of the library) and pass it a `keyframes` prop:
+Starting from version 3.2.0, you can define custom animations! Simply import the `Reveal` component (which is the default export of the library – give it the name you want) and pass it a `keyframes` prop:
 
 ```jsx
 import React from "react";
@@ -150,13 +150,14 @@ const customAnimation = keyframes`
     opacity: 0;
     transform: translate3d(-200px, -100px, 0);
   }
+
   to {
     opacity: 1;
     transform: translate3d(0, 0, 0);
   }
 `;
 
-function MyAnimatedComponent({children}) {
+function MyAnimatedComponent({ children }) {
   return (
     <Reveal keyframes={customAnimation}>
       {children}
