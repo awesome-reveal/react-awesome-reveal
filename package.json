@@ -51,6 +51,7 @@
     }
   },
   "devDependencies": {
+    "@types/classnames": "^2.2.10",
     "@types/jest": "^26.0.13",
     "@types/react": "^16.9.49",
     "@types/react-dom": "^16.9.8",
@@ -65,6 +66,7 @@
   "dependencies": {
     "@emotion/core": "^10.0.35",
     "@emotion/styled": "^10.0.27",
+    "classnames": "^2.2.6",
     "react-intersection-observer": "^8.28.4",
     "react-is": "^16.13.1"
   }

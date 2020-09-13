@@ -1,5 +1,6 @@
 /** @jsx jsx */
 import * as React from "react";
+import cn from "classnames";
 import { Interpolation, jsx } from "@emotion/core";
 import { Keyframes } from "@emotion/serialize";
 import { isFragment } from "react-is";
@@ -132,7 +133,10 @@ export const Reveal: React.FC<RevealProps> = ({
         case "ul":
           return React.cloneElement(
             nodeElement,
-            { className, style },
+            {
+              className: cn(className, nodeElement.props.className),
+              style: { ...style, ...nodeElement.props.style }
+            },
             makeAnimated(nodeElement.props.children)
           );
         case "li":
@@ -143,8 +147,8 @@ export const Reveal: React.FC<RevealProps> = ({
                   ...nodeElement.props,
                   ref,
                   css: inView ? [css, ...nodeCss] : { opacity: 0 },
-                  className: childClassName,
-                  style: childStyle
+                  className: cn(childClassName, nodeElement.props.className),
+                  style: { ...childStyle, ...nodeElement.props.style }
                 })
               }
             </InView>
@@ -160,8 +164,8 @@ export const Reveal: React.FC<RevealProps> = ({
                   style={style}
                 >
                   {React.cloneElement(nodeElement, {
-                    className: childClassName,
-                    style: childStyle
+                    className: cn(childClassName, nodeElement.props.className),
+                    style: { ...childStyle, ...nodeElement.props.style }
                   })}
                 </div>
               )}
