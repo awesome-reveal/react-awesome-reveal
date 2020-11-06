@@ -1,9 +1,7 @@
 /** @jsx jsx */
 import * as React from "react";
-import cn from "classnames";
 import { Interpolation, jsx } from "@emotion/core";
 import { Keyframes } from "@emotion/serialize";
-import { isFragment } from "react-is";
 import { InView } from "react-intersection-observer";
 
 // Animations
@@ -11,6 +9,8 @@ import fadeInLeft from "./animations/fading_entrances/fadeInLeft";
 
 // Utils
 import { getAnimationCss } from "./utils/animations";
+import { classnames } from "./utils/classnames";
+import { isEmpty, isFragment, isStringLike } from "./utils/react-is";
 
 export interface RevealProps {
   /**
@@ -84,104 +84,17 @@ export const Reveal: React.FC<RevealProps> = ({
   childStyle,
   children
 }) => {
-  function makeAnimated(nodes: React.ReactNode): React.ReactNode {
-    if (!nodes) {
-      return null;
-    }
-
-    if (typeof nodes === "string") {
-      return makeAnimatedText(nodes);
-    }
-
-    if (isFragment(nodes)) {
-      return (
-        <InView threshold={fraction} triggerOnce={triggerOnce}>
-          {({ inView, ref }) => (
-            <div
-              ref={ref}
-              css={
-                inView
-                  ? [css, getAnimationCss({ keyframes, delay, duration })]
-                  : { opacity: 0 }
-              }
-              className={className}
-              style={style}
-            >
-              {nodes}
-            </div>
-          )}
-        </InView>
-      );
-    }
-
-    return React.Children.map(nodes, (node, index) => {
-      const nodeElement = node as React.ReactElement;
-      const nodeCss: Interpolation[] = nodeElement.props.css
-        ? [nodeElement.props.css]
-        : [];
-
-      nodeCss.push(
-        getAnimationCss({
-          keyframes,
-          delay: delay + (cascade ? index * duration * damping : 0),
-          duration
-        })
-      );
-
-      switch (nodeElement.type) {
-        case "ol":
-        case "ul":
-          return React.cloneElement(
-            nodeElement,
-            {
-              className: cn(className, nodeElement.props.className),
-              style: { ...style, ...nodeElement.props.style }
-            },
-            makeAnimated(nodeElement.props.children)
-          );
-        case "li":
-          return (
-            <InView threshold={fraction} triggerOnce={triggerOnce}>
-              {({ inView, ref }) =>
-                jsx(nodeElement.type, {
-                  ...nodeElement.props,
-                  ref,
-                  css: inView ? [css, ...nodeCss] : { opacity: 0 },
-                  className: cn(childClassName, nodeElement.props.className),
-                  style: { ...childStyle, ...nodeElement.props.style }
-                })
-              }
-            </InView>
-          );
-        default:
-          return (
-            <InView threshold={fraction} triggerOnce={triggerOnce}>
-              {({ inView, ref }) => (
-                <div
-                  ref={ref}
-                  css={inView ? [css, ...nodeCss] : { opacity: 0 }}
-                  className={className}
-                  style={style}
-                >
-                  {React.cloneElement(nodeElement, {
-                    className: cn(childClassName, nodeElement.props.className),
-                    style: { ...childStyle, ...nodeElement.props.style }
-                  })}
-                </div>
-              )}
-            </InView>
-          );
-      }
-    });
+  if (isEmpty(children)) {
+    return null;
   }
 
-  function makeAnimatedText(text: string): React.ReactNode {
+  if (isStringLike(children)) {
     const baseCss: Interpolation = {
       display: "inline-block",
       whiteSpace: "pre"
     };
 
-    return (
+    return cascade ? (
       <InView threshold={fraction} triggerOnce={triggerOnce}>
         {({ inView, ref }) => (
           <div
@@ -190,31 +103,152 @@ export const Reveal: React.FC<RevealProps> = ({
             className={className}
             style={style}
           >
-            {text.split("").map((char, index) => {
-              const textCss = inView
-                ? getAnimationCss({
-                    keyframes,
-                    delay: delay + (cascade ? index * duration * damping : 0),
-                    duration
-                  })
-                : { opacity: 0 };
+            {String(children)
+              .split("")
+              .map((char, index) => {
+                const textCss = inView
+                  ? getAnimationCss({
+                      keyframes,
+                      delay: delay + index * duration * damping,
+                      duration
+                    })
+                  : { opacity: 0 };
 
-              return (
-                <span
-                  key={index}
-                  css={textCss}
-                  className={childClassName}
-                  style={childStyle}
-                >
-                  {char}
-                </span>
-              );
-            })}
+                return (
+                  <span
+                    key={index}
+                    css={textCss}
+                    className={childClassName}
+                    style={childStyle}
+                  >
+                    {char}
+                  </span>
+                );
+              })}
+          </div>
+        )}
+      </InView>
+    ) : (
+      <Reveal
+        {...{
+          delay,
+          duration,
+          fraction,
+          keyframes,
+          triggerOnce,
+          css,
+          className,
+          style
+        }}
+      >
+        <React.Fragment>{String(children)}</React.Fragment>
+      </Reveal>
+    );
+  }
+
+  if (isFragment(children)) {
+    return (
+      <InView threshold={fraction} triggerOnce={triggerOnce}>
+        {({ inView, ref }) => (
+          <div
+            ref={ref}
+            css={
+              inView
+                ? [css, getAnimationCss({ keyframes, delay, duration })]
+                : { opacity: 0 }
+            }
+            className={className}
+            style={style}
+          >
+            {children}
           </div>
         )}
       </InView>
     );
   }
 
-  return <React.Fragment>{makeAnimated(children)}</React.Fragment>;
+  return (
+    <React.Fragment>
+      {React.Children.map(children, (node, index) => {
+        const nodeElement = node as React.ReactElement;
+        const nodeCss: Interpolation[] = nodeElement.props.css
+          ? [nodeElement.props.css]
+          : [];
+
+        nodeCss.push(
+          getAnimationCss({
+            keyframes,
+            delay: delay + (cascade ? index * duration * damping : 0),
+            duration
+          })
+        );
+
+        switch (nodeElement.type) {
+          case "ol":
+          case "ul":
+            return React.cloneElement(
+              nodeElement,
+              {
+                className: classnames(className, nodeElement.props.className),
+                style: { ...style, ...nodeElement.props.style }
+              },
+              <Reveal
+                {...{
+                  cascade,
+                  damping,
+                  delay,
+                  duration,
+                  fraction,
+                  keyframes,
+                  triggerOnce,
+                  css,
+                  childClassName,
+                  childStyle
+                }}
+              >
+                {nodeElement.props.children}
+              </Reveal>
+            );
+          case "li":
+            return (
+              <InView threshold={fraction} triggerOnce={triggerOnce}>
+                {({ inView, ref }) =>
+                  jsx(nodeElement.type, {
+                    ...nodeElement.props,
+                    ref,
+                    css: inView ? [css, ...nodeCss] : { opacity: 0 },
+                    className: classnames(
+                      childClassName,
+                      nodeElement.props.className
+                    ),
+                    style: { ...childStyle, ...nodeElement.props.style }
+                  })
+                }
+              </InView>
+            );
+          default:
+            return (
+              <InView threshold={fraction} triggerOnce={triggerOnce}>
+                {({ inView, ref }) => (
+                  <div
+                    ref={ref}
+                    css={inView ? [css, ...nodeCss] : { opacity: 0 }}
+                    className={className}
+                    style={style}
+                  >
+                    {React.cloneElement(nodeElement, {
+                      className: classnames(
+                        childClassName,
+                        nodeElement.props.className
+                      ),
+                      style: { ...childStyle, ...nodeElement.props.style }
+                    })}
+                  </div>
+                )}
+              </InView>
+            );
+        }
+      })}
+    </React.Fragment>
+  );
 };
