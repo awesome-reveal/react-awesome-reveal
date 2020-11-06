@@ -32,7 +32,8 @@
   "module": "dist/react-reveal.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "sideEffects": false,
   "scripts": {
@@ -40,7 +41,9 @@
     "build": "tsdx build",
     "test": "tsdx test --passWithNoTests",
     "lint": "tsdx lint src",
-    "prepare": "tsdx build"
+    "prepare": "tsdx build",
+    "size": "size-limit",
+    "analyze": "size-limit --why"
   },
   "peerDependencies": {
     "react": ">=16"
@@ -50,24 +53,36 @@
       "pre-commit": "tsdx lint"
     }
   },
+  "size-limit": [
+    {
+      "path": "dist/react-awesome-reveal.cjs.production.min.js",
+      "limit": "15 KB"
+    },
+    {
+      "path": "dist/react-awesome-reveal.esm.js",
+      "limit": "15 KB"
+    }
+  ],
   "devDependencies": {
-    "@types/classnames": "^2.2.10",
-    "@types/jest": "^26.0.13",
-    "@types/react": "^16.9.49",
-    "@types/react-dom": "^16.9.8",
+    "@size-limit/preset-small-lib": "^4.7.0",
+    "@types/classnames": "^2.2.11",
+    "@types/jest": "^26.0.15",
+    "@types/react": "^16.9.56",
+    "@types/react-dom": "^16.9.9",
     "@types/react-is": "^16.7.1",
     "husky": "^4.3.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "tsdx": "^0.13.3",
-    "tslib": "^2.0.1",
+    "react": "^16.14.0",
+    "react-dom": "^16.14.0",
+    "size-limit": "^4.7.0",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.0.3",
     "typescript": "^3.9.7"
   },
   "dependencies": {
-    "@emotion/core": "^10.0.35",
+    "@emotion/core": "^10.1.1",
     "@emotion/styled": "^10.0.27",
     "classnames": "^2.2.6",
-    "react-intersection-observer": "^8.28.4",
+    "react-intersection-observer": "^8.30.1",
     "react-is": "^16.13.1"
   }
 }
