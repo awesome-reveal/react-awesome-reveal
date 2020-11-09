@@ -22,6 +22,8 @@
   - [Chaining Multiple Animations](#chaining-multiple-animations)
 - [Custom Animations](#custom-animations)
   - [Other Props](#other-props)
+- [Intersection Observer](#intersection-observer)
+  - [Polyfill](#polyfill)
 - [Past Releases](#past-releases)
 - [License](#license)
 
@@ -84,19 +86,20 @@ Again, refer to the [Animate.css](https://animate.style) documentation for the d
 
 You can pass the following props to the animation components to customize the behavior:
 
-| Prop            | Description                                                                                                                                                                                                                                                                                                                          | Values                                                                                       | Default                                                               |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `cascade`       | If set, each child of a reveal animation automatically get assigned a delay that takes into account their predecessor (child `i` enters the viewport after `i * delay * damping` milliseconds) – useful for animating list items.                                                                                                    | `true` or `false`                                                                            | `false`                                                               |
-| `damping`       | Factor that affects the delay that each animated component in a cascade animation will be assigned. If `damping = 1` then the delay will be equal to the animation duration; if `damping < 1` then the delay will be lower than the animation duration; if `damping > 1` then the delay will be greater than the animation duration. | `number`                                                                                     | `0.5` (meaning that the delay will be half of the animation duration) |
-| `direction`     | Origin of the animation (where applicable).                                                                                                                                                                                                                                                                                          | Usually `"down"`, `"left"`, `"right"` or `"up"`, with some exceptions documented in the code | `undefined`                                                           |
-| `delay`         | Time to wait before the animation starts (in milliseconds).                                                                                                                                                                                                                                                                          | `number`                                                                                     | `0`                                                                   |
-| `duration`      | The animation duration (milliseconds).                                                                                                                                                                                                                                                                                               | `number`                                                                                     | `1000`                                                                |
-| `fraction`      | How much an element should be in viewport before the animation is triggered.                                                                                                                                                                                                                                                         | `number` between `0` and `1`                                                                 | `0`                                                                   |
-| `triggerOnce`   | Specifies if the animation should run only once or everytime an element enters/exits/re-enters the viewport.                                                                                                                                                                                                                         | `true` or `false`                                                                            | `false`                                                               |
-| `className`     | The class names to add to the container element.                                                                                                                                                                                                                                                                                     | `string`                                                                                     | `undefined`                                                           |
-| `style`         | The inline styles to add to the container element.                                                                                                                                                                                                                                                                                   | `React.CSSProperties`                                                                        | `undefined`                                                           |
-| `childClassName`| The class names to add to the child element.                                                                                                                                                                                                                                                                                         | `string`                                                                                     | `undefined`                                                           |
-| `childStyle`    | The inline styles to add to the child element.                                                                                                                                                                                                                                                                                       | `React.CSSProperties`                                                                        | `undefined`                                                           |
+| Prop                 | Description                                                                                                                                                                                                                                                                                                                          | Values                                                                                       | Default                                                               |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `cascade`            | If set, each child of a reveal animation automatically get assigned a delay that takes into account their predecessor (child `i` enters the viewport after `i * delay * damping` milliseconds) – useful for animating list items.                                                                                                    | `true` or `false`                                                                            | `false`                                                               |
+| `damping`            | Factor that affects the delay that each animated component in a cascade animation will be assigned. If `damping = 1` then the delay will be equal to the animation duration; if `damping < 1` then the delay will be lower than the animation duration; if `damping > 1` then the delay will be greater than the animation duration. | `number`                                                                                     | `0.5` (meaning that the delay will be half of the animation duration) |
+| `direction`          | Origin of the animation (where applicable).                                                                                                                                                                                                                                                                                          | Usually `"down"`, `"left"`, `"right"` or `"up"`, with some exceptions documented in the code | `undefined`                                                           |
+| `delay`              | Time to wait before the animation starts (in milliseconds).                                                                                                                                                                                                                                                                          | `number`                                                                                     | `0`                                                                   |
+| `duration`           | The animation duration (milliseconds).                                                                                                                                                                                                                                                                                               | `number`                                                                                     | `1000`                                                                |
+| `fraction`           | How much an element should be in viewport before the animation is triggered.                                                                                                                                                                                                                                                         | `number` between `0` and `1`                                                                 | `0`                                                                   |
+| `triggerOnce`        | Specifies if the animation should run only once or everytime an element enters/exits/re-enters the viewport.                                                                                                                                                                                                                         | `true` or `false`                                                                            | `false`                                                               |
+| `className`          | The class names to add to the container element.                                                                                                                                                                                                                                                                                     | `string`                                                                                     | `undefined`                                                           |
+| `style`              | The inline styles to add to the container element.                                                                                                                                                                                                                                                                                   | `React.CSSProperties`                                                                        | `undefined`                                                           |
+| `childClassName`     | The class names to add to the child element.                                                                                                                                                                                                                                                                                         | `string`                                                                                     | `undefined`                                                           |
+| `childStyle`         | The inline styles to add to the child element.                                                                                                                                                                                                                                                                                       | `React.CSSProperties`                                                                        | `undefined`                                                           |
+| `onVisibilityChange` | Callback executed when the element enters or leaves the viewport. If more than one element is being animated, this function is called on each element.                                                                                                                                                                               | `(inView: boolean, entry: IntersectionObserverEntry) => void`                                | `undefined`                                                           |
 
 ### Example
 
@@ -180,6 +183,39 @@ You can also pass these props to `Reveal`:
 - `triggerOnce`
 - `className` and `childClassName`
 - `style` and `childStyle`
+
+## Intersection Observer
+
+[Intersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) is the API used to determine if an element is inside the viewport or not. [Browser support](http://caniuse.com/#feat=intersectionobserver) is really good – with [Safari adding support in 12.1](https://webkit.org/blog/8718/new-webkit-features-in-safari-12-1), all major browsers now support Intersection Observers natively.
+
+If you need to support old browsers, add the polyfill for the Intersection Observer API.
+
+### Polyfill
+
+You can add the [polyfill](https://www.npmjs.com/package/intersection-observer) directly or use a service like [polyfill.io](https://polyfill.io/v2/docs) to add it when needed.
+
+```sh
+yarn add intersection-observer
+```
+
+Then import it in your app:
+
+```javascript
+import "intersection-observer";
+```
+
+If you are using Webpack (or similar) you could use [dynamic imports](https://webpack.js.org/guides/code-splitting/#dynamic-imports) to load the polyfill only if needed. A basic implementation could look something like this:
+
+```javascript
+/**
+ * Do feature detection, to figure out which polyfills needs to be imported.
+ **/
+async function loadPolyfills() {
+  if (typeof window.IntersectionObserver === "undefined") {
+    await import("intersection-observer");
+  }
+}
+```
 
 ## Past Releases
 
