@@ -29,7 +29,7 @@
     "url": "https://github.com/dennismorello/react-awesome-reveal/issues"
   },
   "main": "dist/index.js",
-  "module": "dist/react-reveal.esm.js",
+  "module": "dist/react-awesome-reveal.esm.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist",
