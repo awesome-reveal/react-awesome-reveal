@@ -67,6 +67,15 @@ export interface RevealProps {
    * Inline styles to add to the child element.
    */
   childStyle?: React.CSSProperties;
+  /**
+   * Callback executed when the element enters or leaves the viewport.
+   * If more than one element is being animated, this function is called
+   * on each element.
+   *
+   * @param inView The current visibility flag.
+   * @param entry The current IntersectionObserverEntry.
+   */
+  onVisibilityChange?(inView: boolean, entry: IntersectionObserverEntry): void;
 }
 
 export const Reveal: React.FC<RevealProps> = ({
@@ -82,7 +91,8 @@ export const Reveal: React.FC<RevealProps> = ({
   style,
   childClassName,
   childStyle,
-  children
+  children,
+  onVisibilityChange
 }) => {
   if (isEmpty(children)) {
     return null;
@@ -95,7 +105,11 @@ export const Reveal: React.FC<RevealProps> = ({
     };
 
     return cascade ? (
-      <InView threshold={fraction} triggerOnce={triggerOnce}>
+      <InView
+        threshold={fraction}
+        triggerOnce={triggerOnce}
+        onChange={onVisibilityChange}
+      >
         {({ inView, ref }) => (
           <div
             ref={ref}
@@ -148,7 +162,11 @@ export const Reveal: React.FC<RevealProps> = ({
 
   if (isFragment(children)) {
     return (
-      <InView threshold={fraction} triggerOnce={triggerOnce}>
+      <InView
+        threshold={fraction}
+        triggerOnce={triggerOnce}
+        onChange={onVisibilityChange}
+      >
         {({ inView, ref }) => (
           <div
             ref={ref}
@@ -211,7 +229,11 @@ export const Reveal: React.FC<RevealProps> = ({
             );
           case "li":
             return (
-              <InView threshold={fraction} triggerOnce={triggerOnce}>
+              <InView
+                threshold={fraction}
+                triggerOnce={triggerOnce}
+                onChange={onVisibilityChange}
+              >
                 {({ inView, ref }) =>
                   jsx(nodeElement.type, {
                     ...nodeElement.props,
@@ -228,7 +250,11 @@ export const Reveal: React.FC<RevealProps> = ({
             );
           default:
             return (
-              <InView threshold={fraction} triggerOnce={triggerOnce}>
+              <InView
+                threshold={fraction}
+                triggerOnce={triggerOnce}
+                onChange={onVisibilityChange}
+              >
                 {({ inView, ref }) => (
                   <div
                     ref={ref}
