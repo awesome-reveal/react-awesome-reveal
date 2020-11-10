@@ -183,6 +183,7 @@ You can also pass these props to `Reveal`:
 - `triggerOnce`
 - `className` and `childClassName`
 - `style` and `childStyle`
+- `onVisibilityChange`
 
 ## Intersection Observer
 
