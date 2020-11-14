@@ -4,10 +4,11 @@ import {
   Box,
   Button,
   Flex,
-  Stack,
+  HStack,
   IconButton,
   useDisclosure,
-} from "@chakra-ui/core"
+} from "@chakra-ui/react"
+import { HamburgerIcon } from "@chakra-ui/icons"
 import { Fade } from "react-awesome-reveal"
 
 // Components
@@ -50,55 +51,55 @@ const Header = ({
   }, [])
 
   const headerContent = (
-    <Stack isInline alignItems="center">
-      {showMenu && (
-        <IconButton
-          onClick={onOpen}
-          ref={drawerButtonRef}
-          aria-label="Open Effects Drawer"
-          variantColor="purple"
-          icon="hamburger"
-          variant="ghost"
-          isRound
-        />
-      )}
-      {showMenu && (
-        <EffectsDrawer
-          isOpen={isOpen}
-          onClose={onClose}
-          drawerButtonRef={drawerButtonRef}
-          location={location}
-        />
-      )}
+    <Flex direction="row" alignItems="center" justifyContent="space-between">
+      <HStack>
+        {showMenu && (
+          <HStack>
+            <IconButton
+              onClick={onOpen}
+              ref={drawerButtonRef}
+              aria-label="Open Effects Drawer"
+              colorScheme="purple"
+              icon={<HamburgerIcon />}
+              variant="ghost"
+              isRound
+            />
+            <EffectsDrawer
+              isOpen={isOpen}
+              onClose={onClose}
+              drawerButtonRef={drawerButtonRef}
+              location={location}
+            />
+          </HStack>
+        )}
 
-      {showLeft && leftContent}
-
-      <Box flexGrow={1} />
+        {showLeft && leftContent}
+      </HStack>
 
       {showRight && (
         <Button
-          variantColor="purple"
+          colorScheme="purple"
           variant="ghost"
           as="a"
           target="_blank"
-          rel="noopener"
+          rel="noopener noreferrer"
           href={site.siteMetadata.githubUrl}
         >
           GitHub
         </Button>
       )}
-    </Stack>
+    </Flex>
   )
 
   return (
     <Flex
       as="header"
-      boxShadow={showHeaderShadow ? "sm" : null}
+      boxShadow={showHeaderShadow ? "base" : null}
       backgroundColor="gray.800"
       py={2}
       px={4}
       position="fixed"
-      zIndex="sticky"
+      zIndex={1}
       top={0}
       left={0}
       right={0}

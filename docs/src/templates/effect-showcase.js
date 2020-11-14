@@ -1,9 +1,9 @@
 import React from "react"
-import { Button, Heading } from "@chakra-ui/core"
+import { Button, Heading } from "@chakra-ui/react"
 
 // Components
-import Reveal from "../components/reveal"
 import Layout from "../components/layout"
+import Reveal from "../components/reveal"
 import Section from "../components/section"
 
 export default ({ location, pageContext }) => {
@@ -15,7 +15,7 @@ export default ({ location, pageContext }) => {
       title={title}
       showTitle={false}
       navbarLeftContent={
-        <Heading size="md" pl={2} color="purple.50">
+        <Heading size="md" color="purple.50">
           {title}
         </Heading>
       }
@@ -28,7 +28,7 @@ export default ({ location, pageContext }) => {
               minH={32}
               maxH="calc(100vh - 4rem)"
               width="100%"
-              variantColor="purple"
+              colorScheme="purple"
             >
               {direction && (
                 <Heading size="lg">

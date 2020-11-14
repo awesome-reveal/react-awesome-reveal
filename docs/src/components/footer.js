@@ -1,7 +1,10 @@
 import React from "react"
 import { graphql, useStaticQuery } from "gatsby"
-import { Box, Icon, Link, Stack, Text } from "@chakra-ui/core"
+import { Box, Link, Stack, Text } from "@chakra-ui/react"
 import { Fade } from "react-awesome-reveal"
+
+import Copyleft from "./copyleft"
+import HeartIcon from "../icons/heart"
 
 const Footer = () => {
   const { site } = useStaticQuery(graphql`
@@ -22,16 +25,11 @@ const Footer = () => {
       <Fade direction="top">
         <Stack color="gray.400">
           <Text textAlign="center">
-            Made in Italy with{" "}
-            <Icon name="heart" color="red.600" aria-label="Heart" />
+            Made in Italy with <HeartIcon color="red.600" aria-label="Heart" />
           </Text>
           <Text textAlign="center" mt={[0, 0, 2, 2]}>
-            Copyright &copy; {new Date().getFullYear()}{" "}
-            <Link
-              href={site.siteMetadata.author.website}
-              target="_blank"
-              rel="noopener"
-            >
+            Copyleft <Copyleft /> {new Date().getFullYear()}{" "}
+            <Link href={site.siteMetadata.author.website} isExternal>
               {site.siteMetadata.author.name}
             </Link>
           </Text>

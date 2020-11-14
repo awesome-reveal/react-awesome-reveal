@@ -1,9 +1,8 @@
 import React, { useRef } from "react"
-import { useStaticQuery, graphql } from "gatsby"
-import { Heading, Button, Flex, useDisclosure } from "@chakra-ui/core"
+import { graphql, useStaticQuery } from "gatsby"
+import { Button, Heading, Stack, useDisclosure } from "@chakra-ui/react"
 import { Zoom } from "react-awesome-reveal"
 
-// Components
 import EffectsDrawer from "../components/effects-drawer"
 import GetStartedModal from "../components/get-started-modal"
 import Layout from "../components/layout"
@@ -68,11 +67,11 @@ export default ({ location }) => {
           </Heading>
         </Zoom>
         <Zoom direction="bottom" triggerOnce>
-          <Flex mt={16} direction={{ xs: "column", sm: "row" }}>
+          <Stack direction={["column", "row"]} mt={16} spacing={4}>
             <Button
               ref={getStartedButtonRef}
               size="lg"
-              variantColor="purple"
+              colorScheme="purple"
               onClick={onGetStartedModalOpen}
               mr={{ xs: 0, sm: 4 }}
               mb={{ xs: 4, sm: 0 }}
@@ -83,14 +82,14 @@ export default ({ location }) => {
             <Button
               ref={effectsDrawerButtonRef}
               size="lg"
-              variantColor="purple"
+              colorScheme="purple"
               onClick={onEffectsDrawerOpen}
               variant="outline"
               width={{ sm: "full" }}
             >
               Effects
             </Button>
-          </Flex>
+          </Stack>
         </Zoom>
       </Section>
     </Layout>

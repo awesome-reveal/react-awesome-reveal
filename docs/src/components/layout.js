@@ -1,6 +1,6 @@
 import React from "react"
 import PropTypes from "prop-types"
-import { Box, Heading, DarkMode } from "@chakra-ui/core"
+import { Box, DarkMode, Heading } from "@chakra-ui/react"
 import { Fade } from "react-awesome-reveal"
 
 import Footer from "./footer"

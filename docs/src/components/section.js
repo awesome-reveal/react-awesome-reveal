@@ -1,5 +1,5 @@
 import React from "react"
-import { Flex } from "@chakra-ui/core"
+import { Flex } from "@chakra-ui/react"
 
 const Section = ({ children, hasNavbar = true, height = "100vh", ...rest }) => (
   <Flex

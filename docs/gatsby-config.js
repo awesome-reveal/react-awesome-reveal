@@ -29,7 +29,7 @@ module.exports = {
   plugins: [
     `gatsby-plugin-react-helmet`,
     {
-      resolve: `gatsby-plugin-chakra-ui`,
+      resolve: `@chakra-ui/gatsby-plugin`,
       options: {
         isResettingCSS: true,
         isUsingColorMode: true,

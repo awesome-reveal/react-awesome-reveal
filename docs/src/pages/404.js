@@ -1,6 +1,6 @@
 import React from "react"
 import { Link as GatsbyLink } from "gatsby"
-import { Heading, Button } from "@chakra-ui/core"
+import { Button, Heading } from "@chakra-ui/react"
 
 // Components
 import Layout from "../components/layout"
