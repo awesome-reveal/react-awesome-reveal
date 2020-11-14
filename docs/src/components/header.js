@@ -3,6 +3,7 @@ import { useStaticQuery, graphql } from "gatsby"
 import {
   Box,
   Button,
+  Container,
   Flex,
   HStack,
   IconButton,
@@ -11,7 +12,6 @@ import {
 import { HamburgerIcon } from "@chakra-ui/icons"
 import { Fade } from "react-awesome-reveal"
 
-// Components
 import EffectsDrawer from "./effects-drawer"
 
 const Header = ({
@@ -94,24 +94,23 @@ const Header = ({
   return (
     <Flex
       as="header"
+      alignItems="center"
       boxShadow={showHeaderShadow ? "base" : null}
       backgroundColor="gray.800"
-      py={2}
-      px={4}
       position="fixed"
       zIndex={1}
       top={0}
       left={0}
       right={0}
       height={16}
-      flexDirection="column"
-      justifyContent="center"
     >
-      {animateHeader ? (
-        <Fade direction="bottom">{headerContent}</Fade>
-      ) : (
-        headerContent
-      )}
+      <Container py={2} px={4} maxW="xl">
+        {animateHeader ? (
+          <Fade direction="bottom">{headerContent}</Fade>
+        ) : (
+          headerContent
+        )}
+      </Container>
     </Flex>
   )
 }

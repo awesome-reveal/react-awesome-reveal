@@ -1,6 +1,6 @@
 import React from "react"
 import PropTypes from "prop-types"
-import { Box, DarkMode, Heading } from "@chakra-ui/react"
+import { Box, Container, DarkMode, Heading } from "@chakra-ui/react"
 import { Fade } from "react-awesome-reveal"
 
 import Footer from "./footer"
@@ -40,13 +40,7 @@ const Layout = ({
           showRight={showNavbarRightContent}
         />
       )}
-      <Box
-        as="main"
-        px={4}
-        mx="auto"
-        width={["100%", "100%", "100%", "66.667%"]}
-        {...rest}
-      >
+      <Container as="main" px={4} maxW="xl" {...rest}>
         {showTitle && (
           <Fade direction="bottom" triggerOnce>
             <Heading mt={[2, 4, 8, 16]} size="2xl">
@@ -55,7 +49,7 @@ const Layout = ({
           </Fade>
         )}
         {children}
-      </Box>
+      </Container>
       {showFooter && <Footer />}
     </Box>
   </DarkMode>
