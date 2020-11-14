@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import {
-  Box,
   Button,
   Container,
   Flex,
