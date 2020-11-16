@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Interpolation } from "@emotion/core";
+import { Interpolation, Theme } from "@emotion/react";
 import { Reveal, RevealProps } from "../Reveal";
 
 // Animations
@@ -43,7 +43,7 @@ const Flip: React.FC<FlipProps> = ({
   css,
   ...rest
 }) => {
-  const animationCss: Interpolation = { backfaceVisibility: "visible" };
+  const animationCss: Interpolation<Theme> = { backfaceVisibility: "visible" };
 
   return (
     <Reveal

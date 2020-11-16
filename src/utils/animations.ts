@@ -1,4 +1,4 @@
-import { css } from "@emotion/core";
+import { css } from "@emotion/react";
 
 // Animations
 import fadeInLeft from "../animations/fading_entrances/fadeInLeft";

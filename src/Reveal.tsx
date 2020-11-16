@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import * as React from "react";
-import { Interpolation, jsx } from "@emotion/core";
+import { Interpolation, Theme, jsx } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
 import { InView } from "react-intersection-observer";
 
@@ -50,7 +50,7 @@ export interface RevealProps {
   /**
    * Custom Emotion styles.
    */
-  css?: Interpolation;
+  css?: Interpolation<Theme>;
   /**
    * Class names to add to the container element.
    */
@@ -99,7 +99,7 @@ export const Reveal: React.FC<RevealProps> = ({
   }
 
   if (isStringLike(children)) {
-    const baseCss: Interpolation = {
+    const baseCss: Interpolation<Theme> = {
       display: "inline-block",
       whiteSpace: "pre"
     };
@@ -189,7 +189,7 @@ export const Reveal: React.FC<RevealProps> = ({
     <React.Fragment>
       {React.Children.map(children, (node, index) => {
         const nodeElement = node as React.ReactElement;
-        const nodeCss: Interpolation[] = nodeElement.props.css
+        const nodeCss: Interpolation<Theme>[] = nodeElement.props.css
           ? [nodeElement.props.css]
           : [];
 

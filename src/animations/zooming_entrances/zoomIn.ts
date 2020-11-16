@@ -1,4 +1,4 @@
-import { keyframes } from "@emotion/core";
+import { keyframes } from "@emotion/react";
 
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/zooming_entrances/zoomIn.css}

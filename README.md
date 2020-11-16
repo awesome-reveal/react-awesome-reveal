@@ -146,7 +146,7 @@ Starting from version 3.2.0, you can define custom animations! Simply import the
 ```jsx
 import React from "react";
 import Reveal from "react-awesome-reveal";
-import { keyframes } from "@emotion/core";
+import { keyframes } from "@emotion/react";
 
 const customAnimation = keyframes`
   from {

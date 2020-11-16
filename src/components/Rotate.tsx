@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Interpolation } from "@emotion/core";
+import { Interpolation, Theme } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
 import { Reveal, RevealProps } from "../Reveal";
 
@@ -41,7 +41,7 @@ interface RotateProps extends Omit<RevealProps, "keyframes"> {
 function getRotateKeyframesAndCss(
   reverse: boolean,
   direction?: RotateDirection
-): [Keyframes, Interpolation?] {
+): [Keyframes, Interpolation<Theme>?] {
   switch (direction) {
     case "bottom-left":
       return reverse

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Interpolation } from "@emotion/core";
+import { Interpolation, Theme } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
 import { Reveal, RevealProps } from "../Reveal";
 
@@ -45,7 +45,7 @@ interface AttentionSeekerProps extends Omit<RevealProps, "keyframes"> {
 
 function getAttentionSeekerKeyframesAndCss(
   effect: AttentionSeekerEffect
-): [Keyframes, Interpolation?] {
+): [Keyframes, Interpolation<Theme>?] {
   switch (effect) {
     case "flash":
       return [flash];
