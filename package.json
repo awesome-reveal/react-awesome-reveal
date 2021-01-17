@@ -63,6 +63,7 @@
     }
   ],
   "devDependencies": {
+    "@emotion/eslint-plugin": "^11.0.0",
     "@size-limit/preset-small-lib": "^4.8.0",
     "@types/jest": "^26.0.15",
     "@types/react": "^16.9.56",
@@ -78,6 +79,7 @@
   },
   "dependencies": {
     "@emotion/react": "^11.1.4",
-    "react-intersection-observer": "^8.31.0"
+    "react-intersection-observer": "^8.31.0",
+    "react-is": "^17.0.1"
   }
 }

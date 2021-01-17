@@ -1,4 +1,4 @@
-import { Reveal } from "./Reveal";
+import Reveal from "./Reveal";
 
 export { default as AttentionSeeker } from "./components/AttentionSeeker";
 export { default as Bounce } from "./components/Bounce";

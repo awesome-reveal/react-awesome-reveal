@@ -4,6 +4,7 @@ module.exports = {
     "prettier/@typescript-eslint",
     "plugin:prettier/recommended"
   ],
+  plugins: ["@emotion"],
   settings: {
     react: {
       version: "detect"

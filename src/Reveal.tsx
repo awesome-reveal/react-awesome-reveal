@@ -1,16 +1,22 @@
 /** @jsx jsx */
 import * as React from "react";
-import { Interpolation, Theme, jsx } from "@emotion/react";
+import { isFragment } from "react-is";
+import { ClassNames, Interpolation, Theme, css, jsx } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
 import { InView } from "react-intersection-observer";
 
-// Animations
 import fadeInLeft from "./animations/fading_entrances/fadeInLeft";
-
-// Utils
+import { isEmpty, isStringLike } from "./utils/js-types";
 import { getAnimationCss } from "./utils/animations";
-import { classnames } from "./utils/classnames";
-import { isEmpty, isFragment, isStringLike } from "./utils/react-is";
+
+const hiddenCss = css`
+  opacity: 0;
+`;
+
+const textBaseCss = css`
+  display: inline-block;
+  white-space: pre;
+`;
 
 export interface RevealProps {
   /**
@@ -78,7 +84,7 @@ export interface RevealProps {
   onVisibilityChange?(inView: boolean, entry: IntersectionObserverEntry): void;
 }
 
-export const Reveal: React.FC<RevealProps> = ({
+const Reveal: React.FC<RevealProps> = ({
   cascade = false,
   damping = 0.5,
   delay = 0,
@@ -86,7 +92,7 @@ export const Reveal: React.FC<RevealProps> = ({
   fraction = 0,
   keyframes = fadeInLeft,
   triggerOnce = false,
-  css,
+  css: revealCss,
   className,
   style,
   childClassName,
@@ -99,10 +105,7 @@ export const Reveal: React.FC<RevealProps> = ({
   }
 
   if (isStringLike(children)) {
-    const baseCss: Interpolation<Theme> = {
-      display: "inline-block",
-      whiteSpace: "pre"
-    };
+    const stringifiedChildren = String(children);
 
     return cascade ? (
       <InView
@@ -113,32 +116,28 @@ export const Reveal: React.FC<RevealProps> = ({
         {({ inView, ref }) => (
           <div
             ref={ref}
-            css={[css, baseCss]}
+            css={[revealCss, textBaseCss]}
             className={className}
             style={style}
           >
-            {String(children)
-              .split("")
-              .map((char, index) => {
-                const textCss = inView
-                  ? getAnimationCss({
-                      keyframes,
-                      delay: delay + index * duration * damping,
-                      duration
-                    })
-                  : { opacity: 0 };
-
-                return (
-                  <span
-                    key={index}
-                    css={textCss}
-                    className={childClassName}
-                    style={childStyle}
-                  >
-                    {char}
-                  </span>
-                );
-              })}
+            {stringifiedChildren.split("").map((char, index) => (
+              <span
+                key={index}
+                css={
+                  inView
+                    ? getAnimationCss({
+                        keyframes,
+                        delay: delay + index * duration * damping,
+                        duration
+                      })
+                    : hiddenCss
+                }
+                className={childClassName}
+                style={childStyle}
+              >
+                {char}
+              </span>
+            ))}
           </div>
         )}
       </InView>
@@ -150,12 +149,12 @@ export const Reveal: React.FC<RevealProps> = ({
           fraction,
           keyframes,
           triggerOnce,
-          css,
+          css: revealCss,
           className,
           style
         }}
       >
-        <React.Fragment>{String(children)}</React.Fragment>
+        {stringifiedChildren}
       </Reveal>
     );
   }
@@ -172,8 +171,8 @@ export const Reveal: React.FC<RevealProps> = ({
             ref={ref}
             css={
               inView
-                ? [css, getAnimationCss({ keyframes, delay, duration })]
-                : { opacity: 0 }
+                ? [revealCss, getAnimationCss({ keyframes, delay, duration })]
+                : hiddenCss
             }
             className={className}
             style={style}
@@ -204,28 +203,34 @@ export const Reveal: React.FC<RevealProps> = ({
         switch (nodeElement.type) {
           case "ol":
           case "ul":
-            return React.cloneElement(
-              nodeElement,
-              {
-                className: classnames(className, nodeElement.props.className),
-                style: { ...style, ...nodeElement.props.style }
-              },
-              <Reveal
-                {...{
-                  cascade,
-                  damping,
-                  delay,
-                  duration,
-                  fraction,
-                  keyframes,
-                  triggerOnce,
-                  css,
-                  childClassName,
-                  childStyle
-                }}
-              >
-                {nodeElement.props.children}
-              </Reveal>
+            return (
+              <ClassNames>
+                {({ cx }) =>
+                  React.cloneElement(
+                    nodeElement,
+                    {
+                      className: cx(className, nodeElement.props.className),
+                      style: { ...style, ...nodeElement.props.style }
+                    },
+                    <Reveal
+                      {...{
+                        cascade,
+                        damping,
+                        delay,
+                        duration,
+                        fraction,
+                        keyframes,
+                        triggerOnce,
+                        css: revealCss,
+                        childClassName,
+                        childStyle
+                      }}
+                    >
+                      {nodeElement.props.children}
+                    </Reveal>
+                  )
+                }
+              </ClassNames>
             );
           case "li":
             return (
@@ -234,18 +239,22 @@ export const Reveal: React.FC<RevealProps> = ({
                 triggerOnce={triggerOnce}
                 onChange={onVisibilityChange}
               >
-                {({ inView, ref }) =>
-                  jsx(nodeElement.type, {
-                    ...nodeElement.props,
-                    ref,
-                    css: inView ? [css, ...nodeCss] : { opacity: 0 },
-                    className: classnames(
-                      childClassName,
-                      nodeElement.props.className
-                    ),
-                    style: { ...childStyle, ...nodeElement.props.style }
-                  })
-                }
+                {({ inView, ref }) => (
+                  <ClassNames>
+                    {({ cx }) =>
+                      jsx(nodeElement.type, {
+                        ...nodeElement.props,
+                        ref,
+                        css: inView ? [revealCss, ...nodeCss] : hiddenCss,
+                        className: cx(
+                          childClassName,
+                          nodeElement.props.className
+                        ),
+                        style: { ...childStyle, ...nodeElement.props.style }
+                      })
+                    }
+                  </ClassNames>
+                )}
               </InView>
             );
           default:
@@ -258,17 +267,22 @@ export const Reveal: React.FC<RevealProps> = ({
                 {({ inView, ref }) => (
                   <div
                     ref={ref}
-                    css={inView ? [css, ...nodeCss] : { opacity: 0 }}
+                    css={inView ? [revealCss, ...nodeCss] : hiddenCss}
                     className={className}
                     style={style}
                   >
-                    {React.cloneElement(nodeElement, {
-                      className: classnames(
-                        childClassName,
-                        nodeElement.props.className
-                      ),
-                      style: { ...childStyle, ...nodeElement.props.style }
-                    })}
+                    <ClassNames>
+                      {({ cx }) =>
+                        jsx(nodeElement.type, {
+                          ...nodeElement.props,
+                          className: cx(
+                            childClassName,
+                            nodeElement.props.className
+                          ),
+                          style: { ...childStyle, ...nodeElement.props.style }
+                        })
+                      }
+                    </ClassNames>
                   </div>
                 )}
               </InView>
@@ -278,3 +292,5 @@ export const Reveal: React.FC<RevealProps> = ({
     </React.Fragment>
   );
 };
+
+export default Reveal;

@@ -1,8 +1,7 @@
 import * as React from "react";
 import { Interpolation, Theme } from "@emotion/react";
-import { Reveal, RevealProps } from "../Reveal";
 
-// Animations
+import Reveal, { RevealProps } from "../Reveal";
 import { hinge } from "../animations/specials";
 
 type HingeProps = Omit<RevealProps, "keyframes">;

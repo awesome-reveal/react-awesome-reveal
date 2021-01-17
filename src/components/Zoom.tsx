@@ -1,7 +1,6 @@
 import * as React from "react";
-import { Reveal, RevealProps } from "../Reveal";
 
-// Animations
+import Reveal, { RevealProps } from "../Reveal";
 import {
   zoomIn,
   zoomInDown,

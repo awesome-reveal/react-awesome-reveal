@@ -1,9 +1,8 @@
 import * as React from "react";
 import { Interpolation, Theme } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
-import { Reveal, RevealProps } from "../Reveal";
 
-// Animations
+import Reveal, { RevealProps } from "../Reveal";
 import {
   rotateIn,
   rotateInDownLeft,
