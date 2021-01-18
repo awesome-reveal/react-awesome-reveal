@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import * as React from "react";
+import { Children, FC } from "react";
 import { isFragment } from "react-is";
 import { ClassNames, Interpolation, Theme, css, jsx } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
@@ -84,7 +83,7 @@ export interface RevealProps {
   onVisibilityChange?(inView: boolean, entry: IntersectionObserverEntry): void;
 }
 
-const Reveal: React.FC<RevealProps> = ({
+const Reveal: FC<RevealProps> = ({
   cascade = false,
   damping = 0.5,
   delay = 0,
@@ -185,8 +184,8 @@ const Reveal: React.FC<RevealProps> = ({
   }
 
   return (
-    <React.Fragment>
-      {React.Children.map(children, (node, index) => {
+    <>
+      {Children.map(children, (node, index) => {
         const nodeElement = node as React.ReactElement;
         const nodeCss: Interpolation<Theme>[] = nodeElement.props.css
           ? [nodeElement.props.css]
@@ -206,9 +205,10 @@ const Reveal: React.FC<RevealProps> = ({
             return (
               <ClassNames>
                 {({ cx }) =>
-                  React.cloneElement(
-                    nodeElement,
+                  jsx(
+                    nodeElement.type,
                     {
+                      ...nodeElement.props,
                       className: cx(className, nodeElement.props.className),
                       style: { ...style, ...nodeElement.props.style }
                     },
@@ -289,7 +289,7 @@ const Reveal: React.FC<RevealProps> = ({
             );
         }
       })}
-    </React.Fragment>
+    </>
   );
 };
 

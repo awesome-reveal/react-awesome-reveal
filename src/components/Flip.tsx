@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Interpolation, Theme } from "@emotion/react";
 
 import Reveal, { RevealProps } from "../Reveal";
@@ -12,7 +11,7 @@ import {
 
 type FlipDirection = "horizontal" | "vertical";
 
-interface FlipProps extends Omit<RevealProps, "keyframes"> {
+interface FlipProps extends Omit<RevealProps, "keyframes" | "css"> {
   /**
    * Axis direction of the animation.
    * @default undefined
@@ -39,16 +38,15 @@ function getFlipKeyframes(reverse: boolean, direction?: FlipDirection) {
 const Flip: React.FC<FlipProps> = ({
   direction,
   reverse = false,
-  css,
-  ...rest
+  ...otherProps
 }) => {
   const animationCss: Interpolation<Theme> = { backfaceVisibility: "visible" };
 
   return (
     <Reveal
       keyframes={getFlipKeyframes(reverse, direction)}
-      css={[css, animationCss]}
-      {...rest}
+      css={animationCss}
+      {...otherProps}
     />
   );
 };

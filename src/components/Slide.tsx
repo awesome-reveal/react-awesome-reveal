@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import Reveal, { RevealProps } from "../Reveal";
 import {
   slideInDown,
@@ -16,7 +14,7 @@ import {
 
 type SlideDirection = "down" | "left" | "right" | "up";
 
-interface SlideProps extends Omit<RevealProps, "keyframes"> {
+interface SlideProps extends Omit<RevealProps, "keyframes" | "css"> {
   /**
    * Origin of the animation.
    * @default undefined
@@ -46,9 +44,11 @@ function getSlideKeyframes(reverse: boolean, direction?: SlideDirection) {
 const Slide: React.FC<SlideProps> = ({
   direction,
   reverse = false,
-  ...rest
+  ...otherProps
 }) => {
-  return <Reveal keyframes={getSlideKeyframes(reverse, direction)} {...rest} />;
+  return (
+    <Reveal keyframes={getSlideKeyframes(reverse, direction)} {...otherProps} />
+  );
 };
 
 export default Slide;

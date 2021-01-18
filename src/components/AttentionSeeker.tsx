@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Interpolation, Theme } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
 
@@ -34,7 +33,7 @@ type AttentionSeekerEffect =
   | "tada"
   | "wobble";
 
-interface AttentionSeekerProps extends Omit<RevealProps, "keyframes"> {
+interface AttentionSeekerProps extends Omit<RevealProps, "keyframes" | "css"> {
   /**
    * The animation effect to use for this attention seeker.
    * @default "bounce"
@@ -78,12 +77,11 @@ function getAttentionSeekerKeyframesAndCss(
 
 const AttentionSeeker: React.FC<AttentionSeekerProps> = ({
   effect = "bounce",
-  css,
-  ...rest
+  ...otherProps
 }) => {
   const [keyframes, animationCss] = getAttentionSeekerKeyframesAndCss(effect);
 
-  return <Reveal keyframes={keyframes} css={[css, animationCss]} {...rest} />;
+  return <Reveal keyframes={keyframes} css={animationCss} {...otherProps} />;
 };
 
 export default AttentionSeeker;

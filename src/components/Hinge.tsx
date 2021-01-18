@@ -1,15 +1,14 @@
-import * as React from "react";
 import { Interpolation, Theme } from "@emotion/react";
 
 import Reveal, { RevealProps } from "../Reveal";
 import { hinge } from "../animations/specials";
 
-type HingeProps = Omit<RevealProps, "keyframes">;
+type HingeProps = Omit<RevealProps, "keyframes" | "css">;
 
-const Hinge: React.FC<HingeProps> = ({ css, ...rest }) => {
+const Hinge: React.FC<HingeProps> = props => {
   const animationCss: Interpolation<Theme> = { transformOrigin: "top left" };
 
-  return <Reveal keyframes={hinge} css={[css, animationCss]} {...rest} />;
+  return <Reveal keyframes={hinge} css={animationCss} {...props} />;
 };
 
 export default Hinge;

@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import Reveal, { RevealProps } from "../Reveal";
 import {
   fadeIn,
@@ -42,7 +40,7 @@ type FadeDirection =
   | "top-right"
   | "up";
 
-interface FadeProps extends Omit<RevealProps, "keyframes"> {
+interface FadeProps extends Omit<RevealProps, "keyframes" | "css"> {
   /**
    * Causes the animation to start farther. Only works with "down", "left", "right" and "up" directions.
    * @default false
@@ -115,10 +113,13 @@ const Fade: React.FC<FadeProps> = ({
   big = false,
   direction,
   reverse = false,
-  ...rest
+  ...otherProps
 }) => {
   return (
-    <Reveal keyframes={getFadeKeyframes(big, reverse, direction)} {...rest} />
+    <Reveal
+      keyframes={getFadeKeyframes(big, reverse, direction)}
+      {...otherProps}
+    />
   );
 };
 

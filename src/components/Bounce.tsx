@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import Reveal, { RevealProps } from "../Reveal";
 import {
   bounceIn,
@@ -18,7 +16,7 @@ import {
 
 type BounceDirection = "down" | "left" | "right" | "up";
 
-interface BounceProps extends Omit<RevealProps, "keyframes"> {
+interface BounceProps extends Omit<RevealProps, "keyframes" | "css"> {
   /**
    * Origin of the animation.
    * @default undefined
@@ -49,10 +47,13 @@ function getBounceKeyframes(reverse: boolean, direction?: BounceDirection) {
 const Bounce: React.FC<BounceProps> = ({
   direction,
   reverse = false,
-  ...rest
+  ...otherProps
 }) => {
   return (
-    <Reveal keyframes={getBounceKeyframes(reverse, direction)} {...rest} />
+    <Reveal
+      keyframes={getBounceKeyframes(reverse, direction)}
+      {...otherProps}
+    />
   );
 };
 

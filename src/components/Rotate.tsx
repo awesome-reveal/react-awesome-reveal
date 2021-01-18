@@ -1,4 +1,3 @@
-import * as React from "react";
 import { Interpolation, Theme } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
 
@@ -24,7 +23,7 @@ type RotateDirection =
   | "top-left"
   | "top-right";
 
-interface RotateProps extends Omit<RevealProps, "keyframes"> {
+interface RotateProps extends Omit<RevealProps, "keyframes" | "css"> {
   /**
    * Origin of the animation.
    * @default undefined
@@ -68,15 +67,14 @@ function getRotateKeyframesAndCss(
 const Rotate: React.FC<RotateProps> = ({
   direction,
   reverse = false,
-  css,
-  ...rest
+  ...otherProps
 }) => {
   const [keyframes, animationCss] = getRotateKeyframesAndCss(
     reverse,
     direction
   );
 
-  return <Reveal keyframes={keyframes} css={[css, animationCss]} {...rest} />;
+  return <Reveal keyframes={keyframes} css={animationCss} {...otherProps} />;
 };
 
 export default Rotate;
