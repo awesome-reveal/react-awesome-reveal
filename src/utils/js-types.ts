@@ -1,11 +1,13 @@
-export function isEmpty(object: any): object is null | undefined {
-  return object === null || object === undefined;
+export function isNullOrUndefined(value: unknown): value is null | undefined {
+  return value === null || value === undefined;
 }
 
-export function isStringLike(object: any): object is string | number | boolean {
+export function isStringLike(
+  value: unknown
+): value is string | number | boolean {
   return (
-    typeof object === "string" ||
-    typeof object === "number" ||
-    typeof object === "boolean"
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
   );
 }

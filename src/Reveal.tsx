@@ -5,7 +5,7 @@ import { Keyframes } from "@emotion/serialize";
 import { InView } from "react-intersection-observer";
 
 import fadeInLeft from "./animations/fading_entrances/fadeInLeft";
-import { isEmpty, isStringLike } from "./utils/js-types";
+import { isNullOrUndefined, isStringLike } from "./utils/js-types";
 import { getAnimationCss } from "./utils/animations";
 
 const hiddenCss = css`
@@ -99,7 +99,7 @@ const Reveal: FC<RevealProps> = ({
   children,
   onVisibilityChange
 }) => {
-  if (isEmpty(children)) {
+  if (isNullOrUndefined(children)) {
     return null;
   }
 
