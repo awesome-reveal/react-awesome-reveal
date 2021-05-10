@@ -2,11 +2,11 @@ module.exports = {
   siteMetadata: {
     title: `React Awesome Reveal`,
     description: `Playground to showcase React Awesome Reveal effects and features.`,
-    githubUrl: `https://github.com/dennismorello/react-awesome-reveal`,
+    githubUrl: `https://github.com/morellodev/react-awesome-reveal`,
     siteUrl: `https://react-awesome-reveal.morello.dev`,
     author: {
       name: `Dennis Morello`,
-      twitter: `@dennismorello`,
+      twitter: `@morellodev`,
       website: `https://morello.dev`,
     },
     keywords: [
