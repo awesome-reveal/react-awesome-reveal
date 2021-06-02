@@ -1,8 +1,10 @@
 name: Release
 on:
-  push:
-    branches:
-      - master
+  workflow_run:
+    workflows: ["CI"]
+    branches: [master]
+    types:
+      - completed
 jobs:
   release:
     name: Release
@@ -12,14 +14,18 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
       - name: Setup Node.js
         uses: actions/setup-node@v1
+
         with:
-          node-version: 12
+          node-version: 14
+
       - name: Install dependencies
-        run: npm ci
+        uses: bahmutov/npm-install@v1
+
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
+        run: yarn release
