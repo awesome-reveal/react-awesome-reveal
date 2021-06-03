@@ -23,7 +23,7 @@ jobs:
         run: yarn test --ci --coverage --maxWorkers=2
   release:
     name: Release
-    if: ${{ github.ref == 'master' }}
+    if: ${{ github.ref == 'refs/heads/master' }}
     needs: build
     runs-on: ubuntu-latest
     steps:
