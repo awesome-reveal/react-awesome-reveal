@@ -1,5 +1,5 @@
-import React from "react"
-import { Text } from "@chakra-ui/react"
+import { Text } from "@chakra-ui/react";
+import React from "react";
 
 const Copyleft = () => {
   return (
@@ -11,7 +11,7 @@ const Copyleft = () => {
         "::after": { content: "'\\00a9'" },
       }}
     />
-  )
-}
+  );
+};
 
-export default Copyleft
+export default Copyleft;

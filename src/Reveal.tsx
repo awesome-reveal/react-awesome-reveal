@@ -1,12 +1,12 @@
-import { Children, FC } from "react";
-import { isFragment } from "react-is";
-import { ClassNames, Interpolation, Theme, css, jsx } from "@emotion/react";
+import { ClassNames, css, Interpolation, jsx, Theme } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
+import { Children, FC } from "react";
 import { InView } from "react-intersection-observer";
+import { isFragment } from "react-is";
 
 import fadeInLeft from "./animations/fading_entrances/fadeInLeft";
-import { isNullOrUndefined, isStringLike } from "./utils/js-types";
 import { getAnimationCss } from "./utils/animations";
+import { isNullOrUndefined, isStringLike } from "./utils/js-types";
 
 const hiddenCss = css`
   opacity: 0;
@@ -97,7 +97,7 @@ const Reveal: FC<RevealProps> = ({
   childClassName,
   childStyle,
   children,
-  onVisibilityChange
+  onVisibilityChange,
 }) => {
   if (isNullOrUndefined(children)) {
     return null;
@@ -127,7 +127,7 @@ const Reveal: FC<RevealProps> = ({
                     ? getAnimationCss({
                         keyframes,
                         delay: delay + index * duration * damping,
-                        duration
+                        duration,
                       })
                     : hiddenCss
                 }
@@ -150,7 +150,7 @@ const Reveal: FC<RevealProps> = ({
           triggerOnce,
           css: revealCss,
           className,
-          style
+          style,
         }}
       >
         {stringifiedChildren}
@@ -195,7 +195,7 @@ const Reveal: FC<RevealProps> = ({
           getAnimationCss({
             keyframes,
             delay: delay + (cascade ? index * duration * damping : 0),
-            duration
+            duration,
           })
         );
 
@@ -210,7 +210,7 @@ const Reveal: FC<RevealProps> = ({
                     {
                       ...nodeElement.props,
                       className: cx(className, nodeElement.props.className),
-                      style: { ...style, ...nodeElement.props.style }
+                      style: { ...style, ...nodeElement.props.style },
                     },
                     <Reveal
                       {...{
@@ -223,7 +223,7 @@ const Reveal: FC<RevealProps> = ({
                         triggerOnce,
                         css: revealCss,
                         childClassName,
-                        childStyle
+                        childStyle,
                       }}
                     >
                       {nodeElement.props.children}
@@ -250,7 +250,7 @@ const Reveal: FC<RevealProps> = ({
                           childClassName,
                           nodeElement.props.className
                         ),
-                        style: { ...childStyle, ...nodeElement.props.style }
+                        style: { ...childStyle, ...nodeElement.props.style },
                       })
                     }
                   </ClassNames>
@@ -279,7 +279,7 @@ const Reveal: FC<RevealProps> = ({
                             childClassName,
                             nodeElement.props.className
                           ),
-                          style: { ...childStyle, ...nodeElement.props.style }
+                          style: { ...childStyle, ...nodeElement.props.style },
                         })
                       }
                     </ClassNames>

@@ -1,11 +1,11 @@
-import React from "react"
-import PropTypes from "prop-types"
-import { Box, Container, DarkMode, Heading } from "@chakra-ui/react"
-import { Fade } from "react-awesome-reveal"
+import { Box, Container, DarkMode, Heading } from "@chakra-ui/react";
+import PropTypes from "prop-types";
+import React from "react";
+import { Fade } from "react-awesome-reveal";
 
-import Footer from "./footer"
-import Header from "./header"
-import SEO from "./seo"
+import Footer from "./footer";
+import Header from "./header";
+import SEO from "./seo";
 
 const Layout = ({
   children,
@@ -53,10 +53,10 @@ const Layout = ({
       {showFooter && <Footer />}
     </Box>
   </DarkMode>
-)
+);
 
 Layout.propTypes = {
   children: PropTypes.node.isRequired,
-}
+};
 
-export default Layout
+export default Layout;

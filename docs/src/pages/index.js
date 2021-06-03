@@ -1,12 +1,12 @@
-import React, { useRef } from "react"
-import { graphql, useStaticQuery } from "gatsby"
-import { Button, Heading, Stack, useDisclosure } from "@chakra-ui/react"
-import { Zoom } from "react-awesome-reveal"
+import { Button, Heading, Stack, useDisclosure } from "@chakra-ui/react";
+import { graphql, useStaticQuery } from "gatsby";
+import React, { useRef } from "react";
+import { Zoom } from "react-awesome-reveal";
 
-import EffectsDrawer from "../components/effects-drawer"
-import GetStartedModal from "../components/get-started-modal"
-import Layout from "../components/layout"
-import Section from "../components/section"
+import EffectsDrawer from "../components/effects-drawer";
+import GetStartedModal from "../components/get-started-modal";
+import Layout from "../components/layout";
+import Section from "../components/section";
 
 export default ({ location }) => {
   const { site } = useStaticQuery(
@@ -19,22 +19,22 @@ export default ({ location }) => {
         }
       }
     `
-  )
+  );
 
   const {
     isOpen: isGetStartedModalOpen,
     onOpen: onGetStartedModalOpen,
     onClose: onGetStartedModalClose,
-  } = useDisclosure()
+  } = useDisclosure();
 
   const {
     isOpen: isEffectsDrawerOpen,
     onOpen: onEffectsDrawerOpen,
     onClose: onEffectsDrawerClose,
-  } = useDisclosure()
+  } = useDisclosure();
 
-  const getStartedButtonRef = useRef()
-  const effectsDrawerButtonRef = useRef()
+  const getStartedButtonRef = useRef();
+  const effectsDrawerButtonRef = useRef();
 
   return (
     <Layout
@@ -93,5 +93,5 @@ export default ({ location }) => {
         </Zoom>
       </Section>
     </Layout>
-  )
-}
+  );
+};

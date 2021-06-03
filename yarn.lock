@@ -4314,6 +4314,11 @@ eslint-plugin-react@^7.14.3:
     resolve "^2.0.0-next.3"
     string.prototype.matchall "^4.0.5"
 
+eslint-plugin-simple-import-sort@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-simple-import-sort/-/eslint-plugin-simple-import-sort-7.0.0.tgz#a1dad262f46d2184a90095a60c66fef74727f0f8"
+  integrity sha512-U3vEDB5zhYPNfxT5TYR7u01dboFZp+HNpnGhkDB2g/2E4wZ/g1Q9Ton8UwCLfRV9yAKyYqDh62oHOamvkFxsvw==
+
 eslint-scope@^4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/eslint-scope/-/eslint-scope-4.0.3.tgz#ca03833310f6889a3264781aa82e63eb9cfe7848"
@@ -8423,6 +8428,11 @@ prelude-ls@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
   integrity sha1-IZMqVJ9eUv/ZqCf1cOBL5iqX2lQ=
+
+prettier-config-morellodev@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/prettier-config-morellodev/-/prettier-config-morellodev-2.0.0.tgz#1c409d47e201bb4c1c58d23722795a5ca69ed8f6"
+  integrity sha512-LmgP9kW8tzwo5srpva8ks1XLcqmTuyY+ItSp7sJsIQg0j0fQALE8WNMTB/CWhgScsCpWfGBzKJWPf7sytmmx7w==
 
 prettier-linter-helpers@^1.0.0:
   version "1.0.0"

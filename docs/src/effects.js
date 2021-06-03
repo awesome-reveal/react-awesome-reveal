@@ -47,4 +47,4 @@ module.exports = [
     title: "Zoom",
     directions: [undefined, "top", "left", "bottom", "right"],
   },
-]
+];

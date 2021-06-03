@@ -1,18 +1,18 @@
-import Reveal, { RevealProps } from "../Reveal";
 import {
   zoomIn,
   zoomInDown,
   zoomInLeft,
   zoomInRight,
-  zoomInUp
+  zoomInUp,
 } from "../animations/zooming_entrances";
 import {
   zoomOut,
   zoomOutDown,
   zoomOutLeft,
   zoomOutRight,
-  zoomOutUp
+  zoomOutUp,
 } from "../animations/zooming_exits";
+import Reveal, { RevealProps } from "../Reveal";
 
 type ZoomDirection = "down" | "left" | "right" | "up";
 

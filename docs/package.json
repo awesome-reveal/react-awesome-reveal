@@ -37,7 +37,9 @@
   },
   "devDependencies": {
     "eslint-plugin-react-hooks": "^4.1.0",
-    "prettier": "^1.19.1"
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "prettier": "^2.3.0",
+    "prettier-config-morellodev": "^2.0.0"
   },
   "keywords": [],
   "license": "MIT",
@@ -45,6 +47,7 @@
     "build": "gatsby build --prefix-paths",
     "clean": "gatsby clean",
     "develop": "gatsby develop",
+    "lint": "eslint --fix \"**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
     "start": "npm run develop",
     "serve": "gatsby serve --prefix-paths",

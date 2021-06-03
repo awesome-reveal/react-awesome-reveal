@@ -1,4 +1,3 @@
-import Reveal, { RevealProps } from "../Reveal";
 import {
   fadeIn,
   fadeInBottomLeft,
@@ -12,7 +11,7 @@ import {
   fadeInTopLeft,
   fadeInTopRight,
   fadeInUp,
-  fadeInUpBig
+  fadeInUpBig,
 } from "../animations/fading_entrances";
 import {
   fadeOut,
@@ -27,8 +26,9 @@ import {
   fadeOutTopLeft,
   fadeOutTopRight,
   fadeOutUp,
-  fadeOutUpBig
+  fadeOutUpBig,
 } from "../animations/fading_exits";
+import Reveal, { RevealProps } from "../Reveal";
 
 type FadeDirection =
   | "bottom-left"

@@ -7,7 +7,7 @@ export function getAnimationCss({
   delay = 0,
   timingFunction = "ease",
   keyframes = fadeInLeft,
-  iterationCount = 1
+  iterationCount = 1,
 }) {
   return css`
     animation-duration: ${duration}ms;

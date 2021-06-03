@@ -1,10 +1,10 @@
-import React from "react"
-import { graphql, useStaticQuery } from "gatsby"
-import { Box, Container, Link, Stack, Text } from "@chakra-ui/react"
-import { Fade } from "react-awesome-reveal"
+import { Box, Container, Link, Stack, Text } from "@chakra-ui/react";
+import { graphql, useStaticQuery } from "gatsby";
+import React from "react";
+import { Fade } from "react-awesome-reveal";
 
-import Copyleft from "./copyleft"
-import HeartIcon from "../icons/heart"
+import HeartIcon from "../icons/heart";
+import Copyleft from "./copyleft";
 
 const Footer = () => {
   const { site } = useStaticQuery(graphql`
@@ -18,7 +18,7 @@ const Footer = () => {
         }
       }
     }
-  `)
+  `);
 
   return (
     <Box as="footer" backgroundColor="gray.900">
@@ -39,7 +39,7 @@ const Footer = () => {
         </Fade>
       </Container>
     </Box>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

@@ -1,18 +1,18 @@
-import React from "react"
-import { Link as GatsbyLink, withPrefix } from "gatsby"
 import {
   Button,
   Drawer,
   DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
   DrawerHeader,
   DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
   VStack,
-} from "@chakra-ui/react"
-import { Flip } from "react-awesome-reveal"
+} from "@chakra-ui/react";
+import { Link as GatsbyLink, withPrefix } from "gatsby";
+import React from "react";
+import { Flip } from "react-awesome-reveal";
 
-import effects from "../effects"
+import effects from "../effects";
 
 const NavLink = ({ to, location, ...props }) => (
   <Button
@@ -25,7 +25,7 @@ const NavLink = ({ to, location, ...props }) => (
     isActive={location.pathname === withPrefix(to)}
     {...props}
   />
-)
+);
 
 const EffectsDrawer = ({ isOpen, onClose, referrer, location }) => {
   return (
@@ -43,7 +43,7 @@ const EffectsDrawer = ({ isOpen, onClose, referrer, location }) => {
           <DrawerBody overflowY="auto" pb={8}>
             <VStack as="nav">
               <Flip triggerOnce>
-                {effects.map(effect => (
+                {effects.map((effect) => (
                   <NavLink
                     key={effect.name}
                     to={`/${effect.name}`}
@@ -58,7 +58,7 @@ const EffectsDrawer = ({ isOpen, onClose, referrer, location }) => {
         </DrawerContent>
       </DrawerOverlay>
     </Drawer>
-  )
-}
+  );
+};
 
-export default EffectsDrawer
+export default EffectsDrawer;

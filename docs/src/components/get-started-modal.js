@@ -1,37 +1,37 @@
-import React, { useState } from "react"
+import { CopyIcon } from "@chakra-ui/icons";
 import {
   Button,
   Code,
   Flex,
   IconButton,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
   ModalBody,
-  Tabs,
-  TabList,
-  TabPanels,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Tab,
+  TabList,
   TabPanel,
+  TabPanels,
+  Tabs,
   useClipboard,
-} from "@chakra-ui/react"
-import { CopyIcon } from "@chakra-ui/icons"
+} from "@chakra-ui/react";
+import React, { useState } from "react";
 
 const INSTALL_COMMANDS = [
   "npm install react-awesome-reveal@latest",
   "yarn add react-awesome-reveal@latest",
-]
+];
 
-const PACKAGE_MANAGERS_REGEX = /^(npm|yarn)/
+const PACKAGE_MANAGERS_REGEX = /^(npm|yarn)/;
 
 const GetStartedModal = ({ isOpen, onClose, referrer }) => {
-  const [installCommand, setInstallCommand] = useState(INSTALL_COMMANDS[0])
-  const { onCopy } = useClipboard(installCommand)
+  const [installCommand, setInstallCommand] = useState(INSTALL_COMMANDS[0]);
+  const { onCopy } = useClipboard(installCommand);
 
   function getPackageManagerNameFromInstallCommand(command) {
-    return command.match(PACKAGE_MANAGERS_REGEX)?.[0]
+    return command.match(PACKAGE_MANAGERS_REGEX)?.[0];
   }
 
   return (
@@ -47,7 +47,7 @@ const GetStartedModal = ({ isOpen, onClose, referrer }) => {
         <ModalBody>
           <Tabs colorScheme="purple" size="sm" variant="soft-rounded">
             <TabList>
-              {INSTALL_COMMANDS.map(command => (
+              {INSTALL_COMMANDS.map((command) => (
                 <Tab key={command} onClick={() => setInstallCommand(command)}>
                   {getPackageManagerNameFromInstallCommand(command)}
                 </Tab>
@@ -55,7 +55,7 @@ const GetStartedModal = ({ isOpen, onClose, referrer }) => {
             </TabList>
 
             <TabPanels>
-              {INSTALL_COMMANDS.map(command => (
+              {INSTALL_COMMANDS.map((command) => (
                 <TabPanel key={command} px={0}>
                   <Flex
                     align="center"
@@ -89,7 +89,7 @@ const GetStartedModal = ({ isOpen, onClose, referrer }) => {
         </ModalFooter>
       </ModalContent>
     </Modal>
-  )
-}
+  );
+};
 
-export default GetStartedModal
+export default GetStartedModal;

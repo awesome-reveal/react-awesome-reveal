@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
-import { useStaticQuery, graphql } from "gatsby"
+import { HamburgerIcon } from "@chakra-ui/icons";
 import {
   Button,
   Container,
@@ -7,11 +6,12 @@ import {
   HStack,
   IconButton,
   useDisclosure,
-} from "@chakra-ui/react"
-import { HamburgerIcon } from "@chakra-ui/icons"
-import { Fade } from "react-awesome-reveal"
+} from "@chakra-ui/react";
+import { graphql,useStaticQuery } from "gatsby";
+import React, { useEffect, useRef, useState } from "react";
+import { Fade } from "react-awesome-reveal";
 
-import EffectsDrawer from "./effects-drawer"
+import EffectsDrawer from "./effects-drawer";
 
 const Header = ({
   location,
@@ -31,23 +31,23 @@ const Header = ({
         }
       }
     `
-  )
+  );
 
-  const [showHeaderShadow, setShowHeaderShadow] = useState(false)
-  const { isOpen, onOpen, onClose } = useDisclosure()
-  const drawerButtonRef = useRef()
+  const [showHeaderShadow, setShowHeaderShadow] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const drawerButtonRef = useRef();
 
   useEffect(() => {
     function onScrollHandler() {
-      setShowHeaderShadow(window.scrollY > 64)
+      setShowHeaderShadow(window.scrollY > 64);
     }
 
-    window.addEventListener("scroll", onScrollHandler)
+    window.addEventListener("scroll", onScrollHandler);
 
     return () => {
-      window.removeEventListener("scroll", onScrollHandler)
-    }
-  }, [])
+      window.removeEventListener("scroll", onScrollHandler);
+    };
+  }, []);
 
   const headerContent = (
     <Flex direction="row" alignItems="center" justifyContent="space-between">
@@ -88,7 +88,7 @@ const Header = ({
         </Button>
       )}
     </Flex>
-  )
+  );
 
   return (
     <Flex
@@ -111,7 +111,7 @@ const Header = ({
         )}
       </Container>
     </Flex>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

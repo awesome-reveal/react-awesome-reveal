@@ -1,7 +1,6 @@
 import { Interpolation, Theme } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
 
-import Reveal, { RevealProps } from "../Reveal";
 import {
   bounce,
   flash,
@@ -15,8 +14,9 @@ import {
   shakeY,
   swing,
   tada,
-  wobble
+  wobble,
 } from "../animations/attention_seekers";
+import Reveal, { RevealProps } from "../Reveal";
 
 type AttentionSeekerEffect =
   | "bounce"

@@ -1,21 +1,21 @@
 import { Interpolation, Theme } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
 
-import Reveal, { RevealProps } from "../Reveal";
 import {
   rotateIn,
   rotateInDownLeft,
   rotateInDownRight,
   rotateInUpLeft,
-  rotateInUpRight
+  rotateInUpRight,
 } from "../animations/rotating_entrances";
 import {
   rotateOut,
   rotateOutDownLeft,
   rotateOutDownRight,
   rotateOutUpLeft,
-  rotateOutUpRight
+  rotateOutUpRight,
 } from "../animations/rotating_exits";
+import Reveal, { RevealProps } from "../Reveal";
 
 type RotateDirection =
   | "bottom-left"

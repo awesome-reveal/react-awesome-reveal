@@ -1,5 +1,5 @@
-import React from "react"
-import { Flex } from "@chakra-ui/react"
+import { Flex } from "@chakra-ui/react";
+import React from "react";
 
 const Section = ({ children, hasNavbar = true, height = "100vh", ...rest }) => (
   <Flex
@@ -11,6 +11,6 @@ const Section = ({ children, hasNavbar = true, height = "100vh", ...rest }) => (
   >
     {children}
   </Flex>
-)
+);
 
-export default Section
+export default Section;

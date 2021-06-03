@@ -1,18 +1,18 @@
-import Reveal, { RevealProps } from "../Reveal";
 import {
   bounceIn,
   bounceInDown,
   bounceInLeft,
   bounceInRight,
-  bounceInUp
+  bounceInUp,
 } from "../animations/bouncing_entrances";
 import {
   bounceOut,
   bounceOutDown,
   bounceOutLeft,
   bounceOutRight,
-  bounceOutUp
+  bounceOutUp,
 } from "../animations/bouncing_exits";
+import Reveal, { RevealProps } from "../Reveal";
 
 type BounceDirection = "down" | "left" | "right" | "up";
 

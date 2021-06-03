@@ -1,13 +1,13 @@
-import React from "react"
-import { Button, Heading } from "@chakra-ui/react"
+import { Button, Heading } from "@chakra-ui/react";
+import React from "react";
 
 // Components
-import Layout from "../components/layout"
-import Reveal from "../components/reveal"
-import Section from "../components/section"
+import Layout from "../components/layout";
+import Reveal from "../components/reveal";
+import Section from "../components/section";
 
 export default ({ location, pageContext }) => {
-  const { title, directions, effect } = pageContext
+  const { title, directions, effect } = pageContext;
 
   return (
     <Layout
@@ -42,5 +42,5 @@ export default ({ location, pageContext }) => {
         </Section>
       ))}
     </Layout>
-  )
-}
+  );
+};

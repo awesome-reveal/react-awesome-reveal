@@ -5,7 +5,7 @@ const Section: React.FC = ({ children }) => (
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      flexDirection: "column"
+      flexDirection: "column",
     }}
   >
     {children}

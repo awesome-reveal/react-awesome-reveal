@@ -1,16 +1,16 @@
-import Reveal, { RevealProps } from "../Reveal";
 import {
   slideInDown,
   slideInLeft,
   slideInRight,
-  slideInUp
+  slideInUp,
 } from "../animations/sliding_entrances";
 import {
   slideOutDown,
   slideOutLeft,
   slideOutRight,
-  slideOutUp
+  slideOutUp,
 } from "../animations/sliding_exits";
+import Reveal, { RevealProps } from "../Reveal";
 
 type SlideDirection = "down" | "left" | "right" | "up";
 
