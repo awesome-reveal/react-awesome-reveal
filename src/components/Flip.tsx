@@ -11,7 +11,7 @@ import Reveal, { RevealProps } from "../Reveal";
 
 type FlipDirection = "horizontal" | "vertical";
 
-interface FlipProps extends Omit<RevealProps, "keyframes" | "css"> {
+export interface FlipProps extends Omit<RevealProps, "keyframes" | "css"> {
   /**
    * Axis direction of the animation.
    * @default undefined

@@ -23,7 +23,7 @@ type RotateDirection =
   | "top-left"
   | "top-right";
 
-interface RotateProps extends Omit<RevealProps, "keyframes" | "css"> {
+export interface RotateProps extends Omit<RevealProps, "keyframes" | "css"> {
   /**
    * Origin of the animation.
    * @default undefined

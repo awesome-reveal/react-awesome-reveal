@@ -33,7 +33,8 @@ type AttentionSeekerEffect =
   | "tada"
   | "wobble";
 
-interface AttentionSeekerProps extends Omit<RevealProps, "keyframes" | "css"> {
+export interface AttentionSeekerProps
+  extends Omit<RevealProps, "keyframes" | "css"> {
   /**
    * The animation effect to use for this attention seeker.
    * @default "bounce"

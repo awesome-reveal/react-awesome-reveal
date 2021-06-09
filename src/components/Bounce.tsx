@@ -16,7 +16,7 @@ import Reveal, { RevealProps } from "../Reveal";
 
 type BounceDirection = "down" | "left" | "right" | "up";
 
-interface BounceProps extends Omit<RevealProps, "keyframes" | "css"> {
+export interface BounceProps extends Omit<RevealProps, "keyframes" | "css"> {
   /**
    * Origin of the animation.
    * @default undefined

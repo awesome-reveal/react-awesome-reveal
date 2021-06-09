@@ -1,7 +1,7 @@
 import { rollIn, rollOut } from "../animations/specials";
 import Reveal, { RevealProps } from "../Reveal";
 
-interface RollProps extends Omit<RevealProps, "keyframes" | "css"> {
+export interface RollProps extends Omit<RevealProps, "keyframes" | "css"> {
   /**
    * Specifies if the animation should make element(s) disappear.
    * @default false
