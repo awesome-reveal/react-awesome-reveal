@@ -14,7 +14,7 @@ import Reveal, { RevealProps } from "../Reveal";
 
 type SlideDirection = "down" | "left" | "right" | "up";
 
-interface SlideProps extends Omit<RevealProps, "keyframes" | "css"> {
+export interface SlideProps extends Omit<RevealProps, "keyframes" | "css"> {
   /**
    * Origin of the animation.
    * @default undefined
