@@ -13,8 +13,8 @@ module.exports = {
   projectName: pkg.name, // Usually your repo name.
   themeConfig: {
     algolia: {
-      apiKey: "YOUR_API_KEY",
-      indexName: "YOUR_INDEX_NAME",
+      apiKey: process.env.ALGOLIA_RAR_API_KEY,
+      indexName: process.env.ALGOLIA_RAR_INDEX_NAME,
     },
     colorMode: {
       disableSwitch: true,
