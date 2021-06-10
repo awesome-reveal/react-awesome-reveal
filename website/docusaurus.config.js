@@ -12,10 +12,6 @@ module.exports = {
   organizationName: "morellodev", // Usually your GitHub org/user name.
   projectName: pkg.name, // Usually your repo name.
   themeConfig: {
-    algolia: {
-      apiKey: process.env.ALGOLIA_RAR_API_KEY,
-      indexName: process.env.ALGOLIA_RAR_INDEX_NAME,
-    },
     colorMode: {
       disableSwitch: true,
     },
@@ -96,5 +92,6 @@ module.exports = {
       },
     ],
   ],
+  plugins: [require.resolve("docusaurus-lunr-search")],
   themes: ["@docusaurus/theme-live-codeblock"],
 };
