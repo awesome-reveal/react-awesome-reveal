@@ -5,7 +5,7 @@ module.exports = {
   title: "React Awesome Reveal",
   tagline: "Add revealing animations to your website with ease",
   url: pkg.homepage,
-  baseUrl: "/next/",
+  baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
