@@ -8,9 +8,6 @@
     "email": "dennismorello@gmail.com",
     "url": "https://react-awesome-reveal.morello.dev"
   },
-  "engines": {
-    "node": ">=8"
-  },
   "dependencies": {
     "@chakra-ui/gatsby-plugin": "^1.0.0",
     "@chakra-ui/icons": "^1.0.0",
