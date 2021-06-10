@@ -34,7 +34,7 @@ module.exports = {
         },
         {
           type: "doc",
-          docId: "effects/fade",
+          docId: "effects/attention-seekers",
           label: "Effects",
           position: "left",
         },

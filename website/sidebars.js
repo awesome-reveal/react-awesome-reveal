@@ -13,9 +13,38 @@ module.exports = {
   // By default, Docusaurus generates a sidebar from the docs folder structure
   docsSidebar: [
     "intro",
-    { "Getting Started": ["getting-started/installation"] },
+    "features",
+    {
+      "Getting Started": [
+        "getting-started/installation",
+        "getting-started/quick-start",
+      ],
+    },
+    {
+      "Supported Effects": [
+        "supported-effects/attention-seekers",
+        "supported-effects/props",
+        "supported-effects/example",
+        "supported-effects/chaining-multiple-animations",
+      ],
+    },
+    "custom-animations",
+    "advanced-concepts",
+    "past-releases",
+    "license",
   ],
-  examplesSidebar: ["effects/fade"],
+  examplesSidebar: [
+    "effects/attention-seekers",
+    "effects/bounce",
+    "effects/fade",
+    "effects/flip",
+    "effects/hinge",
+    "effects/jack-in-the-box",
+    "effects/roll",
+    "effects/rotate",
+    "effects/slide",
+    "effects/zoom",
+  ],
 
   // But you can create a sidebar manually
   /*
