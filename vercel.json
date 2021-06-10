@@ -10,7 +10,14 @@
     {
       "src": "docs/package.json",
       "use": "@now/static-build"
+    },
+    {
+      "src": "website/package.json",
+      "use": "@now/static-build"
     }
   ],
-  "routes": [{ "src": "/(.*)", "dest": "/docs/$1" }]
+  "routes": [
+    { "src": "/next/(.*)", "dest": "/website/$1" },
+    { "src": "/(.*)", "dest": "/docs/$1" }
+  ]
 }
