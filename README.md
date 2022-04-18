@@ -29,7 +29,7 @@
 
 ## Features
 
-- 🎁 **Modern stack** – It is built for modern React
+- 🎁 **Modern stack** – It is built for modern React and supports React 18
 - 🏷 **TypeScript support** – It is written in TypeScript to improve the DX
 - 🍃 **Lightweight** – Very little footprint on your project and no other dependencies required
 - ⚙️ **Uses native APIs** – Intersection Observer and CSS Animations are now supported by all major browsers

@@ -1,6 +1,6 @@
 import { ClassNames, css, Interpolation, jsx, Theme } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
-import { Children, FC } from "react";
+import * as React from "react";
 import { InView } from "react-intersection-observer";
 import { isFragment } from "react-is";
 
@@ -73,6 +73,11 @@ export interface RevealProps {
    */
   childStyle?: React.CSSProperties;
   /**
+   * From React 18, children must be explicitly typed.
+   * @see https://reactjs.org/blog/2022/03/08/react-18-upgrade-guide.html#updates-to-typescript-definitions
+   */
+  children?: React.ReactNode;
+  /**
    * Callback executed when the element enters or leaves the viewport.
    * If more than one element is being animated, this function is called
    * on each element.
@@ -83,7 +88,7 @@ export interface RevealProps {
   onVisibilityChange?(inView: boolean, entry: IntersectionObserverEntry): void;
 }
 
-const Reveal: FC<RevealProps> = ({
+const Reveal: React.FC<RevealProps> = ({
   cascade = false,
   damping = 0.5,
   delay = 0,
@@ -185,7 +190,7 @@ const Reveal: FC<RevealProps> = ({
 
   return (
     <>
-      {Children.map(children, (node, index) => {
+      {React.Children.map(children, (node, index) => {
         const nodeElement = node as React.ReactElement;
         const nodeCss: Interpolation<Theme>[] = nodeElement.props.css
           ? [nodeElement.props.css]

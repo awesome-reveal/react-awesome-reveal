@@ -1,4 +1,4 @@
-const Section: React.FC = ({ children }) => (
+export const Section: React.FC = ({ children }) => (
   <section
     style={{
       height: "100vh",
@@ -11,5 +11,3 @@ const Section: React.FC = ({ children }) => (
     {children}
   </section>
 );
-
-export default Section;
