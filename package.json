@@ -42,7 +42,7 @@
     "test": "jest --passWithNoTests",
     "lint": "eslint src example",
     "lint:fix": "eslint --fix src example",
-    "prepare": "tsup && husky install",
+    "prepare": "husky install",
     "size": "size-limit",
     "analyze": "size-limit --why"
   },
