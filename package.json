@@ -39,6 +39,7 @@
     "prebuild": "tsc",
     "build": "tsup",
     "dev": "tsup --watch",
+    "test": "jest --passWithNoTests",
     "lint": "eslint src example",
     "lint:fix": "eslint --fix src example",
     "prepare": "tsup && husky install",
@@ -61,6 +62,7 @@
   "devDependencies": {
     "@emotion/eslint-plugin": "^11.7.0",
     "@size-limit/preset-small-lib": "^4.11.0",
+    "@types/jest": "^27.4.1",
     "@types/react": "^17.0.9",
     "@types/react-dom": "^17.0.6",
     "@types/react-is": "^16.7.1",
@@ -72,6 +74,7 @@
     "eslint-plugin-react-hooks": "^4.4.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "husky": "^7.0.0",
+    "jest": "^27.5.1",
     "prettier": "^2.6.2",
     "prettier-config-morellodev": "^2.0.1",
     "react": "^17.0.2",
