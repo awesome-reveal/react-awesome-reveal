@@ -51,7 +51,7 @@
   "size-limit": [
     {
       "path": "dist/index.js",
-      "limit": "15 KB"
+      "limit": "20 KB"
     },
     {
       "path": "dist/index.mjs",
