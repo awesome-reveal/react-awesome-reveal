@@ -1,5 +1,5 @@
-import { Interpolation, Theme } from "@emotion/react";
-import { Keyframes } from "@emotion/serialize";
+import type { Interpolation, Theme } from "@emotion/react";
+import type { Keyframes } from "@emotion/serialize";
 
 import {
   rotateIn,
@@ -15,7 +15,8 @@ import {
   rotateOutUpLeft,
   rotateOutUpRight,
 } from "../animations/rotating_exits";
-import Reveal, { RevealProps } from "../Reveal";
+import type { RevealProps } from "../Reveal";
+import Reveal from "../Reveal";
 
 type RotateDirection =
   | "bottom-left"

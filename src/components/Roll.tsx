@@ -1,5 +1,6 @@
 import { rollIn, rollOut } from "../animations/specials";
-import Reveal, { RevealProps } from "../Reveal";
+import type { RevealProps } from "../Reveal";
+import Reveal from "../Reveal";
 
 export interface RollProps extends Omit<RevealProps, "keyframes" | "css"> {
   /**

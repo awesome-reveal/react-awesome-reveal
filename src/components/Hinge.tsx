@@ -1,7 +1,8 @@
-import { Interpolation, Theme } from "@emotion/react";
+import type { Interpolation, Theme } from "@emotion/react";
 
 import { hinge } from "../animations/specials";
-import Reveal, { RevealProps } from "../Reveal";
+import type { RevealProps } from "../Reveal";
+import Reveal from "../Reveal";
 
 export type HingeProps = Omit<RevealProps, "keyframes" | "css">;
 

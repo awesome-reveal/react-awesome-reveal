@@ -12,7 +12,8 @@ import {
   zoomOutRight,
   zoomOutUp,
 } from "../animations/zooming_exits";
-import Reveal, { RevealProps } from "../Reveal";
+import type { RevealProps } from "../Reveal";
+import Reveal from "../Reveal";
 
 type ZoomDirection = "down" | "left" | "right" | "up";
 

@@ -1,4 +1,4 @@
-import { Interpolation, Theme } from "@emotion/react";
+import type { Interpolation, Theme } from "@emotion/react";
 
 import {
   flip,
@@ -7,7 +7,8 @@ import {
   flipOutX,
   flipOutY,
 } from "../animations/flippers";
-import Reveal, { RevealProps } from "../Reveal";
+import type { RevealProps } from "../Reveal";
+import Reveal from "../Reveal";
 
 type FlipDirection = "horizontal" | "vertical";
 

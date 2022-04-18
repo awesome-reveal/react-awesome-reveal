@@ -12,7 +12,8 @@ import {
   bounceOutRight,
   bounceOutUp,
 } from "../animations/bouncing_exits";
-import Reveal, { RevealProps } from "../Reveal";
+import type { RevealProps } from "../Reveal";
+import Reveal from "../Reveal";
 
 type BounceDirection = "down" | "left" | "right" | "up";
 

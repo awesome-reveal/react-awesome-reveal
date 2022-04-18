@@ -1,6 +1,7 @@
-import { ClassNames, css, Interpolation, jsx, Theme } from "@emotion/react";
+import type { Interpolation, Theme } from "@emotion/react";
+import { ClassNames, css, jsx } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
-import React from "react";
+import { Children } from "react";
 import { InView } from "react-intersection-observer";
 import { isFragment } from "react-is";
 
@@ -190,7 +191,7 @@ const Reveal: React.FC<RevealProps> = ({
 
   return (
     <>
-      {React.Children.map(children, (node, index) => {
+      {Children.map(children, (node, index) => {
         const nodeElement = node as React.ReactElement;
         const nodeCss: Interpolation<Theme>[] = nodeElement.props.css
           ? [nodeElement.props.css]
