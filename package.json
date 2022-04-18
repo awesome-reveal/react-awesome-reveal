@@ -43,25 +43,24 @@
     "lint": "eslint src example",
     "lint:fix": "eslint --fix src example",
     "prepare": "husky install",
-    "size": "size-limit",
-    "analyze": "size-limit --why"
+    "size": "size-limit"
   },
   "peerDependencies": {
     "react": ">=16.14.0"
   },
   "size-limit": [
     {
-      "path": "dist/react-awesome-reveal.cjs.production.min.js",
+      "path": "dist/index.js",
       "limit": "15 KB"
     },
     {
-      "path": "dist/react-awesome-reveal.esm.js",
+      "path": "dist/index.mjs",
       "limit": "15 KB"
     }
   ],
   "devDependencies": {
     "@emotion/eslint-plugin": "^11.7.0",
-    "@size-limit/preset-small-lib": "^4.11.0",
+    "@size-limit/preset-small-lib": "^7.0.8",
     "@types/jest": "^27.4.1",
     "@types/react": "^17.0.9",
     "@types/react-dom": "^17.0.6",
@@ -79,7 +78,7 @@
     "prettier-config-morellodev": "^2.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "size-limit": "^4.11.0",
+    "size-limit": "^7.0.8",
     "tsup": "^5.12.5",
     "typescript": "^4.6.3"
   },
