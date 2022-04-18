@@ -1,6 +1,6 @@
 import { ClassNames, css, Interpolation, jsx, Theme } from "@emotion/react";
 import { Keyframes } from "@emotion/serialize";
-import * as React from "react";
+import React from "react";
 import { InView } from "react-intersection-observer";
 import { isFragment } from "react-is";
 

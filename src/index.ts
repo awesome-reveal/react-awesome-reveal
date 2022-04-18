@@ -16,6 +16,6 @@ export { default as Roll, RollProps } from "./components/Roll";
 export { default as Rotate, RotateProps } from "./components/Rotate";
 export { default as Slide, SlideProps } from "./components/Slide";
 export { default as Zoom, ZoomProps } from "./components/Zoom";
-
 export { Reveal, RevealProps };
+
 export default Reveal;

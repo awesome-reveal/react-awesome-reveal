@@ -29,19 +29,19 @@
     "url": "https://github.com/morellodev/react-awesome-reveal/issues"
   },
   "main": "dist/index.js",
-  "module": "dist/react-awesome-reveal.esm.js",
+  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "sideEffects": false,
   "scripts": {
-    "start": "tsdx watch",
-    "build": "tsdx build",
-    "test": "tsdx test --passWithNoTests",
-    "lint": "tsdx lint src example",
-    "lint:fix": "npm run lint -- --fix",
-    "prepare": "tsdx build && husky install",
+    "prebuild": "tsc",
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src example",
+    "lint:fix": "eslint --fix src example",
+    "prepare": "tsup && husky install",
     "size": "size-limit",
     "analyze": "size-limit --why"
   },
@@ -59,32 +59,30 @@
     }
   ],
   "devDependencies": {
-    "@babel/core": "^7.17.9",
-    "@babel/preset-react": "^7.16.7",
     "@emotion/eslint-plugin": "^11.7.0",
     "@size-limit/preset-small-lib": "^4.11.0",
-    "@types/jest": "^26.0.23",
     "@types/react": "^17.0.9",
     "@types/react-dom": "^17.0.6",
     "@types/react-is": "^16.7.1",
+    "@typescript-eslint/eslint-plugin": "^5.19.0",
+    "@typescript-eslint/parser": "^5.19.0",
+    "eslint": "^8.13.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-react-hooks": "^4.4.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "husky": "^7.0.0",
-    "prettier-config-morellodev": "^2.0.0",
+    "prettier": "^2.6.2",
+    "prettier-config-morellodev": "^2.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "size-limit": "^4.11.0",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.3.1",
-    "typescript": "^4.3.2"
+    "tsup": "^5.12.5",
+    "typescript": "^4.6.3"
   },
   "dependencies": {
     "@emotion/react": "^11.9.0",
     "react-intersection-observer": "^8.34.0",
     "react-is": "^17.0.2"
-  },
-  "resolutions": {
-    "**/@typescript-eslint/eslint-plugin": "^4.26.0",
-    "**/@typescript-eslint/parser": "^4.26.0",
-    "**/typescript": "^4.3.2"
   }
 }

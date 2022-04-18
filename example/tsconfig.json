@@ -1,19 +1,12 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": false,
-    "target": "es5",
-    "module": "commonjs",
+    "target": "ESNext",
+    "module": "ESNext",
     "jsx": "react-jsx",
-    "moduleResolution": "node",
-    "noImplicitAny": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "removeComments": true,
-    "strictNullChecks": true,
-    "preserveConstEnums": true,
-    "sourceMap": true,
-    "lib": ["es2015", "es2016", "dom"],
-    "baseUrl": ".",
-    "types": ["node"]
+    "moduleResolution": "Node",
+    "skipLibCheck": true,
+    "strict": true,
+    "lib": ["DOM", "ESNext"],
+    "baseUrl": "."
   }
 }
