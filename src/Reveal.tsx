@@ -73,6 +73,11 @@ export interface RevealProps {
    */
   childStyle?: React.CSSProperties;
   /**
+   * React 18 requires children to be explicitly listed in props
+   * https://reactjs.org/blog/2022/03/08/react-18-upgrade-guide.html#updates-to-typescript-definitions
+   */
+  children? React.ReactNode;
+  /**
    * Callback executed when the element enters or leaves the viewport.
    * If more than one element is being animated, this function is called
    * on each element.
