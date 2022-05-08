@@ -118,14 +118,16 @@ export const Reveal: React.FC<RevealProps> = ({
         triggerOnce={triggerOnce}
         onChange={onVisibilityChange}
       >
-        {({ inView, ref }) => (
-          <div
-            ref={ref}
-            css={[revealCss, textBaseCss]}
-            className={className}
-            style={style}
-          >
-            {stringifiedChildren.split("").map((char, index) =>
+        {({ inView, ref }) =>
+          jsx(
+            "div",
+            {
+              ref,
+              className,
+              css: [revealCss, textBaseCss],
+              style,
+            },
+            stringifiedChildren.split("").map((char, index) =>
               jsx(
                 "span",
                 {
@@ -141,9 +143,9 @@ export const Reveal: React.FC<RevealProps> = ({
                 },
                 char
               )
-            )}
-          </div>
-        )}
+            )
+          )
+        }
       </InView>
     ) : (
       <Reveal
