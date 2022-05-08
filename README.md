@@ -47,13 +47,13 @@ You can find a demo website [here](https://react-awesome-reveal.morello.dev).
 To add this package as a dependency to your app, simply run
 
 ```sh
-npm install react-awesome-reveal --save
+npm install react-awesome-reveal @emotion/react --save
 ```
 
 or, if you are using Yarn (as I strongly suggest):
 
 ```sh
-yarn add react-awesome-reveal
+yarn add react-awesome-reveal @emotion/react
 ```
 
 ## Quick Start
