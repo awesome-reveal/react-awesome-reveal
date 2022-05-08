@@ -42,8 +42,7 @@
   },
   "peerDependencies": {
     "@emotion/react": "^11.0.0",
-    "react": ">=16.14.0",
-    "react-dom": ">=16.14.0"
+    "react": ">=16.14.0"
   },
   "devDependencies": {
     "@emotion/react": "^11.9.0",
@@ -54,8 +53,7 @@
     "@types/react-dom": "^18.0.3",
     "@types/react-is": "^17.0.3",
     "parcel": "^2.5.0",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0"
+    "react": "^18.1.0"
   },
   "dependencies": {
     "react-intersection-observer": "^9.1.0",

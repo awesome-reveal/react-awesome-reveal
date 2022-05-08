@@ -45,7 +45,6 @@ importers:
       '@types/react-is': ^17.0.3
       parcel: ^2.5.0
       react: ^18.1.0
-      react-dom: ^18.1.0
       react-intersection-observer: ^9.1.0
       react-is: ^18.1.0
     dependencies:
@@ -61,7 +60,6 @@ importers:
       '@types/react-is': 17.0.3
       parcel: 2.5.0
       react: 18.1.0
-      react-dom: 18.1.0_react@18.1.0
 
   packages/playground:
     specifiers:
@@ -9046,6 +9044,7 @@ packages:
       loose-envify: 1.4.0
       react: 18.1.0
       scheduler: 0.22.0
+    dev: false
 
   /react-error-overlay/6.0.11:
     resolution: {integrity: sha512-/6UZ2qgEyH2aqzYZgQPxEnz33NJ2gNsnHA2o5+o4wW9bLM/JYQitNP9xPhsXwC08hMMovfGe/8retsdDsczPRg==}
@@ -9585,6 +9584,7 @@ packages:
     resolution: {integrity: sha512-6QAm1BgQI88NPYymgGQLCZgvep4FyePDWFpXVK+zNSUgHwlqpJy8VEh8Et0KxTACS4VWwMousBElAZOH9nkkoQ==}
     dependencies:
       loose-envify: 1.4.0
+    dev: false
 
   /schema-utils/2.7.0:
     resolution: {integrity: sha512-0ilKFI6QQF5nxDZLFn2dMjvc4hjg/Wkg7rHd3jK6/A4a1Hl9VFdQWvgB1UMGoU94pad1P/8N7fMcEnLnSiju8A==}
