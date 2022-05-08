@@ -9,14 +9,14 @@ import fadeInLeft from "./animations/fading_entrances/fadeInLeft";
 import { getAnimationCss } from "./utils/animations";
 import { isNullOrUndefined, isStringLike } from "./utils/js-types";
 
-const hiddenCss = css`
-  opacity: 0;
-`;
+const hiddenCss = css({
+  opacity: 0,
+});
 
-const textBaseCss = css`
-  display: inline-block;
-  white-space: pre;
-`;
+const textBaseCss = css({
+  display: "inline-block",
+  whiteSpace: "pre",
+});
 
 export interface RevealProps {
   /**
@@ -125,24 +125,23 @@ export const Reveal: React.FC<RevealProps> = ({
             className={className}
             style={style}
           >
-            {stringifiedChildren.split("").map((char, index) => (
-              <span
-                key={index}
-                css={
-                  inView
+            {stringifiedChildren.split("").map((char, index) =>
+              jsx(
+                "span",
+                {
+                  key: index,
+                  className,
+                  css: inView
                     ? getAnimationCss({
                         keyframes,
                         delay: delay + index * duration * damping,
                         duration,
                       })
-                    : hiddenCss
-                }
-                className={childClassName}
-                style={childStyle}
-              >
-                {char}
-              </span>
-            ))}
+                    : hiddenCss,
+                },
+                char
+              )
+            )}
           </div>
         )}
       </InView>
@@ -171,20 +170,20 @@ export const Reveal: React.FC<RevealProps> = ({
         triggerOnce={triggerOnce}
         onChange={onVisibilityChange}
       >
-        {({ inView, ref }) => (
-          <div
-            ref={ref}
-            css={
-              inView
+        {({ inView, ref }) =>
+          jsx(
+            "div",
+            {
+              ref,
+              className,
+              css: inView
                 ? [revealCss, getAnimationCss({ keyframes, delay, duration })]
-                : hiddenCss
-            }
-            className={className}
-            style={style}
-          >
-            {children}
-          </div>
-        )}
+                : hiddenCss,
+              style,
+            },
+            children
+          )
+        }
       </InView>
     );
   }
@@ -270,13 +269,15 @@ export const Reveal: React.FC<RevealProps> = ({
                 triggerOnce={triggerOnce}
                 onChange={onVisibilityChange}
               >
-                {({ inView, ref }) => (
-                  <div
-                    ref={ref}
-                    css={inView ? [revealCss, ...nodeCss] : hiddenCss}
-                    className={className}
-                    style={style}
-                  >
+                {({ inView, ref }) =>
+                  jsx(
+                    "div",
+                    {
+                      ref,
+                      className,
+                      css: inView ? [revealCss, ...nodeCss] : hiddenCss,
+                      style,
+                    },
                     <ClassNames>
                       {({ cx }) =>
                         jsx(nodeElement.type, {
@@ -289,8 +290,8 @@ export const Reveal: React.FC<RevealProps> = ({
                         })
                       }
                     </ClassNames>
-                  </div>
-                )}
+                  )
+                }
               </InView>
             );
         }
