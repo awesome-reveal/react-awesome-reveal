@@ -1,0 +1,19 @@
+{
+  "name": "playground",
+  "private": true,
+  "scripts": {
+    "start": "parcel index.html",
+    "build": "parcel build index.html"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.9.0",
+    "react": "^18.1.0",
+    "react-awesome-reveal": "workspace:*",
+    "react-dom": "^18.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.3",
+    "parcel": "^2.5.0"
+  }
+}

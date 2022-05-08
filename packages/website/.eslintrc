@@ -1,0 +1,15 @@
+{
+  "plugins": ["@docusaurus"],
+  "extends": ["plugin:@docusaurus/recommended"],
+  "env": {
+    "node": true
+  },
+  "rules": {
+    "import/no-unresolved": [
+      2,
+      {
+        "ignore": ["^@docusaurus", "^@site", "^@theme"]
+      }
+    ]
+  }
+}

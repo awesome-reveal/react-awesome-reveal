@@ -1,0 +1,64 @@
+{
+  "name": "react-awesome-reveal",
+  "description": "React components to add reveal animations using the Intersection Observer API and CSS Animations.",
+  "version": "4.0.0-beta.1",
+  "license": "MIT",
+  "source": "src/index.ts",
+  "main": "dist/main.js",
+  "module": "dist/module.js",
+  "types": "dist/types.d.ts",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "author": {
+    "name": "Dennis Morello",
+    "email": "dennis@morello.dev",
+    "url": "https://morello.dev"
+  },
+  "homepage": "https://react-awesome-reveal.morello.dev",
+  "keywords": [
+    "react",
+    "reveal",
+    "react-reveal",
+    "scroll",
+    "typescript",
+    "intersection",
+    "intersection-observer",
+    "animations",
+    "css-in-js",
+    "emotion"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/morellodev/react-awesome-reveal"
+  },
+  "bugs": {
+    "url": "https://github.com/morellodev/react-awesome-reveal/issues"
+  },
+  "scripts": {
+    "build": "tsc && parcel build",
+    "watch": "parcel watch"
+  },
+  "peerDependencies": {
+    "@emotion/react": "^11.0.0",
+    "react": ">=16.14.0",
+    "react-dom": ">=16.14.0"
+  },
+  "devDependencies": {
+    "@emotion/react": "^11.9.0",
+    "@emotion/serialize": "^1.0.0",
+    "@parcel/packager-ts": "^2.5.0",
+    "@parcel/transformer-typescript-types": "^2.5.0",
+    "@types/react": "^18.0.9",
+    "@types/react-dom": "^18.0.3",
+    "@types/react-is": "^17.0.3",
+    "parcel": "^2.5.0",
+    "react": "^18.1.0",
+    "react-dom": "^18.1.0"
+  },
+  "dependencies": {
+    "react-intersection-observer": "^9.1.0",
+    "react-is": "^18.1.0"
+  }
+}

@@ -1,19 +1,12 @@
 {
-  // see https://www.typescriptlang.org/tsconfig to better understand tsconfigs
-  "include": ["src"],
   "compilerOptions": {
-    "module": "ESNExt",
-    "target": "ESNext",
-    "lib": ["DOM", "ESNext"],
-    "rootDir": "./src",
-    "strict": true,
-    "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "Node",
-    "jsx": "react-jsx",
-    "jsxImportSource": "@emotion/react",
+    "allowJs": false,
     "esModuleInterop": true,
-    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true
+    "resolveJsonModule": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "strict": true
   }
 }
