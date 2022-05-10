@@ -9,14 +9,14 @@ import fadeInLeft from "./animations/fading_entrances/fadeInLeft";
 import { getAnimationCss } from "./utils/animations";
 import { isNullOrUndefined, isStringLike } from "./utils/js-types";
 
-const hiddenCss = css({
-  opacity: 0,
-});
+const hiddenCss = css`
+  opacity: 0;
+`;
 
-const textBaseCss = css({
-  display: "inline-block",
-  whiteSpace: "pre",
-});
+const textBaseCss = css`
+  display: inline-block;
+  white-space: pre;
+`;
 
 export interface RevealProps {
   /**
@@ -118,34 +118,32 @@ export const Reveal: React.FC<RevealProps> = ({
         triggerOnce={triggerOnce}
         onChange={onVisibilityChange}
       >
-        {({ inView, ref }) =>
-          jsx(
-            "div",
-            {
-              ref,
-              className,
-              css: [revealCss, textBaseCss],
-              style,
-            },
-            stringifiedChildren.split("").map((char, index) =>
-              jsx(
-                "span",
-                {
-                  key: index,
-                  className,
-                  css: inView
+        {({ inView, ref }) => (
+          <div
+            ref={ref}
+            className={className}
+            css={[revealCss, textBaseCss]}
+            style={style}
+          >
+            {stringifiedChildren.split("").map((char, index) => (
+              <span
+                key={index}
+                className={className}
+                css={
+                  inView
                     ? getAnimationCss({
                         keyframes,
                         delay: delay + index * duration * damping,
                         duration,
                       })
-                    : hiddenCss,
-                },
-                char
-              )
-            )
-          )
-        }
+                    : hiddenCss
+                }
+              >
+                {char}
+              </span>
+            ))}
+          </div>
+        )}
       </InView>
     ) : (
       <Reveal

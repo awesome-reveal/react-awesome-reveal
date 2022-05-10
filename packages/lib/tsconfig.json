@@ -1,14 +1,14 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
+    "baseUrl": ".",
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "isolatedModules": true,
-    "module": "ESNExt",
+    "module": "ESNext",
     "moduleResolution": "Node",
     "noEmit": true,
-    "rootDir": "./src",
     "skipLibCheck": true,
     "target": "ESNext",
     "useDefineForClassFields": true

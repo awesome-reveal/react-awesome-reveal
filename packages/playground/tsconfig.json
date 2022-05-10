@@ -1,12 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
+    "baseUrl": ".",
     "jsx": "react-jsx",
+    "lib": ["DOM", "ESNext"],
+    "module": "ESNext",
     "moduleResolution": "Node",
     "skipLibCheck": true,
-    "strict": true,
-    "lib": ["DOM", "ESNext"],
-    "baseUrl": "."
+    "target": "ESNext"
   }
 }

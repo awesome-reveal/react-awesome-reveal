@@ -9,13 +9,13 @@ export function getAnimationCss({
   keyframes = fadeInLeft,
   iterationCount = 1,
 }) {
-  return css({
-    animationDuration: `${duration}ms`,
-    animationTimingFunction: timingFunction,
-    animationDelay: `${delay}ms`,
-    animationName: keyframes,
-    animationDirection: "normal",
-    animationFillMode: "both",
-    animationIterationCount: iterationCount,
-  });
+  return css`
+    animation-duration: ${duration}ms;
+    animation-timing-function: ${timingFunction};
+    animation-delay: ${delay}ms;
+    animation-name: ${keyframes};
+    animation-direction: normal;
+    animation-fill-mode: both;
+    animation-iteration-count: ${iterationCount};
+  `;
 }
