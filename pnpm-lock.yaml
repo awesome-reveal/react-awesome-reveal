@@ -39,6 +39,7 @@ importers:
       '@emotion/react': ^11.9.0
       '@emotion/serialize': ^1.0.0
       '@parcel/packager-ts': ^2.5.0
+      '@parcel/transformer-typescript-tsc': ^2.5.0
       '@parcel/transformer-typescript-types': ^2.5.0
       '@types/react': ^18.0.9
       '@types/react-dom': ^18.0.3
@@ -54,6 +55,7 @@ importers:
       '@emotion/react': 11.9.0_7cpxmzzodpxnolj5zcc5cr63ji
       '@emotion/serialize': 1.0.3
       '@parcel/packager-ts': 2.5.0
+      '@parcel/transformer-typescript-tsc': 2.5.0
       '@parcel/transformer-typescript-types': 2.5.0
       '@types/react': 18.0.9
       '@types/react-dom': 18.0.3
@@ -3199,6 +3201,19 @@ packages:
       posthtml-parser: 0.10.2
       posthtml-render: 3.0.0
       semver: 5.7.1
+    dev: true
+
+  /@parcel/transformer-typescript-tsc/2.5.0:
+    resolution: {integrity: sha512-a7uoqsKozCqf3t8z+6GLAK3ozad/MB/Y5sOneBZ4S6UgwJQ8b41sY2crya8B9x2BiyWVas1eXHDi2E1Ai1y+XQ==}
+    engines: {node: '>= 12.0.0', parcel: ^2.5.0}
+    peerDependencies:
+      typescript: '>=3.0.0'
+    dependencies:
+      '@parcel/plugin': 2.5.0
+      '@parcel/source-map': 2.0.2
+      '@parcel/ts-utils': 2.5.0
+    transitivePeerDependencies:
+      - '@parcel/core'
     dev: true
 
   /@parcel/transformer-typescript-types/2.5.0:
