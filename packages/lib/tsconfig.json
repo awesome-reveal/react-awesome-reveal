@@ -5,6 +5,7 @@
     "jsxImportSource": "@emotion/react",
     "lib": ["DOM", "ESNext"],
     "isolatedModules": true,
+    "noEmit": true,
     "skipLibCheck": true,
     "target": "ESNext"
   },
