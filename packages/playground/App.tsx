@@ -7,7 +7,7 @@ export const App = () => {
     <>
       <Section>
         <Fade cascade damping={0.1}>
-          Mona de cojon
+          Text fading example
         </Fade>
       </Section>
       <Section>
