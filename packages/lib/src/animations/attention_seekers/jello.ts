@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/attention_seekers/jello.css}
  */
-const jello = keyframes`
+export const jello = keyframes`
   from,
   11.1%,
   to {
@@ -38,5 +38,3 @@ const jello = keyframes`
     transform: skewX(-0.1953125deg) skewY(-0.1953125deg);
   }
 `;
-
-export default jello;

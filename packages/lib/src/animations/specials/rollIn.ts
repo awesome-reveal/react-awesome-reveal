@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/specials/rollIn.css}
  */
-const rollIn = keyframes`
+export const rollIn = keyframes`
   from {
     opacity: 0;
     transform: translate3d(-100%, 0, 0) rotate3d(0, 0, 1, -120deg);
@@ -14,5 +14,3 @@ const rollIn = keyframes`
     transform: translate3d(0, 0, 0);
   }
 `;
-
-export default rollIn;

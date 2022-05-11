@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/bouncing_exits/bounceOut.css}
  */
-const bounceOut = keyframes`
+export const bounceOut = keyframes`
   20% {
     transform: scale3d(0.9, 0.9, 0.9);
   }
@@ -19,5 +19,3 @@ const bounceOut = keyframes`
     transform: scale3d(0.3, 0.3, 0.3);
   }
 `;
-
-export default bounceOut;

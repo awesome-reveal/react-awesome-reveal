@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/attention_seekers/swing.css}
  */
-const swing = keyframes`
+export const swing = keyframes`
   20% {
     transform: rotate3d(0, 0, 1, 15deg);
   }
@@ -24,5 +24,3 @@ const swing = keyframes`
     transform: rotate3d(0, 0, 1, 0deg);
   }
 `;
-
-export default swing;

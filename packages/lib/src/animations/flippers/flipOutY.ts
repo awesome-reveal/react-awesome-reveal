@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/flippers/flipOutY.css}
  */
-const flipOutY = keyframes`
+export const flipOutY = keyframes`
   from {
     transform: perspective(400px);
   }
@@ -18,5 +18,3 @@ const flipOutY = keyframes`
     opacity: 0;
   }
 `;
-
-export default flipOutY;

@@ -1,5 +1,5 @@
-export { default as flip } from "./flip";
-export { default as flipInX } from "./flipInX";
-export { default as flipInY } from "./flipInY";
-export { default as flipOutX } from "./flipOutX";
-export { default as flipOutY } from "./flipOutY";
+export * from "./flip";
+export * from "./flipInX";
+export * from "./flipInY";
+export * from "./flipOutX";
+export * from "./flipOutY";

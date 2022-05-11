@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/rotating_entrances/rotateInUpRight.css}
  */
-const rotateInUpRight = keyframes`
+export const rotateInUpRight = keyframes`
   from {
     transform: rotate3d(0, 0, 1, -90deg);
     opacity: 0;
@@ -14,5 +14,3 @@ const rotateInUpRight = keyframes`
     opacity: 1;
   }
 `;
-
-export default rotateInUpRight;

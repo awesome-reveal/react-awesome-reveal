@@ -1,6 +1,6 @@
 import { css } from "@emotion/react";
 
-import fadeInLeft from "../animations/fading_entrances/fadeInLeft";
+import { fadeInLeft } from "../animations/fading_entrances";
 
 export function getAnimationCss({
   duration = 1000,

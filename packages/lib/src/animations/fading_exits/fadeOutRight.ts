@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/fading_exits/fadeOutRight.css}
  */
-const fadeOutRight = keyframes`
+export const fadeOutRight = keyframes`
   from {
     opacity: 1;
   }
@@ -13,5 +13,3 @@ const fadeOutRight = keyframes`
     transform: translate3d(100%, 0, 0);
   }
 `;
-
-export default fadeOutRight;

@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/rotating_entrances/rotateInDownLeft.css}
  */
-const rotateInDownLeft = keyframes`
+export const rotateInDownLeft = keyframes`
   from {
     transform: rotate3d(0, 0, 1, -45deg);
     opacity: 0;
@@ -14,5 +14,3 @@ const rotateInDownLeft = keyframes`
     opacity: 1;
   }
 `;
-
-export default rotateInDownLeft;

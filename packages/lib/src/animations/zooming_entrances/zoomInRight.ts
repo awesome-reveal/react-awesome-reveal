@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/zooming_entrances/zoomInRight.css}
  */
-const zoomInRight = keyframes`
+export const zoomInRight = keyframes`
   from {
     opacity: 0;
     transform: scale3d(0.1, 0.1, 0.1) translate3d(1000px, 0, 0);
@@ -16,5 +16,3 @@ const zoomInRight = keyframes`
     animation-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1);
   }
 `;
-
-export default zoomInRight;

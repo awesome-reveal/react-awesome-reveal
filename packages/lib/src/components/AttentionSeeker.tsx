@@ -1,5 +1,6 @@
 import type { Interpolation, Theme } from "@emotion/react";
 import type { Keyframes } from "@emotion/serialize";
+import { useMemo } from "react";
 
 import {
   bounce,
@@ -43,7 +44,7 @@ export interface AttentionSeekerProps
   effect?: AttentionSeekerEffect;
 }
 
-function getAttentionSeekerKeyframesAndCss(
+function getStyles(
   effect: AttentionSeekerEffect
 ): [Keyframes, Interpolation<Theme>?] {
   switch (effect) {
@@ -77,11 +78,10 @@ function getAttentionSeekerKeyframesAndCss(
   }
 }
 
-export const AttentionSeeker: React.FC<AttentionSeekerProps> = ({
-  effect = "bounce",
-  ...otherProps
-}) => {
-  const [keyframes, animationCss] = getAttentionSeekerKeyframesAndCss(effect);
+export const AttentionSeeker: React.FC<AttentionSeekerProps> = (props) => {
+  const { effect = "bounce", ...rest } = props;
 
-  return <Reveal keyframes={keyframes} css={animationCss} {...otherProps} />;
+  const [keyframes, animationCss] = useMemo(() => getStyles(effect), [effect]);
+
+  return <Reveal keyframes={keyframes} css={animationCss} {...rest} />;
 };

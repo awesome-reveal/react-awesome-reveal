@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/attention_seekers/tada.css}
  */
-const tada = keyframes`
+export const tada = keyframes`
   from {
     transform: scale3d(1, 1, 1);
   }
@@ -30,5 +30,3 @@ const tada = keyframes`
     transform: scale3d(1, 1, 1);
   }
 `;
-
-export default tada;

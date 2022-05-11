@@ -37,8 +37,8 @@
     "url": "https://github.com/morellodev/react-awesome-reveal/issues"
   },
   "scripts": {
-    "build": "tsc && parcel build",
-    "watch": "parcel watch"
+    "start": "parcel watch",
+    "build": "tsc && parcel build"
   },
   "peerDependencies": {
     "@emotion/react": "^11.0.0",

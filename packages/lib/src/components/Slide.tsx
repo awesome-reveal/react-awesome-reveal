@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import {
   slideInDown,
   slideInLeft,
@@ -28,7 +30,7 @@ export interface SlideProps extends Omit<RevealProps, "keyframes" | "css"> {
   reverse?: boolean;
 }
 
-function getSlideKeyframes(reverse: boolean, direction?: SlideDirection) {
+function getStyles(reverse: boolean, direction?: SlideDirection) {
   switch (direction) {
     case "down":
       return reverse ? slideOutDown : slideInDown;
@@ -42,12 +44,13 @@ function getSlideKeyframes(reverse: boolean, direction?: SlideDirection) {
   }
 }
 
-export const Slide: React.FC<SlideProps> = ({
-  direction,
-  reverse = false,
-  ...otherProps
-}) => {
-  return (
-    <Reveal keyframes={getSlideKeyframes(reverse, direction)} {...otherProps} />
+export const Slide: React.FC<SlideProps> = (props) => {
+  const { direction, reverse = false, ...rest } = props;
+
+  const keyframes = useMemo(
+    () => getStyles(reverse, direction),
+    [direction, reverse]
   );
+
+  return <Reveal keyframes={keyframes} {...rest} />;
 };

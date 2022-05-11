@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/specials/hinge.css}
  */
-const hinge = keyframes`
+export const hinge = keyframes`
   0% {
     animation-timing-function: ease-in-out;
   }
@@ -26,5 +26,3 @@ const hinge = keyframes`
     opacity: 0;
   }
 `;
-
-export default hinge;

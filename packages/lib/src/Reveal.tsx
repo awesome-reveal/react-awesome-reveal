@@ -1,11 +1,11 @@
 import type { Interpolation, Theme } from "@emotion/react";
-import { ClassNames, css, jsx } from "@emotion/react";
+import { ClassNames, css } from "@emotion/react";
 import type { Keyframes } from "@emotion/serialize";
-import { Children } from "react";
+import { Children, isValidElement } from "react";
 import { InView } from "react-intersection-observer";
 import { isFragment } from "react-is";
 
-import fadeInLeft from "./animations/fading_entrances/fadeInLeft";
+import { fadeInLeft } from "./animations/fading_entrances";
 import { getAnimationCss } from "./utils/animations";
 import { isNullOrUndefined, isStringLike } from "./utils/js-types";
 
@@ -89,22 +89,24 @@ export interface RevealProps {
   onVisibilityChange?(inView: boolean, entry: IntersectionObserverEntry): void;
 }
 
-export const Reveal: React.FC<RevealProps> = ({
-  cascade = false,
-  damping = 0.5,
-  delay = 0,
-  duration = 1000,
-  fraction = 0,
-  keyframes = fadeInLeft,
-  triggerOnce = false,
-  css: revealCss,
-  className,
-  style,
-  childClassName,
-  childStyle,
-  children,
-  onVisibilityChange,
-}) => {
+export const Reveal: React.FC<RevealProps> = (props) => {
+  const {
+    cascade = false,
+    damping = 0.5,
+    delay = 0,
+    duration = 1000,
+    fraction = 0,
+    keyframes = fadeInLeft,
+    triggerOnce = false,
+    css: revealCss,
+    className,
+    style,
+    childClassName,
+    childStyle,
+    children,
+    onVisibilityChange,
+  } = props;
+
   if (isNullOrUndefined(children)) {
     return null;
   }
@@ -170,20 +172,20 @@ export const Reveal: React.FC<RevealProps> = ({
         triggerOnce={triggerOnce}
         onChange={onVisibilityChange}
       >
-        {({ inView, ref }) =>
-          jsx(
-            "div",
-            {
-              ref,
-              className,
-              css: inView
+        {({ inView, ref }) => (
+          <div
+            ref={ref}
+            className={className}
+            css={
+              inView
                 ? [revealCss, getAnimationCss({ keyframes, delay, duration })]
-                : hiddenCss,
-              style,
-            },
-            children
-          )
-        }
+                : hiddenCss
+            }
+            style={style}
+          >
+            {children}
+          </div>
+        )}
       </InView>
     );
   }
@@ -191,9 +193,10 @@ export const Reveal: React.FC<RevealProps> = ({
   return (
     <>
       {Children.map(children, (node, index) => {
-        const nodeElement = node as React.ReactElement;
-        const nodeCss: Interpolation<Theme>[] = nodeElement.props.css
-          ? [nodeElement.props.css]
+        if (!isValidElement(node)) return null;
+
+        const nodeCss: Interpolation<Theme>[] = node.props.css
+          ? [node.props.css]
           : [];
 
         nodeCss.push(
@@ -204,19 +207,17 @@ export const Reveal: React.FC<RevealProps> = ({
           })
         );
 
-        switch (nodeElement.type) {
+        switch (node.type) {
           case "ol":
           case "ul":
             return (
               <ClassNames>
-                {({ cx }) =>
-                  jsx(
-                    nodeElement.type,
-                    {
-                      ...nodeElement.props,
-                      className: cx(className, nodeElement.props.className),
-                      style: { ...style, ...nodeElement.props.style },
-                    },
+                {({ cx }) => (
+                  <node.type
+                    {...node.props}
+                    className={cx(className, node.props.className)}
+                    style={{ ...style, ...node.props.style }}
+                  >
                     <Reveal
                       {...{
                         cascade,
@@ -231,10 +232,10 @@ export const Reveal: React.FC<RevealProps> = ({
                         childStyle,
                       }}
                     >
-                      {nodeElement.props.children}
+                      {node.props.children}
                     </Reveal>
-                  )
-                }
+                  </node.type>
+                )}
               </ClassNames>
             );
           case "li":
@@ -246,18 +247,15 @@ export const Reveal: React.FC<RevealProps> = ({
               >
                 {({ inView, ref }) => (
                   <ClassNames>
-                    {({ cx }) =>
-                      jsx(nodeElement.type, {
-                        ...nodeElement.props,
-                        ref,
-                        css: inView ? [revealCss, ...nodeCss] : hiddenCss,
-                        className: cx(
-                          childClassName,
-                          nodeElement.props.className
-                        ),
-                        style: { ...childStyle, ...nodeElement.props.style },
-                      })
-                    }
+                    {({ cx }) => (
+                      <node.type
+                        {...node.props}
+                        ref={ref}
+                        className={cx(childClassName, node.props.className)}
+                        css={inView ? [revealCss, ...nodeCss] : hiddenCss}
+                        style={{ ...childStyle, ...node.props.style }}
+                      />
+                    )}
                   </ClassNames>
                 )}
               </InView>
@@ -269,29 +267,24 @@ export const Reveal: React.FC<RevealProps> = ({
                 triggerOnce={triggerOnce}
                 onChange={onVisibilityChange}
               >
-                {({ inView, ref }) =>
-                  jsx(
-                    "div",
-                    {
-                      ref,
-                      className,
-                      css: inView ? [revealCss, ...nodeCss] : hiddenCss,
-                      style,
-                    },
+                {({ inView, ref }) => (
+                  <div
+                    ref={ref}
+                    className={className}
+                    css={inView ? [revealCss, ...nodeCss] : hiddenCss}
+                    style={style}
+                  >
                     <ClassNames>
-                      {({ cx }) =>
-                        jsx(nodeElement.type, {
-                          ...nodeElement.props,
-                          className: cx(
-                            childClassName,
-                            nodeElement.props.className
-                          ),
-                          style: { ...childStyle, ...nodeElement.props.style },
-                        })
-                      }
+                      {({ cx }) => (
+                        <node.type
+                          {...node.props}
+                          className={cx(childClassName, node.props.className)}
+                          style={{ ...childStyle, ...node.props.style }}
+                        />
+                      )}
                     </ClassNames>
-                  )
-                }
+                  </div>
+                )}
               </InView>
             );
         }

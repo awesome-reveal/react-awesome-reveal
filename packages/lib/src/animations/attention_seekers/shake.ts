@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/attention_seekers/shake.css}
  */
-const shake = keyframes`
+export const shake = keyframes`
   from,
   to {
     transform: translate3d(0, 0, 0);
@@ -24,5 +24,3 @@ const shake = keyframes`
     transform: translate3d(10px, 0, 0);
   }
 `;
-
-export default shake;

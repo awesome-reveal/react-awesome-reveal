@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/rotating_exits/rotateOutUpRight.css}
  */
-const rotateOutUpRight = keyframes`
+export const rotateOutUpRight = keyframes`
   from {
     opacity: 1;
   }
@@ -13,5 +13,3 @@ const rotateOutUpRight = keyframes`
     opacity: 0;
   }
 `;
-
-export default rotateOutUpRight;

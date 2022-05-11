@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/bouncing_entrances/bounceIn.css}
  */
-const bounceIn = keyframes`
+export const bounceIn = keyframes`
   from,
   20%,
   40%,
@@ -40,5 +40,3 @@ const bounceIn = keyframes`
     transform: scale3d(1, 1, 1);
   }
 `;
-
-export default bounceIn;

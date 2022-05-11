@@ -1,12 +1,3 @@
-export * from "./components/AttentionSeeker";
-export * from "./components/Bounce";
-export * from "./components/Fade";
-export * from "./components/Flip";
-export * from "./components/Hinge";
-export * from "./components/JackInTheBox";
-export * from "./components/Roll";
-export * from "./components/Rotate";
-export * from "./components/Slide";
-export * from "./components/Zoom";
+export * from "./components";
 export * from "./Reveal";
 export { Reveal as default } from "./Reveal";

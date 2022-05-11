@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/specials/rollOut.css}
  */
-const rollOut = keyframes`
+export const rollOut = keyframes`
   from {
     opacity: 1;
   }
@@ -13,5 +13,3 @@ const rollOut = keyframes`
     transform: translate3d(100%, 0, 0) rotate3d(0, 0, 1, 120deg);
   }
 `;
-
-export default rollOut;

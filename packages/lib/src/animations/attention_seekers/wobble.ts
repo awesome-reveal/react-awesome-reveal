@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/attention_seekers/wobble.css}
  */
-const wobble = keyframes`
+export const wobble = keyframes`
   from {
     transform: translate3d(0, 0, 0);
   }
@@ -32,5 +32,3 @@ const wobble = keyframes`
     transform: translate3d(0, 0, 0);
   }
 `;
-
-export default wobble;

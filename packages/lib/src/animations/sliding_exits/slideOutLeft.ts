@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/sliding_exits/slideOutLeft.css}
  */
-const slideOutLeft = keyframes`
+export const slideOutLeft = keyframes`
   from {
     transform: translate3d(0, 0, 0);
   }
@@ -13,5 +13,3 @@ const slideOutLeft = keyframes`
     transform: translate3d(-100%, 0, 0);
   }
 `;
-
-export default slideOutLeft;

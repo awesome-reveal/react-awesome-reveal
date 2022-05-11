@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import {
   bounceIn,
   bounceInDown,
@@ -30,7 +32,7 @@ export interface BounceProps extends Omit<RevealProps, "keyframes" | "css"> {
   reverse?: boolean;
 }
 
-function getBounceKeyframes(reverse: boolean, direction?: BounceDirection) {
+function getStyles(reverse: boolean, direction?: BounceDirection) {
   switch (direction) {
     case "down":
       return reverse ? bounceOutDown : bounceInDown;
@@ -45,15 +47,13 @@ function getBounceKeyframes(reverse: boolean, direction?: BounceDirection) {
   }
 }
 
-export const Bounce: React.FC<BounceProps> = ({
-  direction,
-  reverse = false,
-  ...otherProps
-}) => {
-  return (
-    <Reveal
-      keyframes={getBounceKeyframes(reverse, direction)}
-      {...otherProps}
-    />
+export const Bounce: React.FC<BounceProps> = (props) => {
+  const { direction, reverse = false, ...rest } = props;
+
+  const keyframes = useMemo(
+    () => getStyles(reverse, direction),
+    [direction, reverse]
   );
+
+  return <Reveal keyframes={keyframes} {...rest} />;
 };

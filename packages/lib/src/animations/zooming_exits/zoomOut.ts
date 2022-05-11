@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/zooming_exits/zoomOut.css}
  */
-const zoomOut = keyframes`
+export const zoomOut = keyframes`
   from {
     opacity: 1;
   }
@@ -17,5 +17,3 @@ const zoomOut = keyframes`
     opacity: 0;
   }
 `;
-
-export default zoomOut;

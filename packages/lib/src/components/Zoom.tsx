@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import {
   zoomIn,
   zoomInDown,
@@ -30,7 +32,7 @@ export interface ZoomProps extends Omit<RevealProps, "keyframes" | "css"> {
   reverse?: boolean;
 }
 
-function getZoomKeyframes(reverse: boolean, direction?: ZoomDirection) {
+function getStyles(reverse: boolean, direction?: ZoomDirection) {
   switch (direction) {
     case "down":
       return reverse ? zoomOutDown : zoomInDown;
@@ -45,12 +47,13 @@ function getZoomKeyframes(reverse: boolean, direction?: ZoomDirection) {
   }
 }
 
-export const Zoom: React.FC<ZoomProps> = ({
-  direction,
-  reverse = false,
-  ...otherProps
-}) => {
-  return (
-    <Reveal keyframes={getZoomKeyframes(reverse, direction)} {...otherProps} />
+export const Zoom: React.FC<ZoomProps> = (props) => {
+  const { direction, reverse = false, ...rest } = props;
+
+  const keyframes = useMemo(
+    () => getStyles(reverse, direction),
+    [direction, reverse]
   );
+
+  return <Reveal keyframes={keyframes} {...rest} />;
 };

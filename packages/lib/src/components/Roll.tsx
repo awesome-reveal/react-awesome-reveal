@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import { rollIn, rollOut } from "../animations/specials";
 import type { RevealProps } from "../Reveal";
 import { Reveal } from "../Reveal";
@@ -10,13 +12,14 @@ export interface RollProps extends Omit<RevealProps, "keyframes" | "css"> {
   reverse?: boolean;
 }
 
-function getRollKeyframes(reverse: boolean) {
+function getStyles(reverse: boolean) {
   return reverse ? rollOut : rollIn;
 }
 
-export const Roll: React.FC<RollProps> = ({
-  reverse = false,
-  ...otherProps
-}) => {
-  return <Reveal keyframes={getRollKeyframes(reverse)} {...otherProps} />;
+export const Roll: React.FC<RollProps> = (props) => {
+  const { reverse = false, ...rest } = props;
+
+  const keyframes = useMemo(() => getStyles(reverse), [reverse]);
+
+  return <Reveal keyframes={keyframes} {...rest} />;
 };

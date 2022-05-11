@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import {
   fadeIn,
   fadeInBottomLeft,
@@ -59,11 +61,7 @@ export interface FadeProps extends Omit<RevealProps, "keyframes" | "css"> {
   reverse?: boolean;
 }
 
-function getFadeKeyframes(
-  big: boolean,
-  reverse: boolean,
-  direction?: FadeDirection
-) {
+function getStyles(big: boolean, reverse: boolean, direction?: FadeDirection) {
   switch (direction) {
     case "bottom-left":
       return reverse ? fadeOutBottomLeft : fadeInBottomLeft;
@@ -110,16 +108,13 @@ function getFadeKeyframes(
   }
 }
 
-export const Fade: React.FC<FadeProps> = ({
-  big = false,
-  direction,
-  reverse = false,
-  ...otherProps
-}) => {
-  return (
-    <Reveal
-      keyframes={getFadeKeyframes(big, reverse, direction)}
-      {...otherProps}
-    />
+export const Fade: React.FC<FadeProps> = (props) => {
+  const { big = false, direction, reverse = false, ...rest } = props;
+
+  const keyframes = useMemo(
+    () => getStyles(big, reverse, direction),
+    [big, direction, reverse]
   );
+
+  return <Reveal keyframes={keyframes} {...rest} />;
 };

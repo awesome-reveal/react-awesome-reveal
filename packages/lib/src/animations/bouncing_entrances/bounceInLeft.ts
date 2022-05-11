@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/bouncing_entrances/bounceInLeft.css}
  */
-const bounceInLeft = keyframes`
+export const bounceInLeft = keyframes`
   from,
   60%,
   75%,
@@ -34,5 +34,3 @@ const bounceInLeft = keyframes`
     transform: translate3d(0, 0, 0);
   }
 `;
-
-export default bounceInLeft;

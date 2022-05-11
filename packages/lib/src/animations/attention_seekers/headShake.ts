@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/attention_seekers/headShake.css}
  */
-const headShake = keyframes`
+export const headShake = keyframes`
   0% {
     transform: translateX(0);
   }
@@ -28,5 +28,3 @@ const headShake = keyframes`
     transform: translateX(0);
   }
 `;
-
-export default headShake;

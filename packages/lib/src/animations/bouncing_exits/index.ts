@@ -1,5 +1,5 @@
-export { default as bounceOut } from "./bounceOut";
-export { default as bounceOutDown } from "./bounceOutDown";
-export { default as bounceOutLeft } from "./bounceOutLeft";
-export { default as bounceOutRight } from "./bounceOutRight";
-export { default as bounceOutUp } from "./bounceOutUp";
+export * from "./bounceOut";
+export * from "./bounceOutDown";
+export * from "./bounceOutLeft";
+export * from "./bounceOutRight";
+export * from "./bounceOutUp";

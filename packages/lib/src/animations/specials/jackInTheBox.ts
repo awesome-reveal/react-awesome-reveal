@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/specials/jackInTheBox.css}
  */
-const jackInTheBox = keyframes`
+export const jackInTheBox = keyframes`
   from {
     opacity: 0;
     transform: scale(0.1) rotate(30deg);
@@ -23,5 +23,3 @@ const jackInTheBox = keyframes`
     transform: scale(1);
   }
 `;
-
-export default jackInTheBox;

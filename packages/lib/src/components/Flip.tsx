@@ -1,4 +1,5 @@
-import type { Interpolation, Theme } from "@emotion/react";
+import { css } from "@emotion/react";
+import { useMemo } from "react";
 
 import {
   flip,
@@ -25,7 +26,7 @@ export interface FlipProps extends Omit<RevealProps, "keyframes" | "css"> {
   reverse?: boolean;
 }
 
-function getFlipKeyframes(reverse: boolean, direction?: FlipDirection) {
+function getStyles(reverse: boolean, direction?: FlipDirection) {
   switch (direction) {
     case "horizontal":
       return reverse ? flipOutX : flipInX;
@@ -36,18 +37,17 @@ function getFlipKeyframes(reverse: boolean, direction?: FlipDirection) {
   }
 }
 
-export const Flip: React.FC<FlipProps> = ({
-  direction,
-  reverse = false,
-  ...otherProps
-}) => {
-  const animationCss: Interpolation<Theme> = { backfaceVisibility: "visible" };
+const animationCss = css`
+  backface-visibility: visible;
+`;
 
-  return (
-    <Reveal
-      keyframes={getFlipKeyframes(reverse, direction)}
-      css={animationCss}
-      {...otherProps}
-    />
+export const Flip: React.FC<FlipProps> = (props) => {
+  const { direction, reverse = false, ...rest } = props;
+
+  const keyframes = useMemo(
+    () => getStyles(reverse, direction),
+    [direction, reverse]
   );
+
+  return <Reveal css={animationCss} keyframes={keyframes} {...rest} />;
 };

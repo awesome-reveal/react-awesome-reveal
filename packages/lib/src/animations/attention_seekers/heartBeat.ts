@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/attention_seekers/heartBeat.css}
  */
-const heartBeat = keyframes`
+export const heartBeat = keyframes`
   0% {
     transform: scale(1);
   }
@@ -24,5 +24,3 @@ const heartBeat = keyframes`
     transform: scale(1);
   }
 `;
-
-export default heartBeat;

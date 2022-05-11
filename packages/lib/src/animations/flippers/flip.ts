@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/flippers/flip.css}
  */
-const flip = keyframes`
+export const flip = keyframes`
   from {
     transform: perspective(400px) scale3d(1, 1, 1) translate3d(0, 0, 0) rotate3d(0, 1, 0, -360deg);
     animation-timing-function: ease-out;
@@ -32,5 +32,3 @@ const flip = keyframes`
     animation-timing-function: ease-in;
   }
 `;
-
-export default flip;

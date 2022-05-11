@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/attention_seekers/flash.css}
  */
-const flash = keyframes`
+export const flash = keyframes`
   from,
   50%,
   to {
@@ -15,5 +15,3 @@ const flash = keyframes`
     opacity: 0;
   }
 `;
-
-export default flash;

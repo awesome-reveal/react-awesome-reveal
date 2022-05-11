@@ -4,14 +4,13 @@
     "baseUrl": ".",
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": ["DOM", "ESNext"],
     "isolatedModules": true,
     "module": "ESNext",
     "moduleResolution": "Node",
     "noEmit": true,
     "skipLibCheck": true,
-    "target": "ESNext",
-    "useDefineForClassFields": true
+    "target": "ESNext"
   },
   "include": ["src"]
 }

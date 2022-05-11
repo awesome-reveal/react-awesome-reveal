@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/attention_seekers/rubberBand.css}
  */
-const rubberBand = keyframes`
+export const rubberBand = keyframes`
   from {
     transform: scale3d(1, 1, 1);
   }
@@ -32,5 +32,3 @@ const rubberBand = keyframes`
     transform: scale3d(1, 1, 1);
   }
 `;
-
-export default rubberBand;

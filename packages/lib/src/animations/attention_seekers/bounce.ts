@@ -3,7 +3,7 @@ import { keyframes } from "@emotion/react";
 /**
  * @see {@link https://github.com/animate-css/animate.css/blob/master/source/attention_seekers/bounce.css}
  */
-const bounce = keyframes`
+export const bounce = keyframes`
   from,
   20%,
   53%,
@@ -32,5 +32,3 @@ const bounce = keyframes`
     transform: translate3d(0, -4px, 0) scaleY(1.02);
   }
 `;
-
-export default bounce;
