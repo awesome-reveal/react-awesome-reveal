@@ -3,6 +3,7 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "lib": ["DOM", "ESNext"],
+    "noEmit": true,
     "target": "ESNext"
   },
   "include": ["src"]
