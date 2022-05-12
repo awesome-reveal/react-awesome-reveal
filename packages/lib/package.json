@@ -22,6 +22,16 @@
     "email": "dennis@morello.dev",
     "url": "https://morello.dev"
   },
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/morellodev"
+    },
+    {
+      "type": "opencollective",
+      "url": "https://opencollective.com/react-awesome-reveal"
+    }
+  ],
   "homepage": "https://react-awesome-reveal.morello.dev",
   "keywords": [
     "react",
