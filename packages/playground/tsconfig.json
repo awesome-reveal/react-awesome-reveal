@@ -4,5 +4,6 @@
     "jsx": "react-jsx",
     "lib": ["DOM", "ESNext"],
     "target": "ESNext"
-  }
+  },
+  "include": ["src"]
 }

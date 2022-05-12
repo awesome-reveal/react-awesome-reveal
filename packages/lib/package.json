@@ -44,7 +44,7 @@
   },
   "scripts": {
     "start": "parcel watch",
-    "build": "parcel build"
+    "build": "tsc --noEmit && parcel build"
   },
   "peerDependencies": {
     "@emotion/react": "^11.0.0",
