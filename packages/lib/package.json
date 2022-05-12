@@ -1,7 +1,7 @@
 {
   "name": "react-awesome-reveal",
   "description": "React components to add reveal animations using the Intersection Observer API and CSS Animations.",
-  "version": "4.0.0-beta.0",
+  "version": "4.0.0-beta.1",
   "license": "MIT",
   "source": "src/index.ts",
   "main": "dist/main.js",
