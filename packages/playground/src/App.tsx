@@ -11,6 +11,16 @@ export const App = () => {
         </Fade>
       </Section>
       <Section>
+        <Fade direction="left">
+          <>
+            <p>This</p>
+            <p>is</p>
+            <p>a</p>
+            <p>fragment</p>
+          </>
+        </Fade>
+      </Section>
+      <Section>
         <Fade cascade>
           <ul>
             <li>First</li>

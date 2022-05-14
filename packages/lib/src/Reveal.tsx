@@ -1,19 +1,19 @@
 import type { Interpolation, Theme } from "@emotion/react";
 import { ClassNames, css } from "@emotion/react";
-import type { Keyframes } from "@emotion/serialize";
-import { Children, isValidElement } from "react";
-import { InView } from "react-intersection-observer";
+import type { Keyframes, SerializedStyles } from "@emotion/serialize";
+import { Children, isValidElement, useMemo } from "react";
+import { InView, useInView } from "react-intersection-observer";
 import { isFragment } from "react-is";
 
 import { fadeInLeft } from "./animations/fading_entrances";
 import { getAnimationCss } from "./utils/animations";
 import { isNullOrUndefined, isStringLike } from "./utils/js-types";
 
-const hiddenCss = css`
+const hiddenStyles = css`
   opacity: 0;
 `;
 
-const textBaseCss = css`
+const textBaseStyles = css`
   display: inline-block;
   white-space: pre;
 `;
@@ -107,87 +107,29 @@ export const Reveal: React.FC<RevealProps> = (props) => {
     onVisibilityChange,
   } = props;
 
+  const animationStyles = useMemo(
+    () =>
+      getAnimationCss({
+        keyframes,
+        duration,
+      }),
+    [duration, keyframes]
+  );
+
   if (isNullOrUndefined(children)) {
     return null;
   }
 
   if (isStringLike(children)) {
-    const stringifiedChildren = String(children);
-
-    return cascade ? (
-      <InView
-        threshold={fraction}
-        triggerOnce={triggerOnce}
-        onChange={onVisibilityChange}
-      >
-        {({ inView, ref }) => (
-          <div
-            ref={ref}
-            className={className}
-            css={[revealCss, textBaseCss]}
-            style={style}
-          >
-            {stringifiedChildren.split("").map((char, index) => (
-              <span
-                key={index}
-                className={className}
-                css={
-                  inView
-                    ? getAnimationCss({
-                        keyframes,
-                        delay: delay + index * duration * damping,
-                        duration,
-                      })
-                    : hiddenCss
-                }
-              >
-                {char}
-              </span>
-            ))}
-          </div>
-        )}
-      </InView>
-    ) : (
-      <Reveal
-        {...{
-          delay,
-          duration,
-          fraction,
-          keyframes,
-          triggerOnce,
-          css: revealCss,
-          className,
-          style,
-        }}
-      >
-        {stringifiedChildren}
-      </Reveal>
+    return (
+      <TextReveal {...props} animationStyles={animationStyles}>
+        {String(children)}
+      </TextReveal>
     );
   }
 
   if (isFragment(children)) {
-    return (
-      <InView
-        threshold={fraction}
-        triggerOnce={triggerOnce}
-        onChange={onVisibilityChange}
-      >
-        {({ inView, ref }) => (
-          <div
-            ref={ref}
-            className={className}
-            css={
-              inView
-                ? [revealCss, getAnimationCss({ keyframes, delay, duration })]
-                : hiddenCss
-            }
-            style={style}
-          >
-            {children}
-          </div>
-        )}
-      </InView>
-    );
+    return <FragmentReveal {...props} animationStyles={animationStyles} />;
   }
 
   return (
@@ -195,17 +137,8 @@ export const Reveal: React.FC<RevealProps> = (props) => {
       {Children.map(children, (node, index) => {
         if (!isValidElement(node)) return null;
 
-        const nodeCss: Interpolation<Theme>[] = node.props.css
-          ? [node.props.css]
-          : [];
-
-        nodeCss.push(
-          getAnimationCss({
-            keyframes,
-            delay: delay + (cascade ? index * duration * damping : 0),
-            duration,
-          })
-        );
+        const inViewStyles = [revealCss, animationStyles];
+        const nodeDelay = delay + (cascade ? index * duration * damping : 0);
 
         switch (node.type) {
           case "ol":
@@ -218,22 +151,7 @@ export const Reveal: React.FC<RevealProps> = (props) => {
                     className={cx(className, node.props.className)}
                     style={{ ...style, ...node.props.style }}
                   >
-                    <Reveal
-                      {...{
-                        cascade,
-                        damping,
-                        delay,
-                        duration,
-                        fraction,
-                        keyframes,
-                        triggerOnce,
-                        css: revealCss,
-                        childClassName,
-                        childStyle,
-                      }}
-                    >
-                      {node.props.children}
-                    </Reveal>
+                    <Reveal {...props}>{node.props.children}</Reveal>
                   </node.type>
                 )}
               </ClassNames>
@@ -252,8 +170,12 @@ export const Reveal: React.FC<RevealProps> = (props) => {
                         {...node.props}
                         ref={ref}
                         className={cx(childClassName, node.props.className)}
-                        css={inView ? [revealCss, ...nodeCss] : hiddenCss}
-                        style={{ ...childStyle, ...node.props.style }}
+                        css={inView ? inViewStyles : hiddenStyles}
+                        style={{
+                          ...childStyle,
+                          ...node.props.style,
+                          animationDelay: nodeDelay + "ms",
+                        }}
                       />
                     )}
                   </ClassNames>
@@ -271,8 +193,8 @@ export const Reveal: React.FC<RevealProps> = (props) => {
                   <div
                     ref={ref}
                     className={className}
-                    css={inView ? [revealCss, ...nodeCss] : hiddenCss}
-                    style={style}
+                    css={inView ? inViewStyles : hiddenStyles}
+                    style={{ ...style, animationDelay: nodeDelay + "ms" }}
                   >
                     <ClassNames>
                       {({ cx }) => (
@@ -290,5 +212,87 @@ export const Reveal: React.FC<RevealProps> = (props) => {
         }
       })}
     </>
+  );
+};
+
+const TextReveal: React.FC<
+  RevealProps & { animationStyles: SerializedStyles; children: string }
+> = (props) => {
+  const {
+    animationStyles,
+    cascade = false,
+    damping = 0.5,
+    delay = 0,
+    duration = 1000,
+    fraction = 0,
+    triggerOnce = false,
+    css: revealCss,
+    className,
+    style,
+    children,
+    onVisibilityChange,
+  } = props;
+
+  const { ref, inView } = useInView({
+    triggerOnce,
+    threshold: fraction,
+    onChange: onVisibilityChange,
+  });
+
+  return cascade ? (
+    <div
+      ref={ref}
+      className={className}
+      css={[revealCss, textBaseStyles]}
+      style={style}
+    >
+      {children.split("").map((char, index) => (
+        <span
+          key={index}
+          css={inView ? animationStyles : hiddenStyles}
+          style={{
+            animationDelay: delay + index * duration * damping + "ms",
+          }}
+        >
+          {char}
+        </span>
+      ))}
+    </div>
+  ) : (
+    <Reveal {...props}>{children}</Reveal>
+  );
+};
+
+const FragmentReveal: React.FC<
+  RevealProps & { animationStyles: SerializedStyles }
+> = (props) => {
+  const {
+    animationStyles,
+    fraction = 0,
+    triggerOnce = false,
+    css: revealCss,
+    className,
+    style,
+    children,
+    onVisibilityChange,
+  } = props;
+
+  const { ref, inView } = useInView({
+    triggerOnce,
+    threshold: fraction,
+    onChange: onVisibilityChange,
+  });
+
+  const inViewStyles = [revealCss, animationStyles];
+
+  return (
+    <div
+      ref={ref}
+      className={className}
+      css={inView ? inViewStyles : hiddenStyles}
+      style={style}
+    >
+      {children}
+    </div>
   );
 };
