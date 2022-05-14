@@ -21,7 +21,7 @@
     "@mdx-js/react": "^1.6.22",
     "clsx": "^1.1.1",
     "react": "^18.1.0",
-    "react-awesome-reveal": "workspace:*",
+    "react-awesome-reveal": "4.0.0-beta.2",
     "react-dom": "^18.1.0"
   },
   "browserslist": {
