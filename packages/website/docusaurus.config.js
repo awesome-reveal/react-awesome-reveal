@@ -92,6 +92,8 @@ module.exports = {
       },
     ],
   ],
-  plugins: [require.resolve("docusaurus-lunr-search")],
-  themes: ["@docusaurus/theme-live-codeblock"],
+  themes: [
+    "@docusaurus/theme-live-codeblock",
+    [require.resolve("@easyops-cn/docusaurus-search-local"), { hashed: true }],
+  ],
 };

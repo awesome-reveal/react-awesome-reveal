@@ -1,0 +1,11 @@
+# Roll
+
+```jsx live
+<div className="flex gap-2">
+  <Roll cascade damping={0.1}>
+    {Array.from({ length: 5 }, (_, index) => (
+      <Box key={index} />
+    ))}
+  </Roll>
+</div>
+```

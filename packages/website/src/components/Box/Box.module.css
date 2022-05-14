@@ -1,0 +1,8 @@
+.Box {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.5rem;
+  display: inline-block;
+  text-align: center;
+  color: white;
+}

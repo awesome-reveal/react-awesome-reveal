@@ -1,0 +1,11 @@
+# Slide
+
+```jsx live
+<div className="flex gap-2">
+  <Slide direction="up" cascade damping={0.1}>
+    {Array.from({ length: 5 }, (_, index) => (
+      <Box key={index} />
+    ))}
+  </Slide>
+</div>
+```

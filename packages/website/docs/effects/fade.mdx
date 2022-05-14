@@ -1,0 +1,11 @@
+# Fade
+
+```jsx live
+<div className="flex gap-2">
+  <Fade direction="bottom-left" cascade damping={0.1}>
+    {Array.from({ length: 5 }, (_, index) => (
+      <Box key={index} />
+    ))}
+  </Fade>
+</div>
+```

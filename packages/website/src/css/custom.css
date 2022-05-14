@@ -28,3 +28,11 @@
   display: inline-block;
   transform: rotate(180deg);
 }
+
+.flex {
+  display: flex;
+}
+
+.flex.gap-2 {
+  gap: 0.5rem;
+}
