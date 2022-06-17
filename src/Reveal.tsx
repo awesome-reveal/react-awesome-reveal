@@ -81,6 +81,10 @@ export interface RevealProps {
    * @param entry The current IntersectionObserverEntry.
    */
   onVisibilityChange?(inView: boolean, entry: IntersectionObserverEntry): void;
+  /**
+   * Children
+   */
+  children?: JSX.Element | JSX.Element[]
 }
 
 const Reveal: FC<RevealProps> = ({
