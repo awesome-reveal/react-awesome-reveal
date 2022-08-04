@@ -7,15 +7,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.9.0",
-    "react": "^18.1.0",
+    "@emotion/react": "^11.10.0",
+    "react": "^18.2.0",
     "react-awesome-reveal": "workspace:*",
-    "react-dom": "^18.1.0"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/react": "^18.0.9",
-    "@types/react-dom": "^18.0.3",
+    "@types/react": "^18.0.15",
+    "@types/react-dom": "^18.0.6",
     "@vitejs/plugin-react": "^1.3.2",
-    "vite": "^2.9.9"
+    "vite": "^3.0.4"
   }
 }
