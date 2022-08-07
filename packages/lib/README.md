@@ -38,10 +38,6 @@
 - 💻 **SSR support** – Server Side Rendering works out-of-the-box
 - 🌳 **Tree-shakeable** – Only the parts you use will be included in your final bundle
 
-## Demo
-
-You can find a demo website [here](https://react-awesome-reveal.morello.dev).
-
 ## Installation
 
 To add this package as a dependency to your app, simply run
