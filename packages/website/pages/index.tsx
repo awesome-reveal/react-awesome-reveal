@@ -19,7 +19,11 @@ const Home: NextPage = () => {
           Documentation website is under (re)construction.
           <br />
           Please refer to the{" "}
-          <a href="https://github.com/morellodev/react-awesome-reveal">
+          <a
+            href="https://github.com/morellodev/react-awesome-reveal"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             project <code>README</code>
           </a>{" "}
           for the instructions.
