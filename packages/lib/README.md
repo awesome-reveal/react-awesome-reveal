@@ -12,7 +12,6 @@
 ## Table Of Contents
 
 - [Features](#features)
-- [Demo](#demo)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Supported Effects](#supported-effects)
