@@ -1,0 +1,50 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <div class="wrapper">
+    <main class="content">
+      <h1 class="title">React Awesome Reveal</h1>
+      <p class="headline">
+        Documentation website is under (re)construction.
+        <br />
+        Please refer to the{" "}
+        <a
+          href="https://github.com/morellodev/react-awesome-reveal"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          project <code>README</code>
+        </a>{" "}
+        for the instructions.
+      </p>
+    </main>
+  </div>
+</Layout>
+
+<style>
+  .wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .content {
+    padding: 4rem 0;
+  }
+
+  .title {
+    text-align: center;
+  }
+
+  .headline {
+    text-align: center;
+  }
+
+  @media (min-width: 800px) {
+    .content {
+      padding: 8rem 0;
+    }
+  }
+</style>
