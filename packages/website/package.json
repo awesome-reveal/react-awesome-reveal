@@ -9,6 +9,8 @@
     "astro": "astro"
   },
   "devDependencies": {
-    "astro": "^1.0.8"
+    "@astrojs/tailwind": "^1.0.0",
+    "astro": "^1.0.8",
+    "eslint-plugin-tailwindcss": "^3.6.0"
   }
 }

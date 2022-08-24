@@ -3,42 +3,23 @@ import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout>
-  <main>
-    <h1>React Awesome Reveal</h1>
-    <p>
+  <main class="container max-w-3xl mx-auto py-16 md:py-32">
+    <h1 class="text-center text-4xl md:text-5xl font-bold mb-4 md:mb-8">
+      React Awesome Reveal
+    </h1>
+    <p class="text-center">
       Documentation website is under (re)construction.
       <br />
       Please refer to the{" "}
       <a
+        class="underline"
         href="https://github.com/morellodev/react-awesome-reveal"
         target="_blank"
         rel="noopener noreferrer"
       >
-        project <code>README</code>
+        project repo
       </a>{" "}
       for the instructions.
     </p>
   </main>
 </Layout>
-
-<style>
-  main {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 4rem 1rem;
-  }
-
-  h1 {
-    text-align: center;
-  }
-
-  p {
-    text-align: center;
-  }
-
-  @media (min-width: 800px) {
-    main {
-      padding: 8rem 1rem;
-    }
-  }
-</style>
