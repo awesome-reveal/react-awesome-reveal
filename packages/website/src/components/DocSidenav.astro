@@ -1,0 +1,34 @@
+---
+interface Frontmatter {
+  title: string;
+  sidenavOrder: number;
+}
+
+const docPages = await Astro.glob<Frontmatter>("../pages/docs/*.md");
+---
+
+<aside
+  class="fixed flex-shrink-0 w-full md:w-64 md:sticky z-10 top-16 self-start overflow-y-auto transform-none h-[calc(100vh-4rem)] md:block"
+>
+  <ul class="p-4 space-y-1">
+    {
+      docPages
+        .sort((a, b) => a.frontmatter.sidenavOrder - b.frontmatter.sidenavOrder)
+        .map((page) => {
+          const isActive = Astro.url.pathname === page.url;
+
+          return (
+            <li>
+              <a
+                class="block no-underline px-2 py-[0.375rem] select-none rounded text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 hover:opacity-100 active-link:bg-gray-100 active-link:text-gray-900"
+                aria-current={isActive ? "page" : "false"}
+                href={page.url}
+              >
+                {page.frontmatter.title}
+              </a>
+            </li>
+          );
+        })
+    }
+  </ul>
+</aside>

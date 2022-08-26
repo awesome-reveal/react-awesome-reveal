@@ -11,6 +11,13 @@
   "devDependencies": {
     "@astrojs/tailwind": "^1.0.0",
     "astro": "^1.0.8",
-    "eslint-plugin-tailwindcss": "^3.6.0"
+    "eslint-plugin-tailwindcss": "^3.6.0",
+    "hastscript": "^7.0.2",
+    "rehype-autolink-headings": "^6.1.1",
+    "rehype-slug": "^5.0.1",
+    "remark-emoji": "^3.0.2"
+  },
+  "dependencies": {
+    "astro-icon": "^0.7.3"
   }
 }

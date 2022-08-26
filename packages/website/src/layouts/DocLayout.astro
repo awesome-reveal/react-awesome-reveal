@@ -1,0 +1,30 @@
+---
+import type { MarkdownInstance } from "astro";
+import DocSidenav from "../components/DocSidenav.astro";
+import Navbar from "../components/Navbar.astro";
+import "../styles/docs.css";
+import BaseLayout from "./BaseLayout.astro";
+
+interface Frontmatter {
+  title: string;
+  description?: string;
+}
+
+const { frontmatter } = Astro.props as MarkdownInstance<Frontmatter>;
+---
+
+<BaseLayout {...frontmatter}>
+  <Navbar />
+  <div class="max-w-7xl w-full mx-auto flex flex-1 items-stretch">
+    <div class="flex flex-1 w-full">
+      <DocSidenav />
+      <article
+        class="relative pb-8 w-full justify-center max-w-full flex min-w-0"
+      >
+        <main class="max-w-4xl px-6 md:px-8 pt-4 min-w-0 w-full">
+          <slot />
+        </main>
+      </article>
+    </div>
+  </div>
+</BaseLayout>

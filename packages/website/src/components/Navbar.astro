@@ -1,0 +1,41 @@
+---
+import { Icon } from "astro-icon";
+
+const isDocPage = Astro.url.pathname.startsWith("/docs");
+const isExamplePage = Astro.url.pathname.startsWith("/examples");
+---
+
+<div class="z-20 sticky bg-transparent w-full top-0">
+  <div
+    class="-z-10 shadow-sm absolute w-full h-full bg-white/90 backdrop-blur-md pointer-events-none"
+  >
+  </div>
+  <nav
+    class="flex gap-2 max-w-7xl mx-auto items-center left-0 right-0 h-16 px-6"
+  >
+    <div class="flex items-center mr-2 flex-auto">
+      <a
+        class="no-underline text-current font-bold tracking-tighter inline-flex items-center hover:opacity-75"
+        href="/">React Awesome Reveal</a
+      >
+    </div>
+    <div class="flex-1"></div>
+    <a
+      class="text-sm no-underline whitespace-nowrap p-2 -ml-2 hidden md:inline-block hover:active-link:opacity-100 active-link:font-medium"
+      aria-current={isDocPage ? "page" : "false"}
+      href="/docs/getting-started">Docs</a
+    >
+    <a
+      class="text-sm no-underline whitespace-nowrap p-2 -ml-2 hidden md:inline-block hover:active-link:opacity-100 active-link:font-medium"
+      aria-current={isExamplePage ? "page" : "false"}
+      href="/examples/basic">Examples</a
+    >
+    <a
+      class="p-2 -ml-2"
+      href="https://github.com/morellodev/react-awesome-reveal"
+      target="_blank"
+      rel="noopener"
+      ><Icon class="w-6 h-6" name="bx:bxl-github" />
+    </a>
+  </nav>
+</div>

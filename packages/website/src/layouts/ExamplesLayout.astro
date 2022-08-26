@@ -1,0 +1,16 @@
+---
+import type { MarkdownInstance } from "astro";
+import Navbar from "../components/Navbar.astro";
+import BaseLayout from "./BaseLayout.astro";
+
+interface Frontmatter {
+  title: string;
+  description?: string;
+}
+
+const { frontmatter } = Astro.props as MarkdownInstance<Frontmatter>;
+---
+
+<BaseLayout {...frontmatter}>
+  <Navbar />
+</BaseLayout>

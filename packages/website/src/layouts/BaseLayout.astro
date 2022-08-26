@@ -1,4 +1,6 @@
 ---
+import "../styles/index.css";
+
 export interface Props {
   title?: string;
   description?: string;
@@ -6,7 +8,7 @@ export interface Props {
 
 const {
   title = "React Awesome Reveal",
-  description = "Add revealing animations to your website with ease",
+  description = "Add revealing animations to your React app with ease",
 } = Astro.props as Props;
 ---
 
@@ -20,7 +22,9 @@ const {
     <meta name="description" content={description} />
     <title>{title}</title>
   </head>
-  <body>
-    <slot />
+  <body class="antialiased">
+    <div class="min-h-screen flex flex-col">
+      <slot />
+    </div>
   </body>
 </html>

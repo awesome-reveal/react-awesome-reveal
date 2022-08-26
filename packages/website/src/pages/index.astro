@@ -1,25 +1,58 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import Features from "../components/Features.astro";
+import Navbar from "../components/Navbar.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<Layout>
-  <main class="container max-w-3xl mx-auto px-4 py-16 md:py-32">
-    <h1 class="text-center text-4xl md:text-5xl font-bold mb-4 md:mb-8">
-      React Awesome Reveal
-    </h1>
-    <p class="text-center">
-      Documentation website is under (re)construction.
-      <br />
-      Please refer to the{" "}
-      <a
-        class="underline"
-        href="https://github.com/morellodev/react-awesome-reveal"
-        target="_blank"
-        rel="noopener noreferrer"
+<BaseLayout>
+  <Navbar />
+  <div class="max-w-7xl w-full mx-auto flex flex-1 items-stretch">
+    <div class="flex flex-1 w-full">
+      <article
+        class="relative pb-8 w-full justify-center max-w-full flex min-w-0"
       >
-        project repo
-      </a>{" "}
-      for the instructions.
-    </p>
-  </main>
-</Layout>
+        <main class="max-w-4xl px-6 md:px-8 pt-4 z-10 min-w-0 w-full">
+          <h1 class="text-center font-extrabold text-4xl md:text-5xl mt-8">
+            React Awesome Reveal
+          </h1>
+          <div class="relative mt-6 -mx-6 md:-mx-8 2xl:-mx-24">
+            <div class="mx-auto max-w-full w-[880px] text-center px-4 mb-10">
+              <p class="text-lg md:text-2xl mb-2 text-gray-600">
+                Animated Performant Components
+              </p>
+              <Features />
+            </div>
+          </div>
+          <div class="mt-6 leading-7">
+            <p>
+              React Awesome Reveal is a library for React apps written in
+              <a
+                href="https://www.typescriptlang.org"
+                target="_blank"
+                rel="noopener">TypeScript</a
+              > that adds reveal animations using the <a
+                href="https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API"
+                target="_blank"
+                rel="noopener">Intersection Observer API</a
+              > to detect when elements appear in the viewport.
+            </p><p>
+              Animations are internally provided by
+              <a href="https://emotion.sh" target="_blank" rel="noopener"
+                >Emotion</a
+              > and implemented as CSS Animations to benefit from hardware acceleration.
+            </p>
+          </div>
+          <div class="mt-16 mb-20 text-center">
+            <a href="/docs/getting-started">Get Started</a> &bull;
+            <a href="/examples/basic">Examples</a> &bull;
+            <a
+              href="https://github.com/morellodev/react-awesome-reveal"
+              target="_blank"
+              rel="noopener">GitHub</a
+            >
+          </div>
+        </main>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
