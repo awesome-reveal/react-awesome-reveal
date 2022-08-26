@@ -20,22 +20,24 @@ const isExamplePage = Astro.url.pathname.startsWith("/examples");
       >
     </div>
     <div class="flex-1"></div>
-    <a
-      class="text-sm no-underline whitespace-nowrap p-2 -ml-2 hidden md:inline-block hover:active-link:opacity-100 active-link:font-medium"
-      aria-current={isDocPage ? "page" : "false"}
-      href="/docs/getting-started">Docs</a
-    >
-    <a
-      class="text-sm no-underline whitespace-nowrap p-2 -ml-2 hidden md:inline-block hover:active-link:opacity-100 active-link:font-medium"
-      aria-current={isExamplePage ? "page" : "false"}
-      href="/examples/basic">Examples</a
-    >
-    <a
-      class="p-2 -ml-2"
-      href="https://github.com/morellodev/react-awesome-reveal"
-      target="_blank"
-      rel="noopener"
-      ><Icon class="w-6 h-6" name="bx:bxl-github" />
-    </a>
+    <div class="flex items-center">
+      <a
+        class="text-sm no-underline whitespace-nowrap p-2 hidden md:inline-block hover:active-link:opacity-100 active-link:font-medium"
+        aria-current={isDocPage ? "page" : "false"}
+        href="/docs/getting-started">Docs</a
+      >
+      <a
+        class="text-sm no-underline whitespace-nowrap p-2 hidden md:inline-block hover:active-link:opacity-100 active-link:font-medium"
+        aria-current={isExamplePage ? "page" : "false"}
+        href="/examples/basic">Examples</a
+      >
+      <a
+        class="p-2 -mr-2"
+        href="https://github.com/morellodev/react-awesome-reveal"
+        target="_blank"
+        rel="noopener"
+        ><Icon class="w-6 h-6" name="bx:bxl-github" />
+      </a>
+    </div>
   </nav>
 </div>
