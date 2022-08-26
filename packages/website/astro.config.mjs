@@ -18,7 +18,7 @@ const AnchorLinkIcon = h(
 
 // https://astro.build/config
 export default defineConfig({
-  site: process.env.VERCEL_URL,
+  site: "https://react-awesome-reveal.morello.dev",
   integrations: [
     tailwind({
       config: {
