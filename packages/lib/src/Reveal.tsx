@@ -259,7 +259,7 @@ const TextReveal: React.FC<
       ))}
     </div>
   ) : (
-    <Reveal {...props}>{children}</Reveal>
+    <FragmentReveal {...props}>{children}</FragmentReveal>
   );
 };
 
