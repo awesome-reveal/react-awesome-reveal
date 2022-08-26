@@ -1,0 +1,85 @@
+---
+import Icon from "astro-icon";
+import { array as A, option as O } from "fp-ts";
+import { pipe } from "fp-ts/function";
+
+export interface Props {
+  currentDocIndex: number;
+}
+
+const { currentDocIndex } = Astro.props as Props;
+
+interface Frontmatter {
+  title: string;
+  order: number;
+}
+
+const docPages = await Astro.glob<Frontmatter>("../pages/docs/*.md");
+
+const prevDocPage = pipe(
+  currentDocIndex,
+  O.fromPredicate((i) => i > 1),
+  O.chain((i) =>
+    pipe(
+      docPages,
+      A.findFirst((page) => page.frontmatter.order === i - 1)
+    )
+  )
+);
+
+const nextDocPage = pipe(
+  currentDocIndex,
+  O.fromPredicate((i) => i < docPages.length),
+  O.chain((i) =>
+    pipe(
+      docPages,
+      A.findFirst((page) => page.frontmatter.order === i + 1)
+    )
+  )
+);
+---
+
+<div
+  class="pt-8 mt-12 mb-8 border-t flex flex-row items-center justify-between"
+>
+  <div class="flex-1 min-w-0 flex justify-start">
+    {
+      pipe(
+        prevDocPage,
+        O.map((page) => (
+          <a
+            class="text-base md:text-lg font-medium p-4 -m-4 no-underline text-gray-600 hover:text-black hover:opacity-100 inline-flex items-center rounded mr-2"
+            href={page.url}
+          >
+            <Icon
+              class="flex-shrink-0 mr-1 w-5 md:w-6 h-5 md:h-6"
+              name="heroicons-outline:chevron-left"
+            />
+            {page.frontmatter.title}
+          </a>
+        )),
+        O.toNullable
+      )
+    }
+  </div>
+  <div class="flex-1 min-w-0 flex justify-end">
+    {
+      pipe(
+        nextDocPage,
+        O.map((page) => (
+          <a
+            class="text-base md:text-lg font-medium p-4 -m-4 no-underline text-gray-600 hover:text-black hover:opacity-100 inline-flex items-center rounded ml-2"
+            href={page.url}
+          >
+            {page.frontmatter.title}
+            <Icon
+              class="flex-shrink-0 ml-1 w-5 md:w-6 h-5 md:h-6"
+              name="heroicons-outline:chevron-right"
+            />
+          </a>
+        )),
+        O.toNullable
+      )
+    }
+  </div>
+</div>

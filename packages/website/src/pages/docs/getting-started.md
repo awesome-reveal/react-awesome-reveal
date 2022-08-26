@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocLayout.astro
 title: Getting Started
-sidenavOrder: 1
+order: 1
 ---
 
 # Getting Started

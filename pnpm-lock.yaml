@@ -97,12 +97,14 @@ importers:
       astro: ^1.0.8
       astro-icon: ^0.7.3
       eslint-plugin-tailwindcss: ^3.6.0
+      fp-ts: ^2.12.2
       hastscript: ^7.0.2
       rehype-autolink-headings: ^6.1.1
       rehype-slug: ^5.0.1
       remark-emoji: ^3.0.2
     dependencies:
       astro-icon: 0.7.3
+      fp-ts: 2.12.2
     devDependencies:
       '@astrojs/sitemap': 1.0.0
       '@astrojs/tailwind': 1.0.0
@@ -3586,6 +3588,10 @@ packages:
     engines: {node: '>=12.20.0'}
     dependencies:
       fetch-blob: 3.2.0
+
+  /fp-ts/2.12.2:
+    resolution: {integrity: sha512-v8J7ud+nTkP5Zz17GhpCsY19wiRbB9miuj61nBcCJyDpu52zs9Z4O7OLDfYoKFQMJ9EsSZA7W1vRgC1d3jy5qw==}
+    dev: false
 
   /fraction.js/4.2.0:
     resolution: {integrity: sha512-MhLuK+2gUcnZe8ZHlaaINnQLl0xRIGRfcGk2yl8xoQAfHrSsL3rYu6FCmBdkdbhc9EPlwyGHewaRsvwRMJtAlA==}

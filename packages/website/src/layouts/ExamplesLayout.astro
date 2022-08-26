@@ -8,9 +8,11 @@ interface Frontmatter {
   description?: string;
 }
 
-const { frontmatter } = Astro.props as MarkdownInstance<Frontmatter>;
+const {
+  frontmatter: { title, description },
+} = Astro.props as MarkdownInstance<Frontmatter>;
 ---
 
-<BaseLayout {...frontmatter}>
+<BaseLayout {title} {description}>
   <Navbar />
 </BaseLayout>

@@ -1,5 +1,6 @@
 ---
 import type { MarkdownInstance } from "astro";
+import DocBottomNavlinks from "../components/DocBottomNavlinks.astro";
 import DocSidenav from "../components/DocSidenav.astro";
 import Navbar from "../components/Navbar.astro";
 import "../styles/docs.css";
@@ -8,12 +9,15 @@ import BaseLayout from "./BaseLayout.astro";
 interface Frontmatter {
   title: string;
   description?: string;
+  order: number;
 }
 
-const { frontmatter } = Astro.props as MarkdownInstance<Frontmatter>;
+const {
+  frontmatter: { title, description, order },
+} = Astro.props as MarkdownInstance<Frontmatter>;
 ---
 
-<BaseLayout {...frontmatter}>
+<BaseLayout {title} {description}>
   <Navbar />
   <div class="max-w-7xl w-full mx-auto flex flex-1 items-stretch">
     <div class="flex flex-1 w-full">
@@ -23,6 +27,7 @@ const { frontmatter } = Astro.props as MarkdownInstance<Frontmatter>;
       >
         <main class="max-w-4xl px-6 md:px-8 pt-4 min-w-0 w-full">
           <slot />
+          <DocBottomNavlinks currentDocIndex={order} />
         </main>
       </article>
     </div>

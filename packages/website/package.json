@@ -19,6 +19,7 @@
     "remark-emoji": "^3.0.2"
   },
   "dependencies": {
-    "astro-icon": "^0.7.3"
+    "astro-icon": "^0.7.3",
+    "fp-ts": "^2.12.2"
   }
 }

@@ -1,7 +1,7 @@
 ---
 layout: ../../layouts/DocLayout.astro
 title: Installation
-sidenavOrder: 2
+order: 2
 ---
 
 # Installation

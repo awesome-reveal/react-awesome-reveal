@@ -1,10 +1,19 @@
 ---
+import { array as A, number as N } from "fp-ts";
+import { pipe } from "fp-ts/function";
+import { contramap } from "fp-ts/Ord";
+
 interface Frontmatter {
   title: string;
-  sidenavOrder: number;
+  order: number;
 }
 
 const docPages = await Astro.glob<Frontmatter>("../pages/docs/*.md");
+
+const byOrder = pipe(
+  N.Ord,
+  contramap((p: typeof docPages[number]) => p.frontmatter.order)
+);
 ---
 
 <aside
@@ -12,9 +21,10 @@ const docPages = await Astro.glob<Frontmatter>("../pages/docs/*.md");
 >
   <ul class="p-4 space-y-1">
     {
-      docPages
-        .sort((a, b) => a.frontmatter.sidenavOrder - b.frontmatter.sidenavOrder)
-        .map((page) => {
+      pipe(
+        docPages,
+        A.sortBy([byOrder]),
+        A.map((page) => {
           const isActive = Astro.url.pathname === page.url;
 
           return (
@@ -29,6 +39,7 @@ const docPages = await Astro.glob<Frontmatter>("../pages/docs/*.md");
             </li>
           );
         })
+      )
     }
   </ul>
 </aside>
