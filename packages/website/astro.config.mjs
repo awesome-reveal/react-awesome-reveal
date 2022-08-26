@@ -1,3 +1,4 @@
+import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
 import { h } from "hastscript";
@@ -25,6 +26,7 @@ export default defineConfig({
         applyBaseStyles: false,
       },
     }),
+    sitemap(),
   ],
   markdown: {
     remarkPlugins: ["remark-gfm", "remark-smartypants", "remark-emoji"],
