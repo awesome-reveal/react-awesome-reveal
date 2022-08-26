@@ -6,8 +6,11 @@ export const App = () => {
   return (
     <>
       <Section>
+        <Fade>Text fading example (no cascade)</Fade>
+      </Section>
+      <Section>
         <Fade cascade damping={0.1}>
-          Text fading example
+          Text fading example (cascade)
         </Fade>
       </Section>
       <Section>
