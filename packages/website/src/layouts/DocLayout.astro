@@ -1,5 +1,5 @@
 ---
-import type { MarkdownInstance } from "astro";
+import type { MarkdownLayoutProps } from "astro";
 import DocBottomNavlinks from "../components/DocBottomNavlinks.astro";
 import DocSidenav from "../components/DocSidenav.astro";
 import Navbar from "../components/Navbar.astro";
@@ -14,7 +14,7 @@ interface Frontmatter {
 
 const {
   frontmatter: { title, description, order },
-} = Astro.props as MarkdownInstance<Frontmatter>;
+} = Astro.props as MarkdownLayoutProps<Frontmatter>;
 ---
 
 <BaseLayout {title} {description}>
