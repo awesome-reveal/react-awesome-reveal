@@ -11,7 +11,8 @@
   "devDependencies": {
     "@astrojs/sitemap": "^1.0.0",
     "@astrojs/tailwind": "^1.0.0",
-    "astro": "^1.0.8",
+    "@fec/remark-a11y-emoji": "^3.1.0",
+    "astro": "^1.1.1",
     "eslint-plugin-tailwindcss": "^3.6.0",
     "hastscript": "^7.0.2",
     "rehype-autolink-headings": "^6.1.1",

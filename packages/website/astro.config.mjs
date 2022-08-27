@@ -32,7 +32,8 @@ export default defineConfig({
     sitemap(),
   ],
   markdown: {
-    remarkPlugins: ["remark-gfm", "remark-smartypants", "remark-emoji"],
+    extendDefaultPlugins: true,
+    remarkPlugins: ["remark-emoji", "@fec/remark-a11y-emoji"],
     rehypePlugins: [
       "rehype-slug",
       [
