@@ -3,6 +3,10 @@
 @tailwind base;
 
 @layer base {
+  article > main > * + * {
+    @apply mt-6;
+  }
+
   article :is(h1, h2) {
     @apply text-3xl tracking-tighter;
   }
@@ -15,15 +19,31 @@
     @apply font-semibold;
   }
 
-  article p:not(:first-child) {
-    @apply mt-6;
+  article p {
+    @apply leading-relaxed;
   }
 
   article pre {
-    @apply mt-6 mb-4 rounded-xl p-4 subpixel-antialiased;
+    @apply p-4 rounded-xl subpixel-antialiased;
   }
 
   article :not(pre) > code {
     @apply rounded-md border text-sm bg-gray-100 px-1 py-[2px];
+  }
+
+  article :is(ul, ol) {
+    @apply pl-6 leading-relaxed;
+  }
+
+  article ul {
+    @apply list-disc;
+  }
+
+  article ol {
+    @apply list-decimal;
+  }
+
+  article :is(ul, ol) > li {
+    @apply mt-2;
   }
 }

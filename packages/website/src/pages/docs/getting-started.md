@@ -28,12 +28,12 @@ pnpm add react-awesome-reveal @emotion/react
 
 ## Quick Start
 
-Just import the `<Fade />` component and wrap your elements:
+Import any of the animated components :sparkles: and wrap your elements:
 
 ```jsx
 import { Fade } from "react-awesome-reveal";
 
-function MyComponent() {
+function App() {
   return (
     <Fade>
       <p>I am an animated text</p>
