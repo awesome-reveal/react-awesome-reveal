@@ -1,5 +1,6 @@
 ---
 import "../styles/index.css";
+import { formatTitle } from "../utils/seo";
 
 export interface Props {
   title?: string;
@@ -20,7 +21,7 @@ const {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
-    <title>{title}</title>
+    <title>{formatTitle(title)}</title>
   </head>
   <body class="antialiased">
     <div class="min-h-screen flex flex-col">
