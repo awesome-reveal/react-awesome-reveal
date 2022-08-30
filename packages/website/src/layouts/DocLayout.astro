@@ -1,5 +1,6 @@
 ---
 import type { MarkdownLayoutProps } from "astro";
+import Container from "../components/Container.astro";
 import DocBottomNavlinks from "../components/DocBottomNavlinks.astro";
 import DocSidenav from "../components/DocSidenav.astro";
 import Navbar from "../components/Navbar.astro";
@@ -21,11 +22,13 @@ const {
   <div class="max-w-7xl w-full mx-auto flex items-stretch">
     <div class="flex flex-1 w-full">
       <DocSidenav />
-      <main class="relative pb-8 w-full justify-center max-w-full flex min-w-0">
-        <article class="prose max-w-4xl px-6 md:px-8 pt-4 min-w-0 w-full">
-          <slot />
+      <main class="pt-8 pb-12 w-full justify-center max-w-full flex min-w-0">
+        <Container size="narrow">
+          <article class="prose prose-emerald">
+            <slot />
+          </article>
           <DocBottomNavlinks currentDocIndex={order} />
-        </article>
+        </Container>
       </main>
     </div>
   </div>

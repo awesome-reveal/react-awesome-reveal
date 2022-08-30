@@ -14,7 +14,7 @@ const isExamplePage = Astro.url.pathname.startsWith("/examples");
       >
       <div class="hidden lg:flex items-center ml-auto">
         <nav class="text-sm leading-6 font-semibold">
-          <ul class="flex space-x-6">
+          <ul class="links flex space-x-6">
             <li>
               <a
                 aria-current={isDocPage ? "page" : "false"}
@@ -41,3 +41,9 @@ const isExamplePage = Astro.url.pathname.startsWith("/examples");
     </div>
   </Container>
 </div>
+
+<style>
+  .links a {
+    @apply hover:text-emerald-600;
+  }
+</style>

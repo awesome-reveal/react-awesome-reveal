@@ -47,10 +47,7 @@ const nextDocPage = pipe(
       pipe(
         prevDocPage,
         O.map((page) => (
-          <a
-            class="text-base md:text-lg p-4 -m-4 no-underline text-slate-600 hover:text-slate-500 inline-flex items-center rounded mr-2"
-            href={page.url}
-          >
+          <a class="mr-2" href={page.url}>
             <Icon
               class="flex-shrink-0 mr-1 w-5 md:w-6 h-5 md:h-6"
               name="heroicons-outline:chevron-left"
@@ -62,15 +59,12 @@ const nextDocPage = pipe(
       )
     }
   </div>
-  <div class="flex-1 min-w-0 flex justify-end">
+  <div class="flex-1 min-w-0 flex justify-end text-right">
     {
       pipe(
         nextDocPage,
         O.map((page) => (
-          <a
-            class="text-base md:text-lg p-4 -m-4 no-underline text-slate-600 hover:text-slate-500 inline-flex items-center rounded ml-2"
-            href={page.url}
-          >
+          <a class="ml-2" href={page.url}>
             {page.frontmatter.title}
             <Icon
               class="flex-shrink-0 ml-1 w-5 md:w-6 h-5 md:h-6"
@@ -83,3 +77,9 @@ const nextDocPage = pipe(
     }
   </div>
 </div>
+
+<style>
+  a {
+    @apply no-underline text-base md:text-lg p-4 -m-4 text-emerald-600 inline-flex items-center rounded leading-snug;
+  }
+</style>
