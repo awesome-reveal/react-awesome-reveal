@@ -6,6 +6,12 @@ order: 1
 
 # Getting Started
 
+## About
+
+**React Awesome Reveal** is a library for React apps that provides a bunch of animated primitives. You can use them to implement both [revealing effects](/docs/revealing-effects) and [attention seekers](/docs/attention-seekers) animations.
+
+It was initially born as a modern (and more performant) replacement for [react-reveal](https://github.com/rnosov/react-reveal), which has been discontinued.
+
 ## Installation
 
 Inside your React project directory, run the following:
@@ -41,3 +47,12 @@ function App() {
   );
 }
 ```
+
+## Design Principles
+
+This library has been developed with the following design principles:
+
+- **simplicity** – it should be easy and intuitive to adopt
+- **lightness** – it should not bloat your app
+- **performance** – animations should run as smooth as possible
+- **modernicity** – it should use state-of-the-art (while well supported) technologies

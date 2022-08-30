@@ -7,7 +7,7 @@ export interface Props {
   currentDocIndex: number;
 }
 
-const { currentDocIndex } = Astro.props as Props;
+const { currentDocIndex } = Astro.props;
 
 interface Frontmatter {
   title: string;
@@ -48,7 +48,7 @@ const nextDocPage = pipe(
         prevDocPage,
         O.map((page) => (
           <a
-            class="text-base md:text-lg font-medium p-4 -m-4 no-underline text-gray-600 hover:text-black hover:opacity-100 inline-flex items-center rounded mr-2"
+            class="text-base md:text-lg p-4 -m-4 no-underline text-slate-600 hover:text-slate-500 inline-flex items-center rounded mr-2"
             href={page.url}
           >
             <Icon
@@ -68,7 +68,7 @@ const nextDocPage = pipe(
         nextDocPage,
         O.map((page) => (
           <a
-            class="text-base md:text-lg font-medium p-4 -m-4 no-underline text-gray-600 hover:text-black hover:opacity-100 inline-flex items-center rounded ml-2"
+            class="text-base md:text-lg p-4 -m-4 no-underline text-slate-600 hover:text-slate-500 inline-flex items-center rounded ml-2"
             href={page.url}
           >
             {page.frontmatter.title}

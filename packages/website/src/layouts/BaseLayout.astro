@@ -1,5 +1,4 @@
 ---
-import "../styles/index.css";
 import { formatTitle } from "../utils/seo";
 
 export interface Props {
@@ -10,7 +9,7 @@ export interface Props {
 const {
   title = "React Awesome Reveal",
   description = "Add revealing animations to your React app with ease",
-} = Astro.props as Props;
+} = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -24,8 +23,6 @@ const {
     <title>{formatTitle(title)}</title>
   </head>
   <body class="antialiased">
-    <div class="min-h-screen flex flex-col">
-      <slot />
-    </div>
+    <slot />
   </body>
 </html>

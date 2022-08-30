@@ -15,12 +15,10 @@ const {
 
 <BaseLayout {title} {description}>
   <Navbar />
-  <div class="max-w-7xl w-full mx-auto flex flex-1 items-stretch">
+  <div class="max-w-7xl w-full mx-auto flex items-stretch">
     <div class="flex flex-1 w-full">
-      <article
-        class="relative pb-8 w-full justify-center max-w-full flex min-w-0"
-      >
-        <main class="max-w-4xl px-6 md:px-8 pt-4 min-w-0 w-full">
+      <main class="relative pb-8 w-full justify-center max-w-full flex min-w-0">
+        <article class="prose max-w-4xl px-6 md:px-8 pt-4 min-w-0 w-full">
           {/* TODO replace with <slot /> */}
           <div class="py-16 md:py-32">
             <p
@@ -32,8 +30,8 @@ const {
               >
             </p>
           </div>
-        </main>
-      </article>
+        </article>
+      </main>
     </div>
   </div>
 </BaseLayout>

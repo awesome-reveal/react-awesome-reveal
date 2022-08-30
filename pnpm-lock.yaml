@@ -95,25 +95,29 @@ importers:
       '@astrojs/sitemap': ^1.0.0
       '@astrojs/tailwind': ^1.0.0
       '@fec/remark-a11y-emoji': ^3.1.0
+      '@tailwindcss/typography': ^0.5.4
       astro: ^1.1.1
       astro-icon: ^0.7.3
       eslint-plugin-tailwindcss: ^3.6.0
       fp-ts: ^2.12.2
-      hastscript: ^7.0.2
+      io-ts: ^2.2.18
       rehype-autolink-headings: ^6.1.1
+      rehype-external-links: ^2.0.1
       rehype-slug: ^5.0.1
       remark-emoji: ^3.0.2
     dependencies:
       astro-icon: 0.7.3
       fp-ts: 2.12.2
+      io-ts: 2.2.18_fp-ts@2.12.2
     devDependencies:
       '@astrojs/sitemap': 1.0.0
       '@astrojs/tailwind': 1.0.0
       '@fec/remark-a11y-emoji': 3.1.0
+      '@tailwindcss/typography': 0.5.4
       astro: 1.1.1
       eslint-plugin-tailwindcss: 3.6.0
-      hastscript: 7.0.2
       rehype-autolink-headings: 6.1.1
+      rehype-external-links: 2.0.1
       rehype-slug: 5.0.1
       remark-emoji: 3.0.2
 
@@ -1737,6 +1741,16 @@ packages:
     resolution: {integrity: sha512-6JrF+fdUK2zbGpJIlN7G3v966PQjyx/dPt1T9km2wj+EUBqgrxCk3uX4Kct16MIm9gGxfKRcfax2hVf5jvlTzA==}
     dependencies:
       tslib: 2.4.0
+    dev: true
+
+  /@tailwindcss/typography/0.5.4:
+    resolution: {integrity: sha512-QEdg40EmGvE7kKoDei8zr5sf4D1pIayHj4R31bH3lX8x2BtTiR+jNejYPOkhbmy3DXgkMF9jC8xqNiGFAuL9Sg==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || insiders'
+    dependencies:
+      lodash.castarray: 4.4.0
+      lodash.isplainobject: 4.0.6
+      lodash.merge: 4.6.2
     dev: true
 
   /@trysound/sax/0.2.0:
@@ -4060,6 +4074,19 @@ packages:
       side-channel: 1.0.4
     dev: true
 
+  /io-ts/2.2.18_fp-ts@2.12.2:
+    resolution: {integrity: sha512-3JxUUzRtPQPs5sOwB7pW0+Xb54nOzqA6M1sRB1hwgsRmkWMeGTjtOrCynGTJhIj+mBLUj2S37DAq2+BrPh9kTQ==}
+    peerDependencies:
+      fp-ts: ^2.5.0
+    dependencies:
+      fp-ts: 2.12.2
+    dev: false
+
+  /is-absolute-url/4.0.1:
+    resolution: {integrity: sha512-/51/TKE88Lmm7Gc4/8btclNXWS+g50wXhYJq8HWIBAGUBnoAdRu1aXeh364t/O7wXDAcTJDP8PNuNKWUDWie+A==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    dev: true
+
   /is-alphabetical/2.0.1:
     resolution: {integrity: sha512-FWyyY60MeTNyeSRpkM2Iry0G9hpr7/9kD40mD/cGQEuilcZYS4okz8SN2Q6rLCJ8gbCt6fN+rC+6tMGS99LaxQ==}
     dev: true
@@ -4440,6 +4467,14 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       p-locate: 5.0.0
+    dev: true
+
+  /lodash.castarray/4.4.0:
+    resolution: {integrity: sha512-aVx8ztPv7/2ULbArGJ2Y42bG1mEQ5mGjpdvrbJcJFU3TbYybe+QlLS4pst9zV52ymy2in1KpFPiZnAOATxD4+Q==}
+    dev: true
+
+  /lodash.isplainobject/4.0.6:
+    resolution: {integrity: sha512-oSXzaWypCMHkPC3NvBEaPHf0KsA5mvPrOPgQWDsbg8n7orZ290M0BmC/jgRZ4vcJ6DTAhjrsSYgdsW/F+MFOBA==}
     dev: true
 
   /lodash.merge/4.6.2:
@@ -5772,6 +5807,17 @@ packages:
       hast-util-has-property: 2.0.0
       hast-util-heading-rank: 2.1.0
       hast-util-is-element: 2.1.2
+      unified: 10.1.2
+      unist-util-visit: 4.1.1
+    dev: true
+
+  /rehype-external-links/2.0.1:
+    resolution: {integrity: sha512-u2dNypma+ps12SJWlS23zvbqwNx0Hl24t0YHXSM/6FCZj/pqWETCO3WyyrvALv4JYvRtuPjhiv2Lpen15ESqbA==}
+    dependencies:
+      '@types/hast': 2.3.4
+      extend: 3.0.2
+      is-absolute-url: 4.0.1
+      space-separated-tokens: 2.0.1
       unified: 10.1.2
       unist-util-visit: 4.1.1
     dev: true
