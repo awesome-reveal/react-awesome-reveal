@@ -25,7 +25,9 @@ const byOrder = pipe(
         docPages,
         A.sortBy([byOrder]),
         A.map((page) => {
-          const isActive = Astro.url.pathname === page.url;
+          const isActive =
+            // https://github.com/withastro/astro/issues/4547
+            page.url === Astro.url.pathname.replace(/.*(\/)$/, "");
 
           return (
             <li>
