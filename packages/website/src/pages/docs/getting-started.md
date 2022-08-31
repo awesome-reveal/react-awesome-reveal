@@ -47,12 +47,3 @@ function App() {
   );
 }
 ```
-
-## Design Principles
-
-This library has been developed following these design principles:
-
-- **simplicity** – it should be easy and intuitive to adopt
-- **lightness** – it should not bloat your app
-- **performance** – animations should run as smooth as possible
-- **modernicity** – it should use state-of-the-art (while well supported) technologies
