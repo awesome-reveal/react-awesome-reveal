@@ -4,6 +4,7 @@ import Container from "../components/Container.astro";
 import DocBottomNavlinks from "../components/DocBottomNavlinks.astro";
 import DocSidenav from "../components/DocSidenav.astro";
 import Navbar from "../components/Navbar.astro";
+import { formatTitle } from "../utils/seo";
 import BaseLayout from "./BaseLayout.astro";
 
 interface Frontmatter {
@@ -17,7 +18,7 @@ const {
 } = Astro.props as MarkdownLayoutProps<Frontmatter>;
 ---
 
-<BaseLayout {title} {description}>
+<BaseLayout title={formatTitle(title)} {description}>
   <Navbar />
   <div class="max-w-7xl w-full mx-auto flex items-stretch">
     <div class="flex flex-1 w-full">
