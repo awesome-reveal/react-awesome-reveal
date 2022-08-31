@@ -47,7 +47,7 @@ const nextDocPage = pipe(
       pipe(
         prevDocPage,
         O.map((page) => (
-          <a class="mr-2" href={page.url}>
+          <a class="mr-2 text-emerald-600" href={page.url}>
             <Icon
               class="flex-shrink-0 mr-1 w-5 md:w-6 h-5 md:h-6"
               name="heroicons-outline:chevron-left"
@@ -64,7 +64,7 @@ const nextDocPage = pipe(
       pipe(
         nextDocPage,
         O.map((page) => (
-          <a class="ml-2" href={page.url}>
+          <a class="ml-2 text-emerald-600" href={page.url}>
             {page.frontmatter.title}
             <Icon
               class="flex-shrink-0 ml-1 w-5 md:w-6 h-5 md:h-6"
@@ -80,6 +80,6 @@ const nextDocPage = pipe(
 
 <style>
   a {
-    @apply no-underline text-base md:text-lg p-4 -m-4 text-emerald-600 inline-flex items-center rounded leading-snug;
+    @apply no-underline text-base md:text-lg p-4 -m-4 inline-flex items-center rounded leading-snug;
   }
 </style>
