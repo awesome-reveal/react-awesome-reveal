@@ -1,6 +1,7 @@
 ---
 import { Icon } from "astro-icon";
 import Container from "./Container.astro";
+import StargazersCount from "./StargazersCount.astro";
 
 const isDocPage = Astro.url.pathname.startsWith("/docs");
 const isExamplePage = Astro.url.pathname.startsWith("/examples");
@@ -37,8 +38,8 @@ const isExamplePage = Astro.url.pathname.startsWith("/examples");
           target="_blank"
           rel="noopener"
         >
-          <span class="text-sm font-medium">600</span>
           <Icon class="w-6 h-6" name="bx:bxl-github" />
+          <StargazersCount />
         </a>
       </div>
     </div>

@@ -1,0 +1,20 @@
+---
+import { Icon } from "astro-icon";
+import { taskEither as TE } from "fp-ts";
+import { pipe } from "fp-ts/lib/function";
+import { getStargazersCount } from "../utils/stargazers";
+
+const stars = await pipe(
+  getStargazersCount(),
+  TE.map((a) => (a >= 1000 ? `${(a / 1000).toFixed(1)}K` : String(a))),
+  TE.getOrElse((e) => () => Promise.reject(e)),
+  (effect) => effect()
+);
+---
+
+<span
+  class="flex items-center gap-1 text-sm font-medium bg-gray-100 border px-1 rounded"
+>
+  <Icon class="w-4 h-4 text-amber-500" name="heroicons-solid:star" />
+  <span class="text-gray-900">{stars}</span>
+</span>
