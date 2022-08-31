@@ -1,4 +1,4 @@
-export interface RepoDetails {
+export interface Repository {
   allow_forking: boolean;
   archive_url: string;
   archived: boolean;

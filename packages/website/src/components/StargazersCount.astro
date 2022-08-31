@@ -6,7 +6,7 @@ import { getStargazersCount } from "../utils/stargazers";
 
 const stars = await pipe(
   getStargazersCount(),
-  TE.map((a) => (a >= 1000 ? `${(a / 1000).toFixed(1)}K` : String(a))),
+  TE.map((n) => (n >= 1000 ? `${(n / 1000).toFixed(1)}K` : String(n))),
   TE.getOrElse((e) => () => Promise.reject(e)),
   (effect) => effect()
 );

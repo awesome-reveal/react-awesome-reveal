@@ -1,17 +1,15 @@
-import type { RepoDetails } from "../types/ghRepo";
+import type { Repository } from "../types/github";
 
-export async function getRepoDetails(args: {
+export async function getRepository(args: {
   user: string;
   repo: string;
-}): Promise<RepoDetails> {
+}): Promise<Repository> {
   const response = await fetch(
     `https://api.github.com/repos/${args.user}/${args.repo}`
   );
 
   if (!response.ok)
-    throw new Error(
-      `Could not fetch details for repository "${args.user}/${args.repo}"`
-    );
+    throw new Error(`Could not fetch repository "${args.user}/${args.repo}"`);
 
   return response.json();
 }
