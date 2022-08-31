@@ -1,5 +1,5 @@
 ---
-import { array as A, number as N } from "fp-ts";
+import { array as A, number as N, option as O, string as S } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import { contramap } from "fp-ts/lib/Ord";
 
@@ -25,7 +25,11 @@ const byOrder = pipe(
         docPages,
         A.sortBy([byOrder]),
         A.map((page) => {
-          const isActive = Astro.url.pathname === page.url;
+          const isActive = pipe(
+            O.fromNullable(page.url),
+            // https://github.com/withastro/astro/issues/4547
+            O.exists((s) => pipe(Astro.url.pathname, S.startsWith(s)))
+          );
 
           return (
             <li>
