@@ -12,3 +12,7 @@ export function getStargazersCount(): TE.TaskEither<Error, number> {
     TE.map((a) => a.stargazers_count)
   );
 }
+
+export function formatThousands(n: number): string {
+  return n >= 1000 ? `${(n / 1000).toFixed(1)}K` : String(n);
+}
