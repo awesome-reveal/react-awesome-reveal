@@ -38,13 +38,9 @@ const isExamplePage = Astro.url.pathname.startsWith("/examples");
           target="_blank"
           rel="noopener"
         >
-          {
-            import.meta.env.PROD && (
-              <span class="hidden lg:block">
-                <StargazersCount />
-              </span>
-            )
-          }
+          <span class="hidden lg:block">
+            <StargazersCount />
+          </span>
           <Icon class="w-6 h-6" name="bx:bxl-github" />
         </a>
       </div>
