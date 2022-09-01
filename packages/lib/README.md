@@ -45,10 +45,16 @@ To add this package as a dependency to your app, simply run
 npm install react-awesome-reveal @emotion/react --save
 ```
 
-or, if you are using Yarn (as I strongly suggest):
+or, if you are using Yarn:
 
 ```sh
 yarn add react-awesome-reveal @emotion/react
+```
+
+or, if you are using PNPM (as I strongly suggest):
+
+```sh
+pnpm add react-awesome-reveal @emotion/react
 ```
 
 ## Quick Start
