@@ -35,16 +35,17 @@ const isDocPage = Astro.url.pathname.startsWith("/docs");
       </div>
       <div class="group flex items-center lg:ml-6">
         <a
-          class="flex items-center gap-2"
+          class="flex items-center"
           href="https://github.com/morellodev/react-awesome-reveal"
           target="_blank"
           rel="noopener"
         >
+          <span class="sr-only">React Awesome Reveal on GitHub</span>
           <span class="hidden lg:block">
             <StargazersCount />
           </span>
           <Icon
-            class="w-6 h-6 group-hover:text-gray-600"
+            class="w-6 h-6 lg:ml-2 group-hover:text-gray-600"
             name="bx:bxl-github"
           />
         </a>
