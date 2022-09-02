@@ -14,7 +14,7 @@ const isDocPage = Astro.url.pathname.startsWith("/docs");
       >
       <div class="hidden lg:flex items-center ml-auto">
         <nav class="text-sm leading-6 font-semibold">
-          <ul class="links flex space-x-6">
+          <ul class="links flex items-center space-x-6">
             <li>
               <a
                 aria-current={isDocPage ? "page" : "false"}
@@ -22,10 +22,12 @@ const isDocPage = Astro.url.pathname.startsWith("/docs");
               >
             </li>
             <li>
-              <a
-                href="https://github.com/sponsors/morellodev"
-                target="_blank"
-                rel="noopener">Sponsor</a>
+              <iframe
+                src="https://github.com/sponsors/morellodev/button"
+                title="Sponsor morellodev"
+                height="32"
+                width="116"
+                style="border: 0;"></iframe>
             </li>
           </ul>
         </nav>
