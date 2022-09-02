@@ -11,8 +11,8 @@ If the default effects do not suite your needs, you can define custom animations
 To do so, import the `Reveal` component and pass it a `keyframes` prop:
 
 ```tsx
-import { Reveal } from "react-awesome-reveal";
 import { keyframes } from "@emotion/react";
+import { Reveal } from "react-awesome-reveal";
 
 const customAnimation = keyframes`
   from {
