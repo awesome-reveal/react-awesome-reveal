@@ -4,7 +4,6 @@ import Container from "./Container.astro";
 import StargazersCount from "./StargazersCount.astro";
 
 const isDocPage = Astro.url.pathname.startsWith("/docs");
-const isExamplePage = Astro.url.pathname.startsWith("/examples");
 ---
 
 <div class="sticky top-0 z-40 w-full border-b backdrop-blur bg-white/95">
@@ -24,9 +23,9 @@ const isExamplePage = Astro.url.pathname.startsWith("/examples");
             </li>
             <li>
               <a
-                aria-current={isExamplePage ? "page" : "false"}
-                href="/examples/basic">Examples</a
-              >
+                href="https://github.com/sponsors/morellodev"
+                target="_blank"
+                rel="noopener">Sponsor</a>
             </li>
           </ul>
         </nav>
