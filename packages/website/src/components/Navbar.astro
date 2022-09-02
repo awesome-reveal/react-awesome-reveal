@@ -17,22 +17,23 @@ const isDocPage = Astro.url.pathname.startsWith("/docs");
           <ul class="links flex items-center space-x-6">
             <li>
               <a
+                class="hover:text-emerald-600"
                 aria-current={isDocPage ? "page" : "false"}
                 href="/docs/getting-started">Docs</a
               >
             </li>
             <li>
-              <iframe
-                src="https://github.com/sponsors/morellodev/button"
-                title="Sponsor morellodev"
-                height="32"
-                width="116"
-                style="border: 0;"></iframe>
+              <a
+                class="hover:text-pink-600"
+                href="https://github.com/sponsors/morellodev"
+                target="_blank"
+                rel="noopener">Sponsor</a
+              >
             </li>
           </ul>
         </nav>
       </div>
-      <div class="flex items-center lg:ml-6">
+      <div class="group flex items-center lg:ml-6">
         <a
           class="flex items-center gap-2"
           href="https://github.com/morellodev/react-awesome-reveal"
@@ -42,15 +43,12 @@ const isDocPage = Astro.url.pathname.startsWith("/docs");
           <span class="hidden lg:block">
             <StargazersCount />
           </span>
-          <Icon class="w-6 h-6" name="bx:bxl-github" />
+          <Icon
+            class="w-6 h-6 group-hover:text-gray-600"
+            name="bx:bxl-github"
+          />
         </a>
       </div>
     </div>
   </Container>
 </div>
-
-<style>
-  .links a {
-    @apply hover:text-emerald-600;
-  }
-</style>
