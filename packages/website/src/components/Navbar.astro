@@ -1,0 +1,55 @@
+---
+import { Icon } from "astro-icon";
+import Container from "./Container.astro";
+import StargazersCount from "./StargazersCount.astro";
+
+const isDocPage = Astro.url.pathname.startsWith("/docs");
+---
+
+<div class="sticky top-0 z-40 w-full border-b backdrop-blur bg-white/95">
+  <Container size="wide">
+    <div class="h-16 py-4 flex justify-between items-center">
+      <a class="mr-3 font-bold tracking-tighter" href="/"
+        >React Awesome Reveal</a
+      >
+      <div class="hidden lg:flex items-center ml-auto">
+        <nav class="text-sm leading-6 font-semibold">
+          <ul class="links flex items-center space-x-6">
+            <li>
+              <a
+                class="hover:text-emerald-600"
+                aria-current={isDocPage ? "page" : "false"}
+                href="/docs/getting-started">Docs</a
+              >
+            </li>
+            <li>
+              <a
+                class="hover:text-pink-600"
+                href="https://github.com/sponsors/morellodev"
+                target="_blank"
+                rel="noopener">Sponsor</a
+              >
+            </li>
+          </ul>
+        </nav>
+      </div>
+      <div class="group flex items-center lg:ml-6">
+        <a
+          class="flex items-center"
+          href="https://github.com/morellodev/react-awesome-reveal"
+          target="_blank"
+          rel="noopener"
+        >
+          <span class="sr-only">React Awesome Reveal on GitHub</span>
+          <span class="hidden lg:block">
+            <StargazersCount />
+          </span>
+          <Icon
+            class="w-6 h-6 lg:ml-2 group-hover:text-gray-600"
+            name="bx:bxl-github"
+          />
+        </a>
+      </div>
+    </div>
+  </Container>
+</div>

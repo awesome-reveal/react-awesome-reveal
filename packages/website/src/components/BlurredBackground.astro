@@ -1,0 +1,25 @@
+<div></div>
+
+<style>
+  div {
+    @apply absolute inset-0 -z-1;
+
+    background: radial-gradient(
+        circle at center left,
+        #fef9c3,
+        rgba(255, 255, 255, 0) 25%
+      ),
+      radial-gradient(circle at 80% 20%, #d1fae5, rgba(255, 255, 255, 0) 25%);
+  }
+
+  @media (min-width: 900px) {
+    div {
+      background: radial-gradient(
+          circle at 15% 50%,
+          #fef9c3,
+          rgba(255, 255, 255, 0) 25%
+        ),
+        radial-gradient(circle at 85% 30%, #d1fae5, rgba(255, 255, 255, 0) 25%);
+    }
+  }
+</style>

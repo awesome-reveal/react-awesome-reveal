@@ -1,25 +1,62 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import BlurredBackground from "../components/BlurredBackground.astro";
+import Container from "../components/Container.astro";
+import Features from "../components/Features.astro";
+import Navbar from "../components/Navbar.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<Layout>
-  <main class="container max-w-3xl mx-auto px-4 py-16 md:py-32">
-    <h1 class="text-center text-4xl md:text-5xl font-bold mb-4 md:mb-8">
-      React Awesome Reveal
-    </h1>
-    <p class="text-center">
-      Documentation website is under (re)construction.
-      <br />
-      Please refer to the{" "}
-      <a
-        class="underline"
-        href="https://github.com/morellodev/react-awesome-reveal"
-        target="_blank"
-        rel="noopener noreferrer"
+<BaseLayout title="React Awesome Reveal | Performant Animated Components">
+  <BlurredBackground />
+  <Navbar />
+  <main class="pt-4">
+    <Container size="narrow">
+      <h1 class="mt-8 text-center font-extrabold text-4xl md:text-5xl">
+        React Awesome Reveal
+      </h1>
+      <div class="mt-6 -mx-4 md:-mx-6 2xl:-mx-24">
+        <div class="mx-auto mb-10 px-4 w-[880px] max-w-full text-center">
+          <p class="mb-2 text-lg md:text-2xl text-gray-700">
+            Performant Animated Components
+          </p>
+          <Features />
+        </div>
+      </div>
+      <div
+        class="mt-6 leading-7 md:text-lg text-gray-800 text-center space-y-2"
       >
-        project repo
-      </a>{" "}
-      for the instructions.
-    </p>
+        <p>
+          React Awesome Reveal is an easy-to-use animation library for React
+          apps.
+        </p>
+        <p>
+          It animates your components when they becomes visible in the page,
+          with many effects to choose from.
+        </p>
+      </div>
+    </Container>
   </main>
-</Layout>
+  <footer class="mt-16 mb-20">
+    <Container size="narrow">
+      <div class="text-center">
+        <a href="/docs/getting-started">Get Started</a> &bull;
+        <a
+          href="https://github.com/morellodev/react-awesome-reveal"
+          target="_blank"
+          rel="noopener">GitHub</a
+        > &bull;
+        <a
+          href="https://github.com/sponsors/morellodev"
+          target="_blank"
+          rel="noopener">Sponsor</a
+        >
+      </div>
+    </Container>
+  </footer>
+</BaseLayout>
+
+<style>
+  a {
+    @apply underline font-medium text-emerald-600;
+  }
+</style>

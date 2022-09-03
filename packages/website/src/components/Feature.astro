@@ -1,0 +1,20 @@
+---
+import { Icon } from "astro-icon";
+
+export interface Props {
+  icon?: string;
+}
+
+const { icon } = Astro.props;
+---
+
+<div class="inline-flex items-center gap-2 justify-center md:justify-start">
+  {
+    icon && (
+      <Icon class="w-4 h-4 sm:w-5 md:w-6 sm:h-5 md:h-6 shrink-0" name={icon} />
+    )
+  }
+  <span class="font-bold text-sm sm:text-base md:text-lg whitespace-nowrap">
+    <slot />
+  </span>
+</div>

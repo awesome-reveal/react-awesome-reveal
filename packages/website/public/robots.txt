@@ -1,2 +1,3 @@
 User-agent: *
 Allow: /
+Sitemap: https://react-awesome-reveal.morello.dev/sitemap-index.xml

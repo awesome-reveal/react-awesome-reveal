@@ -1,5 +1,9 @@
 {
-  "plugins": ["tailwindcss"],
+  "plugins": ["@typescript-eslint", "tailwindcss"],
+  "extends": [
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/typescript"
+  ],
   "parserOptions": {
     "ecmaVersion": "latest"
   }

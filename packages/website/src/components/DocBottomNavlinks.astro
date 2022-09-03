@@ -1,0 +1,85 @@
+---
+import Icon from "astro-icon";
+import { array as A, option as O } from "fp-ts";
+import { pipe } from "fp-ts/lib/function";
+
+export interface Props {
+  currentDocIndex: number;
+}
+
+const { currentDocIndex } = Astro.props;
+
+interface Frontmatter {
+  title: string;
+  order: number;
+}
+
+const docPages = await Astro.glob<Frontmatter>("../pages/docs/*.md");
+
+const prevDocPage = pipe(
+  currentDocIndex,
+  O.fromPredicate((i) => i > 1),
+  O.chain((i) =>
+    pipe(
+      docPages,
+      A.findFirst((page) => page.frontmatter.order === i - 1)
+    )
+  )
+);
+
+const nextDocPage = pipe(
+  currentDocIndex,
+  O.fromPredicate((i) => i < docPages.length),
+  O.chain((i) =>
+    pipe(
+      docPages,
+      A.findFirst((page) => page.frontmatter.order === i + 1)
+    )
+  )
+);
+---
+
+<div
+  class="pt-8 mt-12 mb-8 border-t flex flex-row items-center justify-between"
+>
+  <div class="flex-1 min-w-0 flex justify-start">
+    {
+      pipe(
+        prevDocPage,
+        O.map((page) => (
+          <a class="mr-2 text-emerald-600" href={page.url}>
+            <Icon
+              class="flex-shrink-0 mr-1 w-5 md:w-6 h-5 md:h-6"
+              name="heroicons-outline:chevron-left"
+            />
+            {page.frontmatter.title}
+          </a>
+        )),
+        O.toNullable
+      )
+    }
+  </div>
+  <div class="flex-1 min-w-0 flex justify-end text-right">
+    {
+      pipe(
+        nextDocPage,
+        O.map((page) => (
+          <a class="ml-2 text-emerald-600" href={page.url}>
+            {page.frontmatter.title}
+            <Icon
+              class="flex-shrink-0 ml-1 w-5 md:w-6 h-5 md:h-6"
+              name="heroicons-outline:chevron-right"
+            />
+          </a>
+        )),
+        O.toNullable
+      )
+    }
+  </div>
+</div>
+
+<style>
+  a {
+    @apply no-underline text-base md:text-lg p-4 -m-4 inline-flex items-center rounded leading-snug;
+  }
+</style>

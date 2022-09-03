@@ -1,0 +1,42 @@
+---
+import type { MarkdownLayoutProps } from "astro";
+import Container from "../components/Container.astro";
+import DocBottomNavlinks from "../components/DocBottomNavlinks.astro";
+import DocSidenav from "../components/DocSidenav.astro";
+import Navbar from "../components/Navbar.astro";
+import { formatTitle } from "../utils/seo";
+import BaseLayout from "./BaseLayout.astro";
+
+interface Frontmatter {
+  title: string;
+  description?: string;
+  order: number;
+}
+
+const {
+  frontmatter: { title, description, order },
+} = Astro.props as MarkdownLayoutProps<Frontmatter>;
+---
+
+<BaseLayout title={formatTitle(title)} {description}>
+  <Navbar />
+  <div class="max-w-7xl w-full mx-auto flex items-stretch">
+    <div class="flex flex-1 w-full">
+      <DocSidenav />
+      <main class="pt-8 pb-12 w-full justify-center max-w-full flex min-w-0">
+        <Container size="narrow">
+          <article class="prose prose-emerald max-w-none">
+            <slot />
+          </article>
+          <DocBottomNavlinks currentDocIndex={order} />
+        </Container>
+      </main>
+    </div>
+  </div>
+</BaseLayout>
+
+<style is:global>
+  article :is(h1, h2, h3, h4, h5, h6) {
+    scroll-margin-top: 6rem;
+  }
+</style>

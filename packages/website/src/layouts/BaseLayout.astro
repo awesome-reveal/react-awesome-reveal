@@ -1,0 +1,23 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "React Awesome Reveal",
+  description = "Add revealing animations to your React app with ease",
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
+  <body class="antialiased">
+    <slot />
+  </body>
+</html>

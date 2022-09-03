@@ -1,13 +1,74 @@
-<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 36 36">
-  <path fill="#000" d="M22.25 4h-8.5a1 1 0 0 0-.96.73l-5.54 19.4a.5.5 0 0 0 .62.62l5.05-1.44a2 2 0 0 0 1.38-1.4l3.22-11.66a.5.5 0 0 1 .96 0l3.22 11.67a2 2 0 0 0 1.38 1.39l5.05 1.44a.5.5 0 0 0 .62-.62l-5.54-19.4a1 1 0 0 0-.96-.73Z"/>
-  <path fill="url(#gradient)" d="M18 28a7.63 7.63 0 0 1-5-2c-1.4 2.1-.35 4.35.6 5.55.14.17.41.07.47-.15.44-1.8 2.93-1.22 2.93.6 0 2.28.87 3.4 1.72 3.81.34.16.59-.2.49-.56-.31-1.05-.29-2.46 1.29-3.25 3-1.5 3.17-4.83 2.5-6-.67.67-2.6 2-5 2Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 512 512">
+  <g clip-path="url(#a)">
+    <rect width="512" height="512" fill="url(#b)" rx="128" />
+    <g filter="url(#c)">
+      <circle cx="140" cy="256" r="96" fill="#34D399" fill-opacity=".2" shape-rendering="crispEdges" />
+    </g>
+    <g filter="url(#d)">
+      <circle cx="195" cy="256" r="96" fill="#34D399" fill-opacity=".4" shape-rendering="crispEdges" />
+    </g>
+    <g filter="url(#e)">
+      <circle cx="256" cy="256" r="96" fill="#34D399" fill-opacity=".6" shape-rendering="crispEdges" />
+    </g>
+    <g filter="url(#f)">
+      <circle cx="320" cy="256" r="96" fill="#34D399" fill-opacity=".8" shape-rendering="crispEdges" />
+    </g>
+    <g filter="url(#g)">
+      <circle cx="372" cy="256" r="96" fill="#34D399" />
+    </g>
+  </g>
   <defs>
-    <linearGradient id="gradient" x1="16" x2="16" y1="32" y2="24" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#000"/>
-      <stop offset="1" stop-color="#000" stop-opacity="0"/>
-    </linearGradient>
+    <filter id="c" width="193" height="192" x="43" y="160" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+      <feOffset dx="-1" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix values="0 0 0 0 0.0627451 0 0 0 0 0.72549 0 0 0 0 0.505882 0 0 0 0.2 0" />
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_7_3" />
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow_7_3" result="shape" />
+    </filter>
+    <filter id="d" width="193" height="192" x="98" y="160" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+      <feOffset dx="-1" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix values="0 0 0 0 0.0627451 0 0 0 0 0.72549 0 0 0 0 0.505882 0 0 0 0.4 0" />
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_7_3" />
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow_7_3" result="shape" />
+    </filter>
+    <filter id="e" width="193" height="192" x="159" y="160" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+      <feOffset dx="-1" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix values="0 0 0 0 0.0627451 0 0 0 0 0.72549 0 0 0 0 0.505882 0 0 0 0.6 0" />
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_7_3" />
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow_7_3" result="shape" />
+    </filter>
+    <filter id="f" width="193" height="192" x="223" y="160" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+      <feOffset dx="-1" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix values="0 0 0 0 0.0627451 0 0 0 0 0.72549 0 0 0 0 0.505882 0 0 0 0.8 0" />
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_7_3" />
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow_7_3" result="shape" />
+    </filter>
+    <filter id="g" width="193" height="192" x="275" y="160" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+      <feOffset dx="-1" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix values="0 0 0 0 0.0627451 0 0 0 0 0.72549 0 0 0 0 0.505882 0 0 0 1 0" />
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_7_3" />
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow_7_3" result="shape" />
+    </filter>
+    <radialGradient id="b" cx="0" cy="0" r="1" gradientTransform="rotate(135 256 106.039) scale(724.077)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A7F3D0" />
+      <stop offset="1" stop-color="#ECFDF5" />
+    </radialGradient>
+    <clipPath id="a">
+      <path fill="#fff" d="M0 0h512v512H0z" />
+    </clipPath>
   </defs>
-	<style>
-    @media (prefers-color-scheme:dark){:root{filter:invert(100%)}}
-  </style>
 </svg>
