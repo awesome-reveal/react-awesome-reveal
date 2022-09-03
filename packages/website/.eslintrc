@@ -6,11 +6,5 @@
   ],
   "parserOptions": {
     "ecmaVersion": "latest"
-  },
-  "overrides": [
-    {
-      "files": ["./astro.config.mjs"],
-      "env": { "node": true }
-    }
-  ]
+  }
 }
