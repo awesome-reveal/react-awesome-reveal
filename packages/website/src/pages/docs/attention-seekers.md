@@ -6,7 +6,7 @@ order: 3
 
 # Attention Seekers
 
-The attention seeker effects are rendered by the `<AttentionSeeker />` component, which accept an `effect` prop with the following values:
+The attention seeker effects are rendered by the `AttentionSeeker` component, which accepts an `effect` prop with the following values:
 
 - `"bounce"`
 - `"flash"`
@@ -21,3 +21,5 @@ The attention seeker effects are rendered by the `<AttentionSeeker />` component
 - `"swing"`
 - `"tada"`
 - `"wobble"`
+
+Please refer to the [Animate.css](https://animate.style) documentation to see a preview of each effect.

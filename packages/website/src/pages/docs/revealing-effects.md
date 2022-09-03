@@ -36,9 +36,9 @@ All animated primitives support the following props to change the animation phys
 
 ### `direction`
 
-Where applicable, this changes the origin of the animation. It can be `"down"`, `"left"`, `"right"` or `"up"`, with some exceptions documented in the component API thanks to the TSDoc comments.
+Where applicable, this changes the origin of the animation. It can be `"down"`, `"left"`, `"right"` or `"up"`, with some exceptions documented in the component API (see the TSDoc comments).
 
-### `delay`
+### `delay`
 
 Time to wait before the animation starts (in _milliseconds_).
 
@@ -52,7 +52,7 @@ Defaults to `1000` (one second).
 
 ### `fraction`
 
-How much an element should be in viewport before the animation is triggered.
+How much an element should be in the viewport before the animation is triggered.
 
 It must be a number between `0` and `1`, with `0` meaning that the animation starts as soon as the component intersects the vieport, and `1` meaning that the animation does not start unless the component is fully contained in the viewport.
 
@@ -64,7 +64,7 @@ Boolean prop that determines if the animation should run only once or everytime 
 
 Defaults to `false`.
 
-### `cascade`
+### `cascade`
 
 Boolean prop to stagger the animation (see [Staggered Animations](#staggered-animations)).
 
@@ -110,7 +110,7 @@ To chain together multiple animations, set the `cascade` prop to `true`:
 </Fade>
 ```
 
-Set the `damping` prop to alter the delay by which each child will progressively appear:
+Play with the `damping` prop to alter the delay by which each child will progressively appear:
 
 ```tsx
 <Fade cascade damping={0.1}>
@@ -122,7 +122,7 @@ Set the `damping` prop to alter the delay by which each child will progressively
 
 ### Animating Lists
 
-A particularly :cool: use case for staggered animations is when animating lists.
+A particularly :cool: use case for staggered animations is list animation.
 
 **React Awesome Reveal** detects if you pass a `ul` or `ol` element and, if `cascade` is `true`, it automatically creates a staggered animation for each `li` element:
 

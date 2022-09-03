@@ -6,7 +6,7 @@ order: 4
 
 # Custom Animations
 
-If the default effects do not suite your needs, you can define custom animations for your components :tada:
+If the included effects do not suite your needs, you can define custom animations for your components :tada:
 
 To do so, import the `Reveal` component and pass it a `keyframes` prop:
 
@@ -30,3 +30,5 @@ function CustomAnimation({ children }) {
   return <Reveal keyframes={customAnimation}>{children}</Reveal>;
 }
 ```
+
+The `Reveal` component also accepts all the common props described in the [Revealing Effects](/docs/revealing-effects#animation-props) page.
