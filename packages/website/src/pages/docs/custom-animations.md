@@ -31,4 +31,14 @@ function CustomAnimation({ children }) {
 }
 ```
 
-The `Reveal` component also accepts all the common props described in the [Revealing Effects](/docs/revealing-effects#animation-props) page.
+## Default Effect
+
+If no `keyframes` prop is passed, the default rendered animation is a fading entrance from the left, equivalent to:
+
+```tsx
+<Fade direction="left">...</Fade>
+```
+
+## Other Props
+
+The `Reveal` component also accepts all common props described in the [Revealing Effects](/docs/revealing-effects#animation-props) page.

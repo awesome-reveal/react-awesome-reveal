@@ -7,7 +7,7 @@
 [![License](https://badgen.net/npm/license/react-awesome-reveal)](https://www.npmjs.com/package/react-awesome-reveal/v/latest)
 [![Rate on Openbase](https://badges.openbase.io/js/rating/react-awesome-reveal.svg)](https://openbase.io/js/react-awesome-reveal?utm_source=embedded&utm_medium=badge&utm_campaign=rate-badge)
 
-[React Awesome Reveal](https://github.com/morellodev/react-awesome-reveal) is a library for React apps written in TypeScript that adds reveal animations using the Intersection Observer API to detect when the elements appear in the viewport. Animations are internally provided by [Emotion](https://emotion.sh) and implemented as CSS Animations to benefit from hardware acceleration.
+[React Awesome Reveal](https://react-awesome-reveal.morello.dev) is a library for React apps written in TypeScript that adds reveal animations using the Intersection Observer API to detect when the elements appear in the viewport. Animations are internally provided by [Emotion](https://emotion.sh) and implemented as CSS Animations to benefit from hardware acceleration.
 
 ## Table Of Contents
 
@@ -124,21 +124,15 @@ To chain together multiple animations, set the `cascade` prop to `true`:
 </Fade>
 ```
 
-This is _almost_ equivalent to
+Play with the `damping` prop to alter the delay by which each child will progressively appear:
 
-```jsx
-<Fade>
+```tsx
+<Fade cascade damping={0.1}>
   <p>I enter first...</p>
-</Fade>
-<Fade delay={1000}>
   <p>...then comes my turn...</p>
-</Fade>
-<Fade delay={2000}>
   <p>...and finally you see me!</p>
 </Fade>
 ```
-
-with the exception that, since each `Fade` component creates an isolated visibility context, in the second snippet every `p` will be shown only if they are inside the viewport (after the specified delay).
 
 ## Custom Animations
 
@@ -161,12 +155,8 @@ const customAnimation = keyframes`
   }
 `;
 
-function MyAnimatedComponent({ children }) {
-  return (
-    <Reveal keyframes={customAnimation}>
-      {children}
-    </Reveal>;
-  );
+function CustomAnimation({ children }) {
+  return <Reveal keyframes={customAnimation}>{children}</Reveal>;
 }
 ```
 
