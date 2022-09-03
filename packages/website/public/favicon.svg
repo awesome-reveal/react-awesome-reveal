@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 512 512">
+  <g clip-path="url(#a)">
+    <rect width="512" height="512" fill="url(#b)" rx="128" />
+    <g filter="url(#c)">
+      <circle cx="140" cy="256" r="96" fill="#34D399" fill-opacity=".2" shape-rendering="crispEdges" />
+    </g>
+    <g filter="url(#d)">
+      <circle cx="195" cy="256" r="96" fill="#34D399" fill-opacity=".4" shape-rendering="crispEdges" />
+    </g>
+    <g filter="url(#e)">
+      <circle cx="256" cy="256" r="96" fill="#34D399" fill-opacity=".6" shape-rendering="crispEdges" />
+    </g>
+    <g filter="url(#f)">
+      <circle cx="320" cy="256" r="96" fill="#34D399" fill-opacity=".8" shape-rendering="crispEdges" />
+    </g>
+    <g filter="url(#g)">
+      <circle cx="372" cy="256" r="96" fill="#34D399" />
+    </g>
+  </g>
+  <defs>
+    <filter id="c" width="193" height="192" x="43" y="160" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+      <feOffset dx="-1" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix values="0 0 0 0 0.0627451 0 0 0 0 0.72549 0 0 0 0 0.505882 0 0 0 0.2 0" />
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_7_3" />
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow_7_3" result="shape" />
+    </filter>
+    <filter id="d" width="193" height="192" x="98" y="160" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+      <feOffset dx="-1" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix values="0 0 0 0 0.0627451 0 0 0 0 0.72549 0 0 0 0 0.505882 0 0 0 0.4 0" />
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_7_3" />
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow_7_3" result="shape" />
+    </filter>
+    <filter id="e" width="193" height="192" x="159" y="160" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+      <feOffset dx="-1" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix values="0 0 0 0 0.0627451 0 0 0 0 0.72549 0 0 0 0 0.505882 0 0 0 0.6 0" />
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_7_3" />
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow_7_3" result="shape" />
+    </filter>
+    <filter id="f" width="193" height="192" x="223" y="160" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+      <feOffset dx="-1" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix values="0 0 0 0 0.0627451 0 0 0 0 0.72549 0 0 0 0 0.505882 0 0 0 0.8 0" />
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_7_3" />
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow_7_3" result="shape" />
+    </filter>
+    <filter id="g" width="193" height="192" x="275" y="160" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" result="hardAlpha" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" />
+      <feOffset dx="-1" />
+      <feComposite in2="hardAlpha" operator="out" />
+      <feColorMatrix values="0 0 0 0 0.0627451 0 0 0 0 0.72549 0 0 0 0 0.505882 0 0 0 1 0" />
+      <feBlend in2="BackgroundImageFix" result="effect1_dropShadow_7_3" />
+      <feBlend in="SourceGraphic" in2="effect1_dropShadow_7_3" result="shape" />
+    </filter>
+    <radialGradient id="b" cx="0" cy="0" r="1" gradientTransform="rotate(135 256 106.039) scale(724.077)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#A7F3D0" />
+      <stop offset="1" stop-color="#ECFDF5" />
+    </radialGradient>
+    <clipPath id="a">
+      <path fill="#fff" d="M0 0h512v512H0z" />
+    </clipPath>
+  </defs>
+</svg>
