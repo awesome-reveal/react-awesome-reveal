@@ -1,3 +1,4 @@
+import type { RehypePlugins } from "astro";
 import { array as A, option as O, record as R, string as S } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import type { Predicate } from "fp-ts/lib/Predicate";
@@ -36,4 +37,4 @@ const options: Options = {
     ),
 };
 
-export default ["rehype-external-links", options];
+export default ["rehype-external-links", options] as RehypePlugins[number];

@@ -18,7 +18,7 @@ const {
 } = Astro.props as MarkdownLayoutProps<Frontmatter>;
 ---
 
-<BaseLayout title={formatTitle(title)} {description}>
+<BaseLayout title={formatTitle(title)} description={description}>
   <Navbar />
   <div class="max-w-7xl w-full mx-auto flex items-stretch">
     <div class="flex flex-1 w-full">

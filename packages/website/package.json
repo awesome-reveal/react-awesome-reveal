@@ -10,11 +10,11 @@
   },
   "devDependencies": {
     "@astrojs/sitemap": "^1.0.0",
-    "@astrojs/tailwind": "^1.0.0",
+    "@astrojs/tailwind": "^2.0.2",
     "@fec/remark-a11y-emoji": "^3.1.0",
-    "@tailwindcss/typography": "^0.5.4",
-    "astro": "^1.1.1",
-    "eslint-plugin-tailwindcss": "^3.6.0",
+    "@tailwindcss/typography": "^0.5.7",
+    "astro": "^1.4.6",
+    "eslint-plugin-tailwindcss": "^3.6.2",
     "rehype-autolink-headings": "^6.1.1",
     "rehype-external-links": "^2.0.1",
     "rehype-slug": "^5.0.1",
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "astro-icon": "^0.7.3",
-    "fp-ts": "^2.12.2",
-    "io-ts": "^2.2.18"
+    "fp-ts": "^2.12.3",
+    "io-ts": "^2.2.19"
   }
 }
