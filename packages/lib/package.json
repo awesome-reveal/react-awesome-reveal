@@ -4,11 +4,12 @@
   "version": "4.0.1",
   "license": "MIT",
   "source": "src/index.ts",
+  "types": "dist/types.d.ts",
   "main": "dist/main.js",
   "module": "dist/module.js",
-  "types": "dist/types.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/types.d.ts",
       "import": "./dist/module.js",
       "require": "./dist/main.js"
     }

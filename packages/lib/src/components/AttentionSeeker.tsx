@@ -17,8 +17,7 @@ import {
   tada,
   wobble,
 } from "../animations/attention_seekers";
-import type { RevealProps } from "../Reveal";
-import { Reveal } from "../Reveal";
+import { type RevealProps, Reveal } from "../Reveal";
 
 type AttentionSeekerEffect =
   | "bounce"
