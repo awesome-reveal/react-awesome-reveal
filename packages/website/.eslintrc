@@ -6,5 +6,14 @@
   ],
   "parserOptions": {
     "ecmaVersion": "latest"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["./tailwind.config.cjs"],
+      "env": { "commonjs": true },
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off"
+      }
+    }
+  ]
 }

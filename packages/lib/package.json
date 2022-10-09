@@ -4,11 +4,12 @@
   "version": "4.0.1",
   "license": "MIT",
   "source": "src/index.ts",
+  "types": "dist/types.d.ts",
   "main": "dist/main.js",
   "module": "dist/module.js",
-  "types": "dist/types.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/types.d.ts",
       "import": "./dist/module.js",
       "require": "./dist/main.js"
     }
@@ -61,12 +62,12 @@
     "react": ">=16.14.0"
   },
   "devDependencies": {
-    "@emotion/react": "^11.10.0",
+    "@emotion/react": "^11.10.4",
     "@emotion/serialize": "^1.1.0",
     "@parcel/packager-ts": "^2.7.0",
     "@parcel/transformer-typescript-tsc": "^2.7.0",
     "@parcel/transformer-typescript-types": "^2.7.0",
-    "@types/react": "^18.0.15",
+    "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
     "@types/react-is": "^17.0.3",
     "parcel": "^2.7.0",

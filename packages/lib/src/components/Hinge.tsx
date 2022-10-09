@@ -1,8 +1,7 @@
 import { css } from "@emotion/react";
 
 import { hinge } from "../animations/specials";
-import type { RevealProps } from "../Reveal";
-import { Reveal } from "../Reveal";
+import { type RevealProps, Reveal } from "../Reveal";
 
 export type HingeProps = Omit<RevealProps, "keyframes" | "css">;
 

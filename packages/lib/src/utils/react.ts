@@ -1,5 +1,5 @@
-export function isNullOrUndefined(value: unknown): value is null | undefined {
-  return value === null || value === undefined;
+export function isNullable(a: unknown): a is null | undefined {
+  return a == undefined;
 }
 
 export function isStringLike(

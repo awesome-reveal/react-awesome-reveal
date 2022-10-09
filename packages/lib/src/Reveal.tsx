@@ -1,5 +1,9 @@
-import type { Interpolation, Theme } from "@emotion/react";
-import { ClassNames, css } from "@emotion/react";
+import {
+  type Interpolation,
+  type Theme,
+  ClassNames,
+  css,
+} from "@emotion/react";
 import type { Keyframes, SerializedStyles } from "@emotion/serialize";
 import { Children, isValidElement, useMemo } from "react";
 import { InView, useInView } from "react-intersection-observer";
@@ -7,7 +11,7 @@ import { isFragment } from "react-is";
 
 import { fadeInLeft } from "./animations/fading_entrances";
 import { getAnimationCss } from "./utils/animations";
-import { isNullOrUndefined, isStringLike } from "./utils/js-types";
+import { isNullable, isStringLike } from "./utils/react";
 
 const hiddenStyles = css`
   opacity: 0;
@@ -116,7 +120,7 @@ export const Reveal: React.FC<RevealProps> = (props) => {
     [duration, keyframes]
   );
 
-  if (isNullOrUndefined(children)) {
+  if (isNullable(children)) {
     return null;
   }
 
