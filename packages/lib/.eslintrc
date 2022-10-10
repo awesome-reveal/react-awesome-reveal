@@ -4,5 +4,8 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:import/typescript",
     "plugin:react/jsx-runtime"
-  ]
+  ],
+  "rules": {
+    "react/no-unknown-property": ["error", { "ignore": ["css"] }]
+  }
 }
