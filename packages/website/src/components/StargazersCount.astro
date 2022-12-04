@@ -2,11 +2,11 @@
 import { Icon } from "astro-icon";
 import { task as T, taskEither as TE } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
-import { formatThousands, getStargazersCount } from "../utils/stargazers";
+import { getStargazersCount, toCompactNotation } from "../utils/stargazers";
 
 const stars = await pipe(
   getStargazersCount(),
-  TE.map(formatThousands),
+  TE.map(toCompactNotation),
   TE.getOrElse(() => T.of("N/A"))
 )();
 ---
