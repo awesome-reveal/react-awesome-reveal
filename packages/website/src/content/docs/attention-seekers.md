@@ -1,10 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: Attention Seekers
-order: 3
+sortOrder: 3
 ---
-
-# Attention Seekers
 
 The attention seeker effects are rendered by the `AttentionSeeker` component, which accepts an `effect` prop with the following values:
 

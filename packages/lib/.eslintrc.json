@@ -1,0 +1,29 @@
+{
+  "root": true,
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:prettier/recommended",
+    "plugin:react/recommended",
+    "plugin:react/jsx-runtime",
+    "plugin:react-hooks/recommended"
+  ],
+  "plugins": ["@typescript-eslint", "simple-import-sort", "tailwindcss"],
+  "parser": "@typescript-eslint/parser",
+  "settings": {
+    "import/resolver": {
+      "typescript": true
+    },
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    "react/prop-types": "off",
+    "react/no-unknown-property": ["error", { "ignore": ["css"] }],
+    "simple-import-sort/imports": "warn",
+    "simple-import-sort/exports": "warn"
+  }
+}

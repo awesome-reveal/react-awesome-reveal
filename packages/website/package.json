@@ -6,7 +6,9 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "devDependencies": {
     "@astrojs/sitemap": "^1.0.0",

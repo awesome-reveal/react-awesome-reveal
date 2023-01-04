@@ -1,0 +1,30 @@
+{
+  "root": true,
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["@typescript-eslint", "simple-import-sort", "tailwindcss"],
+  "parser": "@typescript-eslint/parser",
+  "settings": {
+    "import/resolver": {
+      "typescript": true
+    }
+  },
+  "overrides": [
+    {
+      "files": ["./tailwind.config.cjs"],
+      "env": { "commonjs": true },
+      "rules": {
+        "@typescript-eslint/no-var-requires": "off"
+      }
+    }
+  ],
+  "rules": {
+    "simple-import-sort/imports": "warn",
+    "simple-import-sort/exports": "warn"
+  }
+}

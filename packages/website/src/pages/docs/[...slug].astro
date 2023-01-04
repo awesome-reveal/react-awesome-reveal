@@ -1,0 +1,50 @@
+---
+import { CollectionEntry, getCollection } from "astro:content";
+
+import Container from "../../components/Container.astro";
+import DocBottomNavlinks from "../../components/DocBottomNavlinks.astro";
+import DocSidenav from "../../components/DocSidenav.astro";
+import Navbar from "../../components/Navbar.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { formatTitle } from "../../utils/seo";
+
+export async function getStaticPaths() {
+  const allDocs = await getCollection("docs");
+
+  return allDocs.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<"docs">;
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<BaseLayout title={formatTitle(entry.data.title)}>
+  <Navbar />
+  <div class="max-w-7xl w-full mx-auto flex items-stretch">
+    <div class="flex flex-1 w-full">
+      <DocSidenav />
+      <main class="pt-8 pb-12 w-full justify-center max-w-full flex min-w-0">
+        <Container size="narrow">
+          <article class="prose prose-emerald max-w-none">
+            <h1 id={entry.slug}>{entry.data.title}</h1>
+            <Content />
+          </article>
+          <DocBottomNavlinks currentDocIndex={entry.data.sortOrder} />
+        </Container>
+      </main>
+    </div>
+  </div>
+</BaseLayout>
+
+<style is:global>
+  article :is(h1, h2, h3, h4, h5, h6) {
+    scroll-margin-top: 6rem;
+  }
+</style>

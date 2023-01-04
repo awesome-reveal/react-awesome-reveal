@@ -14,7 +14,6 @@ module.exports = {
     require("@tailwindcss/typography"),
     plugin(({ addVariant }) => {
       addVariant("active-link", "&[aria-current=page]");
-      addVariant("!active-link", "&[aria-current=false]");
     }),
   ],
 };

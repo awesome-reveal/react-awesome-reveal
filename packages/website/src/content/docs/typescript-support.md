@@ -1,10 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: TypeScript Support
-order: 6
+sortOrder: 6
 ---
-
-# TypeScript Support
 
 **React Awesome Reveal** is entirely written in [TypeScript](https://typescriptlang.org), so if you use a code editor that supports it, you will get coding assistance and autocompletions for free.
 

@@ -1,10 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: Custom Animations
-order: 4
+sortOrder: 4
 ---
-
-# Custom Animations
 
 If the included effects do not suite your needs, you can define custom animations for your components :tada:
 

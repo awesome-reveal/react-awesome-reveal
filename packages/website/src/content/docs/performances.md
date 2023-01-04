@@ -1,10 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: Performances
-order: 5
+sortOrder: 5
 ---
-
-# Performances
 
 This library has been designed to be _performant_ :rocket: in all possible ways. This goal has been achieved by leveraging [native browser technologies](#native-technologies-used) and by [restricting the scope](#library-scope).
 

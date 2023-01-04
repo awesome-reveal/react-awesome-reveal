@@ -1,10 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: Revealing Effects
-order: 2
+sortOrder: 2
 ---
-
-# Revealing Effects
 
 **React Awesome Reveal** exports a number of ready-to-use animated primitives to automagically :sparkles: animate your components.
 

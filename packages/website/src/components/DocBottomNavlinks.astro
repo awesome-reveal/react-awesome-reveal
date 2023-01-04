@@ -1,7 +1,10 @@
 ---
 import Icon from "astro-icon";
+import { getCollection } from "astro:content";
 import { array as A, option as O } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
+
+import { getDocPathname } from "../utils/docs";
 
 export interface Props {
   currentDocIndex: number;
@@ -9,31 +12,26 @@ export interface Props {
 
 const { currentDocIndex } = Astro.props;
 
-interface Frontmatter {
-  title: string;
-  order: number;
-}
+const allDocs = await getCollection("docs");
 
-const docPages = await Astro.glob<Frontmatter>("../pages/docs/*.md");
-
-const prevDocPage = pipe(
+const prevDoc = pipe(
   currentDocIndex,
   O.fromPredicate((i) => i > 1),
   O.chain((i) =>
     pipe(
-      docPages,
-      A.findFirst((page) => page.frontmatter.order === i - 1)
+      allDocs,
+      A.findFirst((doc) => doc.data.sortOrder === i - 1)
     )
   )
 );
 
-const nextDocPage = pipe(
+const nextDoc = pipe(
   currentDocIndex,
-  O.fromPredicate((i) => i < docPages.length),
+  O.fromPredicate((i) => i < allDocs.length),
   O.chain((i) =>
     pipe(
-      docPages,
-      A.findFirst((page) => page.frontmatter.order === i + 1)
+      allDocs,
+      A.findFirst((doc) => doc.data.sortOrder === i + 1)
     )
   )
 );
@@ -45,14 +43,14 @@ const nextDocPage = pipe(
   <div class="flex-1 min-w-0 flex justify-start">
     {
       pipe(
-        prevDocPage,
-        O.map((page) => (
-          <a class="mr-2 text-emerald-600" href={page.url}>
+        prevDoc,
+        O.map((doc) => (
+          <a class="mr-2 text-emerald-600" href={getDocPathname(doc.slug)}>
             <Icon
               class="flex-shrink-0 mr-1 w-5 md:w-6 h-5 md:h-6"
               name="heroicons-outline:chevron-left"
             />
-            {page.frontmatter.title}
+            {doc.data.title}
           </a>
         )),
         O.toNullable
@@ -62,10 +60,10 @@ const nextDocPage = pipe(
   <div class="flex-1 min-w-0 flex justify-end text-right">
     {
       pipe(
-        nextDocPage,
-        O.map((page) => (
-          <a class="ml-2 text-emerald-600" href={page.url}>
-            {page.frontmatter.title}
+        nextDoc,
+        O.map((doc) => (
+          <a class="ml-2 text-emerald-600" href={getDocPathname(doc.slug)}>
+            {doc.data.title}
             <Icon
               class="flex-shrink-0 ml-1 w-5 md:w-6 h-5 md:h-6"
               name="heroicons-outline:chevron-right"
