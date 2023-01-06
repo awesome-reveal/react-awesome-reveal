@@ -1,18 +1,16 @@
 ---
-import { array as A, number as N, option as O, string as S } from "fp-ts";
+import { CollectionEntry, getCollection } from "astro:content";
+import { array as A, number as N } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import { contramap } from "fp-ts/lib/Ord";
 
-interface Frontmatter {
-  title: string;
-  order: number;
-}
+import { getDocPathname } from "../utils/docs";
 
-const docPages = await Astro.glob<Frontmatter>("../pages/docs/*.md");
+const allDocs = await getCollection("docs");
 
 const byOrder = pipe(
   N.Ord,
-  contramap((p: typeof docPages[number]) => p.frontmatter.order)
+  contramap((p: CollectionEntry<"docs">) => p.data.sortOrder)
 );
 ---
 
@@ -22,23 +20,22 @@ const byOrder = pipe(
   <ul class="p-4 space-y-1">
     {
       pipe(
-        docPages,
+        allDocs,
         A.sortBy([byOrder]),
-        A.map((page) => {
-          const isActive = pipe(
-            O.fromNullable(page.url),
-            // https://github.com/withastro/astro/issues/4547
-            O.exists((s) => pipe(Astro.url.pathname, S.startsWith(s)))
-          );
+        A.map((doc) => {
+          const docPathname = getDocPathname(doc.slug);
+
+          // https://github.com/withastro/astro/issues/4547
+          const isActive = Astro.url.pathname.startsWith(docPathname);
 
           return (
             <li>
               <a
-                class="block no-underline px-2 py-[0.375rem] select-none rounded text-sm hover:bg-emerald-50 active-link:bg-emerald-100 active-link:font-semibold"
+                class="block no-underline px-2 py-[0.375rem] font-medium select-none rounded text-sm hover:bg-emerald-50 active-link:bg-emerald-100 active-link:font-semibold"
                 aria-current={isActive ? "page" : "false"}
-                href={page.url}
+                href={docPathname}
               >
-                {page.frontmatter.title}
+                {doc.data.title}
               </a>
             </li>
           );

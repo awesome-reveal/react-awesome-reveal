@@ -4,6 +4,7 @@ import Container from "../components/Container.astro";
 import Features from "../components/Features.astro";
 import Navbar from "../components/Navbar.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getDocPathname } from "../utils/docs";
 ---
 
 <BaseLayout title="React Awesome Reveal | Performant Animated Components">
@@ -39,7 +40,7 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   <footer class="mt-16 mb-20">
     <Container size="narrow">
       <div class="text-center">
-        <a href="/docs/getting-started">Get Started</a> &bull;
+        <a href={getDocPathname("getting-started")}>Get Started</a> &bull;
         <a
           href="https://codesandbox.io/s/react-awesome-reveal-typescript-177uom?file=/src/App.tsx"
           target="_blank"

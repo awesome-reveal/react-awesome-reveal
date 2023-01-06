@@ -55,7 +55,9 @@
   },
   "scripts": {
     "start": "tsup --watch",
-    "build": "tsc --noEmit && tsup"
+    "build": "tsc --noEmit && tsup",
+    "lint": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "peerDependencies": {
     "@emotion/react": "^11.0.0",

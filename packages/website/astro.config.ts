@@ -9,6 +9,9 @@ import rehypeExternalLinks from "./plugins/rehypeExternalLinks";
 export default defineConfig({
   site: "https://react-awesome-reveal.morello.dev",
   integrations: [tailwind(), sitemap()],
+  experimental: {
+    contentCollections: true,
+  },
   markdown: {
     extendDefaultPlugins: true,
     remarkPlugins: ["remark-emoji", "@fec/remark-a11y-emoji"],

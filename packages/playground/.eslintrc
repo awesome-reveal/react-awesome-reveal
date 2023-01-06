@@ -1,8 +1,0 @@
-{
-  "plugins": ["@typescript-eslint"],
-  "extends": [
-    "plugin:@typescript-eslint/recommended",
-    "plugin:import/typescript",
-    "plugin:react/jsx-runtime"
-  ]
-}

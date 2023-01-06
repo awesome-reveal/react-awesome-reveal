@@ -1,10 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: Getting Started
-order: 1
+sortOrder: 1
 ---
-
-# Getting Started
 
 ## About
 

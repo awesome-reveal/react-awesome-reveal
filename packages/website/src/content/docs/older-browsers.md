@@ -1,10 +1,7 @@
 ---
-layout: ../../layouts/DocLayout.astro
 title: Older Browsers
-order: 7
+sortOrder: 7
 ---
-
-# Older Browsers
 
 Older browsers _might_ be supported, depending on the React version you are using. React 18 [dropped support for Internet Explorer](https://reactjs.org/blog/2022/03/08/react-18-upgrade-guide.html#dropping-support-for-internet-explorer), but you can keep using React 17 to overcome this.
 
