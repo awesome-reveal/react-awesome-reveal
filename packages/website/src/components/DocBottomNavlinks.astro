@@ -45,7 +45,10 @@ const nextDoc = pipe(
       pipe(
         prevDoc,
         O.map((doc) => (
-          <a class="mr-2 text-emerald-600" href={getDocPathname(doc.slug)}>
+          <a
+            class="mr-2 text-emerald-600 font-medium"
+            href={getDocPathname(doc.slug)}
+          >
             <Icon
               class="flex-shrink-0 mr-1 w-5 md:w-6 h-5 md:h-6"
               name="heroicons-outline:chevron-left"
@@ -62,7 +65,10 @@ const nextDoc = pipe(
       pipe(
         nextDoc,
         O.map((doc) => (
-          <a class="ml-2 text-emerald-600" href={getDocPathname(doc.slug)}>
+          <a
+            class="ml-2 text-emerald-600 font-medium"
+            href={getDocPathname(doc.slug)}
+          >
             {doc.data.title}
             <Icon
               class="flex-shrink-0 ml-1 w-5 md:w-6 h-5 md:h-6"
