@@ -1,5 +1,6 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
+import "../styles/index.css";
 
 export interface Props {
   title?: string;
@@ -13,7 +14,7 @@ const {
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="bg-white">
+<html lang="en-US" class="bg-white">
   <head>
     <BaseHead title={title} description={description} />
   </head>
