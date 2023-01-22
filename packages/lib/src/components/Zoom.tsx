@@ -18,7 +18,7 @@ import { type RevealProps, Reveal } from "../Reveal";
 
 type ZoomDirection = "down" | "left" | "right" | "up";
 
-export interface ZoomProps extends Omit<RevealProps, "keyframes" | "css"> {
+export interface ZoomProps extends Omit<RevealProps, "keyframes"> {
   /**
    * Origin of the animation.
    * @default undefined

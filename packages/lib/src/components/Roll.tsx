@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { rollIn, rollOut } from "../animations/specials";
 import { type RevealProps, Reveal } from "../Reveal";
 
-export interface RollProps extends Omit<RevealProps, "keyframes" | "css"> {
+export interface RollProps extends Omit<RevealProps, "keyframes"> {
   /**
    * Specifies if the animation should make element(s) disappear.
    * @default false

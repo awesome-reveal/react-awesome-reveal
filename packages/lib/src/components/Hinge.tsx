@@ -1,14 +1,22 @@
-import { css } from "@emotion/react";
+import type { CSSProperties } from "react";
 
 import { hinge } from "../animations/specials";
 import { type RevealProps, Reveal } from "../Reveal";
 
-export type HingeProps = Omit<RevealProps, "keyframes" | "css">;
+export type HingeProps = Omit<RevealProps, "keyframes">;
 
-const animationCss = css`
-  transform-origin: top left;
-`;
+const animationCss: CSSProperties = {
+  transformOrigin: "top left",
+};
 
 export const Hinge: React.FC<HingeProps> = (props) => {
-  return <Reveal css={animationCss} keyframes={hinge} {...props} />;
+  const { style, ...rest } = props;
+
+  return (
+    <Reveal
+      keyframes={hinge}
+      style={Object.assign({}, style, animationCss)}
+      {...rest}
+    />
+  );
 };

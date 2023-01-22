@@ -1,26 +1,20 @@
-import {
-  type Interpolation,
-  type Theme,
-  ClassNames,
-  css,
-} from "@emotion/react";
+import { ClassNames } from "@emotion/react";
 import type { Keyframes, SerializedStyles } from "@emotion/serialize";
-import { Children, isValidElement, useMemo } from "react";
+import { type CSSProperties, Children, isValidElement, useMemo } from "react";
 import { InView, useInView } from "react-intersection-observer";
 import { isFragment } from "react-is";
 
 import { fadeInLeft } from "./animations/fading_entrances";
 import { getAnimationCss } from "./utils/animations";
-import { isNullable, isStringLike } from "./utils/react";
+import { isNullable, isStringLike } from "./utils/guards";
+import { matchIf, matchIfOrNull } from "./utils/patterns";
 
-const hiddenStyles = css`
-  opacity: 0;
-`;
-
-const textBaseStyles = css`
-  display: inline-block;
-  white-space: pre;
-`;
+function hideWhen(condition: boolean) {
+  return matchIf<CSSProperties, CSSProperties>(
+    () => ({ opacity: 0 }),
+    () => ({ opacity: 1 })
+  )(condition);
+}
 
 export interface RevealProps {
   /**
@@ -57,10 +51,6 @@ export interface RevealProps {
    * @default false
    */
   triggerOnce?: boolean;
-  /**
-   * Custom Emotion styles.
-   */
-  css?: Interpolation<Theme>;
   /**
    * Class names to add to the container element.
    */
@@ -102,7 +92,6 @@ export const Reveal: React.FC<RevealProps> = (props) => {
     fraction = 0,
     keyframes = fadeInLeft,
     triggerOnce = false,
-    css: revealCss,
     className,
     style,
     childClassName,
@@ -120,28 +109,23 @@ export const Reveal: React.FC<RevealProps> = (props) => {
     [duration, keyframes]
   );
 
-  if (isNullable(children)) {
-    return null;
-  }
+  if (isNullable(children)) return null;
 
-  if (isStringLike(children)) {
+  if (isStringLike(children))
     return (
       <TextReveal {...props} animationStyles={animationStyles}>
         {String(children)}
       </TextReveal>
     );
-  }
 
-  if (isFragment(children)) {
+  if (isFragment(children))
     return <FragmentReveal {...props} animationStyles={animationStyles} />;
-  }
 
   return (
     <>
       {Children.map(children, (node, index) => {
         if (!isValidElement(node)) return null;
 
-        const inViewStyles = [revealCss, animationStyles];
         const nodeDelay = delay + (cascade ? index * duration * damping : 0);
 
         switch (node.type) {
@@ -153,7 +137,7 @@ export const Reveal: React.FC<RevealProps> = (props) => {
                   <node.type
                     {...node.props}
                     className={cx(className, node.props.className)}
-                    style={{ ...style, ...node.props.style }}
+                    style={Object.assign({}, style, node.props.style)}
                   >
                     <Reveal {...props}>{node.props.children}</Reveal>
                   </node.type>
@@ -174,12 +158,14 @@ export const Reveal: React.FC<RevealProps> = (props) => {
                         {...node.props}
                         ref={ref}
                         className={cx(childClassName, node.props.className)}
-                        css={inView ? inViewStyles : hiddenStyles}
-                        style={{
-                          ...childStyle,
-                          ...node.props.style,
-                          animationDelay: nodeDelay + "ms",
-                        }}
+                        css={matchIfOrNull(() => animationStyles)(inView)}
+                        style={Object.assign(
+                          {},
+                          childStyle,
+                          node.props.style,
+                          hideWhen(!inView),
+                          { animationDelay: nodeDelay + "ms" }
+                        )}
                       />
                     )}
                   </ClassNames>
@@ -197,15 +183,21 @@ export const Reveal: React.FC<RevealProps> = (props) => {
                   <div
                     ref={ref}
                     className={className}
-                    css={inView ? inViewStyles : hiddenStyles}
-                    style={{ ...style, animationDelay: nodeDelay + "ms" }}
+                    css={matchIfOrNull(() => animationStyles)(inView)}
+                    style={Object.assign({}, style, {
+                      animationDelay: nodeDelay + "ms",
+                    })}
                   >
                     <ClassNames>
                       {({ cx }) => (
                         <node.type
                           {...node.props}
                           className={cx(childClassName, node.props.className)}
-                          style={{ ...childStyle, ...node.props.style }}
+                          style={Object.assign(
+                            {},
+                            childStyle,
+                            node.props.style
+                          )}
                         />
                       )}
                     </ClassNames>
@@ -219,6 +211,11 @@ export const Reveal: React.FC<RevealProps> = (props) => {
   );
 };
 
+const textBaseStyles: CSSProperties = {
+  display: "inline-block",
+  whiteSpace: "pre",
+};
+
 const TextReveal: React.FC<
   RevealProps & { animationStyles: SerializedStyles; children: string }
 > = (props) => {
@@ -230,7 +227,6 @@ const TextReveal: React.FC<
     duration = 1000,
     fraction = 0,
     triggerOnce = false,
-    css: revealCss,
     className,
     style,
     children,
@@ -243,28 +239,28 @@ const TextReveal: React.FC<
     onChange: onVisibilityChange,
   });
 
-  return cascade ? (
-    <div
-      ref={ref}
-      className={className}
-      css={[revealCss, textBaseStyles]}
-      style={style}
-    >
-      {children.split("").map((char, index) => (
-        <span
-          key={index}
-          css={inView ? animationStyles : hiddenStyles}
-          style={{
-            animationDelay: delay + index * duration * damping + "ms",
-          }}
-        >
-          {char}
-        </span>
-      ))}
-    </div>
-  ) : (
-    <FragmentReveal {...props}>{children}</FragmentReveal>
-  );
+  return matchIf(
+    () => (
+      <div
+        ref={ref}
+        className={className}
+        style={Object.assign({}, style, textBaseStyles)}
+      >
+        {children.split("").map((char, index) => (
+          <span
+            key={index}
+            css={matchIfOrNull(() => animationStyles)(inView)}
+            style={Object.assign({}, hideWhen(!inView), {
+              animationDelay: delay + index * duration * damping + "ms",
+            })}
+          >
+            {char}
+          </span>
+        ))}
+      </div>
+    ),
+    () => <FragmentReveal {...props}>{children}</FragmentReveal>
+  )(cascade);
 };
 
 const FragmentReveal: React.FC<
@@ -274,7 +270,6 @@ const FragmentReveal: React.FC<
     animationStyles,
     fraction = 0,
     triggerOnce = false,
-    css: revealCss,
     className,
     style,
     children,
@@ -287,14 +282,12 @@ const FragmentReveal: React.FC<
     onChange: onVisibilityChange,
   });
 
-  const inViewStyles = [revealCss, animationStyles];
-
   return (
     <div
       ref={ref}
       className={className}
-      css={inView ? inViewStyles : hiddenStyles}
-      style={style}
+      css={matchIfOrNull(() => animationStyles)(inView)}
+      style={Object.assign({}, style, hideWhen(!inView))}
     >
       {children}
     </div>
