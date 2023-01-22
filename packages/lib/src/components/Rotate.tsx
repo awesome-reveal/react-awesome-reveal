@@ -1,6 +1,5 @@
-import type { Interpolation, Theme } from "@emotion/react";
 import type { Keyframes } from "@emotion/serialize";
-import { useMemo } from "react";
+import { type CSSProperties, useMemo } from "react";
 
 import {
   rotateIn,
@@ -24,7 +23,7 @@ type RotateDirection =
   | "top-left"
   | "top-right";
 
-export interface RotateProps extends Omit<RevealProps, "keyframes" | "css"> {
+export interface RotateProps extends Omit<RevealProps, "keyframes"> {
   /**
    * Origin of the animation.
    * @default undefined
@@ -40,7 +39,7 @@ export interface RotateProps extends Omit<RevealProps, "keyframes" | "css"> {
 function getStyles(
   reverse: boolean,
   direction?: RotateDirection
-): [Keyframes, Interpolation<Theme>?] {
+): [Keyframes, CSSProperties?] {
   switch (direction) {
     case "bottom-left":
       return reverse
@@ -66,12 +65,18 @@ function getStyles(
 }
 
 export const Rotate: React.FC<RotateProps> = (props) => {
-  const { direction, reverse = false, ...rest } = props;
+  const { direction, reverse = false, style, ...rest } = props;
 
   const [keyframes, animationCss] = useMemo(
     () => getStyles(reverse, direction),
     [direction, reverse]
   );
 
-  return <Reveal css={animationCss} keyframes={keyframes} {...rest} />;
+  return (
+    <Reveal
+      keyframes={keyframes}
+      style={Object.assign({}, style, animationCss)}
+      {...rest}
+    />
+  );
 };

@@ -1,5 +1,4 @@
-import { css } from "@emotion/react";
-import { useMemo } from "react";
+import { type CSSProperties, useMemo } from "react";
 
 import {
   flip,
@@ -12,7 +11,7 @@ import { type RevealProps, Reveal } from "../Reveal";
 
 type FlipDirection = "horizontal" | "vertical";
 
-export interface FlipProps extends Omit<RevealProps, "keyframes" | "css"> {
+export interface FlipProps extends Omit<RevealProps, "keyframes"> {
   /**
    * Axis direction of the animation.
    * @default undefined
@@ -36,17 +35,23 @@ function getStyles(reverse: boolean, direction?: FlipDirection) {
   }
 }
 
-const animationCss = css`
-  backface-visibility: visible;
-`;
+const animationCss: CSSProperties = {
+  backfaceVisibility: "visible",
+};
 
 export const Flip: React.FC<FlipProps> = (props) => {
-  const { direction, reverse = false, ...rest } = props;
+  const { direction, reverse = false, style, ...rest } = props;
 
   const keyframes = useMemo(
     () => getStyles(reverse, direction),
     [direction, reverse]
   );
 
-  return <Reveal css={animationCss} keyframes={keyframes} {...rest} />;
+  return (
+    <Reveal
+      keyframes={keyframes}
+      style={Object.assign({}, style, animationCss)}
+      {...rest}
+    />
+  );
 };

@@ -1,6 +1,5 @@
-import type { Interpolation, Theme } from "@emotion/react";
 import type { Keyframes } from "@emotion/serialize";
-import { useMemo } from "react";
+import { type CSSProperties, useMemo } from "react";
 
 import {
   bounce,
@@ -34,8 +33,7 @@ type AttentionSeekerEffect =
   | "tada"
   | "wobble";
 
-export interface AttentionSeekerProps
-  extends Omit<RevealProps, "keyframes" | "css"> {
+export interface AttentionSeekerProps extends Omit<RevealProps, "keyframes"> {
   /**
    * The animation effect to use for this attention seeker.
    * @default "bounce"
@@ -43,10 +41,10 @@ export interface AttentionSeekerProps
   effect?: AttentionSeekerEffect;
 }
 
-function getStyles(
-  effect: AttentionSeekerEffect
-): [Keyframes, Interpolation<Theme>?] {
+function getStyles(effect: AttentionSeekerEffect): [Keyframes, CSSProperties?] {
   switch (effect) {
+    case "bounce":
+      return [bounce, { transformOrigin: "center bottom" }];
     case "flash":
       return [flash];
     case "headShake":
@@ -71,16 +69,19 @@ function getStyles(
       return [tada];
     case "wobble":
       return [wobble];
-    case "bounce":
-    default:
-      return [bounce, { transformOrigin: "center bottom" }];
   }
 }
 
 export const AttentionSeeker: React.FC<AttentionSeekerProps> = (props) => {
-  const { effect = "bounce", ...rest } = props;
+  const { effect = "bounce", style, ...rest } = props;
 
   const [keyframes, animationCss] = useMemo(() => getStyles(effect), [effect]);
 
-  return <Reveal keyframes={keyframes} css={animationCss} {...rest} />;
+  return (
+    <Reveal
+      keyframes={keyframes}
+      style={Object.assign({}, style, animationCss)}
+      {...rest}
+    />
+  );
 };

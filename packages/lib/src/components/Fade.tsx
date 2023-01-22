@@ -42,7 +42,7 @@ type FadeDirection =
   | "top-right"
   | "up";
 
-export interface FadeProps extends Omit<RevealProps, "keyframes" | "css"> {
+export interface FadeProps extends Omit<RevealProps, "keyframes"> {
   /**
    * Causes the animation to start farther. Only works with "down", "left", "right" and "up" directions.
    * @default false
