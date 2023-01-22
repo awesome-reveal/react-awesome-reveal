@@ -10,10 +10,7 @@ import { isNullable, isStringLike } from "./utils/guards";
 import { matchIf, matchIfOrNull } from "./utils/patterns";
 
 function hideWhen(condition: boolean) {
-  return matchIf<CSSProperties, CSSProperties>(
-    () => ({ opacity: 0 }),
-    () => ({ opacity: 1 })
-  )(condition);
+  return matchIfOrNull<CSSProperties>(() => ({ opacity: 0 }))(condition);
 }
 
 export interface RevealProps {
