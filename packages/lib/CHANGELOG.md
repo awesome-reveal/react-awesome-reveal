@@ -1,5 +1,11 @@
 # react-awesome-reveal
 
+## 4.2.2
+
+### Patch Changes
+
+- Fix previous release
+
 ## 4.2.1
 
 ### Patch Changes
