@@ -17,5 +17,9 @@ export function getAnimationCss({
     animation-direction: normal;
     animation-fill-mode: both;
     animation-iteration-count: ${iterationCount};
+
+    @media (prefers-reduced-motion: reduce) {
+      animation: none;
+    }
   `;
 }
