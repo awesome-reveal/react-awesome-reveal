@@ -53,6 +53,9 @@
   "bugs": {
     "url": "https://github.com/morellodev/react-awesome-reveal/issues"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "start": "tsup --watch",
     "build": "tsc --noEmit && tsup",
