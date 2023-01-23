@@ -1,5 +1,11 @@
 # react-awesome-reveal
 
+## 4.2.3
+
+### Patch Changes
+
+- 33aad77: Removed hidden styles when animated components are not in the viewport
+
 ## 4.2.2
 
 ### Patch Changes
