@@ -9,10 +9,6 @@ import { getAnimationCss } from "./utils/animations";
 import { isNullable, isStringLike } from "./utils/guards";
 import { matchIf, matchIfOrNull } from "./utils/patterns";
 
-function hideWhen(condition: boolean) {
-  return matchIfOrNull<CSSProperties>(() => ({ opacity: 0 }))(condition);
-}
-
 export interface RevealProps {
   /**
    * Stagger its children animations.
@@ -156,13 +152,9 @@ export const Reveal: React.FC<RevealProps> = (props) => {
                         ref={ref}
                         className={cx(childClassName, node.props.className)}
                         css={matchIfOrNull(() => animationStyles)(inView)}
-                        style={Object.assign(
-                          {},
-                          childStyle,
-                          node.props.style,
-                          hideWhen(!inView),
-                          { animationDelay: nodeDelay + "ms" }
-                        )}
+                        style={Object.assign({}, childStyle, node.props.style, {
+                          animationDelay: nodeDelay + "ms",
+                        })}
                       />
                     )}
                   </ClassNames>
@@ -247,9 +239,9 @@ const TextReveal: React.FC<
           <span
             key={index}
             css={matchIfOrNull(() => animationStyles)(inView)}
-            style={Object.assign({}, hideWhen(!inView), {
+            style={{
               animationDelay: delay + index * duration * damping + "ms",
-            })}
+            }}
           >
             {char}
           </span>
@@ -284,7 +276,7 @@ const FragmentReveal: React.FC<
       ref={ref}
       className={className}
       css={matchIfOrNull(() => animationStyles)(inView)}
-      style={Object.assign({}, style, hideWhen(!inView))}
+      style={style}
     >
       {children}
     </div>
