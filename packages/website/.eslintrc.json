@@ -16,8 +16,16 @@
   },
   "overrides": [
     {
-      "files": ["./tailwind.config.cjs"],
-      "env": { "commonjs": true },
+      "files": ["env.d.ts"],
+      "rules": {
+        "@typescript-eslint/triple-slash-reference": "off"
+      }
+    },
+    {
+      "files": ["tailwind.config.cjs"],
+      "env": {
+        "commonjs": true
+      },
       "rules": {
         "@typescript-eslint/no-var-requires": "off"
       }

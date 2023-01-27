@@ -1,9 +1,3 @@
 {
-  "extends": "astro/tsconfigs/strictest",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "astro:content": ["src/content/types.generated.d.ts"]
-    }
-  }
+  "extends": "astro/tsconfigs/strictest"
 }
