@@ -1,6 +1,9 @@
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
+import remarkA11yEmoji from "@fec/remark-a11y-emoji";
 import { defineConfig } from "astro/config";
+import rehypeSlug from "rehype-slug";
+import remarkEmoji from "remark-emoji";
 
 import rehypeExternalLinks from "./plugins/rehypeExternalLinks";
 
@@ -9,8 +12,8 @@ export default defineConfig({
   site: "https://react-awesome-reveal.morello.dev",
   integrations: [tailwind(), sitemap()],
   markdown: {
-    remarkPlugins: ["remark-emoji", "@fec/remark-a11y-emoji"],
-    rehypePlugins: ["rehype-slug", rehypeExternalLinks],
+    remarkPlugins: [remarkEmoji, remarkA11yEmoji],
+    rehypePlugins: [rehypeSlug, rehypeExternalLinks],
   },
   vite: {
     ssr: {
