@@ -1,20 +1,17 @@
-import type { RehypePlugins } from "astro";
-import { array as A, option as O, record as R, string as S } from "fp-ts";
+import { array as A, option as O, string as S } from "fp-ts";
 import { pipe } from "fp-ts/lib/function";
 import type { Predicate } from "fp-ts/lib/Predicate";
-import * as t from "io-ts";
-import type { Options, Target } from "rehype-external-links";
+import rehypeExternalLinks_, {
+  type Options,
+  type Target,
+} from "rehype-external-links";
+import { z } from "zod";
 
-const KnownProtocols = t.keyof({
-  ftp: null,
-  http: null,
-  https: null,
-});
+const KnownProtocols = z.enum(["ftp", "http", "https"]);
 
 const isExternalLink: Predicate<string> = (s) =>
   pipe(
-    KnownProtocols.keys,
-    R.keys,
+    KnownProtocols.options,
     A.some((p) => pipe(s, S.startsWith(p)))
   );
 
@@ -37,4 +34,6 @@ const options: Options = {
     ),
 };
 
-export default ["rehype-external-links", options] as RehypePlugins[number];
+const rehypeExternalLinks = () => rehypeExternalLinks_(options);
+
+export default rehypeExternalLinks;
