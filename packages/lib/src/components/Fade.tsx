@@ -30,7 +30,7 @@ import {
   fadeOutUp,
   fadeOutUpBig,
 } from "../animations/fading_exits";
-import { type RevealProps, Reveal } from "../Reveal";
+import { Reveal, type RevealProps } from "../Reveal";
 
 type FadeDirection =
   | "bottom-left"

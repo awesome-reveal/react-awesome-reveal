@@ -15,7 +15,7 @@ import {
   rotateOutUpLeft,
   rotateOutUpRight,
 } from "../animations/rotating_exits";
-import { type RevealProps, Reveal } from "../Reveal";
+import { Reveal, type RevealProps } from "../Reveal";
 
 type RotateDirection =
   | "bottom-left"

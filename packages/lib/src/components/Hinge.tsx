@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 
 import { hinge } from "../animations/specials";
-import { type RevealProps, Reveal } from "../Reveal";
+import { Reveal, type RevealProps } from "../Reveal";
 
 export type HingeProps = Omit<RevealProps, "keyframes">;
 

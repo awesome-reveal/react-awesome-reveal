@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 
 import { rollIn, rollOut } from "../animations/specials";
-import { type RevealProps, Reveal } from "../Reveal";
+import { Reveal, type RevealProps } from "../Reveal";
 
 export interface RollProps extends Omit<RevealProps, "keyframes"> {
   /**

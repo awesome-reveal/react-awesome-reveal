@@ -1,5 +1,5 @@
 import { jackInTheBox } from "../animations/specials";
-import { type RevealProps, Reveal } from "../Reveal";
+import { Reveal, type RevealProps } from "../Reveal";
 
 export type JackInTheBoxProps = Omit<RevealProps, "keyframes">;
 

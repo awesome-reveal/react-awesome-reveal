@@ -7,7 +7,7 @@ import {
   flipOutX,
   flipOutY,
 } from "../animations/flippers";
-import { type RevealProps, Reveal } from "../Reveal";
+import { Reveal, type RevealProps } from "../Reveal";
 
 type FlipDirection = "horizontal" | "vertical";
 

@@ -12,7 +12,7 @@ import {
   slideOutRight,
   slideOutUp,
 } from "../animations/sliding_exits";
-import { type RevealProps, Reveal } from "../Reveal";
+import { Reveal, type RevealProps } from "../Reveal";
 
 type SlideDirection = "down" | "left" | "right" | "up";
 

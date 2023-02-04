@@ -1,6 +1,6 @@
 import { ClassNames } from "@emotion/react";
 import type { Keyframes, SerializedStyles } from "@emotion/serialize";
-import { type CSSProperties, Children, isValidElement, useMemo } from "react";
+import { Children, type CSSProperties, isValidElement, useMemo } from "react";
 import { InView, useInView } from "react-intersection-observer";
 import { isFragment } from "react-is";
 

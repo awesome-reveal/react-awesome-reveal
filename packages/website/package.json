@@ -11,12 +11,12 @@
     "lint:fix": "eslint --fix ."
   },
   "devDependencies": {
-    "@astrojs/sitemap": "^1.0.0",
-    "@astrojs/tailwind": "^3.0.0",
+    "@astrojs/sitemap": "^1.0.1",
+    "@astrojs/tailwind": "^3.0.1",
     "@fec/remark-a11y-emoji": "^3.1.0",
     "@tailwindcss/typography": "^0.5.9",
-    "astro": "^2.0.2",
-    "eslint-plugin-tailwindcss": "^3.8.2",
+    "astro": "^2.0.6",
+    "eslint-plugin-tailwindcss": "^3.8.3",
     "rehype-external-links": "^2.0.1",
     "rehype-slug": "^5.1.0",
     "remark-emoji": "^3.1.0",
