@@ -1,5 +1,6 @@
 ---
-import { CollectionEntry, getCollection } from "astro:content";
+import type { InferGetStaticPropsType } from "astro";
+import { getCollection } from "astro:content";
 
 import Container from "../../components/Container.astro";
 import DocBottomNavlinks from "../../components/DocBottomNavlinks.astro";
@@ -17,11 +18,7 @@ export async function getStaticPaths() {
   }));
 }
 
-interface Props {
-  entry: CollectionEntry<"docs">;
-}
-
-const { entry } = Astro.props;
+const { entry } = Astro.props as InferGetStaticPropsType<typeof getStaticPaths>;
 const { Content } = await entry.render();
 ---
 
