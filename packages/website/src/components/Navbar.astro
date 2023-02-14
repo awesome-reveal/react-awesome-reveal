@@ -1,9 +1,6 @@
 ---
-import { Icon } from "astro-icon";
-
 import { getDocPathname } from "../utils/docs";
 import Container from "./Container.astro";
-import StargazersCount from "./StargazersCount.astro";
 ---
 
 <div class="sticky top-0 z-40 w-full border-b backdrop-blur bg-white/95">
@@ -49,12 +46,12 @@ import StargazersCount from "./StargazersCount.astro";
         >
           <span class="sr-only">React Awesome Reveal on GitHub</span>
           <span class="hidden lg:block">
-            <StargazersCount />
+            <iframe
+              src="https://ghbtns.com/github-btn.html?user=morellodev&repo=react-awesome-reveal&type=star&count=true&size=large"
+              title="GitHub"
+              width="160px"
+              height="30px"></iframe>
           </span>
-          <Icon
-            class="w-6 h-6 lg:ml-2 group-hover:text-gray-600"
-            name="bx:bxl-github"
-          />
         </a>
       </div>
     </div>
