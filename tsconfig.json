@@ -3,7 +3,6 @@
     "allowJs": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "importsNotUsedAsValues": "error",
     "module": "ESNext",
     "moduleResolution": "Node",
     "noFallthroughCasesInSwitch": true,

@@ -68,16 +68,16 @@
     "react": ">=16.14.0"
   },
   "devDependencies": {
-    "@emotion/react": "^11.10.5",
+    "@emotion/react": "^11.10.8",
     "@emotion/serialize": "^1.1.1",
-    "@types/react": "^18.0.27",
-    "@types/react-dom": "^18.0.10",
-    "@types/react-is": "^17.0.3",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.1",
+    "@types/react-is": "^18.2.0",
     "react": "^18.2.0",
-    "tsup": "^6.5.0"
+    "tsup": "^6.7.0"
   },
   "dependencies": {
-    "react-intersection-observer": "^9.4.1",
+    "react-intersection-observer": "^9.4.3",
     "react-is": "^18.2.0"
   }
 }

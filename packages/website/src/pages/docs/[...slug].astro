@@ -18,7 +18,9 @@ export async function getStaticPaths() {
   }));
 }
 
-const { entry } = Astro.props as InferGetStaticPropsType<typeof getStaticPaths>;
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { entry } = Astro.props;
 const { Content } = await entry.render();
 ---
 
