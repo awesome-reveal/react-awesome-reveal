@@ -1,5 +1,11 @@
 # react-awesome-reveal
 
+## 4.2.4
+
+### Patch Changes
+
+- cfb05d8: Fix Slide and Zoom flicker when the element is just entering the view and certain conditions are met. Slide flickers when direction is up. Zoom flickers when it is styled.
+
 ## 4.2.3
 
 ### Patch Changes
