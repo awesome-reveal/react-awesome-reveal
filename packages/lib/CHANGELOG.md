@@ -1,5 +1,11 @@
 # react-awesome-reveal
 
+## 4.2.5
+
+### Patch Changes
+
+- Use Vite for building package
+
 ## 4.2.4
 
 ### Patch Changes
