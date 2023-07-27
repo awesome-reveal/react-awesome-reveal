@@ -179,7 +179,7 @@ export const Reveal: React.FC<RevealProps> = (props) => {
                 onChange={onVisibilityChange}
               >
                 {({ inView, ref }) => (
-                  <div ref={ref}>
+                  <div ref={ref} style={{ height: "100%", width: "100%" }}>
                     <div
                       className={className}
                       css={matchIfOrNull(() => animationStyles)(inView)}
