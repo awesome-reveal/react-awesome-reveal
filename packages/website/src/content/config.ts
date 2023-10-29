@@ -1,13 +1,7 @@
-// eslint-disable-next-line import/no-unresolved
-import { defineCollection, z } from "astro:content";
-
-const docs = defineCollection({
-  schema: z.object({
-    title: z.string(),
-    sortOrder: z.number(),
-  }),
-});
+import { defineCollection } from "astro:content";
+import { docsSchema, i18nSchema } from "@astrojs/starlight/schema";
 
 export const collections = {
-  docs,
+  docs: defineCollection({ schema: docsSchema() }),
+  i18n: defineCollection({ type: "data", schema: i18nSchema() }),
 };
