@@ -1,7 +1,10 @@
 ---
 title: Older Browsers
-sortOrder: 7
+sidebar:
+  order: 7
 ---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
 
 Older browsers _might_ be supported, depending on the React version you are using. React 18 [dropped support for Internet Explorer](https://reactjs.org/blog/2022/03/08/react-18-upgrade-guide.html#dropping-support-for-internet-explorer), but you can keep using React 17 to overcome this.
 
@@ -13,9 +16,29 @@ In any case, the Intersection Observer API is not supported on older browsers, s
 
 You can add the [polyfill for the Intersection Observer API](https://www.npmjs.com/package/intersection-observer) directly or by using a service like [polyfill.io](https://polyfill.io/v2/docs) to inject it when needed:
 
-```shell
-yarn add intersection-observer
-```
+<Tabs>
+  <TabItem label="npm">
+  
+  ```shell
+  npm install intersection-observer
+  ```
+  
+  </TabItem>
+  <TabItem label="pnpm">
+  
+  ```shell
+  pnpm add intersection-observer
+  ```
+  
+  </TabItem>
+  <TabItem label="yarn">
+    
+    ```shell
+    yarn add intersection-observer
+    ```
+
+  </TabItem>
+</Tabs>
 
 Then import it in your app:
 
