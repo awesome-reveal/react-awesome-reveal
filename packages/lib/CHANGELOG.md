@@ -1,5 +1,11 @@
 # react-awesome-reveal
 
+## 4.2.6
+
+### Patch Changes
+
+- 8e30cd1: Update dependencies
+
 ## 4.2.5
 
 ### Patch Changes
