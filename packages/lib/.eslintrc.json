@@ -10,7 +10,7 @@
     "plugin:react/jsx-runtime",
     "plugin:react-hooks/recommended"
   ],
-  "plugins": ["@typescript-eslint", "simple-import-sort", "tailwindcss"],
+  "plugins": ["@typescript-eslint", "simple-import-sort"],
   "parser": "@typescript-eslint/parser",
   "settings": {
     "import/resolver": {
