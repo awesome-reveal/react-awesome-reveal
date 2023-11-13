@@ -1,5 +1,11 @@
 # react-awesome-reveal
 
+## 4.2.7
+
+### Patch Changes
+
+- aa47f95: fix: upgrade react-intersection-observer
+
 ## 4.2.6
 
 ### Patch Changes
