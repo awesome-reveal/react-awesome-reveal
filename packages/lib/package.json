@@ -74,7 +74,7 @@
     "@types/react-is": "^18.2.4",
     "@vitejs/plugin-react": "^4.2.1",
     "react": "^18.2.0",
-    "vite": "^5.0.5",
+    "vite": "^5.0.7",
     "vite-plugin-dts": "3.6.4"
   },
   "dependencies": {
