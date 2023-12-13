@@ -1,4 +1,10 @@
 {
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/docs/:path*",
+      "destination": "/guides/:path*"
+    }
+  ]
 }
