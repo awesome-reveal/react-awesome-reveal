@@ -3,9 +3,8 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/docs/$1",
-      "destination": "/guides/$1",
-      "permanent": true
+      "source": "/docs/:path*",
+      "destination": "/guides/:path*"
     }
   ]
 }
