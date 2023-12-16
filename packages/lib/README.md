@@ -7,6 +7,9 @@
 [![License](https://badgen.net/npm/license/react-awesome-reveal)](https://www.npmjs.com/package/react-awesome-reveal/v/latest)
 [![Rate on Openbase](https://badges.openbase.io/js/rating/react-awesome-reveal.svg)](https://openbase.io/js/react-awesome-reveal?utm_source=embedded&utm_medium=badge&utm_campaign=rate-badge)
 
+> [!TIP]
+> If you like this library, please [consider supporting its creator](https://github.com/sponsors/morellodev).
+
 [React Awesome Reveal](https://react-awesome-reveal.morello.dev) is a library for React apps written in TypeScript that adds reveal animations using the Intersection Observer API to detect when the elements appear in the viewport. Animations are internally provided by [Emotion](https://emotion.sh) and implemented as CSS Animations to benefit from hardware acceleration.
 
 ## Table Of Contents
