@@ -72,24 +72,24 @@ function getStyles(big: boolean, reverse: boolean, direction?: FadeDirection) {
           ? fadeOutDownBig
           : fadeInDownBig
         : reverse
-        ? fadeOutDown
-        : fadeInDown;
+          ? fadeOutDown
+          : fadeInDown;
     case "left":
       return big
         ? reverse
           ? fadeOutLeftBig
           : fadeInLeftBig
         : reverse
-        ? fadeOutLeft
-        : fadeInLeft;
+          ? fadeOutLeft
+          : fadeInLeft;
     case "right":
       return big
         ? reverse
           ? fadeOutRightBig
           : fadeInRightBig
         : reverse
-        ? fadeOutRight
-        : fadeInRight;
+          ? fadeOutRight
+          : fadeInRight;
     case "top-left":
       return reverse ? fadeOutTopLeft : fadeInTopLeft;
     case "top-right":
@@ -100,8 +100,8 @@ function getStyles(big: boolean, reverse: boolean, direction?: FadeDirection) {
           ? fadeOutUpBig
           : fadeInUpBig
         : reverse
-        ? fadeOutUp
-        : fadeInUp;
+          ? fadeOutUp
+          : fadeInUp;
     default:
       return reverse ? fadeOut : fadeIn;
   }
