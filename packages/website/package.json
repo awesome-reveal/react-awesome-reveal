@@ -11,11 +11,11 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.4.1",
+    "@astrojs/check": "^0.5.7",
     "@astrojs/partytown": "^2.0.4",
-    "@astrojs/starlight": "^0.17.2",
-    "@astrojs/vercel": "^7.1.1",
-    "astro": "^4.3.2",
+    "@astrojs/starlight": "^0.21.1",
+    "@astrojs/vercel": "^7.3.6",
+    "astro": "^4.5.1",
     "sharp": "^0.33.2"
   }
 }

@@ -9,15 +9,15 @@
     "lint:fix": "eslint --fix ."
   },
   "dependencies": {
-    "@emotion/react": "^11.11.3",
+    "@emotion/react": "^11.11.4",
     "react": "^18.2.0",
     "react-awesome-reveal": "workspace:*",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.52",
-    "@types/react-dom": "^18.2.18",
+    "@types/react": "^18.2.65",
+    "@types/react-dom": "^18.2.21",
     "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.0.12"
+    "vite": "^5.1.6"
   }
 }
