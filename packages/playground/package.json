@@ -1,6 +1,7 @@
 {
   "name": "playground",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -10,14 +11,14 @@
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
-    "react": "^18.2.0",
+    "react": "^18.3.1",
     "react-awesome-reveal": "workspace:*",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@types/react": "^18.2.65",
-    "@types/react-dom": "^18.2.21",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "vite": "^5.1.6"
+    "vite": "^5.2.11"
   }
 }
