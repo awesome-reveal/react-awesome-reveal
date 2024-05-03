@@ -59,8 +59,7 @@
   "scripts": {
     "build": "tsc --noEmit && vite build",
     "lint": "eslint .",
-    "lint:fix": "eslint --fix .",
-    "prepublishOnly": "vite build"
+    "lint:fix": "eslint --fix ."
   },
   "peerDependencies": {
     "@emotion/react": "^11.0.0",
