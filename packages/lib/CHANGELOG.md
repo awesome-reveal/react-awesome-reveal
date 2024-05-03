@@ -1,5 +1,11 @@
 # react-awesome-reveal
 
+## 4.2.10
+
+### Patch Changes
+
+- 010696e: Disable sourcemaps generation
+
 ## 4.2.9
 
 ### Patch Changes
