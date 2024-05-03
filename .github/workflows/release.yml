@@ -28,12 +28,12 @@ jobs:
       - name: Get pnpm Store Directory
         shell: bash
         run: |
-          echo "PNPM_STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+          echo "PNPM_STORE=$(pnpm store path --silent)" >> $GITHUB_ENV
 
       - name: Setup pnpm Cache
         uses: actions/cache@v3
         with:
-          path: ${{ env.PNPM_STORE_PATH }}
+          path: ${{ env.PNPM_STORE }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-

@@ -7,7 +7,7 @@
     "lint:fix": "pnpm run --parallel lint:fix",
     "prepare": "husky install",
     "prerelease": "pnpm --filter react-awesome-reveal build",
-    "release": "changesets publish"
+    "release": "changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
