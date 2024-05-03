@@ -1,5 +1,11 @@
 # react-awesome-reveal
 
+## 4.2.9
+
+### Patch Changes
+
+- b807214: Update dependencies
+
 ## 4.2.8
 
 ### Patch Changes
