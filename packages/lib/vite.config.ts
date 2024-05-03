@@ -1,5 +1,3 @@
-/// <reference types="vite/client" />
-
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
@@ -18,7 +16,6 @@ export default defineConfig({
   build: {
     target: "esnext",
     minify: false,
-    sourcemap: true,
     lib: {
       entry: "src/index.ts",
     },

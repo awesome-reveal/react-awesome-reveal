@@ -1,4 +1,5 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "isolatedModules": true,
     "jsx": "react-jsx",
@@ -8,6 +9,6 @@
     "skipLibCheck": true,
     "target": "ESNext"
   },
-  "extends": "../../tsconfig.json",
-  "include": ["src"]
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
