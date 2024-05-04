@@ -8,8 +8,8 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  release:
-    name: Release
+  setup:
+    name: Setup
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
@@ -41,8 +41,12 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
+  release:
+    name: Release
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
       - name: Create Release Pull Request or Publish to npm
-        id: changesets
         uses: changesets/action@v1
         with:
           publish: pnpm release
