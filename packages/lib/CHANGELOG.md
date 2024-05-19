@@ -1,5 +1,11 @@
 # react-awesome-reveal
 
+## 4.2.11
+
+### Patch Changes
+
+- d592d40: Update dependencies
+
 ## 4.2.10
 
 ### Patch Changes
