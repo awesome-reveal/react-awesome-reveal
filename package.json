@@ -1,7 +1,7 @@
 {
   "name": "rar-monorepo",
   "private": true,
-  "packageManager": "pnpm@9.1.0+sha256.22e36fba7f4880ecf749a5ca128b8435da085ecd49575e7fb9e64d6bf4fad394",
+  "packageManager": "pnpm@9.3.0+sha256.e1f9e8d1a16607a46dd3c158b5f7a7dc7945501d1c6222d454d63d033d1d918f",
   "scripts": {
     "lint": "pnpm run --parallel lint",
     "lint:fix": "pnpm run --parallel lint:fix",
