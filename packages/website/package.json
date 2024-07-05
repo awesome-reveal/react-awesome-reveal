@@ -13,9 +13,9 @@
   "dependencies": {
     "@astrojs/check": "^0.7.0",
     "@astrojs/partytown": "^2.1.1",
-    "@astrojs/starlight": "^0.24.2",
-    "@astrojs/vercel": "^7.7.0",
-    "astro": "^4.10.2",
+    "@astrojs/starlight": "^0.25.0",
+    "@astrojs/vercel": "^7.7.2",
+    "astro": "^4.11.5",
     "sharp": "^0.33.4"
   }
 }
