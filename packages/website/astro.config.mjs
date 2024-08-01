@@ -1,11 +1,11 @@
 import partytown from "@astrojs/partytown";
 import starlight from "@astrojs/starlight";
-import vercel from "@astrojs/vercel/static";
+import netlify from "@astrojs/netlify/static";
 import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
-  adapter: vercel(),
+  adapter: netlify(),
   site: "https://react-awesome-reveal.morello.dev",
   integrations: [
     starlight({

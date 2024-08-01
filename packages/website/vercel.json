@@ -1,8 +1,0 @@
-{
-  "redirects": [
-    {
-      "source": "/docs/:path*",
-      "destination": "/guides/:path*"
-    }
-  ]
-}
