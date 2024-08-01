@@ -5,7 +5,7 @@
   "scripts": {
     "lint": "pnpm run --parallel lint",
     "lint:fix": "pnpm run --parallel lint:fix",
-    "prepare": "husky install",
+    "prepare": "husky",
     "prerelease": "pnpm --filter react-awesome-reveal build",
     "release": "changeset publish"
   },
@@ -22,7 +22,7 @@
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "husky": "^9.1.1",
+    "husky": "^9.1.4",
     "lint-staged": "^15.2.7",
     "prettier": "^3.3.3",
     "prettier-config-morellodev": "^2.0.1",

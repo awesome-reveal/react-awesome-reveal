@@ -39,6 +39,8 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install Dependencies
+        env:
+          HUSKY: 0
         run: pnpm install
 
       - name: Create Release Pull Request or Publish to npm
