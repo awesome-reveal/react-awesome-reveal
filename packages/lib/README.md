@@ -1,7 +1,7 @@
 # React Awesome Reveal
 
 [![Version](https://badgen.net/npm/v/react-awesome-reveal)](https://www.npmjs.com/package/react-awesome-reveal/v/latest)
-[![Last Commit](https://badgen.net/github/last-commit/morellodev/react-awesome-reveal/main)](https://github.com/morellodev/react-awesome-reveal/commit)
+[![Last Commit](https://badgen.net/github/last-commit/awesome-reveal/react-awesome-reveal/main)](https://github.com/awesome-reveal/react-awesome-reveal/commit)
 [![Downloads](https://badgen.net/npm/dt/react-awesome-reveal)](https://www.npmjs.com/package/react-awesome-reveal/v/latest)
 [![Size](https://badgen.net/bundlephobia/minzip/react-awesome-reveal)](https://bundlephobia.com/result?p=react-awesome-reveal@latest)
 [![License](https://badgen.net/npm/license/react-awesome-reveal)](https://www.npmjs.com/package/react-awesome-reveal/v/latest)

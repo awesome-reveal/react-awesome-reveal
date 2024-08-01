@@ -12,7 +12,7 @@ export default defineConfig({
       title: "React Awesome Reveal",
       social: {
         email: "mailto:dennis@morello.dev",
-        github: "https://github.com/morellodev/react-awesome-reveal",
+        github: "https://github.com/awesome-reveal/react-awesome-reveal",
         linkedin: "https://www.linkedin.com/in/dennismorello",
         "x.com": "https://x.com/morellodev",
       },

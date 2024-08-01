@@ -48,10 +48,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/morellodev/react-awesome-reveal"
+    "url": "https://github.com/awesome-reveal/react-awesome-reveal"
   },
   "bugs": {
-    "url": "https://github.com/morellodev/react-awesome-reveal/issues"
+    "url": "https://github.com/awesome-reveal/react-awesome-reveal/issues"
   },
   "publishConfig": {
     "access": "public"
