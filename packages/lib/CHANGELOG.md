@@ -1,5 +1,11 @@
 # react-awesome-reveal
 
+## 4.2.14
+
+### Patch Changes
+
+- dfa6ad0: Update repository refs
+
 ## 4.2.13
 
 ### Patch Changes
