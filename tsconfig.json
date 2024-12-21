@@ -1,12 +1,20 @@
 {
   "compilerOptions": {
-    "allowJs": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "@emotion/react",
+    "lib": ["DOM", "ESNext"],
     "module": "ESNext",
     "moduleResolution": "Node",
+    "noEmit": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
-    "strict": true
-  }
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ESNext"
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }
