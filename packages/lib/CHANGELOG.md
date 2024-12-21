@@ -1,5 +1,11 @@
 # react-awesome-reveal
 
+## 4.3.0
+
+### Minor Changes
+
+- a9a7a7d: Add RSC frameworks support
+
 ## 4.2.14
 
 ### Patch Changes
