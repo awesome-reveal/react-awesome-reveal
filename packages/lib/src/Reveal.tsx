@@ -1,3 +1,5 @@
+"use client";
+
 import { ClassNames } from "@emotion/react";
 import type { Keyframes, SerializedStyles } from "@emotion/serialize";
 import { Children, type CSSProperties, isValidElement, useMemo } from "react";

@@ -1,3 +1,5 @@
+"use client";
+
 import type { Keyframes } from "@emotion/serialize";
 import { type CSSProperties, useMemo } from "react";
 
