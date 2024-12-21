@@ -1,5 +1,11 @@
 # react-awesome-reveal
 
+## 4.3.1
+
+### Patch Changes
+
+- 2de3acc: Fix "use client" directive preservation to final build
+
 ## 4.3.0
 
 ### Minor Changes
