@@ -1,4 +1,5 @@
 import react from "@vitejs/plugin-react";
+import preserveDirectives from "rollup-preserve-directives";
 import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 
@@ -12,6 +13,7 @@ export default defineConfig({
       rollupTypes: false,
     }),
     react(),
+    preserveDirectives(),
   ],
   build: {
     target: "esnext",
