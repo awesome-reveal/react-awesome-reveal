@@ -181,27 +181,28 @@ export const Reveal: React.FC<RevealProps> = (props) => {
                 onChange={onVisibilityChange}
               >
                 {({ inView, ref }) => (
-                  <div
-                    ref={ref}
-                    className={className}
-                    css={matchIfOrNull(() => animationStyles)(inView)}
-                    style={Object.assign({}, style, hideWhen(!inView), {
-                      animationDelay: nodeDelay + "ms",
-                    })}
-                  >
-                    <ClassNames>
-                      {({ cx }) => (
-                        <node.type
-                          {...node.props}
-                          className={cx(childClassName, node.props.className)}
-                          style={Object.assign(
-                            {},
-                            childStyle,
-                            node.props.style
-                          )}
-                        />
-                      )}
-                    </ClassNames>
+                  <div ref={ref} style={{ height: "100%", width: "100%" }}>
+                    <div
+                      className={className}
+                      css={matchIfOrNull(() => animationStyles)(inView)}
+                      style={Object.assign({}, style, hideWhen(!inView), {
+                        animationDelay: nodeDelay + "ms",
+                      })}
+                    >
+                      <ClassNames>
+                        {({ cx }) => (
+                          <node.type
+                            {...node.props}
+                            className={cx(childClassName, node.props.className)}
+                            style={Object.assign(
+                              {},
+                              childStyle,
+                              node.props.style
+                            )}
+                          />
+                        )}
+                      </ClassNames>
+                    </div>
                   </div>
                 )}
               </InView>
