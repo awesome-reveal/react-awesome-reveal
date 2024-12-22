@@ -1,7 +1,7 @@
 "use client";
 
-import { ClassNames } from "@emotion/react";
-import type { Keyframes, SerializedStyles } from "@emotion/serialize";
+import { ClassNames, type Keyframes } from "@emotion/react";
+import type { SerializedStyles } from "@emotion/serialize";
 import { Children, type CSSProperties, isValidElement, useMemo } from "react";
 import { InView, useInView } from "react-intersection-observer";
 import { isFragment } from "react-is";
@@ -120,96 +120,89 @@ export const Reveal: React.FC<RevealProps> = (props) => {
   if (isFragment(children))
     return <FragmentReveal {...props} animationStyles={animationStyles} />;
 
-  return (
-    <>
-      {Children.map(children, (node, index) => {
-        if (!isValidElement(node)) return null;
+  return Children.map(children, (node, index) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!isValidElement<Record<string, any>>(node)) return null;
 
-        const nodeDelay = delay + (cascade ? index * duration * damping : 0);
+    const nodeDelay = delay + (cascade ? index * duration * damping : 0);
 
-        switch (node.type) {
-          case "ol":
-          case "ul":
-            return (
+    switch (node.type) {
+      case "ol":
+      case "ul":
+        return (
+          <ClassNames>
+            {({ cx }) => (
+              <node.type
+                {...node.props}
+                className={cx(className, node.props.className)}
+                style={Object.assign({}, style, node.props.style)}
+              >
+                <Reveal {...props}>{node.props.children}</Reveal>
+              </node.type>
+            )}
+          </ClassNames>
+        );
+      case "li":
+        return (
+          <InView
+            threshold={fraction}
+            triggerOnce={triggerOnce}
+            onChange={onVisibilityChange}
+          >
+            {({ inView, ref }) => (
               <ClassNames>
                 {({ cx }) => (
                   <node.type
                     {...node.props}
-                    className={cx(className, node.props.className)}
-                    style={Object.assign({}, style, node.props.style)}
-                  >
-                    <Reveal {...props}>{node.props.children}</Reveal>
-                  </node.type>
+                    ref={ref}
+                    className={cx(childClassName, node.props.className)}
+                    css={matchIfOrNull(() => animationStyles)(inView)}
+                    style={Object.assign(
+                      {},
+                      childStyle,
+                      node.props.style,
+                      hideWhen(!inView),
+                      {
+                        animationDelay: nodeDelay + "ms",
+                      }
+                    )}
+                  />
                 )}
               </ClassNames>
-            );
-          case "li":
-            return (
-              <InView
-                threshold={fraction}
-                triggerOnce={triggerOnce}
-                onChange={onVisibilityChange}
+            )}
+          </InView>
+        );
+      default:
+        return (
+          <InView
+            threshold={fraction}
+            triggerOnce={triggerOnce}
+            onChange={onVisibilityChange}
+          >
+            {({ inView, ref }) => (
+              <div
+                ref={ref}
+                className={className}
+                css={matchIfOrNull(() => animationStyles)(inView)}
+                style={Object.assign({}, style, hideWhen(!inView), {
+                  animationDelay: nodeDelay + "ms",
+                })}
               >
-                {({ inView, ref }) => (
-                  <ClassNames>
-                    {({ cx }) => (
-                      <node.type
-                        {...node.props}
-                        ref={ref}
-                        className={cx(childClassName, node.props.className)}
-                        css={matchIfOrNull(() => animationStyles)(inView)}
-                        style={Object.assign(
-                          {},
-                          childStyle,
-                          node.props.style,
-                          hideWhen(!inView),
-                          {
-                            animationDelay: nodeDelay + "ms",
-                          }
-                        )}
-                      />
-                    )}
-                  </ClassNames>
-                )}
-              </InView>
-            );
-          default:
-            return (
-              <InView
-                threshold={fraction}
-                triggerOnce={triggerOnce}
-                onChange={onVisibilityChange}
-              >
-                {({ inView, ref }) => (
-                  <div
-                    ref={ref}
-                    className={className}
-                    css={matchIfOrNull(() => animationStyles)(inView)}
-                    style={Object.assign({}, style, hideWhen(!inView), {
-                      animationDelay: nodeDelay + "ms",
-                    })}
-                  >
-                    <ClassNames>
-                      {({ cx }) => (
-                        <node.type
-                          {...node.props}
-                          className={cx(childClassName, node.props.className)}
-                          style={Object.assign(
-                            {},
-                            childStyle,
-                            node.props.style
-                          )}
-                        />
-                      )}
-                    </ClassNames>
-                  </div>
-                )}
-              </InView>
-            );
-        }
-      })}
-    </>
-  );
+                <ClassNames>
+                  {({ cx }) => (
+                    <node.type
+                      {...node.props}
+                      className={cx(childClassName, node.props.className)}
+                      style={Object.assign({}, childStyle, node.props.style)}
+                    />
+                  )}
+                </ClassNames>
+              </div>
+            )}
+          </InView>
+        );
+    }
+  });
 };
 
 const textBaseStyles: CSSProperties = {

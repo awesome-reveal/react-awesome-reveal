@@ -1,4 +1,4 @@
-import { css } from "@emotion/react";
+import { css, type Keyframes } from "@emotion/react";
 
 import { fadeInLeft } from "../animations/fading_entrances";
 
@@ -8,6 +8,12 @@ export function getAnimationCss({
   timingFunction = "ease",
   keyframes = fadeInLeft,
   iterationCount = 1,
+}: {
+  duration?: number;
+  delay?: number;
+  timingFunction?: string;
+  keyframes?: Keyframes;
+  iterationCount?: number;
 }) {
   return css`
     animation-duration: ${duration}ms;
