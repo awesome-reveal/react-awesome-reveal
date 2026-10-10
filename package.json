@@ -69,8 +69,6 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
-    "@changesets/changelog-github": "^1.0.1",
-    "@changesets/cli": "^3.0.3",
     "@emotion/react": "catalog:",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",

@@ -16,81 +16,41 @@ env:
   HUSKY: 0
 
 jobs:
-  select-mode:
-    name: Select mode
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: read
-    outputs:
-      mode: ${{ steps.select-mode.outputs.mode }}
-      publish-plan-artifact-id: ${{ steps.select-mode.outputs.publish-plan-artifact-id }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version-file: .nvmrc
-          package-manager-cache: false
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Select mode
-        id: select-mode
-        uses: changesets/action/select-mode@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
-
-  version:
-    name: Version
-    needs: select-mode
-    if: needs.select-mode.outputs.mode == 'version'
+  release-please:
+    name: Release Please
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
       contents: write
+      issues: write
       pull-requests: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+      version: ${{ steps.release.outputs.version }}
+      sha: ${{ steps.release.outputs.sha }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Release Please
+        id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
-          persist-credentials: false
+          target-branch: ${{ github.ref_name }}
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version-file: .nvmrc
-          package-manager-cache: false
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Version packages
-        uses: changesets/action/version@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
-
-  pack:
-    name: Pack
-    needs: select-mode
-    if: needs.select-mode.outputs.mode == 'publish'
+  publish:
+    name: Publish
+    needs: release-please
+    if: needs.release-please.outputs.release_created == 'true'
     runs-on: ubuntu-latest
+    environment: npm
     timeout-minutes: 10
     permissions:
       contents: read
-    outputs:
-      pack-dir-artifact-id: ${{ steps.pack.outputs.pack-dir-artifact-id }}
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          ref: ${{ needs.release-please.outputs.sha }}
           persist-credentials: false
 
       - name: Install pnpm
@@ -108,40 +68,13 @@ jobs:
       - name: Build
         run: pnpm build
 
-      - name: Pack packages
-        id: pack
-        uses: changesets/action/pack@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
-        with:
-          publish-plan-artifact-id: ${{ needs.select-mode.outputs.publish-plan-artifact-id }}
-
-  publish:
-    name: Publish
-    needs: pack
-    runs-on: ubuntu-latest
-    environment: npm
-    timeout-minutes: 10
-    permissions:
-      contents: write
-      id-token: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version-file: .nvmrc
-          package-manager-cache: false
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Publish packages
-        uses: changesets/action/publish@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
-        with:
-          pack-dir-artifact-id: ${{ needs.pack.outputs.pack-dir-artifact-id }}
+      # The release commit is checked out as a detached HEAD, so pnpm's branch check would fail.
+      - name: Publish
+        env:
+          VERSION: ${{ needs.release-please.outputs.version }}
+        run: |
+          if [[ "$VERSION" == *-* ]]; then
+            pnpm publish --no-git-checks --tag next
+          else
+            pnpm publish --no-git-checks
+          fi
