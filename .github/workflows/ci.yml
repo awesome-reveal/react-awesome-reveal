@@ -59,6 +59,15 @@ jobs:
       - name: Test
         run: pnpm test --coverage
 
+      - name: Add coverage to the job summary
+        run: |
+          {
+            echo "### Coverage"
+            echo '```'
+            cat coverage/summary.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
   package:
     name: Package
     runs-on: ubuntu-latest

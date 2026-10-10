@@ -1,4 +1,4 @@
-import { defineConfig } from "vitest/config";
+import { coverageConfigDefaults, defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
@@ -6,6 +6,8 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["src"],
+      // CI appends the summary file to the GitHub job summary.
+      reporter: [...coverageConfigDefaults.reporter, ["text-summary", { file: "summary.txt" }]],
       thresholds: { lines: 90, functions: 90, branches: 85, statements: 90 },
     },
     projects: [
