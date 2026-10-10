@@ -10,7 +10,7 @@
     "lint:fix": "eslint --fix ."
   },
   "dependencies": {
-    "@emotion/react": "^11.13.0",
+    "@emotion/react": "catalog:",
     "react": "catalog:",
     "react-awesome-reveal": "workspace:*",
     "react-dom": "catalog:"
