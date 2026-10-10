@@ -1,57 +1,95 @@
-import { Fade } from "react-awesome-reveal";
+import { useRef, useState } from "react";
+import { Reveal, useReveal } from "react-awesome-reveal";
+import { blur, defineKeyframes, enter, fade, scale, slide } from "react-awesome-reveal/keyframes";
 
 import { Section } from "./components/Section";
+
+const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
+  keyframe: (t) => ({ opacity: t, transform: `rotate(${(1 - t) * turns * 360}deg) scale(${t})` }),
+  easing: (t) => 1 - (1 - t) ** 3,
+}));
+
+function HookExample() {
+  const { ref, style } = useReveal<HTMLHeadingElement>({ keyframes: blur() });
+
+  return (
+    <h2 ref={ref} style={style}>
+      Revealed with the useReveal hook, no wrapper
+    </h2>
+  );
+}
+
+function ManualExample() {
+  const [shown, setShown] = useState(false);
+
+  return (
+    <>
+      <button type="button" onClick={() => setShown((value) => !value)}>
+        Toggle
+      </button>
+      <Reveal keyframes={scale()} when={shown}>
+        <p>Revealed manually with `when`</p>
+      </Reveal>
+    </>
+  );
+}
+
+function RefExample() {
+  const ref = useRef<HTMLInputElement>(null);
+
+  return (
+    <>
+      <Reveal as="input" keyframes={slide()} ref={ref} placeholder="Revealed input" />
+      <button type="button" onClick={() => ref.current?.focus()}>
+        Focus through the ref
+      </button>
+    </>
+  );
+}
 
 export const App = () => {
   return (
     <>
       <Section>
-        <Fade>Text fading example (no cascade)</Fade>
+        <Reveal keyframes={fade()}>
+          <h1>fade</h1>
+        </Reveal>
+      </Section>
+      {(["up", "down", "left", "right"] as const).map((direction) => (
+        <Section key={direction}>
+          <Reveal as="h1" keyframes={slide({ direction, distance: 40 })} once={false}>
+            slide {direction}, every time it enters the viewport
+          </Reveal>
+        </Section>
+      ))}
+      <Section>
+        <Reveal
+          as="h1"
+          keyframes={scale({ from: 0.5, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" })}
+        >
+          scale with an overshoot
+        </Reveal>
       </Section>
       <Section>
-        <Fade cascade damping={0.1}>
-          Text fading example (cascade)
-        </Fade>
+        <Reveal as="ul" keyframes={enter({ x: -24 })} stagger={100}>
+          <li>I enter first...</li>
+          <li>...then comes my turn...</li>
+          <li>...and finally you see me!</li>
+        </Reveal>
       </Section>
       <Section>
-        <Fade direction="left">
-          <>
-            <p>This</p>
-            <p>is</p>
-            <p>a</p>
-            <p>fragment</p>
-          </>
-        </Fade>
+        <Reveal as="h1" keyframes={spin({ turns: 2 })} duration={1000}>
+          A custom defineKeyframes animation
+        </Reveal>
       </Section>
       <Section>
-        <Fade cascade>
-          <ul>
-            <li>First</li>
-            <li>Second</li>
-            <li>Third</li>
-          </ul>
-        </Fade>
+        <HookExample />
       </Section>
       <Section>
-        <Fade cascade>
-          <h1>Title</h1>
-          <h2>Subtitle</h2>
-        </Fade>
+        <ManualExample />
       </Section>
       <Section>
-        <Fade cascade direction="left">
-          <p>Line 1</p>
-          <p>Line 2</p>
-        </Fade>
-      </Section>
-      <Section>
-        <Fade cascade direction="bottom-left">
-          <ul>
-            <li>I enter first...</li>
-            <li>...then comes my turn...</li>
-            <li>...and finally you see me!</li>
-          </ul>
-        </Fade>
+        <RefExample />
       </Section>
     </>
   );
