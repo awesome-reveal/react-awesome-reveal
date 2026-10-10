@@ -126,7 +126,6 @@ export const Reveal: React.FC<RevealProps> = (props) => {
     return <FragmentReveal {...props} animationStyles={animationStyles} />;
 
   return Children.map(children, (node, index) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (!isValidElement<Record<string, any>>(node)) return null;
 
     const nodeDelay = delay + (cascade ? index * duration * damping : 0);

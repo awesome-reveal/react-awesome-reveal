@@ -1,4 +1,3 @@
 export default {
-  "*.{js,jsx,ts,tsx}": "eslint --fix",
-  "*.{json,md,mdx,html}": "prettier --write",
+  "*": ["oxlint --fix --no-error-on-unmatched-pattern", "oxfmt --no-error-on-unmatched-pattern"],
 };
