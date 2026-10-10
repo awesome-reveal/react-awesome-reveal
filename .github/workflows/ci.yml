@@ -62,7 +62,7 @@ jobs:
       - name: Add coverage to the job summary
         run: |
           {
-            echo "## Coverage"
+            echo "### Coverage"
             echo
             echo "| Metric | Coverage | Covered |"
             echo "| --- | ---: | ---: |"
