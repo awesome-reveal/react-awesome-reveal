@@ -6,8 +6,8 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["src"],
-      // CI appends the summary file to the GitHub job summary.
-      reporter: [...coverageConfigDefaults.reporter, ["text-summary", { file: "summary.txt" }]],
+      // CI turns json-summary into the coverage table of the GitHub job summary.
+      reporter: [...coverageConfigDefaults.reporter, "json-summary"],
       thresholds: { lines: 90, functions: 90, branches: 85, statements: 90 },
     },
     projects: [
