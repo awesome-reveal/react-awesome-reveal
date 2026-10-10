@@ -21,11 +21,16 @@ function source(file: string): string {
 describe("dist", () => {
   it("contains one JavaScript file per source module, and declarations only for src", () => {
     expect(jsFiles).toEqual([
+      "index.js",
       "keyframes/define.js",
       "keyframes/enter.js",
       "keyframes/index.js",
       "keyframes/presets.js",
+      "observe.js",
+      "play.js",
+      "reveal.js",
     ]);
+    expect(distFiles).toContain("index.d.ts");
     expect(distFiles).toContain("keyframes/index.d.ts");
     expect(distFiles.filter((file) => /(^|\/)test/.test(file))).toEqual([]);
   });
@@ -45,6 +50,15 @@ describe("dist", () => {
     expect(imports).toEqual([]);
   });
 
+  it("exposes the public API of the root", async () => {
+    expect(Object.keys(await load(".")).sort()).toEqual([
+      "hiddenStyle",
+      "observe",
+      "play",
+      "reveal",
+    ]);
+  });
+
   it("exposes the public API of ./keyframes", async () => {
     expect(Object.keys(await load("./keyframes")).sort()).toEqual([
       "blur",
@@ -57,6 +71,6 @@ describe("dist", () => {
   });
 
   it("exports only the subpaths above and package.json", () => {
-    expect(Object.keys(pkg.exports)).toEqual(["./keyframes", "./package.json"]);
+    expect(Object.keys(pkg.exports)).toEqual([".", "./keyframes", "./package.json"]);
   });
 });

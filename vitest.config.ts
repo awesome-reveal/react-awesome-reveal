@@ -1,21 +1,24 @@
 import { fileURLToPath } from "node:url";
 
+import { playwright } from "@vitest/browser-playwright";
 import { coverageConfigDefaults, defineConfig } from "vitest/config";
 
 // Unit tests run against the sources of the other workspace packages, so no build is necessary first.
 const resolve = {
-  alias: {
-    "@awesome-reveal/core/keyframes": fileURLToPath(
-      new URL("packages/core/src/keyframes/index.ts", import.meta.url),
-    ),
-  },
+  alias: [
+    ["@awesome-reveal/core", "packages/core/src/index.ts"],
+    ["@awesome-reveal/core/keyframes", "packages/core/src/keyframes/index.ts"],
+  ].map(([specifier, source]) => ({
+    find: new RegExp(`^${specifier}$`),
+    replacement: fileURLToPath(new URL(source!, import.meta.url)),
+  })),
 };
 
 export default defineConfig({
   test: {
     globals: true,
     coverage: {
-      provider: "v8",
+      provider: "istanbul",
       include: ["**/src/**"],
       // CI turns json-summary into the coverage table of the GitHub job summary.
       reporter: [...coverageConfigDefaults.reporter, "json-summary"],
@@ -28,7 +31,24 @@ export default defineConfig({
           name: "core:unit",
           environment: "node",
           include: ["test/**/*.test.ts"],
-          exclude: ["test/package/**"],
+          exclude: ["test/package/**", "test/browser/**"],
+        },
+      },
+      {
+        root: "packages/core",
+        test: {
+          name: "core:browser",
+          include: ["test/browser/**/*.test.ts"],
+          retry: process.env.CI ? 2 : 0,
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright(),
+            instances: [{ browser: "chromium" }, { browser: "firefox" }, { browser: "webkit" }],
+            // The tests scroll by viewport heights.
+            viewport: { width: 1280, height: 720 },
+            trace: "on-first-retry",
+          },
         },
       },
       {
