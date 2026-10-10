@@ -78,7 +78,7 @@
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "husky": "^9.1.7",
-    "lint-staged": "^15.2.11",
+    "lint-staged": "^17.6.0",
     "oxfmt": "^0.72.0",
     "oxlint": "^1.87.0",
     "react": "catalog:",
