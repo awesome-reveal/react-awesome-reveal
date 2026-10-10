@@ -5,216 +5,333 @@
 [![Downloads](https://badgen.net/npm/dt/react-awesome-reveal)](https://www.npmjs.com/package/react-awesome-reveal/v/latest)
 [![Size](https://badgen.net/bundlephobia/minzip/react-awesome-reveal)](https://bundlephobia.com/result?p=react-awesome-reveal@latest)
 [![License](https://badgen.net/npm/license/react-awesome-reveal)](https://www.npmjs.com/package/react-awesome-reveal/v/latest)
-[![Rate on Openbase](https://badges.openbase.io/js/rating/react-awesome-reveal.svg)](https://openbase.io/js/react-awesome-reveal?utm_source=embedded&utm_medium=badge&utm_campaign=rate-badge)
 
 > [!TIP]
 > If you like this library, please [consider supporting its creator](https://github.com/sponsors/morellodev).
 
-[React Awesome Reveal](https://react-awesome-reveal.morello.dev) is a library for React apps written in TypeScript that adds reveal animations using the Intersection Observer API to detect when the elements appear in the viewport. Animations are internally provided by [Emotion](https://emotion.sh) and implemented as CSS Animations to benefit from hardware acceleration.
+[React Awesome Reveal](https://react-awesome-reveal.morello.dev) adds reveal-on-scroll animations to React apps. It uses the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to detect when an element enters the viewport, and the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) to animate it.
 
-## Table Of Contents
+## Table of contents
 
 - [Features](#features)
 - [Installation](#installation)
-- [Quick Start](#quick-start)
-- [Supported Effects](#supported-effects)
-  - [Attention Seekers](#attention-seekers)
-  - [Props](#props)
-  - [Example](#example)
-  - [Chaining Multiple Animations](#chaining-multiple-animations)
-- [Custom Animations](#custom-animations)
-  - [Other Props](#other-props)
-- [Intersection Observer](#intersection-observer)
-  - [Polyfill](#polyfill)
-- [Past Releases](#past-releases)
+- [Quick start](#quick-start)
+- [Entry points](#entry-points)
+- [Keyframes](#keyframes)
+- [The `Reveal` component](#the-reveal-component)
+- [The `useReveal` hook](#the-usereveal-hook)
+- [Options](#options)
+- [Recipes](#recipes)
+- [Accessibility](#accessibility)
+- [Browser support](#browser-support)
+- [Migrating from v4](#migrating-from-v4)
+- [Past releases](#past-releases)
 - [License](#license)
 
 ## Features
 
-- 🎁 **Modern stack** – It is built for modern React and supports React 18
-- 🏷 **TypeScript support** – It is written in TypeScript to improve the DX
-- 🍃 **Lightweight** – Very little footprint on your project
-- ⚙️ **Uses native APIs** – Intersection Observer and CSS Animations are now supported by all browsers
-- 🚀 **Fast** – Buttery smooth experience thanks to the use of native asynchronous APIs and hardware acceleration
-- 💅 **Fully customizable** – Define custom animations and let the library render them
-- 💻 **SSR support** – Server Side Rendering works out-of-the-box
-- 🌳 **Tree-shakeable** – Only the parts you use will be included in your final bundle
+- 🪶 **Tiny** – No dependencies. `Reveal` with one keyframes factory adds about 1.5 kB gzipped to your bundle.
+- 🌳 **Tree-shakeable** – Each keyframes factory is a small function. Your bundle includes only the factories that you import.
+- 🧩 **Composable** – Use the `Reveal` component, or the `useReveal` hook on your own elements and components.
+- ⚙️ **Native APIs** – Intersection Observer detects the reveal. Web Animations run it on the compositor where possible.
+- ♿ **Accessible** – It respects `prefers-reduced-motion` by default. Hidden content stays in the accessibility tree.
+- 💻 **SSR and React Server Components** – Content renders hidden on the server. Keyframes can be created in Server Components.
+- 🏷 **TypeScript** – Strict types for options, elements and keyframes.
 
 ## Installation
 
-To add this package as a dependency to your app, simply run
-
 ```sh
-npm install react-awesome-reveal @emotion/react --save
+pnpm add react-awesome-reveal
 ```
 
-or, if you are using Yarn:
+React 18 or later is necessary.
 
-```sh
-yarn add react-awesome-reveal @emotion/react
-```
-
-or, if you are using PNPM (as I strongly suggest):
-
-```sh
-pnpm add react-awesome-reveal @emotion/react
-```
-
-## Quick Start
-
-Import effects from [React Awesome Reveal](https://www.npmjs.com/package/react-awesome-reveal) to your React component, for example the `Fade` effect:
-
-```js
-import { Fade } from "react-awesome-reveal";
-```
-
-Then simply wrap the components you want to animate:
+## Quick start
 
 ```jsx
-<Fade>
-  <p>I will gently appear as I enter the viewport</p>
-</Fade>
+import { Reveal } from "react-awesome-reveal";
+import { slide } from "react-awesome-reveal/keyframes";
+
+<Reveal keyframes={slide()}>
+  <p>I gently appear as I enter the viewport</p>
+</Reveal>;
 ```
 
-## Supported Effects
+## Entry points
 
-The effects currently supported are `Bounce`, `Fade`, `Flip`, `Hinge`, `JackInTheBox`, `Roll`, `Rotate`, `Slide` and `Zoom`. Refer to the [Animate.css](https://animate.style) documentation for the details.
+| Import path                      | Contents                                                    |
+| -------------------------------- | ----------------------------------------------------------- |
+| `react-awesome-reveal`           | The `Reveal` component and the `useReveal` hook.            |
+| `react-awesome-reveal/keyframes` | The built-in keyframes, `defineKeyframes`, and their types. |
 
-### Attention Seekers
+`react-awesome-reveal/keyframes` does not import React. You can call it in Server Components, or use it with `element.animate()` directly.
 
-Since version 3, attention seeker animations are wrapped by the `AttentionSeeker` component, which accepts a prop called `effect` that specifies the animation to render (defaults to `"bounce”`). The supported effects are: `”bounce"`, `"flash"`, `"headShake”`, `"heartBeat"`, `"jello”`, `"pulse"`, `"rubberBand"`, `“shake”`, `“shakeX"`, `"shakeY”`, `"swing”`, `"tada"` and `“wobble”`.
+## Keyframes
 
-Again, refer to the [Animate.css](https://animate.style) documentation for the details.
+Each keyframes factory is a function. It takes its options, which you can leave out, and returns new [Web Animations keyframes](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats). The animation ends at the element's own style.
+
+```jsx
+<Reveal keyframes={slide()} />
+<Reveal keyframes={slide({ direction: "left", distance: 40 })} />
+```
+
+### Built-in keyframes
+
+| Factory   | Effect                                     | Options                                                                                                               |
+| --------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `fade()`  | Fades in.                                  | `easing`                                                                                                              |
+| `slide()` | Fades in and moves in a direction.         | `direction` (`"up"`, `"down"`, `"left"` or `"right"`, default `"up"`), `distance` (default `16`), `opacity`, `easing` |
+| `scale()` | Fades in and grows.                        | `from` (default `0.95`), `opacity`, `easing`                                                                          |
+| `blur()`  | Fades in and removes a blur.               | `amount` (default `8`), `opacity`, `easing`                                                                           |
+| `enter()` | Starts from any combination of the others. | `x`, `y`, `scale`, `rotate`, `blur`, `opacity`, `easing`                                                              |
+
+- `direction` is the direction in which the element moves. `"up"` starts below the resting position.
+- A number for `distance`, `amount`, `x`, `y` or `blur` is in pixels. A number for `rotate` is in degrees. A string can be any CSS length or angle.
+- `opacity` is the start opacity. It is `0` by default. Set it to `1` for movement with no fade.
+- The default `easing` is `"cubic-bezier(0.22, 1, 0.36, 1)"`. An easing with values out of the 0–1 range overshoots: `scale({ from: 0.5, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" })`.
+- `blur()` animates `filter`. Chromium and Safari composite it, but other engines repaint it on each frame. Use it on small and medium elements.
+
+```jsx
+import { enter } from "react-awesome-reveal/keyframes";
+
+<Reveal keyframes={enter({ y: 40, scale: 0.9 })}>…</Reveal>       // rise and grow
+<Reveal keyframes={enter({ x: "-100%", rotate: -120 })}>…</Reveal> // roll in from the left
+```
+
+### Custom keyframes with `defineKeyframes`
+
+`defineKeyframes` builds keyframes from a function of the animation progress. You return a `keyframe(t)` function, where `t` is the progress from 0 to 1. The library samples the function into keyframes:
+
+```jsx
+import { defineKeyframes } from "react-awesome-reveal/keyframes";
+
+const spin = defineKeyframes(({ turns = 1 }) => ({
+  keyframe: (t) => ({ opacity: t, transform: `rotate(${(1 - t) * turns * 360}deg)` }),
+  easing: (t) => 1 - (1 - t) ** 3, // optional, any JavaScript easing function
+  steps: 30, // optional, the number of samples
+}));
+
+<Reveal keyframes={spin({ turns: 2 })}>…</Reveal>;
+```
+
+At `t = 1`, return the element's resting style. In TypeScript, give the options type: `defineKeyframes<{ turns?: number }>(…)`. Your function gets the options as given, so give defaults for all of them.
+
+Each call samples the function again. In a component that renders often, call the factory once outside the component, for example `const spinTwice = spin({ turns: 2 })`.
+
+### Keyframes arrays
+
+You can also pass a keyframes array directly. Make sure that the last keyframe is the element's resting style, because the animation does not stay applied after it finishes:
+
+```jsx
+<Reveal
+  keyframes={[
+    { opacity: 0, transform: "translate(-200px, -100px)", easing: "ease-out" },
+    { opacity: 1, transform: "none" },
+  ]}
+>
+  …
+</Reveal>
+```
+
+Web Animations eases each keyframe linearly by default. Set `easing` on a keyframe to change the easing up to the next keyframe.
+
+To write a reusable factory with options, type it with `KeyframesFactory`:
+
+```ts
+import type { KeyframesFactory } from "react-awesome-reveal/keyframes";
+
+export const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
+  { opacity: 0, transform: `translateY(${-height}px)`, easing: "ease-out" },
+  {},
+];
+```
+
+## The `Reveal` component
+
+`Reveal` renders one element around its children. Use `as` to choose the tag. Other props go to that element, and so does `ref`:
+
+```jsx
+const inputRef = useRef(null);
+
+<Reveal as="section" keyframes={slide()} className="hero" id="intro">
+  …
+</Reveal>;
+<Reveal as="input" keyframes={fade()} ref={inputRef} />;
+```
+
+## The `useReveal` hook
+
+`useReveal` animates your own element or component, with no wrapper. Attach `ref` to the element, and merge `style` into its style to hide it until it is revealed:
+
+```jsx
+import { useReveal } from "react-awesome-reveal";
+import { slide } from "react-awesome-reveal/keyframes";
+
+function Card() {
+  const { ref, style, revealed } = useReveal({ keyframes: slide() });
+
+  return (
+    <article ref={ref} style={style}>
+      {revealed ? "Hello!" : null}
+    </article>
+  );
+}
+```
+
+Use `revealed` to run code when the element is revealed, for example in a `useEffect`.
+
+Option changes apply to the next reveal. They do not replay an animation that already played.
+
+## Options
+
+`Reveal` and `useReveal` accept the same options:
+
+| Option          | Description                                                                                                               | Default  |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `keyframes`     | The animation. Required.                                                                                                  | –        |
+| `duration`      | Animation duration, in milliseconds.                                                                                      | `600`    |
+| `delay`         | Delay before the animation starts, in milliseconds.                                                                       | `0`      |
+| `stagger`       | Animates the element children instead of the element, each one this many milliseconds after the previous one.             | –        |
+| `threshold`     | Fraction of the element, between 0 and 1, that must be visible to reveal it.                                              | `0`      |
+| `rootMargin`    | Grows or shrinks the viewport area that reveals the element, as a CSS margin.                                             | `"0px"`  |
+| `once`          | Reveals the element only the first time. When `false`, the element hides again when it leaves the viewport.               | `true`   |
+| `when`          | Controls the reveal manually. When set, the viewport is not observed.                                                     | –        |
+| `reducedMotion` | `"user"` skips the animation when the user prefers reduced motion. `"always"` always skips it. `"never"` always plays it. | `"user"` |
+
+## Recipes
+
+### Lists
+
+```jsx
+<Reveal as="ul" keyframes={slide()} stagger={80}>
+  <li>I enter first...</li>
+  <li>...then comes my turn...</li>
+  <li>...and finally you see me!</li>
+</Reveal>
+```
+
+`stagger` animates element children only. Transforms do not apply to inline elements, so give inline children `display: inline-block`.
+
+### Text, one character at a time
+
+```jsx
+<p>
+  <span className="visually-hidden">{text}</span>
+  <Reveal as="span" keyframes={fade()} stagger={30} aria-hidden>
+    {[...text].map((char, index) => (
+      <span key={index} style={{ display: "inline-block", whiteSpace: "pre" }}>
+        {char}
+      </span>
+    ))}
+  </Reveal>
+</p>
+```
+
+`visually-hidden` is your class that hides content visually but keeps it for screen readers. Screen readers read the full text once, and skip the animated characters.
+
+### Wipes
+
+`clip-path` paints on the main thread in most engines, so use it on small elements:
+
+```jsx
+<Reveal
+  keyframes={[{ clipPath: "inset(0 100% 0 0)", easing: "ease-out" }, { clipPath: "inset(0)" }]}
+>
+  …
+</Reveal>
+```
+
+## Accessibility
+
+- When the user prefers reduced motion, the element appears with no animation. Use `reducedMotion` to change this.
+- Hidden content uses `opacity: 0` only. It stays in the accessibility tree and in the browser's find-in-page.
+- If JavaScript does not run, content rendered on the server stays hidden. To show it, put this CSS in a `<noscript>` element in the document head:
+
+  ```css
+  [data-reveal="hidden"] {
+    opacity: 1 !important;
+  }
+  ```
+
+  `Reveal` sets `data-reveal="hidden"` on hidden elements. With `useReveal`, add the attribute yourself.
+
+- The library injects no `<style>` elements. Under a strict Content Security Policy, the inline `opacity: 0` style that the server renders needs `style-src-attr 'unsafe-inline'`.
+
+## Browser support
+
+Chrome 84, Firefox 75 and Safari 13.1, or later. These versions support the Web Animations API with implicit keyframes. MDN reports that the implicit keyframes of Safari 13.1 to 15 have bugs. If you support these versions, give each keyframe of your custom keyframes explicit values.
+
+Without `IntersectionObserver`, elements are revealed immediately. Without `Element.animate`, elements appear with no animation.
+
+## Migrating from v4
+
+### Install
+
+1. Remove `@emotion/react`, unless your app uses it.
+2. Upgrade to React 18 or later.
+
+### Components
+
+v5 has no effect components. Use `Reveal` with a keyframes factory. v4 `direction` named the side where the element started, but v5 `slide` `direction` names the direction of the movement.
+
+| v4                             | v5                                                                                                   |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| `import Reveal from "…"`       | `import { Reveal } from "…"`                                                                         |
+| `<Reveal>` with no `keyframes` | `<Reveal keyframes={slide({ direction: "right", distance: "100%" })}>`. `keyframes` is now required. |
+| `<Fade>`                       | `fade()`                                                                                             |
+| `<Fade direction="up">`        | `slide()`, or `slide({ distance: "100%" })` for the v4 distance                                      |
+| `<Fade direction="down">`      | `slide({ direction: "down" })`                                                                       |
+| `<Fade direction="left">`      | `slide({ direction: "right" })`                                                                      |
+| `<Fade direction="right">`     | `slide({ direction: "left" })`                                                                       |
+| `<Fade direction="left" big>`  | `slide({ direction: "right", distance: 2000 })`                                                      |
+| `<Fade direction="top-left">`  | `enter({ x: "-100%", y: "-100%" })`                                                                  |
+| `<Slide>`                      | `slide({ direction: "right", distance: "100%", opacity: 1 })`                                        |
+| `<Slide direction="up">`       | `slide({ distance: "100%", opacity: 1 })`                                                            |
+| `<Zoom>`                       | `scale({ from: 0.3 })`, a close match                                                                |
+| `<Bounce>`                     | `scale({ from: 0.3, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" })`, a close match                   |
+| `<Rotate>`                     | `enter({ rotate: -200 })`                                                                            |
+| `<Roll>`                       | `enter({ x: "-100%", rotate: -120 })`                                                                |
+
+These are removed:
+
+- exit animations (`reverse`)
+- `Flip`, `JackInTheBox`, `Hinge` and `AttentionSeeker`
+- the directional `Bounce`, `Zoom` and `Rotate` variants
+
+To keep one, port its keyframes from Animate.css (see [Port an Animate.css animation](#port-an-animatecss-animation)).
 
 ### Props
 
-You can pass the following props to the animation components to customize the behavior:
+| v4                             | v5                                                                                                                                                                                 |
+| ------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cascade` and `damping`        | `stagger`, in milliseconds. `cascade damping={d}` becomes `stagger={duration * d}`. The v4 `damping` default was `0.5`, so `cascade` becomes `stagger={500}` with the v4 duration. |
+| `fraction`                     | `threshold`                                                                                                                                                                        |
+| `triggerOnce`                  | `once`. The default is now `true`. Set `once={false}` for the v4 default.                                                                                                          |
+| `duration` default `1000`      | Default `600`                                                                                                                                                                      |
+| `childClassName`, `childStyle` | Style the children directly.                                                                                                                                                       |
+| `onVisibilityChange`           | `useReveal` and its `revealed` value                                                                                                                                               |
+| Emotion `keyframes`            | `defineKeyframes` or a keyframes array (see [Keyframes](#keyframes))                                                                                                               |
 
-| Prop                 | Description                                                                                                                                                                                                                                                                                                                          | Values                                                                                       | Default                                                               |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `cascade`            | If set, each child of a reveal animation automatically get assigned a delay that takes into account their predecessor (child `i` enters the viewport after `i * delay * damping` milliseconds) – useful for animating list items.                                                                                                    | `true` or `false`                                                                            | `false`                                                               |
-| `damping`            | Factor that affects the delay that each animated component in a cascade animation will be assigned. If `damping = 1` then the delay will be equal to the animation duration; if `damping < 1` then the delay will be lower than the animation duration; if `damping > 1` then the delay will be greater than the animation duration. | `number`                                                                                     | `0.5` (meaning that the delay will be half of the animation duration) |
-| `direction`          | Origin of the animation (where applicable).                                                                                                                                                                                                                                                                                          | Usually `"down"`, `"left"`, `"right"` or `"up"`, with some exceptions documented in the code | `undefined`                                                           |
-| `delay`              | Time to wait before the animation starts (in milliseconds).                                                                                                                                                                                                                                                                          | `number`                                                                                     | `0`                                                                   |
-| `duration`           | The animation duration (milliseconds).                                                                                                                                                                                                                                                                                               | `number`                                                                                     | `1000`                                                                |
-| `fraction`           | How much an element should be in viewport before the animation is triggered.                                                                                                                                                                                                                                                         | `number` between `0` and `1`                                                                 | `0`                                                                   |
-| `triggerOnce`        | Specifies if the animation should run only once or everytime an element enters/exits/re-enters the viewport.                                                                                                                                                                                                                         | `true` or `false`                                                                            | `false`                                                               |
-| `className`          | The class names to add to the container element.                                                                                                                                                                                                                                                                                     | `string`                                                                                     | `undefined`                                                           |
-| `style`              | The inline styles to add to the container element.                                                                                                                                                                                                                                                                                   | `React.CSSProperties`                                                                        | `undefined`                                                           |
-| `childClassName`     | The class names to add to the child element.                                                                                                                                                                                                                                                                                         | `string`                                                                                     | `undefined`                                                           |
-| `childStyle`         | The inline styles to add to the child element.                                                                                                                                                                                                                                                                                       | `React.CSSProperties`                                                                        | `undefined`                                                           |
-| `onVisibilityChange` | Callback executed when the element enters or leaves the viewport. If more than one element is being animated, this function is called on each element.                                                                                                                                                                               | `(inView: boolean, entry: IntersectionObserverEntry) => void`                                | `undefined`                                                           |
+### Port an Animate.css animation
 
-### Example
+Copy the keyframes from the [Animate.css source](https://github.com/animate-css/animate.css/tree/main/source) and convert them:
 
-To trigger the animation only the first time an element enters the viewport:
+1. Split grouped selectors such as `from, 20%, 40%` into one keyframe for each offset.
+2. Write each CSS keyframe as an object, with properties in camelCase.
+3. Write `from` as `offset: 0`, `to` as `offset: 1`, and `40%` as `offset: 0.4`.
+4. Write `animation-timing-function` as `easing`.
+5. Add `easing: "ease"` to each other keyframe except the last one. CSS eases these segments with `ease`, but Web Animations eases them linearly.
 
-```jsx
-<Slide triggerOnce>
-  <p>I will animate only the first time you see me</p>
-</Slide>
-```
+### Behavior
 
-### Chaining Multiple Animations
+- `Reveal` renders one element (`as`, `div` by default) around all its children. v4 rendered one `div` for each child.
+- Children animate together. Use `stagger` to animate them one after the other.
+- Lists, fragments and text have no special handling. For lists, use `as="ul"` with `stagger`. For text, see [Text, one character at a time](#text-one-character-at-a-time).
+- Animations do not stay applied after they finish, so a transformed element no longer breaks `position: fixed` children or `z-index`.
 
-To chain together multiple animations, set the `cascade` prop to `true`:
+## Past releases
 
-```jsx
-<Fade cascade>
-  <p>I enter first...</p>
-  <p>...then comes my turn...</p>
-  <p>...and finally you see me!</p>
-</Fade>
-```
-
-Play with the `damping` prop to alter the delay by which each child will progressively appear:
-
-```tsx
-<Fade cascade damping={0.1}>
-  <p>I enter first...</p>
-  <p>...then comes my turn...</p>
-  <p>...and finally you see me!</p>
-</Fade>
-```
-
-## Custom Animations
-
-Starting from version 3.2.0, you can define custom animations! Simply import the `Reveal` component (which is the default export of the library – give it the name you want) and pass it a `keyframes` prop:
-
-```jsx
-import React from "react";
-import Reveal from "react-awesome-reveal";
-import { keyframes } from "@emotion/react";
-
-const customAnimation = keyframes`
-  from {
-    opacity: 0;
-    transform: translate3d(-200px, -100px, 0);
-  }
-
-  to {
-    opacity: 1;
-    transform: translate3d(0, 0, 0);
-  }
-`;
-
-function CustomAnimation({ children }) {
-  return <Reveal keyframes={customAnimation}>{children}</Reveal>;
-}
-```
-
-If no `keyframes` prop is passed, the default rendered animation is a fading entrance from the left (equivalent to `<Fade direction="left">...</Fade>`).
-
-### Other Props
-
-You can also pass these props to `Reveal`:
-
-- `cascade`
-- `damping`
-- `delay`
-- `duration`
-- `fraction`
-- `triggerOnce`
-- `className` and `childClassName`
-- `style` and `childStyle`
-- `onVisibilityChange`
-
-## Intersection Observer
-
-[Intersection Observer](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) is the API used to determine if an element is inside the viewport or not. [Browser support](http://caniuse.com/#feat=intersectionobserver) is really good – with [Safari adding support in 12.1](https://webkit.org/blog/8718/new-webkit-features-in-safari-12-1), all major browsers now support Intersection Observers natively.
-
-If you need to support old browsers, add the polyfill for the Intersection Observer API.
-
-### Polyfill
-
-You can add the [polyfill](https://www.npmjs.com/package/intersection-observer) directly or use a service like [polyfill.io](https://polyfill.io/v2/docs) to add it when needed.
-
-```sh
-yarn add intersection-observer
-```
-
-Then import it in your app:
-
-```javascript
-import "intersection-observer";
-```
-
-If you are using Webpack (or similar) you could use [dynamic imports](https://webpack.js.org/guides/code-splitting/#dynamic-imports) to load the polyfill only if needed. A basic implementation could look something like this:
-
-```javascript
-/**
- * Do feature detection, to figure out which polyfills needs to be imported.
- **/
-async function loadPolyfills() {
-  if (typeof window.IntersectionObserver === "undefined") {
-    await import("intersection-observer");
-  }
-}
-```
-
-## Past Releases
-
-To see the documentation for previous versions, navigate through past tags in the GitHub's project repository and read the README for that specific version.
+To see the documentation for a previous version, open its tag in the GitHub repository and read the README of that version.
 
 ## License
 
