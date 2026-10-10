@@ -61,23 +61,37 @@
     "lint:fix": "oxlint --fix",
     "prepare": "husky",
     "prerelease": "pnpm --filter react-awesome-reveal build",
-    "release": "changeset publish"
+    "release": "changeset publish",
+    "test": "vitest run --project unit",
+    "test:package": "pnpm build && vitest run --project package && publint --strict && attw --pack . --profile esm-only --ignore-rules internal-resolution-error",
+    "test:watch": "vitest --project unit"
   },
   "dependencies": {
     "react-intersection-observer": "^11.0.1"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.5",
     "@changesets/cli": "^2.27.11",
     "@emotion/react": "catalog:",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@types/node": "^24.19.1",
     "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitest/coverage-v8": "^5.0.3",
     "husky": "^9.1.7",
+    "jsdom": "^30.1.2",
     "lint-staged": "^17.6.0",
     "oxfmt": "^0.72.0",
     "oxlint": "^1.87.0",
+    "publint": "^0.3.25",
     "react": "catalog:",
+    "react-dom": "catalog:",
     "typescript": "^5.7.2",
     "vite": "catalog:",
-    "vite-plugin-dts": "^5.1.2"
+    "vite-plugin-dts": "^5.1.2",
+    "vitest": "^5.0.3"
   },
   "peerDependencies": {
     "@emotion/react": "^11.0.0",
