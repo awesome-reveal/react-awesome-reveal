@@ -12,14 +12,12 @@ export default defineConfig({
     },
     projects: [
       {
-        // test-utils imports "react-dom/test-utils" without an extension, which Node cannot resolve on React 17.
-        ssr: { noExternal: ["react-intersection-observer"] },
         test: {
           name: "unit",
           environment: "jsdom",
-          setupFiles: ["./test/setup.ts"],
+          setupFiles: ["./test/setup/console.ts", "./test/setup/dom.ts"],
           include: ["test/**/*.test.{ts,tsx}"],
-          exclude: ["test/package/**"],
+          exclude: ["test/package/**", "test/ssr.test.tsx"],
           typecheck: {
             enabled: true,
             tsconfig: "./test/tsconfig.json",
@@ -29,8 +27,17 @@ export default defineConfig({
       },
       {
         test: {
+          name: "ssr",
+          environment: "node",
+          setupFiles: ["./test/setup/console.ts"],
+          include: ["test/ssr.test.tsx"],
+        },
+      },
+      {
+        test: {
           name: "package",
           environment: "node",
+          setupFiles: ["./test/setup/console.ts"],
           include: ["test/package/**/*.test.ts"],
         },
       },

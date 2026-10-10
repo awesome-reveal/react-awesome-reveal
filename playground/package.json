@@ -8,7 +8,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "catalog:",
     "react": "catalog:",
     "react-awesome-reveal": "workspace:*",
     "react-dom": "catalog:"

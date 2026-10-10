@@ -3,7 +3,6 @@ packages:
   - "playground"
 
 catalog:
-  "@emotion/react": ^11.14.0
   "@types/react": ^19.3.0
   "@types/react-dom": ^19.3.0
   react: ^19.3.0

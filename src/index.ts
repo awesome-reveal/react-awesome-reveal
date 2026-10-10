@@ -1,5 +1,2 @@
-"use client";
-
-export * from "./components/index.js";
-export * from "./Reveal.js";
-export { Reveal as default } from "./Reveal.js";
+export { Reveal, type RevealProps } from "./Reveal.js";
+export { type RevealOptions, type RevealState, useReveal } from "./useReveal.js";

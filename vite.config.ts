@@ -7,17 +7,22 @@ export default defineConfig({
     target: "esnext",
     minify: false,
     lib: {
-      entry: "src/index.ts",
+      entry: ["src/index.ts", "src/keyframes/index.ts"],
       formats: ["es"],
-      fileName: "index",
     },
     rolldownOptions: {
       // Every bare import is a dependency or peer dependency, so none gets bundled.
       external: /^[^./](?!:[/\\])/,
-      // Rolldown keeps the "use client" directive of the entry module, but still warns about it.
+      // Rolldown keeps the "use client" directive of each preserved module, but still warns about it.
       checks: { moduleLevelDirective: false },
-      // The .d.ts files carry the JSDoc; annotations stay for tree-shaking.
-      output: { comments: { jsdoc: false } },
+      output: {
+        // One file per module lets bundlers drop unused modules through "sideEffects": false.
+        preserveModules: true,
+        preserveModulesRoot: "src",
+        entryFileNames: "[name].js",
+        // The .d.ts files carry the JSDoc; annotations stay for tree-shaking.
+        comments: { jsdoc: false },
+      },
     },
   },
 });

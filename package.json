@@ -1,18 +1,18 @@
 {
   "name": "react-awesome-reveal",
   "version": "4.3.1",
-  "description": "React components to add reveal animations using the Intersection Observer API and CSS Animations.",
+  "description": "Reveal-on-scroll animations for React, built on the Web Animations API and IntersectionObserver.",
   "keywords": [
-    "animations",
-    "css-in-js",
-    "emotion",
-    "intersection",
+    "animation",
+    "hooks",
     "intersection-observer",
     "react",
-    "react-reveal",
     "reveal",
     "scroll",
-    "typescript"
+    "scroll-reveal",
+    "typescript",
+    "waapi",
+    "web-animations"
   ],
   "homepage": "https://react-awesome-reveal.morello.dev",
   "bugs": {
@@ -44,7 +44,12 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    }
+    },
+    "./keyframes": {
+      "types": "./dist/keyframes/index.d.ts",
+      "default": "./dist/keyframes/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public"
@@ -56,16 +61,12 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "prepare": "husky",
-    "test": "vitest run --project unit",
+    "test": "vitest run --project unit --project ssr",
     "test:package": "pnpm build && vitest run --project package && publint --strict && attw --pack . --profile esm-only",
     "test:watch": "vitest --project unit"
   },
-  "dependencies": {
-    "react-intersection-observer": "^11.0.1"
-  },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
-    "@emotion/react": "catalog:",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
@@ -87,8 +88,7 @@
     "vitest": "^5.0.3"
   },
   "peerDependencies": {
-    "@emotion/react": "^11.0.0",
-    "react": ">=17.0.0"
+    "react": ">=18.0.0"
   },
   "engines": {
     "node": ">=20.19.0"

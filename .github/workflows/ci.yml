@@ -26,12 +26,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        react: [17, 18, 19]
+        react: [18, 19]
         include:
-          - react: 17
-            deps: react@17 react-dom@17 @testing-library/react@12
           - react: 18
-            deps: react@18 react-dom@18
+            deps: react@18 react-dom@18 @types/react@18 @types/react-dom@18
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
