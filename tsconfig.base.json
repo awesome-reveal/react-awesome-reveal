@@ -9,6 +9,7 @@
     "noImplicitReturns": true,
     // Type-checks workspace packages against their sources, so no build is necessary first.
     "paths": {
+      "@awesome-reveal/core": ["./packages/core/src/index.ts"],
       "@awesome-reveal/core/keyframes": ["./packages/core/src/keyframes/index.ts"]
     },
     "skipLibCheck": true,

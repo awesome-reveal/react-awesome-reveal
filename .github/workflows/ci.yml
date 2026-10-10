@@ -54,8 +54,19 @@ jobs:
         if: ${{ matrix.deps }}
         run: pnpm --filter @awesome-reveal/react add -D ${{ matrix.deps }}
 
+      - name: Install browsers
+        run: pnpm exec playwright install --with-deps --only-shell chromium firefox webkit
+
       - name: Test
         run: pnpm test --coverage
+
+      - name: Upload failure screenshots and traces
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: browser-test-results-react-${{ matrix.react }}
+          path: .vitest/
+          if-no-files-found: ignore
 
       - name: Add coverage to the job summary
         run: |

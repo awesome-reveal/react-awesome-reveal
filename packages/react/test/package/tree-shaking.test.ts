@@ -39,7 +39,9 @@ async function bundle(fixture: string) {
         module.renderedExports,
       ]),
   );
-  return { keptExports, size: chunk.code.length };
+  // Rolldown's //#region comments are not code.
+  const code = chunk.code.replace(/^\/\/#(end)?region.*\n/gm, "");
+  return { keptExports, size: code.length };
 }
 
 describe("consumer bundle", () => {
@@ -51,14 +53,22 @@ describe("consumer bundle", () => {
       "react/dist/useReveal.js": ["useReveal"],
       "core/dist/keyframes/enter.js": ["enter"],
       "core/dist/keyframes/presets.js": ["slide"],
+      "core/dist/observe.js": ["observe"],
+      "core/dist/play.js": ["play"],
+      "core/dist/reveal.js": ["hiddenStyle"],
     });
-    expect(size).toBeLessThan(3300);
+    expect(size).toBeLessThan(3250);
   });
 
   it("keeps neither Reveal nor keyframes for the hook alone", async () => {
     const { keptExports, size } = await bundle("hook-only.js");
 
-    expect(keptExports).toEqual({ "react/dist/useReveal.js": ["useReveal"] });
-    expect(size).toBeLessThan(1450);
+    expect(keptExports).toEqual({
+      "react/dist/useReveal.js": ["useReveal"],
+      "core/dist/observe.js": ["observe"],
+      "core/dist/play.js": ["play"],
+      "core/dist/reveal.js": ["hiddenStyle"],
+    });
+    expect(size).toBeLessThan(1550);
   });
 });
