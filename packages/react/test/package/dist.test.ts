@@ -75,3 +75,42 @@ describe("dist", () => {
     expect(html).toBe('<div style="opacity:0" data-reveal="hidden"><p>hello</p></div>');
   });
 });
+
+describe("skills", () => {
+  const skillsDir = new URL("skills/", root);
+  const skills = readdirSync(skillsDir, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name);
+
+  it("ships the skills folder, where pnpm links skills from", () => {
+    expect(skills.length).toBeGreaterThan(0);
+    expect(pkg.files).toContain("skills");
+  });
+
+  it.each(skills)(
+    "names the %s skill after its folder, as the Agent Skills spec requires",
+    (skill) => {
+      const text = readFileSync(new URL(`${skill}/SKILL.md`, skillsDir), "utf8");
+      const [, name, description] = /^---\nname: (.+)\ndescription: (.+)\n---\n/.exec(text) ?? [];
+
+      expect(name).toBe(skill);
+      expect(description?.length).toBeLessThanOrEqual(1024);
+    },
+  );
+
+  it.each(skills)("imports only public exports in the %s skill", async (skill) => {
+    const text = readFileSync(new URL(`${skill}/SKILL.md`, skillsDir), "utf8");
+    const imports = [
+      ...text.matchAll(/^import \{([^}]+)\} from "@awesome-reveal\/react(\/keyframes)?";$/gm),
+    ];
+
+    expect(imports.length).toBeGreaterThan(0);
+    for (const [, names, subpath = ""] of imports) {
+      const values = names!
+        .split(",")
+        .map((name) => name.trim())
+        .filter((name) => !name.startsWith("type "));
+      expect(Object.keys(await load(`.${subpath}`))).toEqual(expect.arrayContaining(values));
+    }
+  });
+});
