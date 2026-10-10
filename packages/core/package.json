@@ -1,0 +1,58 @@
+{
+  "name": "@awesome-reveal/core",
+  "version": "0.0.0",
+  "description": "Framework-independent core of awesome-reveal: reveal-on-scroll keyframes for the Web Animations API.",
+  "keywords": [
+    "animation",
+    "intersection-observer",
+    "reveal",
+    "scroll",
+    "scroll-reveal",
+    "typescript",
+    "waapi",
+    "web-animations"
+  ],
+  "homepage": "https://react-awesome-reveal.morello.dev",
+  "bugs": {
+    "url": "https://github.com/awesome-reveal/awesome-reveal/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dennis Morello",
+    "email": "dennismorello@gmail.com",
+    "url": "https://morello.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awesome-reveal/awesome-reveal.git",
+    "directory": "packages/core"
+  },
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/morellodev"
+    }
+  ],
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./keyframes": {
+      "types": "./dist/keyframes/index.d.ts",
+      "default": "./dist/keyframes/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "check:package": "publint --strict && attw --pack . --profile esm-only"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { StrictMode, useLayoutEffect, version } from "react";
 
-import { slide } from "../src/keyframes/presets";
+import { slide } from "../src/keyframes";
 import { type RevealOptions, useReveal } from "../src/useReveal";
 import { animations, runningAnimations, uninstallAnimate } from "./mocks/animate";
 import { intersect, observerOf } from "./mocks/intersection-observer";

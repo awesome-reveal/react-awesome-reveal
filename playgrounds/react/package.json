@@ -1,5 +1,5 @@
 {
-  "name": "playground",
+  "name": "playground-react",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,8 +8,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@awesome-reveal/react": "workspace:*",
     "react": "catalog:",
-    "react-awesome-reveal": "workspace:*",
     "react-dom": "catalog:"
   },
   "devDependencies": {

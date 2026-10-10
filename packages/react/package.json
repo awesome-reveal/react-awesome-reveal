@@ -1,0 +1,80 @@
+{
+  "name": "@awesome-reveal/react",
+  "version": "0.0.0",
+  "description": "Reveal-on-scroll animations for React, built on the Web Animations API and IntersectionObserver.",
+  "keywords": [
+    "animation",
+    "hooks",
+    "intersection-observer",
+    "react",
+    "reveal",
+    "scroll",
+    "scroll-reveal",
+    "typescript",
+    "waapi",
+    "web-animations"
+  ],
+  "homepage": "https://react-awesome-reveal.morello.dev",
+  "bugs": {
+    "url": "https://github.com/awesome-reveal/awesome-reveal/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dennis Morello",
+    "email": "dennismorello@gmail.com",
+    "url": "https://morello.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awesome-reveal/awesome-reveal.git",
+    "directory": "packages/react"
+  },
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/morellodev"
+    }
+  ],
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./keyframes": {
+      "types": "./dist/keyframes.d.ts",
+      "default": "./dist/keyframes.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "check:package": "publint --strict && attw --pack . --profile esm-only"
+  },
+  "dependencies": {
+    "@awesome-reveal/core": "workspace:^"
+  },
+  "devDependencies": {
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

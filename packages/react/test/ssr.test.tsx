@@ -1,6 +1,6 @@
 import { renderToString } from "react-dom/server";
 
-import { slide } from "../src/keyframes/presets";
+import { slide } from "../src/keyframes";
 import { Reveal } from "../src/Reveal";
 
 // The setup fails the test if React warns, for example about useLayoutEffect on React 18.

@@ -1,6 +1,6 @@
 packages:
-  - "."
-  - "playground"
+  - "packages/*"
+  - "playgrounds/*"
 
 catalog:
   "@types/react": ^19.3.0
