@@ -2,8 +2,8 @@ version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
-    # Point back to main once v5 is merged into it.
-    target-branch: v5
+    # Point back to main once next is merged into it.
+    target-branch: next
     schedule:
       interval: weekly
     groups:
