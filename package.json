@@ -60,8 +60,6 @@
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "prepare": "husky",
-    "prerelease": "pnpm --filter react-awesome-reveal build",
-    "release": "changeset publish",
     "test": "vitest run --project unit",
     "test:package": "pnpm build && vitest run --project package && publint --strict && attw --pack . --profile esm-only --ignore-rules internal-resolution-error",
     "test:watch": "vitest --project unit"
@@ -71,7 +69,8 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
-    "@changesets/cli": "^2.27.11",
+    "@changesets/changelog-github": "^1.0.1",
+    "@changesets/cli": "^3.0.3",
     "@emotion/react": "catalog:",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
