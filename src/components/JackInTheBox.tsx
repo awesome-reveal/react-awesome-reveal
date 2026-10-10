@@ -1,5 +1,3 @@
-"use client";
-
 import { jackInTheBox } from "../animations/specials";
 import { Reveal, type RevealProps } from "../Reveal";
 

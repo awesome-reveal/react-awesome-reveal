@@ -1,5 +1,3 @@
-"use client";
-
 import { type CSSProperties, useMemo } from "react";
 
 import { flip, flipInX, flipInY, flipOutX, flipOutY } from "../animations/flippers";

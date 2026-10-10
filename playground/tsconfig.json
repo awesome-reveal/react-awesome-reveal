@@ -1,12 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "lib": ["DOM", "ESNext"],
-    "noEmit": true,
-    "target": "ESNext"
+    "jsxImportSource": "react"
   },
-  "include": ["src"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  "include": ["src", "vite.config.ts"]
 }
