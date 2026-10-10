@@ -2,9 +2,14 @@
 
 import { ClassNames, type Keyframes } from "@emotion/react";
 import type { SerializedStyles } from "@emotion/serialize";
-import { Children, type CSSProperties, isValidElement, useMemo } from "react";
+import {
+  Children,
+  type CSSProperties,
+  Fragment,
+  isValidElement,
+  useMemo,
+} from "react";
 import { InView, useInView } from "react-intersection-observer";
-import { isFragment } from "react-is";
 
 import { fadeInLeft } from "./animations/fading_entrances";
 import { getAnimationCss } from "./utils/animations";
@@ -117,7 +122,7 @@ export const Reveal: React.FC<RevealProps> = (props) => {
       </TextReveal>
     );
 
-  if (isFragment(children))
+  if (isValidElement(children) && children.type === Fragment)
     return <FragmentReveal {...props} animationStyles={animationStyles} />;
 
   return Children.map(children, (node, index) => {
