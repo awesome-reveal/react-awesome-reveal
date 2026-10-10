@@ -62,10 +62,13 @@ jobs:
       - name: Add coverage to the job summary
         run: |
           {
-            echo "### Coverage"
-            echo '```'
-            cat coverage/summary.txt
-            echo '```'
+            echo "## Coverage"
+            echo
+            echo "| Metric | Coverage | Covered |"
+            echo "| --- | ---: | ---: |"
+            jq -r '.total | to_entries[] | select(.key != "branchesTrue")
+              | "| \((.key[:1] | ascii_upcase) + .key[1:]) | \(.value.pct)% | \(.value.covered) / \(.value.total) |"' \
+              coverage/coverage-summary.json
           } >> "$GITHUB_STEP_SUMMARY"
 
   package:
