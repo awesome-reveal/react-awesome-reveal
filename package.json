@@ -1,78 +1,21 @@
 {
-  "name": "react-awesome-reveal",
-  "version": "4.3.1",
-  "description": "Reveal-on-scroll animations for React, built on the Web Animations API and IntersectionObserver.",
-  "keywords": [
-    "animation",
-    "hooks",
-    "intersection-observer",
-    "react",
-    "reveal",
-    "scroll",
-    "scroll-reveal",
-    "typescript",
-    "waapi",
-    "web-animations"
-  ],
-  "homepage": "https://react-awesome-reveal.morello.dev",
-  "bugs": {
-    "url": "https://github.com/awesome-reveal/react-awesome-reveal/issues"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Dennis Morello",
-    "email": "dennismorello@gmail.com",
-    "url": "https://morello.dev"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/awesome-reveal/react-awesome-reveal"
-  },
-  "funding": [
-    {
-      "type": "github",
-      "url": "https://github.com/sponsors/morellodev"
-    }
-  ],
-  "files": [
-    "dist"
-  ],
+  "name": "awesome-reveal",
+  "private": true,
   "type": "module",
-  "sideEffects": false,
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
-    },
-    "./keyframes": {
-      "types": "./dist/keyframes/index.d.ts",
-      "default": "./dist/keyframes/index.js"
-    },
-    "./package.json": "./package.json"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {
-    "build": "tsc --noEmit && vite build",
+    "build": "pnpm --filter \"./packages/*\" build",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "prepare": "husky",
-    "test": "vitest run --project unit --project ssr",
-    "test:package": "pnpm build && vitest run --project package && publint --strict && attw --pack . --profile esm-only",
-    "test:watch": "vitest --project unit"
+    "test": "vitest run --project \"*:unit\" --project \"*:ssr\"",
+    "test:package": "pnpm build && vitest run --project \"*:package\" && pnpm --filter \"./packages/*\" check:package",
+    "test:watch": "vitest --project \"*:unit\""
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
-    "@testing-library/dom": "^10.4.2",
-    "@testing-library/jest-dom": "^7.0.1",
-    "@testing-library/react": "^16.3.3",
     "@types/node": "^24.19.1",
-    "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
     "@vitest/coverage-v8": "^5.0.3",
     "husky": "^9.1.7",
     "jsdom": "^30.1.2",
@@ -80,15 +23,10 @@
     "oxfmt": "^0.72.0",
     "oxlint": "^1.87.0",
     "publint": "^0.3.25",
-    "react": "catalog:",
-    "react-dom": "catalog:",
     "typescript": "^5.7.2",
     "vite": "catalog:",
     "vite-plugin-dts": "^5.1.2",
     "vitest": "^5.0.3"
-  },
-  "peerDependencies": {
-    "react": ">=18.0.0"
   },
   "engines": {
     "node": ">=20.19.0"

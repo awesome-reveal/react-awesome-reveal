@@ -2,7 +2,7 @@
 const testRelated = (files) => {
   const sources = files.filter((file) => /\.tsx?$/.test(file));
   return sources.length
-    ? `vitest related --run --project unit --project ssr ${sources.map((file) => JSON.stringify(file)).join(" ")}`
+    ? `vitest related --run --project "*:unit" --project "*:ssr" ${sources.map((file) => JSON.stringify(file)).join(" ")}`
     : [];
 };
 

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { createRef, version } from "react";
 
-import { fade } from "../src/keyframes/presets";
+import { fade } from "../src/keyframes";
 import { Reveal } from "../src/Reveal";
 import { animations } from "./mocks/animate";
 import { intersect } from "./mocks/intersection-observer";

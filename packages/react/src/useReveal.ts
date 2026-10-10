@@ -2,7 +2,7 @@
 
 import { type CSSProperties, type RefCallback, useEffect, useLayoutEffect, useState } from "react";
 
-import type { RevealKeyframe } from "./keyframes/types.js";
+import type { RevealKeyframe } from "@awesome-reveal/core/keyframes";
 
 export interface RevealOptions {
   /**

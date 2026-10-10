@@ -52,7 +52,7 @@ jobs:
       # pnpm add installs the rest of the dependencies too.
       - name: Install dependencies with React ${{ matrix.react }}
         if: ${{ matrix.deps }}
-        run: pnpm add -D -w ${{ matrix.deps }}
+        run: pnpm --filter @awesome-reveal/react add -D ${{ matrix.deps }}
 
       - name: Test
         run: pnpm test --coverage

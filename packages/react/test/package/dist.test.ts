@@ -16,7 +16,11 @@ const directive = /^["']use client["'];\n/;
 
 // Resolves through the package "exports" map, as consumers do.
 function load(subpath: string) {
-  return import(pathToFileURL(resolve(`react-awesome-reveal${subpath.slice(1)}`)).href);
+  return import(pathToFileURL(resolve(`@awesome-reveal/react${subpath.slice(1)}`)).href);
+}
+
+function packageName(specifier: string): string {
+  return specifier.split("/", specifier.startsWith("@") ? 2 : 1).join("/");
 }
 
 function source(file: string): string {
@@ -25,15 +29,7 @@ function source(file: string): string {
 
 describe("dist", () => {
   it("contains one JavaScript file per source module, and declarations only for src", () => {
-    expect(jsFiles).toEqual([
-      "Reveal.js",
-      "index.js",
-      "keyframes/define.js",
-      "keyframes/enter.js",
-      "keyframes/index.js",
-      "keyframes/presets.js",
-      "useReveal.js",
-    ]);
+    expect(jsFiles).toEqual(["Reveal.js", "index.js", "keyframes.js", "useReveal.js"]);
     expect(distFiles).toContain("index.d.ts");
     expect(distFiles.filter((file) => /(^|\/)test/.test(file))).toEqual([]);
   });
@@ -50,7 +46,8 @@ describe("dist", () => {
     const imports = jsFiles.flatMap((file) =>
       [...source(file).matchAll(/^(?:import|export) (?:.* from )?"([^"]+)";$/gm)]
         .map(([, id]) => id!)
-        .filter((id) => !id.startsWith(".")),
+        .filter((id) => !id.startsWith("."))
+        .map(packageName),
     );
 
     expect(imports.filter((id) => !allowed.includes(id))).toEqual([]);

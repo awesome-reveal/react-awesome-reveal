@@ -1,16 +1,9 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ESNext",
-    "verbatimModuleSyntax": true
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node"]
   },
-  "include": ["src"]
+  "include": ["vitest.config.ts", "vite.lib.config.ts"]
 }

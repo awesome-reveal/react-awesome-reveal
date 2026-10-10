@@ -7,7 +7,7 @@ const root = fileURLToPath(new URL("../../", import.meta.url));
 const { resolve } = createRequire(import.meta.url);
 
 // Resolves through the package "exports" map, as consumers do.
-const alias = ["react-awesome-reveal", "react-awesome-reveal/keyframes"].map((specifier) => ({
+const alias = ["@awesome-reveal/react", "@awesome-reveal/react/keyframes"].map((specifier) => ({
   find: new RegExp(`^${specifier}$`),
   replacement: resolve(specifier),
 }));
@@ -33,7 +33,11 @@ async function bundle(fixture: string) {
   const keptExports = Object.fromEntries(
     Object.entries(chunk.modules)
       .filter(([id]) => id.includes("/dist/"))
-      .map(([id, module]) => [id.slice(id.indexOf("/dist/") + 1), module.renderedExports]),
+      // Keeps the package folder, so that core and react modules stay apart.
+      .map(([id, module]) => [
+        id.slice(id.lastIndexOf("/", id.indexOf("/dist/") - 1) + 1),
+        module.renderedExports,
+      ]),
   );
   return { keptExports, size: chunk.code.length };
 }
@@ -43,10 +47,10 @@ describe("consumer bundle", () => {
     const { keptExports, size } = await bundle("reveal-slide.js");
 
     expect(keptExports).toEqual({
-      "dist/Reveal.js": ["Reveal"],
-      "dist/useReveal.js": ["useReveal"],
-      "dist/keyframes/enter.js": ["enter"],
-      "dist/keyframes/presets.js": ["slide"],
+      "react/dist/Reveal.js": ["Reveal"],
+      "react/dist/useReveal.js": ["useReveal"],
+      "core/dist/keyframes/enter.js": ["enter"],
+      "core/dist/keyframes/presets.js": ["slide"],
     });
     expect(size).toBeLessThan(3300);
   });
@@ -54,7 +58,7 @@ describe("consumer bundle", () => {
   it("keeps neither Reveal nor keyframes for the hook alone", async () => {
     const { keptExports, size } = await bundle("hook-only.js");
 
-    expect(keptExports).toEqual({ "dist/useReveal.js": ["useReveal"] });
+    expect(keptExports).toEqual({ "react/dist/useReveal.js": ["useReveal"] });
     expect(size).toBeLessThan(1450);
   });
 });

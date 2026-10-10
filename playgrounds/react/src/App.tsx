@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
-import { Reveal, useReveal } from "react-awesome-reveal";
-import { blur, defineKeyframes, enter, fade, scale, slide } from "react-awesome-reveal/keyframes";
+import { Reveal, useReveal } from "@awesome-reveal/react";
+import { blur, defineKeyframes, enter, fade, scale, slide } from "@awesome-reveal/react/keyframes";
 
 import { Section } from "./components/Section";
 
