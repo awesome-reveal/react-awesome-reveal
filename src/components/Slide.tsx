@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 
 import { slideInDown, slideInLeft, slideInRight, slideInUp } from "../animations/sliding_entrances";

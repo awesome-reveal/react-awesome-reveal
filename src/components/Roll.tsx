@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 
 import { rollIn, rollOut } from "../animations/specials";

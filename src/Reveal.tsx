@@ -1,7 +1,5 @@
-"use client";
-
 import { ClassNames, type Keyframes } from "@emotion/react";
-import type { SerializedStyles } from "@emotion/serialize";
+import type { SerializedStyles } from "@emotion/react";
 import { Children, type CSSProperties, Fragment, isValidElement, useMemo } from "react";
 import { InView, useInView } from "react-intersection-observer";
 
