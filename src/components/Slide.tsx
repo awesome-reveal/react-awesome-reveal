@@ -1,8 +1,18 @@
 import { useMemo } from "react";
 
-import { slideInDown, slideInLeft, slideInRight, slideInUp } from "../animations/sliding_entrances";
-import { slideOutDown, slideOutLeft, slideOutRight, slideOutUp } from "../animations/sliding_exits";
-import { Reveal, type RevealProps } from "../Reveal";
+import {
+  slideInDown,
+  slideInLeft,
+  slideInRight,
+  slideInUp,
+} from "../animations/sliding_entrances/index.js";
+import {
+  slideOutDown,
+  slideOutLeft,
+  slideOutRight,
+  slideOutUp,
+} from "../animations/sliding_exits/index.js";
+import { Reveal, type RevealProps } from "../Reveal.js";
 
 type SlideDirection = "down" | "left" | "right" | "up";
 

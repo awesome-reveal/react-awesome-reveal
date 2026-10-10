@@ -3,10 +3,10 @@ import type { SerializedStyles } from "@emotion/react";
 import { Children, type CSSProperties, Fragment, isValidElement, useMemo } from "react";
 import { InView, useInView } from "react-intersection-observer";
 
-import { fadeInLeft } from "./animations/fading_entrances";
-import { getAnimationCss } from "./utils/animations";
-import { isNullable, isStringLike } from "./utils/guards";
-import { matchIf, matchIfOrNull } from "./utils/patterns";
+import { fadeInLeft } from "./animations/fading_entrances/index.js";
+import { getAnimationCss } from "./utils/animations.js";
+import { isNullable, isStringLike } from "./utils/guards.js";
+import { matchIf, matchIfOrNull } from "./utils/patterns.js";
 
 function hideWhen(condition: boolean) {
   return matchIfOrNull<CSSProperties>(() => ({ opacity: 0 }))(condition);

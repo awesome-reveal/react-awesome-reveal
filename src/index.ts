@@ -1,5 +1,5 @@
 "use client";
 
-export * from "./components";
-export * from "./Reveal";
-export { Reveal as default } from "./Reveal";
+export * from "./components/index.js";
+export * from "./Reveal.js";
+export { Reveal as default } from "./Reveal.js";

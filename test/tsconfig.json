@@ -1,6 +1,8 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "types": ["node", "vitest/globals"]
   },
   "include": ["../src", ".", "../vite.config.ts", "../vitest.config.ts"]

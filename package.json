@@ -61,7 +61,7 @@
     "lint:fix": "oxlint --fix",
     "prepare": "husky",
     "test": "vitest run --project unit",
-    "test:package": "pnpm build && vitest run --project package && publint --strict && attw --pack . --profile esm-only --ignore-rules internal-resolution-error",
+    "test:package": "pnpm build && vitest run --project package && publint --strict && attw --pack . --profile esm-only",
     "test:watch": "vitest --project unit"
   },
   "dependencies": {

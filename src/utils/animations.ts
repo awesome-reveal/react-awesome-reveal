@@ -1,6 +1,6 @@
 import { css, type Keyframes } from "@emotion/react";
 
-import { fadeInLeft } from "../animations/fading_entrances";
+import { fadeInLeft } from "../animations/fading_entrances/index.js";
 
 export function getAnimationCss({
   duration = 1000,

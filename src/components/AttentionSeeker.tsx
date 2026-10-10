@@ -15,8 +15,8 @@ import {
   swing,
   tada,
   wobble,
-} from "../animations/attention_seekers";
-import { Reveal, type RevealProps } from "../Reveal";
+} from "../animations/attention_seekers/index.js";
+import { Reveal, type RevealProps } from "../Reveal.js";
 
 type AttentionSeekerEffect =
   | "bounce"

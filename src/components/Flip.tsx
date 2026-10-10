@@ -1,7 +1,7 @@
 import { type CSSProperties, useMemo } from "react";
 
-import { flip, flipInX, flipInY, flipOutX, flipOutY } from "../animations/flippers";
-import { Reveal, type RevealProps } from "../Reveal";
+import { flip, flipInX, flipInY, flipOutX, flipOutY } from "../animations/flippers/index.js";
+import { Reveal, type RevealProps } from "../Reveal.js";
 
 type FlipDirection = "horizontal" | "vertical";
 

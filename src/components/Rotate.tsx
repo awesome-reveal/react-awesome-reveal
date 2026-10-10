@@ -7,15 +7,15 @@ import {
   rotateInDownRight,
   rotateInUpLeft,
   rotateInUpRight,
-} from "../animations/rotating_entrances";
+} from "../animations/rotating_entrances/index.js";
 import {
   rotateOut,
   rotateOutDownLeft,
   rotateOutDownRight,
   rotateOutUpLeft,
   rotateOutUpRight,
-} from "../animations/rotating_exits";
-import { Reveal, type RevealProps } from "../Reveal";
+} from "../animations/rotating_exits/index.js";
+import { Reveal, type RevealProps } from "../Reveal.js";
 
 type RotateDirection = "bottom-left" | "bottom-right" | "top-left" | "top-right";
 

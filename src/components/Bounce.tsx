@@ -6,15 +6,15 @@ import {
   bounceInLeft,
   bounceInRight,
   bounceInUp,
-} from "../animations/bouncing_entrances";
+} from "../animations/bouncing_entrances/index.js";
 import {
   bounceOut,
   bounceOutDown,
   bounceOutLeft,
   bounceOutRight,
   bounceOutUp,
-} from "../animations/bouncing_exits";
-import { Reveal, type RevealProps } from "../Reveal";
+} from "../animations/bouncing_exits/index.js";
+import { Reveal, type RevealProps } from "../Reveal.js";
 
 type BounceDirection = "down" | "left" | "right" | "up";
 

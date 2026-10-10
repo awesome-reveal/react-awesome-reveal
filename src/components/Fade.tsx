@@ -14,7 +14,7 @@ import {
   fadeInTopRight,
   fadeInUp,
   fadeInUpBig,
-} from "../animations/fading_entrances";
+} from "../animations/fading_entrances/index.js";
 import {
   fadeOut,
   fadeOutBottomLeft,
@@ -29,8 +29,8 @@ import {
   fadeOutTopRight,
   fadeOutUp,
   fadeOutUpBig,
-} from "../animations/fading_exits";
-import { Reveal, type RevealProps } from "../Reveal";
+} from "../animations/fading_exits/index.js";
+import { Reveal, type RevealProps } from "../Reveal.js";
 
 type FadeDirection =
   | "bottom-left"

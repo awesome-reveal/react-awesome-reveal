@@ -6,15 +6,15 @@ import {
   zoomInLeft,
   zoomInRight,
   zoomInUp,
-} from "../animations/zooming_entrances";
+} from "../animations/zooming_entrances/index.js";
 import {
   zoomOut,
   zoomOutDown,
   zoomOutLeft,
   zoomOutRight,
   zoomOutUp,
-} from "../animations/zooming_exits";
-import { Reveal, type RevealProps } from "../Reveal";
+} from "../animations/zooming_exits/index.js";
+import { Reveal, type RevealProps } from "../Reveal.js";
 
 type ZoomDirection = "down" | "left" | "right" | "up";
 
