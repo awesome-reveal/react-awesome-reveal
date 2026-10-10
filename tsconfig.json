@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "isolatedModules": true,
     "jsx": "react-jsx",
     "jsxImportSource": "@emotion/react",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
@@ -11,7 +10,8 @@
     "noImplicitReturns": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "ESNext"
+    "target": "ESNext",
+    "verbatimModuleSyntax": true
   },
   "include": ["src"]
 }
