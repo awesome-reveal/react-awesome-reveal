@@ -1,27 +1,32 @@
 {
   "name": "react-awesome-reveal",
-  "description": "React components to add reveal animations using the Intersection Observer API and CSS Animations.",
   "version": "4.3.1",
-  "license": "MIT",
-  "type": "module",
-  "types": "dist/index.d.ts",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
-    }
-  },
-  "files": [
-    "dist"
+  "description": "React components to add reveal animations using the Intersection Observer API and CSS Animations.",
+  "keywords": [
+    "animations",
+    "css-in-js",
+    "emotion",
+    "intersection",
+    "intersection-observer",
+    "react",
+    "react-reveal",
+    "reveal",
+    "scroll",
+    "typescript"
   ],
-  "sideEffects": false,
+  "homepage": "https://react-awesome-reveal.morello.dev",
+  "bugs": {
+    "url": "https://github.com/awesome-reveal/react-awesome-reveal/issues"
+  },
+  "license": "MIT",
   "author": {
     "name": "Dennis Morello",
     "email": "dennis@morello.dev",
     "url": "https://morello.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/awesome-reveal/react-awesome-reveal"
   },
   "funding": [
     {
@@ -33,25 +38,20 @@
       "url": "https://opencollective.com/react-awesome-reveal"
     }
   ],
-  "homepage": "https://react-awesome-reveal.morello.dev",
-  "keywords": [
-    "react",
-    "reveal",
-    "react-reveal",
-    "scroll",
-    "typescript",
-    "intersection",
-    "intersection-observer",
-    "animations",
-    "css-in-js",
-    "emotion"
+  "files": [
+    "dist"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/awesome-reveal/react-awesome-reveal"
-  },
-  "bugs": {
-    "url": "https://github.com/awesome-reveal/react-awesome-reveal/issues"
+  "type": "module",
+  "sideEffects": false,
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
   },
   "publishConfig": {
     "access": "public"
@@ -66,9 +66,8 @@
     "prerelease": "pnpm --filter react-awesome-reveal build",
     "release": "changeset publish"
   },
-  "peerDependencies": {
-    "@emotion/react": "^11.0.0",
-    "react": ">=17.0.0"
+  "dependencies": {
+    "react-intersection-observer": "^11.0.1"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.11",
@@ -88,8 +87,9 @@
     "vite": "catalog:",
     "vite-plugin-dts": "4.4.0"
   },
-  "dependencies": {
-    "react-intersection-observer": "^11.0.1"
+  "peerDependencies": {
+    "@emotion/react": "^11.0.0",
+    "react": ">=17.0.0"
   },
   "packageManager": "pnpm@12.10.1+sha512.ba40a37eb1a370d60fea8c4cf1d364c13bcccef518e98ad2bcee954f539d38da37458e58261a3fa55e06523450ea0ffff9f497b135be41f2c15c1642bacace6c"
 }

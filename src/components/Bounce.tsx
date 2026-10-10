@@ -51,10 +51,7 @@ function getStyles(reverse: boolean, direction?: BounceDirection) {
 export const Bounce: React.FC<BounceProps> = (props) => {
   const { direction, reverse = false, ...rest } = props;
 
-  const keyframes = useMemo(
-    () => getStyles(reverse, direction),
-    [direction, reverse]
-  );
+  const keyframes = useMemo(() => getStyles(reverse, direction), [direction, reverse]);
 
   return <Reveal keyframes={keyframes} {...rest} />;
 };

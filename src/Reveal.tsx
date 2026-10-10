@@ -2,13 +2,7 @@
 
 import { ClassNames, type Keyframes } from "@emotion/react";
 import type { SerializedStyles } from "@emotion/serialize";
-import {
-  Children,
-  type CSSProperties,
-  Fragment,
-  isValidElement,
-  useMemo,
-} from "react";
+import { Children, type CSSProperties, Fragment, isValidElement, useMemo } from "react";
 import { InView, useInView } from "react-intersection-observer";
 
 import { fadeInLeft } from "./animations/fading_entrances";
@@ -110,7 +104,7 @@ export const Reveal: React.FC<RevealProps> = (props) => {
         keyframes,
         duration,
       }),
-    [duration, keyframes]
+    [duration, keyframes],
   );
 
   if (isNullable(children)) return null;
@@ -148,11 +142,7 @@ export const Reveal: React.FC<RevealProps> = (props) => {
         );
       case "li":
         return (
-          <InView
-            threshold={fraction}
-            triggerOnce={triggerOnce}
-            onChange={onVisibilityChange}
-          >
+          <InView threshold={fraction} triggerOnce={triggerOnce} onChange={onVisibilityChange}>
             {({ inView, ref }) => (
               <ClassNames>
                 {({ cx }) => (
@@ -161,15 +151,9 @@ export const Reveal: React.FC<RevealProps> = (props) => {
                     ref={ref}
                     className={cx(childClassName, node.props.className)}
                     css={matchIfOrNull(() => animationStyles)(inView)}
-                    style={Object.assign(
-                      {},
-                      childStyle,
-                      node.props.style,
-                      hideWhen(!inView),
-                      {
-                        animationDelay: nodeDelay + "ms",
-                      }
-                    )}
+                    style={Object.assign({}, childStyle, node.props.style, hideWhen(!inView), {
+                      animationDelay: nodeDelay + "ms",
+                    })}
                   />
                 )}
               </ClassNames>
@@ -178,11 +162,7 @@ export const Reveal: React.FC<RevealProps> = (props) => {
         );
       default:
         return (
-          <InView
-            threshold={fraction}
-            triggerOnce={triggerOnce}
-            onChange={onVisibilityChange}
-          >
+          <InView threshold={fraction} triggerOnce={triggerOnce} onChange={onVisibilityChange}>
             {({ inView, ref }) => (
               <div
                 ref={ref}
@@ -239,11 +219,7 @@ const TextReveal: React.FC<
 
   return matchIf(
     () => (
-      <div
-        ref={ref}
-        className={className}
-        style={Object.assign({}, style, textBaseStyles)}
-      >
+      <div ref={ref} className={className} style={Object.assign({}, style, textBaseStyles)}>
         {children.split("").map((char, index) => (
           <span
             key={index}
@@ -257,13 +233,11 @@ const TextReveal: React.FC<
         ))}
       </div>
     ),
-    () => <FragmentReveal {...props}>{children}</FragmentReveal>
+    () => <FragmentReveal {...props}>{children}</FragmentReveal>,
   )(cascade);
 };
 
-const FragmentReveal: React.FC<
-  RevealProps & { animationStyles: SerializedStyles }
-> = (props) => {
+const FragmentReveal: React.FC<RevealProps & { animationStyles: SerializedStyles }> = (props) => {
   const {
     animationStyles,
     fraction = 0,

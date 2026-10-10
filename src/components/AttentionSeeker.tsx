@@ -79,11 +79,5 @@ export const AttentionSeeker: React.FC<AttentionSeekerProps> = (props) => {
 
   const [keyframes, animationCss] = useMemo(() => getStyles(effect), [effect]);
 
-  return (
-    <Reveal
-      keyframes={keyframes}
-      style={Object.assign({}, style, animationCss)}
-      {...rest}
-    />
-  );
+  return <Reveal keyframes={keyframes} style={Object.assign({}, style, animationCss)} {...rest} />;
 };

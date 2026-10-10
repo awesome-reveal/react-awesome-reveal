@@ -2,13 +2,7 @@
 
 import { type CSSProperties, useMemo } from "react";
 
-import {
-  flip,
-  flipInX,
-  flipInY,
-  flipOutX,
-  flipOutY,
-} from "../animations/flippers";
+import { flip, flipInX, flipInY, flipOutX, flipOutY } from "../animations/flippers";
 import { Reveal, type RevealProps } from "../Reveal";
 
 type FlipDirection = "horizontal" | "vertical";
@@ -44,16 +38,7 @@ const animationCss: CSSProperties = {
 export const Flip: React.FC<FlipProps> = (props) => {
   const { direction, reverse = false, style, ...rest } = props;
 
-  const keyframes = useMemo(
-    () => getStyles(reverse, direction),
-    [direction, reverse]
-  );
+  const keyframes = useMemo(() => getStyles(reverse, direction), [direction, reverse]);
 
-  return (
-    <Reveal
-      keyframes={keyframes}
-      style={Object.assign({}, style, animationCss)}
-      {...rest}
-    />
-  );
+  return <Reveal keyframes={keyframes} style={Object.assign({}, style, animationCss)} {...rest} />;
 };
