@@ -66,6 +66,7 @@ jobs:
         with:
           name: browser-test-results-react-${{ matrix.react }}
           path: .vitest/
+          include-hidden-files: true
           if-no-files-found: ignore
 
       - name: Add coverage to the job summary
