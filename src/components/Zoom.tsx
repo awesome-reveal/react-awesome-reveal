@@ -51,10 +51,7 @@ function getStyles(reverse: boolean, direction?: ZoomDirection) {
 export const Zoom: React.FC<ZoomProps> = (props) => {
   const { direction, reverse = false, ...rest } = props;
 
-  const keyframes = useMemo(
-    () => getStyles(reverse, direction),
-    [direction, reverse]
-  );
+  const keyframes = useMemo(() => getStyles(reverse, direction), [direction, reverse]);
 
   return <Reveal keyframes={keyframes} {...rest} />;
 };

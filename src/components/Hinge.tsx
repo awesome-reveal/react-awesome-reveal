@@ -14,11 +14,5 @@ const animationCss: CSSProperties = {
 export const Hinge: React.FC<HingeProps> = (props) => {
   const { style, ...rest } = props;
 
-  return (
-    <Reveal
-      keyframes={hinge}
-      style={Object.assign({}, style, animationCss)}
-      {...rest}
-    />
-  );
+  return <Reveal keyframes={hinge} style={Object.assign({}, style, animationCss)} {...rest} />;
 };

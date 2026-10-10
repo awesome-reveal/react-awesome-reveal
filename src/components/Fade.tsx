@@ -69,21 +69,9 @@ function getStyles(big: boolean, reverse: boolean, direction?: FadeDirection) {
     case "bottom-right":
       return reverse ? fadeOutBottomRight : fadeInBottomRight;
     case "down":
-      return big
-        ? reverse
-          ? fadeOutDownBig
-          : fadeInDownBig
-        : reverse
-          ? fadeOutDown
-          : fadeInDown;
+      return big ? (reverse ? fadeOutDownBig : fadeInDownBig) : reverse ? fadeOutDown : fadeInDown;
     case "left":
-      return big
-        ? reverse
-          ? fadeOutLeftBig
-          : fadeInLeftBig
-        : reverse
-          ? fadeOutLeft
-          : fadeInLeft;
+      return big ? (reverse ? fadeOutLeftBig : fadeInLeftBig) : reverse ? fadeOutLeft : fadeInLeft;
     case "right":
       return big
         ? reverse
@@ -97,13 +85,7 @@ function getStyles(big: boolean, reverse: boolean, direction?: FadeDirection) {
     case "top-right":
       return reverse ? fadeOutTopRight : fadeInTopRight;
     case "up":
-      return big
-        ? reverse
-          ? fadeOutUpBig
-          : fadeInUpBig
-        : reverse
-          ? fadeOutUp
-          : fadeInUp;
+      return big ? (reverse ? fadeOutUpBig : fadeInUpBig) : reverse ? fadeOutUp : fadeInUp;
     default:
       return reverse ? fadeOut : fadeIn;
   }
@@ -112,10 +94,7 @@ function getStyles(big: boolean, reverse: boolean, direction?: FadeDirection) {
 export const Fade: React.FC<FadeProps> = (props) => {
   const { big = false, direction, reverse = false, ...rest } = props;
 
-  const keyframes = useMemo(
-    () => getStyles(big, reverse, direction),
-    [big, direction, reverse]
-  );
+  const keyframes = useMemo(() => getStyles(big, reverse, direction), [big, direction, reverse]);
 
   return <Reveal keyframes={keyframes} {...rest} />;
 };

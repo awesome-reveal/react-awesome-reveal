@@ -19,11 +19,7 @@ import {
 } from "../animations/rotating_exits";
 import { Reveal, type RevealProps } from "../Reveal";
 
-type RotateDirection =
-  | "bottom-left"
-  | "bottom-right"
-  | "top-left"
-  | "top-right";
+type RotateDirection = "bottom-left" | "bottom-right" | "top-left" | "top-right";
 
 export interface RotateProps extends Omit<RevealProps, "keyframes"> {
   /**
@@ -38,10 +34,7 @@ export interface RotateProps extends Omit<RevealProps, "keyframes"> {
   reverse?: boolean;
 }
 
-function getStyles(
-  reverse: boolean,
-  direction?: RotateDirection
-): [Keyframes, CSSProperties?] {
+function getStyles(reverse: boolean, direction?: RotateDirection): [Keyframes, CSSProperties?] {
   switch (direction) {
     case "bottom-left":
       return reverse
@@ -71,14 +64,8 @@ export const Rotate: React.FC<RotateProps> = (props) => {
 
   const [keyframes, animationCss] = useMemo(
     () => getStyles(reverse, direction),
-    [direction, reverse]
+    [direction, reverse],
   );
 
-  return (
-    <Reveal
-      keyframes={keyframes}
-      style={Object.assign({}, style, animationCss)}
-      {...rest}
-    />
-  );
+  return <Reveal keyframes={keyframes} style={Object.assign({}, style, animationCss)} {...rest} />;
 };
