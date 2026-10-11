@@ -27,7 +27,9 @@ export interface RevealState<T extends Element> {
 // React 18 warns about useLayoutEffect during server rendering.
 const useIsomorphicLayoutEffect = typeof document === "undefined" ? useEffect : useLayoutEffect;
 
-export function useReveal<T extends Element = HTMLElement>(options: RevealOptions): RevealState<T> {
+export function useReveal<T extends Element = HTMLElement>(
+  options: RevealOptions = {},
+): RevealState<T> {
   const { threshold, rootMargin, once = true, when } = options;
   const [node, setNode] = useState<T | null>(null);
   const [inView, setInView] = useState(false);

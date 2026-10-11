@@ -2,6 +2,7 @@ import { defineKeyframes } from "../src/keyframes/define";
 import { enter } from "../src/keyframes/enter";
 import { blur, fade, scale, slide } from "../src/keyframes/presets";
 import type { RevealKeyframe } from "../src/keyframes/types";
+import { defaultKeyframes } from "../src/play";
 
 const factories: [string, () => RevealKeyframe[]][] = Object.entries({ fade, slide, scale, blur });
 const all = factories.map(([name, factory]): [string, RevealKeyframe[]] => [name, factory()]);
@@ -26,6 +27,10 @@ describe.each(all)("%s", (_, keyframes) => {
     expect(keyframes[0]?.easing).toBeDefined();
     expect(keyframes[1]).toEqual({});
   });
+});
+
+test("the default keyframes match slide()", () => {
+  expect(defaultKeyframes).toEqual(slide());
 });
 
 describe("enter", () => {

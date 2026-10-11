@@ -17,6 +17,7 @@ afterEach(() => {
   controller?.destroy();
   controller = undefined;
   vi.unstubAllGlobals();
+  vi.restoreAllMocks();
 });
 
 function isHidden() {
@@ -55,6 +56,16 @@ describe("reveal", () => {
     expect(isHidden()).toBe(true);
     expect(controller.revealed).toBe(false);
     expect(element.getAnimations()).toEqual([]);
+  });
+
+  it("plays the default keyframes with no options", async () => {
+    vi.spyOn(window, "matchMedia").mockReturnValue({ matches: false } as MediaQueryList);
+    controller = reveal(element);
+    scrollIntoView(element);
+    await waitForReveal();
+
+    const [first] = (element.getAnimations()[0]!.effect as KeyframeEffect).getKeyframes();
+    expect(first).toMatchObject({ opacity: "0", transform: "translate(0px, 16px)" });
   });
 
   it("removes the hidden style and starts the animation in the same frame", async () => {

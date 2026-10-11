@@ -36,7 +36,7 @@ function Card() {
 
 ## Keyframes
 
-`keyframes` is required. Each factory takes optional options and returns Web Animations keyframes that end at the element's own style.
+`keyframes` is optional. Without it, the element fades in and moves up, as with `slide()`. Each factory takes optional options and returns Web Animations keyframes that end at the element's own style.
 
 | Factory   | Effect                                     | Options                                                                                             |
 | --------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------- |
@@ -69,17 +69,17 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 
 ## Options
 
-| Option          | Description                                                                        | Default  |
-| --------------- | ---------------------------------------------------------------------------------- | -------- |
-| `keyframes`     | The animation.                                                                     | –        |
-| `duration`      | Duration in milliseconds.                                                          | `600`    |
-| `delay`         | Delay in milliseconds.                                                             | `0`      |
-| `stagger`       | Animates the element children, each one this many milliseconds after the last one. | –        |
-| `threshold`     | Fraction of the element (0 to 1) that must be visible.                             | `0`      |
-| `rootMargin`    | Grows or shrinks the viewport area, as a CSS margin in `px` or `%`.                | `"0px"`  |
-| `once`          | When `false`, the element hides again when it leaves the viewport.                 | `true`   |
-| `when`          | Controls the reveal manually. When set, the viewport is not observed.              | –        |
-| `reducedMotion` | `"user"` follows `prefers-reduced-motion`. `"always"` skips, `"never"` plays.      | `"user"` |
+| Option          | Description                                                                        | Default   |
+| --------------- | ---------------------------------------------------------------------------------- | --------- |
+| `keyframes`     | The animation.                                                                     | `slide()` |
+| `duration`      | Duration in milliseconds.                                                          | `600`     |
+| `delay`         | Delay in milliseconds.                                                             | `0`       |
+| `stagger`       | Animates the element children, each one this many milliseconds after the last one. | –         |
+| `threshold`     | Fraction of the element (0 to 1) that must be visible.                             | `0`       |
+| `rootMargin`    | Grows or shrinks the viewport area, as a CSS margin in `px` or `%`.                | `"0px"`   |
+| `once`          | When `false`, the element hides again when it leaves the viewport.                 | `true`    |
+| `when`          | Controls the reveal manually. When set, the viewport is not observed.              | –         |
+| `reducedMotion` | `"user"` follows `prefers-reduced-motion`. `"always"` skips, `"never"` plays.      | `"user"`  |
 
 ## Rules
 

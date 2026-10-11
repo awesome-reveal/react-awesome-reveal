@@ -29,6 +29,12 @@ describe("play", () => {
     expect(timing(element)).toEqual([{ duration: 600, delay: 0, fill: "backwards" }]);
   });
 
+  it("plays the default keyframes without keyframes", () => {
+    play(element, { reducedMotion: "never" });
+    const [first] = (element.getAnimations()[0]!.effect as KeyframeEffect).getKeyframes();
+    expect(first).toMatchObject({ opacity: "0", transform: "translate(0px, 16px)" });
+  });
+
   it("applies the first keyframe in the frame that starts it, also during the delay", () => {
     play(element, { keyframes, delay: 1000, reducedMotion: "never" });
     expect(getComputedStyle(element).opacity).toBe("0");

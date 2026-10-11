@@ -51,6 +51,11 @@ export const App = () => {
   return (
     <>
       <Section>
+        <Reveal>
+          <h1>The default keyframes</h1>
+        </Reveal>
+      </Section>
+      <Section>
         <Reveal keyframes={fade()}>
           <h1>fade</h1>
         </Reveal>

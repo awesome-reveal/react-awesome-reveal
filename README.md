@@ -50,12 +50,13 @@ React 18 or later is necessary.
 
 ```jsx
 import { Reveal } from "react-awesome-reveal";
-import { slide } from "react-awesome-reveal/keyframes";
 
-<Reveal keyframes={slide()}>
+<Reveal>
   <p>I gently appear as I enter the viewport</p>
 </Reveal>;
 ```
+
+With no `keyframes`, the element fades in and moves up, as with `slide()`. To choose another animation, see [Keyframes](#keyframes).
 
 ## Entry points
 
@@ -186,17 +187,17 @@ Option changes apply to the next reveal. They do not replay an animation that al
 
 `Reveal` and `useReveal` accept the same options:
 
-| Option          | Description                                                                                                               | Default  |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------- | -------- |
-| `keyframes`     | The animation. Required.                                                                                                  | –        |
-| `duration`      | Animation duration, in milliseconds.                                                                                      | `600`    |
-| `delay`         | Delay before the animation starts, in milliseconds.                                                                       | `0`      |
-| `stagger`       | Animates the element children instead of the element, each one this many milliseconds after the previous one.             | –        |
-| `threshold`     | Fraction of the element, between 0 and 1, that must be visible to reveal it.                                              | `0`      |
-| `rootMargin`    | Grows or shrinks the viewport area that reveals the element, as a CSS margin in `px` or `%`.                              | `"0px"`  |
-| `once`          | Reveals the element only the first time. When `false`, the element hides again when it leaves the viewport.               | `true`   |
-| `when`          | Controls the reveal manually. When set, the viewport is not observed.                                                     | –        |
-| `reducedMotion` | `"user"` skips the animation when the user prefers reduced motion. `"always"` always skips it. `"never"` always plays it. | `"user"` |
+| Option          | Description                                                                                                               | Default   |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------- | --------- |
+| `keyframes`     | The animation.                                                                                                            | `slide()` |
+| `duration`      | Animation duration, in milliseconds.                                                                                      | `600`     |
+| `delay`         | Delay before the animation starts, in milliseconds.                                                                       | `0`       |
+| `stagger`       | Animates the element children instead of the element, each one this many milliseconds after the previous one.             | –         |
+| `threshold`     | Fraction of the element, between 0 and 1, that must be visible to reveal it.                                              | `0`       |
+| `rootMargin`    | Grows or shrinks the viewport area that reveals the element, as a CSS margin in `px` or `%`.                              | `"0px"`   |
+| `once`          | Reveals the element only the first time. When `false`, the element hides again when it leaves the viewport.               | `true`    |
+| `when`          | Controls the reveal manually. When set, the viewport is not observed.                                                     | –         |
+| `reducedMotion` | `"user"` skips the animation when the user prefers reduced motion. `"always"` always skips it. `"never"` always plays it. | `"user"`  |
 
 ## Recipes
 
@@ -277,7 +278,7 @@ v5 has no effect components. Use `Reveal` with a keyframes factory. v4 `directio
 | v4                             | v5                                                                                                   |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------- |
 | `import Reveal from "…"`       | `import { Reveal } from "…"`                                                                         |
-| `<Reveal>` with no `keyframes` | `<Reveal keyframes={slide({ direction: "right", distance: "100%" })}>`. `keyframes` is now required. |
+| `<Reveal>` with no `keyframes` | `<Reveal keyframes={slide({ direction: "right", distance: "100%" })}>`. The v5 default is `slide()`. |
 | `<Fade>`                       | `fade()`                                                                                             |
 | `<Fade direction="up">`        | `slide()`, or `slide({ distance: "100%" })` for the v4 distance                                      |
 | `<Fade direction="down">`      | `slide({ direction: "down" })`                                                                       |
@@ -324,6 +325,7 @@ Copy the keyframes from the [Animate.css source](https://github.com/animate-css/
 
 ### Behavior
 
+- A `<Reveal>` with no `keyframes` now plays `slide()`: it moves up 16px. v4 slid in from the left by 100%. The type check does not find these elements, so search the code for `<Reveal` with no `keyframes`.
 - `Reveal` renders one element (`as`, `div` by default) around all its children. v4 rendered one `div` for each child.
 - Children animate together. Use `stagger` to animate them one after the other.
 - Lists, fragments and text have no special handling. For lists, use `as="ul"` with `stagger`. For text, see [Text, one character at a time](#text-one-character-at-a-time).

@@ -54,21 +54,21 @@ describe("consumer bundle", () => {
       "core/dist/keyframes/enter.js": ["enter"],
       "core/dist/keyframes/presets.js": ["slide"],
       "core/dist/observe.js": ["observe"],
-      "core/dist/play.js": ["play"],
+      "core/dist/play.js": ["play", "defaultKeyframes"],
       "core/dist/reveal.js": ["hiddenStyle"],
     });
     expect(size).toBeLessThan(3250);
   });
 
-  it("keeps neither Reveal nor keyframes for the hook alone", async () => {
+  it("keeps neither Reveal nor keyframes factories for the hook alone", async () => {
     const { keptExports, size } = await bundle("hook-only.js");
 
     expect(keptExports).toEqual({
       "react/dist/useReveal.js": ["useReveal"],
       "core/dist/observe.js": ["observe"],
-      "core/dist/play.js": ["play"],
+      "core/dist/play.js": ["play", "defaultKeyframes"],
       "core/dist/reveal.js": ["hiddenStyle"],
     });
-    expect(size).toBeLessThan(1550);
+    expect(size).toBeLessThan(1650);
   });
 });

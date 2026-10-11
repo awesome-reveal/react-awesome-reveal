@@ -48,13 +48,13 @@ test("Reveal types its ref by the rendered element", () => {
   void (<Reveal as="input" keyframes={slide()} ref={createRef<HTMLDivElement>()} />);
 });
 
-test("keyframes are required RevealKeyframe arrays", () => {
+test("keyframes are optional RevealKeyframe arrays", () => {
   expectTypeOf<RevealKeyframe[]>().toExtend<Keyframe[]>();
   expectTypeOf<Keyframe[]>().toExtend<RevealKeyframe[]>();
 
   void (<Reveal keyframes={[{ opacity: 0, "--progress": 0 }, {}]} />);
-  // @ts-expect-error keyframes is required
   void (<Reveal />);
+  useReveal();
   // @ts-expect-error keyframes are not strings
   void (<Reveal keyframes="fadeIn" />);
   // @ts-expect-error call the factory to get its keyframes
