@@ -93,7 +93,12 @@ jobs:
           for path in $(jq -r '.[]' <<<"$PATHS_RELEASED"); do
             name=$(jq -r .name "$path/package.json")
             version=$(jq -r .version "$path/package.json")
-            current=$(npm view "$name" dist-tags.latest 2>/dev/null || true)
+            # Only a missing package counts as "no stable version". Other errors stop the job,
+            # so that a registry outage cannot send a prerelease to latest.
+            if ! current=$(npm view "$name" dist-tags.latest 2>"$RUNNER_TEMP/npm-view.log"); then
+              grep -q E404 "$RUNNER_TEMP/npm-view.log" || { cat "$RUNNER_TEMP/npm-view.log"; exit 1; }
+              current=
+            fi
             if [[ $version == *-* && -n $current && $current != *-* ]]; then
               next+=(--filter "./$path")
             else
