@@ -100,8 +100,11 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
 
-      # pnpm add installs the rest of the dependencies too.
-      - name: Install dependencies with ${{ matrix.name }}
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # A filtered pnpm add installs only the dependencies of that package, so the full install comes first.
+      - name: Install ${{ matrix.name }}
         env:
           PACKAGE: ${{ matrix.package }}
           DEPS: ${{ matrix.deps }}
