@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - next
 
 permissions: {}
 
@@ -24,10 +25,9 @@ jobs:
       issues: write
       pull-requests: write
     outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-      tag_name: ${{ steps.release.outputs.tag_name }}
-      version: ${{ steps.release.outputs.version }}
-      sha: ${{ steps.release.outputs.sha }}
+      releases_created: ${{ steps.release.outputs.releases_created }}
+      paths_released: ${{ steps.release.outputs.paths_released }}
+      sha: ${{ steps.release-commit.outputs.sha }}
     steps:
       - name: Release Please
         id: release
@@ -35,10 +35,24 @@ jobs:
         with:
           target-branch: ${{ github.ref_name }}
 
+      # A queued run can release a commit other than github.sha. One release PR releases all packages from one commit.
+      - name: Find the release commit
+        id: release-commit
+        if: steps.release.outputs.releases_created == 'true'
+        env:
+          OUTPUTS: ${{ toJSON(steps.release.outputs) }}
+        run: |
+          shas=$(jq -c '[to_entries[] | select(.key | endswith("--sha")) | .value] | unique' <<<"$OUTPUTS")
+          if [[ "$(jq length <<<"$shas")" != 1 ]]; then
+            echo "::error::Expected one release commit, found $shas"
+            exit 1
+          fi
+          echo "sha=$(jq -r '.[0]' <<<"$shas")" >>"$GITHUB_OUTPUT"
+
   publish:
     name: Publish
     needs: release-please
-    if: needs.release-please.outputs.release_created == 'true'
+    if: needs.release-please.outputs.releases_created == 'true'
     runs-on: ubuntu-latest
     environment: npm
     timeout-minutes: 10
@@ -68,12 +82,15 @@ jobs:
         run: pnpm build
 
       # The release commit is checked out as a detached HEAD, so pnpm's branch check would fail.
+      # pnpm skips the versions that are already on npm, so a re-run publishes only the missing packages.
       - name: Publish
         env:
-          VERSION: ${{ needs.release-please.outputs.version }}
+          PATHS_RELEASED: ${{ needs.release-please.outputs.paths_released }}
         run: |
-          if [[ "$VERSION" == *-* ]]; then
-            pnpm publish --no-git-checks --tag next
-          else
-            pnpm publish --no-git-checks
-          fi
+          tag=latest
+          for path in $(jq -r '.[]' <<<"$PATHS_RELEASED"); do
+            if [[ "$(jq -r .version "$path/package.json")" == *-* ]]; then
+              tag=next
+            fi
+          done
+          pnpm -r publish --no-git-checks --tag "$tag"

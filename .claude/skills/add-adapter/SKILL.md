@@ -22,9 +22,10 @@ Use `packages/react` as the model. Keep the option names and defaults of core, s
 7. Port the tests of `packages/react/test/package`: the dist files and exports, the server markup, the skills, and the tree-shaking fixtures with size limits.
 8. Add the consumer skills in `packages/<framework>/skills/<name>/SKILL.md`, and add `skills` to `files`. Port `adding-reveal-animations` from the React package.
 9. Add `playgrounds/<framework>`, with the sections of `playgrounds/react`.
-10. Add a CI matrix entry only when the peer range covers more than one major version of the framework.
-11. Add `.claude/rules/<framework>/adapter.md` for the gotchas of the framework, with `paths: ["packages/<framework>/**"]`.
-12. Run the checks:
+10. Add the package to `release-please-config.json`, with `"component"` set to the package name, and to `linked-versions`. Without `"component"`, release-please drops the npm scope from the tags. Add its path to `.release-please-manifest.json`, with the current version of core.
+11. Add a CI matrix entry only when the peer range covers more than one major version of the framework.
+12. Add `.claude/rules/<framework>/adapter.md` for the gotchas of the framework, with `paths: ["packages/<framework>/**"]`.
+13. Run the checks:
     - `pnpm test --coverage`
     - `pnpm exec tsc -p packages/<framework>/test`
     - `pnpm test:package`

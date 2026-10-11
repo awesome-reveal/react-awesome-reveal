@@ -1,3 +1,5 @@
 {
-  ".": "4.3.1"
+  "packages/core": "0.0.0",
+  "packages/react": "0.0.0",
+  "packages/react-awesome-reveal": "4.3.1"
 }
