@@ -7,7 +7,7 @@
 > [!TIP]
 > If you like this library, please [consider supporting its creator](https://github.com/sponsors/morellodev).
 
-[awesome-reveal](https://react-awesome-reveal.morello.dev) adds reveal-on-scroll animations to React apps. It uses the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to detect when an element enters the viewport, and the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) to animate it.
+[awesome-reveal](https://awesome-reveal.morello.dev) adds reveal-on-scroll animations to React apps. It uses the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to detect when an element enters the viewport, and the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) to animate it.
 
 ## Table of contents
 
