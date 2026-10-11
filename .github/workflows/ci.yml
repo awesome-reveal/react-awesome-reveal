@@ -20,6 +20,10 @@ jobs:
   test:
     name: Test (React ${{ matrix.react }})
     runs-on: ubuntu-latest
+    # The image has the browsers and their system packages. Its tag must match the playwright version in pnpm-lock.yaml.
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.0-noble
+      options: --user 1001
     timeout-minutes: 10
     permissions:
       contents: read
@@ -54,9 +58,6 @@ jobs:
         if: ${{ matrix.deps }}
         run: pnpm --filter @awesome-reveal/react add -D ${{ matrix.deps }}
 
-      - name: Install browsers
-        run: pnpm exec playwright install --with-deps --only-shell chromium firefox webkit
-
       - name: Test
         run: pnpm test --coverage
 
@@ -70,16 +71,17 @@ jobs:
           if-no-files-found: ignore
 
       - name: Add coverage to the job summary
+        # The Playwright image has no jq.
         run: |
-          {
-            echo "### Coverage"
-            echo
-            echo "| Metric | Coverage | Covered |"
-            echo "| --- | ---: | ---: |"
-            jq -r '.total | to_entries[] | select(.key != "branchesTrue")
-              | "| \((.key[:1] | ascii_upcase) + .key[1:]) | \(.value.pct)% | \(.value.covered) / \(.value.total) |"' \
-              coverage/coverage-summary.json
-          } >> "$GITHUB_STEP_SUMMARY"
+          node --input-type=module >> "$GITHUB_STEP_SUMMARY" <<'EOF'
+          import { readFileSync } from "node:fs";
+          const { total } = JSON.parse(readFileSync("coverage/coverage-summary.json", "utf8"));
+          console.log("### Coverage\n\n| Metric | Coverage | Covered |\n| --- | ---: | ---: |");
+          for (const [key, { pct, covered, total: all }] of Object.entries(total)) {
+            if (key === "branchesTrue") continue;
+            console.log(`| ${key[0].toUpperCase()}${key.slice(1)} | ${pct}% | ${covered} / ${all} |`);
+          }
+          EOF
 
   package:
     name: Package
