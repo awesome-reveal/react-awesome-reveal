@@ -1,14 +1,33 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/v17.11.2/schemas/config.json",
+  "release-type": "node",
+  "include-component-in-tag": true,
+  "include-v-in-tag": false,
+  "tag-separator": "@",
+  "versioning": "prerelease",
+  "prerelease": true,
+  "prerelease-type": "next.0",
+  "last-release-sha": "6f8b131bd2037c43baabfc29ad85f0d5ed829c44",
   "packages": {
-    ".": {
-      "release-type": "node",
-      "include-component-in-tag": true,
-      "include-v-in-tag": false,
-      "tag-separator": "@",
-      "versioning": "prerelease",
-      "prerelease": true,
-      "prerelease-type": "next.0"
+    "packages/core": {
+      "component": "@awesome-reveal/core"
+    },
+    "packages/react": {
+      "component": "@awesome-reveal/react"
+    },
+    "packages/react-awesome-reveal": {
+      "component": "react-awesome-reveal"
     }
-  }
+  },
+  "plugins": [
+    {
+      "type": "node-workspace",
+      "merge": false
+    },
+    {
+      "type": "linked-versions",
+      "groupName": "awesome-reveal",
+      "components": ["@awesome-reveal/core", "@awesome-reveal/react"]
+    }
+  ]
 }
