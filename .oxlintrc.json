@@ -8,7 +8,8 @@
         "ignoreRestSiblings": true
       }
     ],
-    "directives/require-description": "error"
+    "directives/require-description": "error",
+    "unicorn/no-abusive-eslint-disable": "error"
   },
   "overrides": [
     {
