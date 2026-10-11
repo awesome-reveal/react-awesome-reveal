@@ -86,11 +86,24 @@ jobs:
       - name: Publish
         env:
           PATHS_RELEASED: ${{ needs.release-please.outputs.paths_released }}
+        # A prerelease goes to latest while the package has no stable version, so that a plain install gets it.
         run: |
-          tag=latest
+          latest=()
+          next=()
           for path in $(jq -r '.[]' <<<"$PATHS_RELEASED"); do
-            if [[ "$(jq -r .version "$path/package.json")" == *-* ]]; then
-              tag=next
+            name=$(jq -r .name "$path/package.json")
+            version=$(jq -r .version "$path/package.json")
+            # Only a missing package counts as "no stable version". Other errors stop the job,
+            # so that a registry outage cannot send a prerelease to latest.
+            if ! current=$(npm view "$name" dist-tags.latest 2>"$RUNNER_TEMP/npm-view.log"); then
+              grep -q E404 "$RUNNER_TEMP/npm-view.log" || { cat "$RUNNER_TEMP/npm-view.log"; exit 1; }
+              current=
+            fi
+            if [[ $version == *-* && -n $current && $current != *-* ]]; then
+              next+=(--filter "./$path")
+            else
+              latest+=(--filter "./$path")
             fi
           done
-          pnpm -r publish --no-git-checks --tag "$tag"
+          if ((${#latest[@]})); then pnpm "${latest[@]}" publish --no-git-checks --tag latest; fi
+          if ((${#next[@]})); then pnpm "${next[@]}" publish --no-git-checks --tag next; fi
