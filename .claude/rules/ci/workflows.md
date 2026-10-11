@@ -1,7 +1,6 @@
 ---
 paths:
   - ".github/workflows/**"
-  - ".github/dependabot.yml"
 ---
 
 # GitHub workflows
