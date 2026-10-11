@@ -10,7 +10,7 @@ description: Adds reveal-on-scroll animations to React components with @awesome-
 ## Choose the API
 
 - `Reveal` renders one element and animates it. Use `as` to choose the tag (default `div`). It passes the other props and `ref` to that element.
-- `useReveal(options)` animates your own element or component, with no wrapper. It returns `{ ref, style, revealed }`. Attach `ref` to the element, and merge `style` into its style.
+- `useReveal(options)` animates your own element or component, with no wrapper. It returns `{ ref, style, revealed }`. Attach `ref` to the element. Spread `style` last into its style, so that the hidden `opacity: 0` overrides your opacity until the reveal.
 
 ```tsx
 import { Reveal, useReveal } from "@awesome-reveal/react";
@@ -25,7 +25,7 @@ function Card() {
   return (
     <article
       ref={ref}
-      style={{ ...style, padding: 16 }}
+      style={{ padding: 16, ...style }}
       data-reveal={revealed ? undefined : "hidden"}
     >
       …

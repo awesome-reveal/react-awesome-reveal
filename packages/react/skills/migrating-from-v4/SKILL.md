@@ -22,11 +22,13 @@ import { Fade } from "react-awesome-reveal";
 <Fade direction="up" cascade damping={0.2} triggerOnce>
   …
 </Fade>;
+```
 
+```tsx
 // @awesome-reveal/react
 import { Reveal } from "@awesome-reveal/react";
 import { slide } from "@awesome-reveal/react/keyframes";
-<Reveal keyframes={slide({ distance: "100%" })} duration={1000} stagger={200}>
+<Reveal keyframes={slide({ distance: "100%", easing: "ease" })} duration={1000} stagger={200}>
   …
 </Reveal>;
 ```
@@ -35,47 +37,51 @@ import { slide } from "@awesome-reveal/react/keyframes";
 
 In v4, `left` and `right` name the side where the element starts, but `up` and `down` name the movement. `slide` `direction` always names the movement, so only `left` and `right` swap.
 
-| v4                             | @awesome-reveal/react                                                  |
-| ------------------------------ | ---------------------------------------------------------------------- |
-| `import Reveal from "…"`       | `import { Reveal } from "@awesome-reveal/react"`                       |
-| `<Reveal>` with no `keyframes` | `<Reveal keyframes={slide({ direction: "right", distance: "100%" })}>` |
-| `<Fade>`                       | `fade()`                                                               |
-| `<Fade direction="up">`        | `slide()`, or `slide({ distance: "100%" })` for the v4 distance        |
-| `<Fade direction="down">`      | `slide({ direction: "down" })`                                         |
-| `<Fade direction="left">`      | `slide({ direction: "right" })`                                        |
-| `<Fade direction="right">`     | `slide({ direction: "left" })`                                         |
-| `<Fade direction="left" big>`  | `slide({ direction: "right", distance: 2000 })`                        |
-| `<Fade direction="top-left">`  | `enter({ x: "-100%", y: "-100%" })`                                    |
-| `<Slide>`                      | `slide({ direction: "right", distance: "100%", opacity: 1 })`          |
-| `<Slide direction="up">`       | `slide({ distance: "100%", opacity: 1 })`                              |
-| `<Zoom>`                       | `scale({ from: 0.3 })`, a close match                                  |
-| `<Bounce>`                     | `scale({ from: 0.3, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" })`    |
-| `<Rotate>`                     | `enter({ rotate: -200 })`                                              |
-| `<Roll>`                       | `enter({ x: "-100%", rotate: -120 })`                                  |
+| v4                             | @awesome-reveal/react                                               |
+| ------------------------------ | ------------------------------------------------------------------- |
+| `import Reveal from "…"`       | `import { Reveal } from "@awesome-reveal/react"`                    |
+| `<Reveal>` with no `keyframes` | `slide({ direction: "right", distance: "100%" })`                   |
+| `<Fade>`                       | `fade()`                                                            |
+| `<Fade direction="up">`        | `slide()`, or `slide({ distance: "100%" })` for the v4 distance     |
+| `<Fade direction="down">`      | `slide({ direction: "down" })`                                      |
+| `<Fade direction="left">`      | `slide({ direction: "right" })`                                     |
+| `<Fade direction="right">`     | `slide({ direction: "left" })`                                      |
+| `<Fade direction="left" big>`  | `slide({ direction: "right", distance: 2000 })`                     |
+| `<Fade direction="top-left">`  | `enter({ x: "-100%", y: "-100%" })`                                 |
+| `<Slide>`                      | `slide({ direction: "right", distance: "100%", opacity: 1 })`       |
+| `<Slide direction="up">`       | `slide({ distance: "100%", opacity: 1 })`                           |
+| `<Zoom>`                       | `scale({ from: 0.3 })`, a close match                               |
+| `<Bounce>`                     | `scale({ from: 0.3, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" })` |
+| `<Rotate>`                     | `enter({ rotate: -200 })`                                           |
+| `<Roll>`                       | `enter({ x: "-100%", rotate: -120 })`                               |
 
 These have no replacement: exit animations (`reverse`), `Flip`, `JackInTheBox`, `Hinge`, `AttentionSeeker`, and the directional `Bounce`, `Zoom` and `Rotate` variants. To keep one, port its keyframes from Animate.css (see below).
 
 ## Props
 
-| v4                             | @awesome-reveal/react                                                                   |
-| ------------------------------ | --------------------------------------------------------------------------------------- |
-| `cascade` and `damping`        | `stagger`, in milliseconds: `duration * damping`. The v4 defaults give `stagger={500}`. |
-| `fraction`                     | `threshold`                                                                             |
-| `triggerOnce`                  | `once`. The default is `true` now. Set `once={false}` where v4 had no `triggerOnce`.    |
-| `duration` (default `1000`)    | `duration` (default `600`). Set `duration={1000}` to keep the v4 timing.                |
-| `childClassName`, `childStyle` | Style the children directly.                                                            |
-| `onVisibilityChange`           | `useReveal`, and its `revealed` value in an effect                                      |
-| Emotion `keyframes`            | `defineKeyframes` or a keyframes array                                                  |
+| v4                             | @awesome-reveal/react                                                                                                                                                                                                      |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `cascade` and `damping`        | `stagger`, in milliseconds: `duration * damping`. The v4 defaults give `stagger={500}`.                                                                                                                                    |
+| `fraction`                     | `threshold`                                                                                                                                                                                                                |
+| `triggerOnce`                  | `once`. The default is `true` now. Set `once={false}` where v4 had no `triggerOnce`.                                                                                                                                       |
+| `duration` (default `1000`)    | `duration` (default `600`). Set `duration={1000}` to keep the v4 duration.                                                                                                                                                 |
+| `ease` timing, with no prop    | The `easing` option of each factory, default `cubic-bezier(0.22, 1, 0.36, 1)`. Set `easing: "ease"` to keep the v4 motion.                                                                                                 |
+| `className`, `style`           | They apply to the one element that `Reveal` renders. v4 applied them to the `div` of each child. To keep that, put them on each child.                                                                                     |
+| `childClassName`, `childStyle` | Style the children directly.                                                                                                                                                                                               |
+| `onVisibilityChange`           | `useReveal` with `once: false`, and its `revealed` value in an effect. With the default `once: true`, `revealed` never goes back to `false`. v4 called the callback for each child, so use one `useReveal` for each child. |
+| Emotion `keyframes`            | `defineKeyframes` or a keyframes array                                                                                                                                                                                     |
 
 ## Port an Animate.css animation
 
 Copy the keyframes from the Animate.css source, and convert them to a keyframes array:
 
 1. Split grouped selectors such as `from, 20%, 40%` into one keyframe for each offset.
-2. Write each CSS keyframe as an object, with properties in camelCase.
-3. Write `from` as `offset: 0`, `to` as `offset: 1`, and `40%` as `offset: 0.4`.
-4. Write `animation-timing-function` as `easing`.
-5. Add `easing: "ease"` to each other keyframe except the last one. CSS eases these segments with `ease`, but Web Animations eases them linearly.
+2. Merge the keyframes that have the same offset into one keyframe. When two of them set the same property, keep the later value.
+3. Sort the keyframes by offset. `element.animate` throws a `TypeError` when an offset is smaller than the offset before it.
+4. Write each CSS keyframe as an object, with properties in camelCase.
+5. Write `from` as `offset: 0`, `to` as `offset: 1`, and `40%` as `offset: 0.4`.
+6. Write `animation-timing-function` as `easing`.
+7. Add `easing: "ease"` to each other keyframe except the last one. CSS eases these segments with `ease`, but Web Animations eases them linearly.
 
 ## Behavior changes
 
