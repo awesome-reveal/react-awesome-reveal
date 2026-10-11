@@ -1,13 +1,18 @@
 import { type ObserveOptions, observe } from "./observe.js";
 import { type PlayOptions, play } from "./play.js";
 
-export interface RevealOptions extends PlayOptions, ObserveOptions {}
+export interface RevealOptions extends PlayOptions, ObserveOptions {
+  /**
+   * Controls the reveal manually. When set, the viewport is not observed.
+   */
+  when?: boolean;
+}
 
 export interface RevealController {
   readonly revealed: boolean;
   /**
-   * Replaces the options. A change of `threshold`, `rootMargin` or `once` restarts the observer;
-   * the other options apply at the next reveal.
+   * Replaces the options. A change of `when` applies at once. A change of `threshold`,
+   * `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
    */
   update(options: RevealOptions): void;
   /**
@@ -29,7 +34,9 @@ export function reveal(
   element: Element & ElementCSSInlineStyle,
   options: RevealOptions = {},
 ): RevealController {
-  let current = options;
+  // A copy, so that a caller who mutates the options object still restarts the observer on update.
+  let current = { ...options };
+  let inView = false;
   let revealed = false;
   let destroyed = false;
   let cancel = () => {};
@@ -47,15 +54,24 @@ export function reveal(
     cancel = play(element, current);
   }
 
+  function set(next: boolean) {
+    if (next === revealed) return;
+    revealed = next;
+    if (next) show();
+    else hide();
+  }
+
   function connect() {
     disconnect();
     disconnect = () => {};
-    if (revealed && current.once !== false) return;
-    disconnect = observe(element, current, (inView) => {
-      if (destroyed || inView === revealed) return;
-      revealed = inView;
-      if (inView) show();
-      else hide();
+    // As in the adapters, the element shows `when ?? inView`.
+    if (current.when !== undefined) return set(current.when);
+    set(inView);
+    if (inView && current.once !== false) return;
+    disconnect = observe(element, current, (value) => {
+      if (destroyed) return;
+      inView = value;
+      set(value);
     });
   }
 
@@ -69,8 +85,9 @@ export function reveal(
     update(next) {
       if (destroyed) return;
       const previous = current;
-      current = next;
+      current = { ...next };
       if (
+        next.when !== previous.when ||
         next.threshold !== previous.threshold ||
         next.rootMargin !== previous.rootMargin ||
         next.once !== previous.once

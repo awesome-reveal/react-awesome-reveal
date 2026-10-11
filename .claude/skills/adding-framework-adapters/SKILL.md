@@ -21,8 +21,7 @@ Copy the steps into your task list, and mark each step when it is done.
 3. Add `src/keyframes.ts` with `export * from "@awesome-reveal/core/keyframes";`, and the `./keyframes` export.
 4. Write the API on core:
    - Use `reveal()` when the adapter owns an element and the framework does not render its style (directives, actions).
-   - Use `observe`, `play` and `hiddenStyle` when the framework renders the style, as the React adapter does.
-   - Add `when` in the adapter.
+   - Use `observe`, `play` and `hiddenStyle` when the framework renders the style, as the React adapter does. Show the element when `when ?? inView` is true, as `reveal()` does.
 5. Render `hiddenStyle` and `data-reveal="hidden"` in the server markup, so that the element does not show before hydration.
 6. Add the Vitest projects to `vitest.config.ts`: `<framework>:unit`, `<framework>:package`, and `<framework>:ssr` when the framework renders on a server.
    - Give the `sources` alias to `:unit` and `:ssr`, and only the `testUtils` alias to `:package`, because `:package` tests `dist`.
