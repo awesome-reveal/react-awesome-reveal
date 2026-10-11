@@ -1,6 +1,6 @@
 {
-  "packages/core": "1.0.0-next.0",
-  "packages/react": "1.0.0-next.0",
-  "packages/react-awesome-reveal": "5.0.0-next.0",
-  "packages/vue": "1.0.0-next.0"
+  "packages/core": "1.0.0-next.1",
+  "packages/react": "1.0.0-next.1",
+  "packages/react-awesome-reveal": "5.0.0-next.1",
+  "packages/vue": "1.0.0-next.1"
 }
