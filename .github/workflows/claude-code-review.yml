@@ -31,20 +31,12 @@ jobs:
           fetch-depth: 1
           persist-credentials: false
 
-      # plugin_marketplaces takes no git ref, so a local clone pins the marketplace.
-      - name: Fetch the plugin marketplace
-        env:
-          MARKETPLACE_SHA: 2301018b1f61073c501a8e7a4813ef48c239163b # v2.1.296
-        run: |
-          git init -q "$RUNNER_TEMP/claude-code"
-          git -C "$RUNNER_TEMP/claude-code" fetch -q --depth 1 https://github.com/anthropics/claude-code.git "$MARKETPLACE_SHA"
-          git -C "$RUNNER_TEMP/claude-code" checkout -q FETCH_HEAD
-
       - name: Run Claude Code Review
         uses: anthropics/claude-code-action@1d6de8cb0c237e7c15e9e1bdf973826ebae490cc # v1.0.248
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          plugin_marketplaces: ${{ runner.temp }}/claude-code
+          # Claude Code accepts the official marketplace only from this URL, and plugin_marketplaces takes no git ref.
+          plugin_marketplaces: https://github.com/anthropics/claude-code.git
           plugins: code-review@claude-code-plugins
           prompt: /code-review:code-review --comment ${{ github.repository }}/pull/${{ github.event.pull_request.number }}
           claude_args: --allowedTools "mcp__github_inline_comment__create_inline_comment"
