@@ -15,7 +15,7 @@ Reveal-on-scroll animations for many frameworks, built on IntersectionObserver a
 
 Use the Node version in `.nvmrc`. jsdom needs Node 22.22, 24.15 or later.
 
-- `pnpm exec playwright install chromium-headless-shell firefox webkit`: run once before the browser tests.
+- `pnpm exec playwright install --with-deps --only-shell chromium firefox webkit`: run once before the browser tests.
 - `pnpm test`: the unit, SSR and browser tests. Add `--coverage` to check the CI thresholds.
 - `pnpm vitest run --project core:browser`: one project.
 - `pnpm exec tsc -p packages/<package>/test`: type-check the tests. `pnpm build` type-checks only `src`.
