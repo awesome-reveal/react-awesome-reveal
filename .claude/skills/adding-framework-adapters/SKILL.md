@@ -9,6 +9,8 @@ Use `packages/react` as the model. Keep the option names and defaults of core, s
 
 Copy the steps into your task list, and mark each step when it is done.
 
+Keep the item of the adapter on the plan board, https://github.com/orgs/awesome-reveal/projects/1, in sync with the work. Set its Status to "In Progress" before step 1. Add the PR number to each checklist item that a PR covers, tick the item when the PR merges, and set "Done" when all items are ticked.
+
 1. Create `packages/<framework>` with `package.json`, `tsconfig.json`, `vite.config.ts`, `test/tsconfig.json` and the `test/setup` files. Copy them from `packages/react`, and change:
    - `name`, `description`, `keywords` and `repository.directory`.
    - The framework peer dependency and its dev dependencies.
