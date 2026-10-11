@@ -62,15 +62,15 @@ describe("enter", () => {
 describe("presets", () => {
   it.each<[string, RevealKeyframe[], RevealKeyframe[]]>([
     ["fade", fade({ easing: "linear" }), enter({ easing: "linear" })],
-    ["slide moves up 16px by default", slide(), enter({ y: 16 })],
-    ["slide down", slide({ direction: "down" }), enter({ y: -16 })],
-    ["slide left", slide({ direction: "left", distance: 24 }), enter({ x: 24 })],
+    ["slide moves up 24px by default", slide(), enter({ y: 24 })],
+    ["slide down", slide({ direction: "down" }), enter({ y: -24 })],
+    ["slide left", slide({ direction: "left", distance: 40 }), enter({ x: 40 })],
     [
       "slide right with a string distance",
       slide({ direction: "right", distance: "2rem" }),
       enter({ x: "calc(-1 * 2rem)" }),
     ],
-    ["slide without a fade", slide({ opacity: 1 }), enter({ y: 16, opacity: 1 })],
+    ["slide without a fade", slide({ opacity: 1 }), enter({ y: 24, opacity: 1 })],
     ["scale", scale(), enter({ scale: 0.95 })],
     ["scale from a value", scale({ from: 0.5 }), enter({ scale: 0.5 })],
     ["blur", blur(), enter({ blur: 8 })],

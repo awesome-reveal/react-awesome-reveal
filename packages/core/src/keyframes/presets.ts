@@ -13,7 +13,7 @@ export interface SlideOptions extends Pick<EnterOptions, "opacity" | "easing"> {
   direction?: "up" | "down" | "left" | "right";
   /**
    * Distance that the element moves. A number is in pixels.
-   * @default 16
+   * @default 24
    */
   distance?: number | string;
 }
@@ -23,7 +23,7 @@ function negate(distance: number | string): number | string {
 }
 
 export const slide: KeyframesFactory<SlideOptions> = (options = {}) => {
-  const { direction = "up", distance = 16, opacity, easing } = options;
+  const { direction = "up", distance = 24, opacity, easing } = options;
   // Moving up or left starts at a positive offset.
   const offset = direction === "up" || direction === "left" ? distance : negate(distance);
 

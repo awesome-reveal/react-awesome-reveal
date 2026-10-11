@@ -81,7 +81,7 @@ Each keyframes factory is a function. It takes its options, which you can leave 
 | Factory   | Effect                                     | Options                                                                                                               |
 | --------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
 | `fade()`  | Fades in.                                  | `easing`                                                                                                              |
-| `slide()` | Fades in and moves in a direction.         | `direction` (`"up"`, `"down"`, `"left"` or `"right"`, default `"up"`), `distance` (default `16`), `opacity`, `easing` |
+| `slide()` | Fades in and moves in a direction.         | `direction` (`"up"`, `"down"`, `"left"` or `"right"`, default `"up"`), `distance` (default `24`), `opacity`, `easing` |
 | `scale()` | Fades in and grows.                        | `from` (default `0.95`), `opacity`, `easing`                                                                          |
 | `blur()`  | Fades in and removes a blur.               | `amount` (default `8`), `opacity`, `easing`                                                                           |
 | `enter()` | Starts from any combination of the others. | `x`, `y`, `scale`, `rotate`, `blur`, `opacity`, `easing`                                                              |
@@ -325,7 +325,7 @@ Copy the keyframes from the [Animate.css source](https://github.com/animate-css/
 
 ### Behavior
 
-- A `<Reveal>` with no `keyframes` now plays `slide()`: it moves up 16px. v4 slid in from the left by 100%. The type check does not find these elements, so search the code for `<Reveal` with no `keyframes`.
+- A `<Reveal>` with no `keyframes` now plays `slide()`: it moves up 24px. v4 slid in from the left by 100%. The type check does not find these elements, so search the code for `<Reveal` with no `keyframes`.
 - `Reveal` renders one element (`as`, `div` by default) around all its children. v4 rendered one `div` for each child.
 - Children animate together. Use `stagger` to animate them one after the other.
 - Lists, fragments and text have no special handling. For lists, use `as="ul"` with `stagger`. For text, see [Text, one character at a time](#text-one-character-at-a-time).

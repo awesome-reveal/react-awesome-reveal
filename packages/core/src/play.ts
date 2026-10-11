@@ -32,7 +32,7 @@ export interface PlayOptions {
 
 // The output of slide(), inlined so that consumers who pass their own keyframes do not bundle it.
 export const defaultKeyframes: RevealKeyframe[] = [
-  { opacity: 0, easing: "cubic-bezier(0.22, 1, 0.36, 1)", transform: "translate(0px, 16px)" },
+  { opacity: 0, easing: "cubic-bezier(0.22, 1, 0.36, 1)", transform: "translate(0px, 24px)" },
   {},
 ];
 

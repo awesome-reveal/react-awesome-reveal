@@ -41,7 +41,7 @@ function Card() {
 | Factory   | Effect                                     | Options                                                                                             |
 | --------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------- |
 | `fade()`  | Fades in.                                  | `easing`                                                                                            |
-| `slide()` | Fades in and moves in a direction.         | `direction` (`"up"` default, `"down"`, `"left"`, `"right"`), `distance` (`16`), `opacity`, `easing` |
+| `slide()` | Fades in and moves in a direction.         | `direction` (`"up"` default, `"down"`, `"left"`, `"right"`), `distance` (`24`), `opacity`, `easing` |
 | `scale()` | Fades in and grows.                        | `from` (`0.95`), `opacity`, `easing`                                                                |
 | `blur()`  | Fades in and removes a blur.               | `amount` (`8`), `opacity`, `easing`                                                                 |
 | `enter()` | Starts from any combination of the others. | `x`, `y`, `scale`, `rotate`, `blur`, `opacity`, `easing`                                            |

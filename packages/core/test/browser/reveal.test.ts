@@ -65,7 +65,7 @@ describe("reveal", () => {
     await waitForReveal();
 
     const [first] = (element.getAnimations()[0]!.effect as KeyframeEffect).getKeyframes();
-    expect(first).toMatchObject({ opacity: "0", transform: "translate(0px, 16px)" });
+    expect(first).toMatchObject({ opacity: "0", transform: "translate(0px, 24px)" });
   });
 
   it("removes the hidden style and starts the animation in the same frame", async () => {

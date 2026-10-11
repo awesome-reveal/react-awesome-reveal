@@ -86,7 +86,7 @@ Copy the keyframes from the Animate.css source, and convert them to a keyframes 
 
 ## Behavior changes
 
-- A `<Reveal>` with no `keyframes` now plays `slide()`: it moves up 16px. v4 slid in from the left by 100%. The type check does not find these elements, so search the code for `<Reveal` with no `keyframes`.
+- A `<Reveal>` with no `keyframes` now plays `slide()`: it moves up 24px. v4 slid in from the left by 100%. The type check does not find these elements, so search the code for `<Reveal` with no `keyframes`.
 - `Reveal` renders one element (`as`, `div` by default) around all its children. v4 rendered one `div` for each child. Check the CSS that targets these wrappers.
 - v4 observed each child separately. One observer now watches the whole `Reveal`, and all children reveal together, also children below the fold. Split a long list into several `Reveal` elements, or use `useReveal` for each item.
 - Use `stagger` to animate the children one after the other.

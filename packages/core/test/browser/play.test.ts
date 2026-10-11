@@ -32,7 +32,7 @@ describe("play", () => {
   it("plays the default keyframes without keyframes", () => {
     play(element, { reducedMotion: "never" });
     const [first] = (element.getAnimations()[0]!.effect as KeyframeEffect).getKeyframes();
-    expect(first).toMatchObject({ opacity: "0", transform: "translate(0px, 16px)" });
+    expect(first).toMatchObject({ opacity: "0", transform: "translate(0px, 24px)" });
   });
 
   it("applies the first keyframe in the frame that starts it, also during the delay", () => {
