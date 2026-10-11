@@ -1,6 +1,6 @@
 {
   "name": "react-awesome-reveal",
-  "version": "4.3.1",
+  "version": "5.0.0-next.0",
   "description": "Reveal-on-scroll animations for React. This package re-exports @awesome-reveal/react.",
   "keywords": [
     "animation",

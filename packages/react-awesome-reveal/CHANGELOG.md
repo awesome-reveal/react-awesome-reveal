@@ -1,5 +1,23 @@
 # react-awesome-reveal
 
+## [5.0.0-next.0](https://github.com/awesome-reveal/awesome-reveal/compare/react-awesome-reveal@4.3.1...react-awesome-reveal@5.0.0-next.0) (2026-10-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* **react-awesome-reveal:** react-awesome-reveal 5 re-exports @awesome-reveal/react. It has no effect components and does not use Emotion. Read "Migrating from v4" in the README of @awesome-reveal/react.
+
+### Features
+
+* **react-awesome-reveal:** re-export @awesome-reveal/react ([d39d407](https://github.com/awesome-reveal/awesome-reveal/commit/d39d40720fc444f9bbc610a50f6d6f330a248fff))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @awesome-reveal/react bumped to 1.0.0-next.0
+
 ## 4.3.1
 
 ### Patch Changes
