@@ -14,7 +14,10 @@ Copy the steps into your task list, and mark each step when it is done.
    - The framework peer dependency and its dev dependencies.
    - The JSX options in `tsconfig.json`, such as `jsxImportSource`. Remove them if the framework has no JSX.
    - `"@awesome-reveal/core": "workspace:^"` stays. Keep `"version"` equal to the other packages.
-2. If the framework needs a compiler plugin, pass it to `defineLibConfig` in `vite.config.ts` as the second argument.
+2. If the framework needs a compiler plugin, pass it to `defineLibConfig` in `vite.config.ts` as the second argument. Check the declarations and the output format:
+   - `vite-plugin-dts` emits declarations for `.vue` files only when `@vue/language-core` is installed.
+   - `vite-plugin-dts` cannot emit declarations for `.svelte` files. Svelte libraries use `@sveltejs/package`.
+   - Solid libraries also publish uncompiled JSX under a `"solid"` export condition, so that the consumer compiles it for the DOM or the server.
 3. Add `src/keyframes.ts` with `export * from "@awesome-reveal/core/keyframes";`, and the `./keyframes` export.
 4. Write the API on core:
    - Use `reveal()` when the adapter owns an element and the framework does not render its style (directives, actions).
