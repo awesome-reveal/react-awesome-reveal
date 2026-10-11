@@ -16,7 +16,7 @@ export default defineLibConfig(
         this.emitFile({
           type: "asset",
           fileName: "Reveal.astro",
-          source: await readFile("src/Reveal.astro", "utf8"),
+          source: await readFile(new URL("src/Reveal.astro", import.meta.url), "utf8"),
         });
       },
     },
