@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-next.2](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/core@1.0.0-next.1...@awesome-reveal/core@1.0.0-next.2) (2026-10-11)
+
+
+### Features
+
+* **core:** add a consumer skill for plain DOM code ([#265](https://github.com/awesome-reveal/awesome-reveal/issues/265)) ([a53dad6](https://github.com/awesome-reveal/awesome-reveal/commit/a53dad66585cbd94bfa090218cb727d0b101a5ad))
+
 ## [1.0.0-next.1](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/core@1.0.0-next.0...@awesome-reveal/core@1.0.0-next.1) (2026-10-11)
 
 
