@@ -77,7 +77,7 @@ describe("presets", () => {
 
 describe("defineKeyframes", () => {
   const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
-    keyframe: (t) => ({ opacity: t, transform: `rotate(${(1 - t) * turns * 360}deg)` }),
+    keyframe: (t, u) => ({ opacity: t, transform: `rotate(${u * turns * 360}deg)` }),
     steps: 4,
   }));
 
@@ -103,6 +103,20 @@ describe("defineKeyframes", () => {
     }));
 
     expect(eased()).toEqual([{ opacity: 0 }, { opacity: 0.25 }, { opacity: 1 }]);
+  });
+
+  it("passes the remaining eased progress as the second argument", () => {
+    const remaining = defineKeyframes(() => ({
+      keyframe: (t, u) => ({ opacity: t + u, offset: u }),
+      easing: (t) => t * t,
+      steps: 2,
+    }));
+
+    expect(remaining()).toEqual([
+      { opacity: 1, offset: 1 },
+      { opacity: 1, offset: 0.75 },
+      { opacity: 1, offset: 0 },
+    ]);
   });
 
   it("takes 30 steps by default", () => {

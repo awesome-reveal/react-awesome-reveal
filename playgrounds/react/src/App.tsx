@@ -5,7 +5,7 @@ import { blur, defineKeyframes, enter, fade, scale, slide } from "@awesome-revea
 import { Section } from "./components/Section";
 
 const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
-  keyframe: (t) => ({ opacity: t, transform: `rotate(${(1 - t) * turns * 360}deg) scale(${t})` }),
+  keyframe: (t, u) => ({ opacity: t, transform: `rotate(${u * turns * 360}deg) scale(${t})` }),
   easing: (t) => 1 - (1 - t) ** 3,
 }));
 

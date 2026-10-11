@@ -55,9 +55,9 @@ For a custom animation, use `defineKeyframes` or a keyframes array:
 ```tsx
 import { defineKeyframes, type KeyframesFactory } from "@awesome-reveal/react/keyframes";
 
-// keyframe(t) gets the progress from 0 to 1. At t = 1, return the resting style.
+// keyframe(t, u) gets the progress t from 0 to 1, and u = 1 - t. At t = 1, return the resting style.
 const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
-  keyframe: (t) => ({ opacity: t, transform: `rotate(${(1 - t) * turns * 360}deg)` }),
+  keyframe: (t, u) => ({ opacity: t, transform: `rotate(${u * turns * 360}deg)` }),
 }));
 
 // The last keyframe must be the resting style: the animation does not stay applied.

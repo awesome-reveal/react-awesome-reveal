@@ -100,13 +100,13 @@ import { enter } from "react-awesome-reveal/keyframes";
 
 ### Custom keyframes with `defineKeyframes`
 
-`defineKeyframes` builds keyframes from a function of the animation progress. You return a `keyframe(t)` function, where `t` is the progress from 0 to 1. The library samples the function into keyframes:
+`defineKeyframes` builds keyframes from a function of the animation progress. You return a `keyframe(t, u)` function, where `t` is the progress from 0 to 1 and `u` is `1 - t`. The library samples the function into keyframes:
 
 ```jsx
 import { defineKeyframes } from "react-awesome-reveal/keyframes";
 
 const spin = defineKeyframes(({ turns = 1 }) => ({
-  keyframe: (t) => ({ opacity: t, transform: `rotate(${(1 - t) * turns * 360}deg)` }),
+  keyframe: (t, u) => ({ opacity: t, transform: `rotate(${u * turns * 360}deg)` }),
   easing: (t) => 1 - (1 - t) ** 3, // optional, any JavaScript easing function
   steps: 30, // optional, the number of samples
 }));

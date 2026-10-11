@@ -3,9 +3,9 @@ import type { KeyframesFactory, RevealKeyframe } from "./types.js";
 export interface KeyframesDefinition {
   /**
    * Returns the keyframe at progress `t`, from 0 to 1, after easing.
-   * At `t = 1`, return the element's resting style.
+   * `u` is the remaining progress, `1 - t`. At `t = 1`, return the element's resting style.
    */
-  keyframe: (t: number) => RevealKeyframe;
+  keyframe: (t: number, u: number) => RevealKeyframe;
   /**
    * Maps linear progress to eased progress, for example a spring or an elastic curve.
    * @default (t) => t
@@ -27,6 +27,9 @@ export function defineKeyframes<Options extends object = Record<string, never>>(
   return (options) => {
     const { keyframe, easing = (t) => t, steps = 30 } = define(options ?? {});
 
-    return Array.from({ length: steps + 1 }, (_, index) => keyframe(easing(index / steps)));
+    return Array.from({ length: steps + 1 }, (_, index) => {
+      const t = easing(index / steps);
+      return keyframe(t, 1 - t);
+    });
   };
 }
