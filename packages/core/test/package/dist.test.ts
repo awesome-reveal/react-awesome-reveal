@@ -2,12 +2,16 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 
+import { describeSkills } from "@awesome-reveal/test-utils/skills";
+
 const root = new URL("../../", import.meta.url);
 const dist = new URL("dist/", root);
 const pkg = JSON.parse(readFileSync(new URL("package.json", root), "utf8"));
 const distFiles = readdirSync(dist, { recursive: true, encoding: "utf8" });
 const jsFiles = distFiles.filter((file) => /\.(c|m)?js$/.test(file)).sort();
 const { resolve } = createRequire(import.meta.url);
+
+const factories = ["blur", "enter", "fade", "pop", "scale", "slide", "spring"];
 
 // Resolves through the package "exports" map, as consumers do.
 function load(subpath: string) {
@@ -61,19 +65,17 @@ describe("dist", () => {
   });
 
   it("exposes the public API of ./keyframes", async () => {
-    expect(Object.keys(await load("./keyframes")).sort()).toEqual([
-      "blur",
-      "defineKeyframes",
-      "enter",
-      "fade",
-      "pop",
-      "scale",
-      "slide",
-      "spring",
-    ]);
+    expect(Object.keys(await load("./keyframes")).sort()).toEqual(
+      [...factories, "defineKeyframes"].sort(),
+    );
   });
 
   it("exports only the subpaths above and package.json", () => {
     expect(Object.keys(pkg.exports)).toEqual([".", "./keyframes", "./package.json"]);
   });
+});
+
+describeSkills(root, {
+  keyframes: "@awesome-reveal/core/keyframes",
+  factories,
 });

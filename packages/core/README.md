@@ -62,7 +62,7 @@ The keyframes do not touch the DOM, so you can create them on the server. Each a
 
 Hides the element, and plays the keyframes when the element enters the viewport. It returns a controller:
 
-- `revealed`: `true` after the reveal.
+- `revealed`: `true` while the element is revealed.
 - `update(options)`: replaces the options. A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
 - `destroy()`: stops the observation and cancels the animation.
 
