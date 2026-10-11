@@ -27,6 +27,26 @@ describe("observe", () => {
     await expect.poll(() => onChange.mock.calls).toEqual([[true]]);
   });
 
+  it("ignores entries that the observer queued before the stop", () => {
+    let notify: IntersectionObserverCallback | undefined;
+    vi.stubGlobal(
+      "IntersectionObserver",
+      class {
+        constructor(callback: IntersectionObserverCallback) {
+          notify = callback;
+        }
+        observe() {}
+        disconnect() {}
+      },
+    );
+    const onChange = vi.fn();
+    observe(element, {}, onChange)();
+
+    const entry = { isIntersecting: true, intersectionRatio: 1 } as IntersectionObserverEntry;
+    notify!([entry], {} as IntersectionObserver);
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
   it("stops after the first entry with once", async () => {
     const onChange = vi.fn();
     stop = observe(element, {}, onChange);
