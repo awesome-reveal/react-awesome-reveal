@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and ideas
+    url: https://github.com/awesome-reveal/awesome-reveal/discussions
+    about: Ask a question or suggest a feature in Discussions.
+  - name: Documentation
+    url: https://awesome-reveal.morello.dev
+    about: Read the guides and the API reference.

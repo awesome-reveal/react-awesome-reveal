@@ -34,7 +34,7 @@ Copy the steps into your task list, and mark each step when it is done.
 10. Add `playgrounds/<framework>`, with the sections of `playgrounds/react`.
 11. Add the package to `release-please-config.json`, with `"component"` set to the package name, and to `linked-versions`. Without `"component"`, release-please drops the npm scope from the tags. Add its path to `.release-please-manifest.json`, with the current version of core. Before the release PR merges, do "Publish a new package" in the `releasing-packages` skill.
 12. If the peer range covers an older major version of the framework, add it to the `framework` matrix in `.github/workflows/ci.yml`.
-13. Add the package to the package tables in the root `README.md` and in `packages/core/README.md`.
+13. Add the package to the package tables in the root `README.md` and in `packages/core/README.md`, and to the `package` dropdown in `.github/ISSUE_TEMPLATE/bug_report.yml`.
 14. Add `.claude/rules/<framework>/adapter.md` for the gotchas of the framework, with `paths: ["packages/<framework>/**"]`.
 15. Run the checks:
     - `pnpm test --coverage`
