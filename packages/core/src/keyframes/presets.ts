@@ -13,7 +13,7 @@ export interface SlideOptions extends Pick<EnterOptions, "opacity" | "easing"> {
   direction?: "up" | "down" | "left" | "right";
   /**
    * Distance that the element moves. A number is in pixels.
-   * @default 16
+   * @default 24
    */
   distance?: number | string;
 }
@@ -23,7 +23,7 @@ function negate(distance: number | string): number | string {
 }
 
 export const slide: KeyframesFactory<SlideOptions> = (options = {}) => {
-  const { direction = "up", distance = 16, opacity, easing } = options;
+  const { direction = "up", distance = 24, opacity, easing } = options;
   // Moving up or left starts at a positive offset.
   const offset = direction === "up" || direction === "left" ? distance : negate(distance);
 
@@ -57,3 +57,20 @@ export interface BlurOptions extends Pick<EnterOptions, "opacity" | "easing"> {
  */
 export const blur: KeyframesFactory<BlurOptions> = ({ amount = 8, opacity, easing } = {}) =>
   enter({ blur: amount, opacity, easing });
+
+export interface PopOptions extends Pick<EnterOptions, "opacity" | "easing"> {
+  /**
+   * Scale at the start of the animation.
+   * @default 0.8
+   */
+  from?: number;
+}
+
+/**
+ * With the default easing, grows past its resting size, then settles back.
+ */
+export const pop: KeyframesFactory<PopOptions> = ({
+  from = 0.8,
+  opacity,
+  easing = "cubic-bezier(0.34, 1.56, 0.64, 1)",
+} = {}) => enter({ scale: from, opacity, easing });

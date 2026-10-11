@@ -50,12 +50,13 @@ React 18 or later is necessary.
 
 ```jsx
 import { Reveal } from "react-awesome-reveal";
-import { slide } from "react-awesome-reveal/keyframes";
 
-<Reveal keyframes={slide()}>
+<Reveal>
   <p>I gently appear as I enter the viewport</p>
 </Reveal>;
 ```
+
+With no `keyframes`, the element fades in and moves up, as with `slide()`. To choose another animation, see [Keyframes](#keyframes).
 
 ## Entry points
 
@@ -80,15 +81,17 @@ Each keyframes factory is a function. It takes its options, which you can leave 
 | Factory   | Effect                                     | Options                                                                                                               |
 | --------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
 | `fade()`  | Fades in.                                  | `easing`                                                                                                              |
-| `slide()` | Fades in and moves in a direction.         | `direction` (`"up"`, `"down"`, `"left"` or `"right"`, default `"up"`), `distance` (default `16`), `opacity`, `easing` |
+| `slide()` | Fades in and moves in a direction.         | `direction` (`"up"`, `"down"`, `"left"` or `"right"`, default `"up"`), `distance` (default `24`), `opacity`, `easing` |
 | `scale()` | Fades in and grows.                        | `from` (default `0.95`), `opacity`, `easing`                                                                          |
 | `blur()`  | Fades in and removes a blur.               | `amount` (default `8`), `opacity`, `easing`                                                                           |
+| `pop()`   | Fades in, grows past its size and settles. | `from` (default `0.8`), `opacity`, `easing`                                                                           |
 | `enter()` | Starts from any combination of the others. | `x`, `y`, `scale`, `rotate`, `blur`, `opacity`, `easing`                                                              |
 
 - `direction` is the direction in which the element moves. `"up"` starts below the resting position.
 - A number for `distance`, `amount`, `x`, `y` or `blur` is in pixels. A number for `rotate` is in degrees. A string can be any CSS length or angle.
 - `opacity` is the start opacity. It is `0` by default. Set it to `1` for movement with no fade.
-- The default `easing` is `"cubic-bezier(0.22, 1, 0.36, 1)"`. An easing with values out of the 0–1 range overshoots: `scale({ from: 0.5, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" })`.
+- The default `easing` is `"cubic-bezier(0.22, 1, 0.36, 1)"`. An easing with values out of the 0–1 range overshoots, as `pop()` does.
+- `spring()` returns an easing that follows a spring, for the `easing` option of any factory: `slide({ easing: spring({ bounce: 0.5 }) })`. `bounce` (default `0.3`, from `0` to `0.8`) sets the overshoot. It uses CSS `linear()`. Safari before 17.2 gets the default easing. If you call `spring()` on the server, that Safari shows the element with no animation.
 - `blur()` animates `filter`. Chromium and Safari composite it, but other engines repaint it on each frame. Use it on small and medium elements.
 
 ```jsx
@@ -186,17 +189,17 @@ Option changes apply to the next reveal. They do not replay an animation that al
 
 `Reveal` and `useReveal` accept the same options:
 
-| Option          | Description                                                                                                               | Default  |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------- | -------- |
-| `keyframes`     | The animation. Required.                                                                                                  | –        |
-| `duration`      | Animation duration, in milliseconds.                                                                                      | `600`    |
-| `delay`         | Delay before the animation starts, in milliseconds.                                                                       | `0`      |
-| `stagger`       | Animates the element children instead of the element, each one this many milliseconds after the previous one.             | –        |
-| `threshold`     | Fraction of the element, between 0 and 1, that must be visible to reveal it.                                              | `0`      |
-| `rootMargin`    | Grows or shrinks the viewport area that reveals the element, as a CSS margin in `px` or `%`.                              | `"0px"`  |
-| `once`          | Reveals the element only the first time. When `false`, the element hides again when it leaves the viewport.               | `true`   |
-| `when`          | Controls the reveal manually. When set, the viewport is not observed.                                                     | –        |
-| `reducedMotion` | `"user"` skips the animation when the user prefers reduced motion. `"always"` always skips it. `"never"` always plays it. | `"user"` |
+| Option          | Description                                                                                                               | Default   |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------- | --------- |
+| `keyframes`     | The animation.                                                                                                            | `slide()` |
+| `duration`      | Animation duration, in milliseconds.                                                                                      | `600`     |
+| `delay`         | Delay before the animation starts, in milliseconds.                                                                       | `0`       |
+| `stagger`       | Animates the element children instead of the element, each one this many milliseconds after the previous one.             | –         |
+| `threshold`     | Fraction of the element, between 0 and 1, that must be visible to reveal it.                                              | `0`       |
+| `rootMargin`    | Grows or shrinks the viewport area that reveals the element, as a CSS margin in `px` or `%`.                              | `"0px"`   |
+| `once`          | Reveals the element only the first time. When `false`, the element hides again when it leaves the viewport.               | `true`    |
+| `when`          | Controls the reveal manually. When set, the viewport is not observed.                                                     | –         |
+| `reducedMotion` | `"user"` skips the animation when the user prefers reduced motion. `"always"` always skips it. `"never"` always plays it. | `"user"`  |
 
 ## Recipes
 
@@ -277,7 +280,7 @@ v5 has no effect components. Use `Reveal` with a keyframes factory. v4 `directio
 | v4                             | v5                                                                                                   |
 | ------------------------------ | ---------------------------------------------------------------------------------------------------- |
 | `import Reveal from "…"`       | `import { Reveal } from "…"`                                                                         |
-| `<Reveal>` with no `keyframes` | `<Reveal keyframes={slide({ direction: "right", distance: "100%" })}>`. `keyframes` is now required. |
+| `<Reveal>` with no `keyframes` | `<Reveal keyframes={slide({ direction: "right", distance: "100%" })}>`. The v5 default is `slide()`. |
 | `<Fade>`                       | `fade()`                                                                                             |
 | `<Fade direction="up">`        | `slide()`, or `slide({ distance: "100%" })` for the v4 distance                                      |
 | `<Fade direction="down">`      | `slide({ direction: "down" })`                                                                       |
@@ -288,14 +291,15 @@ v5 has no effect components. Use `Reveal` with a keyframes factory. v4 `directio
 | `<Slide>`                      | `slide({ direction: "right", distance: "100%", opacity: 1 })`                                        |
 | `<Slide direction="up">`       | `slide({ distance: "100%", opacity: 1 })`                                                            |
 | `<Zoom>`                       | `scale({ from: 0.3 })`, a close match                                                                |
-| `<Bounce>`                     | `scale({ from: 0.3, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" })`, a close match                   |
+| `<Bounce>`                     | `pop({ from: 0.3 })`, or `scale({ from: 0.3, easing: spring({ bounce: 0.5 }) })` for more bounces    |
+| `<JackInTheBox>`               | `pop({ from: 0.1 })`, with no rotation                                                               |
 | `<Rotate>`                     | `enter({ rotate: -200 })`                                                                            |
 | `<Roll>`                       | `enter({ x: "-100%", rotate: -120 })`                                                                |
 
 These are removed:
 
 - exit animations (`reverse`)
-- `Flip`, `JackInTheBox`, `Hinge` and `AttentionSeeker`
+- `Flip`, `Hinge` and `AttentionSeeker`
 - the directional `Bounce`, `Zoom` and `Rotate` variants
 
 To keep one, port its keyframes from Animate.css (see [Port an Animate.css animation](#port-an-animatecss-animation)).
@@ -324,6 +328,7 @@ Copy the keyframes from the [Animate.css source](https://github.com/animate-css/
 
 ### Behavior
 
+- A `<Reveal>` with no `keyframes` now plays `slide()`: it moves up 24px. v4 slid in from the left by 100%. The type check does not find these elements, so search the code for `<Reveal` with no `keyframes`.
 - `Reveal` renders one element (`as`, `div` by default) around all its children. v4 rendered one `div` for each child.
 - Children animate together. Use `stagger` to animate them one after the other.
 - Lists, fragments and text have no special handling. For lists, use `as="ul"` with `stagger`. For text, see [Text, one character at a time](#text-one-character-at-a-time).

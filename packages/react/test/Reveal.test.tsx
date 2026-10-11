@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { createRef, version } from "react";
 
-import { fade } from "../src/keyframes";
+import { fade, slide } from "../src/keyframes";
 import { Reveal } from "../src/Reveal";
 import { animations } from "./mocks/animate";
 import { intersect } from "./mocks/intersection-observer";
@@ -33,6 +33,13 @@ describe(`Reveal (React ${version})`, () => {
     expect(element.style.opacity).toBe("");
     expect(element).not.toHaveAttribute("data-reveal");
     expect(animations[0]?.element).toBe(element);
+  });
+
+  it("plays the default keyframes without keyframes", () => {
+    const { container } = render(<Reveal>child</Reveal>);
+    intersect(container.firstElementChild!, true);
+
+    expect(animations[0]?.keyframes).toEqual(slide());
   });
 
   it("renders the tag given by `as`", () => {

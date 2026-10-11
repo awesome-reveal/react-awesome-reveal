@@ -27,7 +27,7 @@ export const hiddenStyle = { opacity: "0" } as const;
  */
 export function reveal(
   element: Element & ElementCSSInlineStyle,
-  options: RevealOptions,
+  options: RevealOptions = {},
 ): RevealController {
   let current = options;
   let revealed = false;

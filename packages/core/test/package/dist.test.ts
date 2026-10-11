@@ -26,6 +26,7 @@ describe("dist", () => {
       "keyframes/enter.js",
       "keyframes/index.js",
       "keyframes/presets.js",
+      "keyframes/spring.js",
       "observe.js",
       "play.js",
       "reveal.js",
@@ -65,8 +66,10 @@ describe("dist", () => {
       "defineKeyframes",
       "enter",
       "fade",
+      "pop",
       "scale",
       "slide",
+      "spring",
     ]);
   });
 

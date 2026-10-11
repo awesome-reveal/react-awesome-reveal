@@ -57,7 +57,10 @@ describe("dist", () => {
 
   it.each([
     [".", ["Reveal", "useReveal"]],
-    ["./keyframes", ["blur", "defineKeyframes", "enter", "fade", "scale", "slide"]],
+    [
+      "./keyframes",
+      ["blur", "defineKeyframes", "enter", "fade", "pop", "scale", "slide", "spring"],
+    ],
   ])("exposes the public API of %s", async (subpath, names) => {
     expect(Object.keys(await load(subpath)).sort()).toEqual(names);
   });
@@ -121,16 +124,16 @@ describe("skills", () => {
       const fences = [...text.matchAll(/^```tsx?\r?\n([\s\S]*?)^```$/gm)]
         .map(([, code]) => code!)
         .filter((code) => !/from ["']react-awesome-reveal["']/.test(code));
-      const calls = [...text.matchAll(/`((?:blur|enter|fade|scale|slide)\([^`]*\))`/g)].map(
-        ([, call]) => call!,
-      );
+      const calls = [
+        ...text.matchAll(/`((?:blur|enter|fade|pop|scale|slide|spring)\([^`]*\))`/g),
+      ].map(([, call]) => call!);
       fences.forEach((code, index) =>
         files.set(fileURLToPath(new URL(`${skill}/example-${index + 1}.tsx`, skillsDir)), code),
       );
       files.set(
         fileURLToPath(new URL(`${skill}/factory-calls.ts`, skillsDir)),
-        `import { blur, enter, fade, scale, slide } from "@awesome-reveal/react/keyframes";\n` +
-          `export const calls = [blur, enter, fade, scale, slide, ${calls.join(", ")}];\n`,
+        `import { blur, enter, fade, pop, scale, slide, spring } from "@awesome-reveal/react/keyframes";\n` +
+          `export const calls = [blur, enter, fade, pop, scale, slide, spring, ${calls.join(", ")}];\n`,
       );
     }
 
