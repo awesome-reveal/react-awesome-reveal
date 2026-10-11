@@ -86,11 +86,19 @@ jobs:
       - name: Publish
         env:
           PATHS_RELEASED: ${{ needs.release-please.outputs.paths_released }}
+        # A prerelease goes to latest while the package has no stable version, so that a plain install gets it.
         run: |
-          tag=latest
+          latest=()
+          next=()
           for path in $(jq -r '.[]' <<<"$PATHS_RELEASED"); do
-            if [[ "$(jq -r .version "$path/package.json")" == *-* ]]; then
-              tag=next
+            name=$(jq -r .name "$path/package.json")
+            version=$(jq -r .version "$path/package.json")
+            current=$(npm view "$name" dist-tags.latest 2>/dev/null || true)
+            if [[ $version == *-* && -n $current && $current != *-* ]]; then
+              next+=(--filter "./$path")
+            else
+              latest+=(--filter "./$path")
             fi
           done
-          pnpm -r publish --no-git-checks --tag "$tag"
+          if ((${#latest[@]})); then pnpm "${latest[@]}" publish --no-git-checks --tag latest; fi
+          if ((${#next[@]})); then pnpm "${next[@]}" publish --no-git-checks --tag next; fi

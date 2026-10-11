@@ -5,14 +5,14 @@ description: Releases the awesome-reveal packages with release-please and npm tr
 
 # Release the packages
 
-A push to `main` or `next` runs `.github/workflows/release.yml`. The `release-please` job opens or updates the release PR, "chore: release <branch>". When the release PR merges, the job creates the tags and the GitHub releases, and the `publish` job publishes to npm with OIDC. The `publish` job uses one dist-tag for all packages: `next` when any released version is a prerelease, and `latest` when none is.
+A push to `main` or `next` runs `.github/workflows/release.yml`. The `release-please` job opens or updates the release PR, "chore: release <branch>". When the release PR merges, the job creates the tags and the GitHub releases, and the `publish` job publishes to npm with OIDC. The `publish` job gives each released package the `latest` dist-tag. A prerelease gets `next` instead when the package already has a stable version on `latest`. So a package with no stable version gets its prereleases on `latest`, and a plain install gets them.
 
 Do not run `npm publish`, `npm trust` or `npm dist-tag` yourself. The agent shell cannot do the npm web 2FA, so these commands fail with `EOTP`. Give the command to the user, with `--otp=<code>`, to run as `! <command>`.
 
 ## Merge a release PR
 
 1. Read the PR diff. Check the versions in `.release-please-manifest.json` and the new `CHANGELOG.md` entries.
-2. Make sure that each package in the workspace exists on npm and has a trusted publisher: `npm view <package> version` and `npm trust list <package>`. `pnpm -r publish` publishes every package whose version is not on npm, so one missing publisher fails the job. Do "Publish a new package" first if necessary.
+2. Make sure that each package in the workspace exists on npm and has a trusted publisher: `npm view <package> version` and `npm trust list <package>`. One missing publisher fails the job. Do "Publish a new package" first if necessary.
 3. Squash-merge the PR. It has no CI runs, because `GITHUB_TOKEN` opened it.
 4. Watch the run: `gh run watch <run-id> --exit-status`. Find the ID with `gh run list --workflow release.yml --branch <branch> --limit 1`.
 5. Check the result: `npm view <package> dist-tags`.
@@ -49,8 +49,8 @@ Check the versions, the changelog entries, and that the `workspace:` ranges stay
 
 npm can add a trusted publisher only to a package that exists.
 
-1. Make a placeholder in the scratchpad: a `package.json` with the package name, version `0.0.1`, `license`, `repository` (with `directory`) and `"publishConfig": { "access": "public" }`, and a short README.
-2. Ask the user to publish it: `npm publish --otp=<code>` in that directory. The placeholder keeps the `latest` dist-tag. Without it, npm points `latest` at the first prerelease.
+1. Make a placeholder in the scratchpad: a `package.json` with the package name, version `0.0.0-placeholder`, `license`, `repository` (with `directory`) and `"publishConfig": { "access": "public" }`, and a short README.
+2. Ask the user to publish it: `npm publish --tag placeholder --otp=<code>` in that directory. npm refuses a prerelease without `--tag`. Use a prerelease placeholder: a stable placeholder keeps `latest`, so `pnpm add <package>` installs the empty placeholder.
 3. Just before you merge the release PR, ask the user to add the trusted publisher. This needs npm 11.15 or later:
 
    ```sh
@@ -59,6 +59,7 @@ npm can add a trusted publisher only to a package that exists.
    ```
 
 4. Merge the release PR within 48 hours. A new trusted publisher expires 48 hours after you create it, unless a publish uses it first. To replace an expired one, revoke it with `npm trust revoke --id <id> <package>`, then create it again.
+5. After the first release, ask the user to remove the placeholder: `npm dist-tag rm <package> placeholder --otp=<code>`, then `npm unpublish <package>@0.0.0-placeholder --otp=<code>`. After 72 hours, npm permits the unpublish only when no other package depends on the package, it had fewer than 300 downloads in the last week, and it has one maintainer.
 
 The GitHub environment `npm` allows only the `main` and `next` branches. Add a branch there before you release from it.
 
@@ -67,7 +68,7 @@ The GitHub environment `npm` allows only the `main` and `next` branches. Add a b
 1. Remove `versioning`, `prerelease` and `prerelease-type` from `release-please-config.json`.
 2. In the same PR, set `release-as` on each package to its stable version. A `Release-As:` footer does not work here, because the commit changes no package files.
 3. Make sure that these packages have a `feat:`, `fix:` or `Release-As:` commit since the last release:
-   - `react-awesome-reveal`. Without one, `node-workspace` gives it a prerelease version, and all packages then go to `next`.
+   - `react-awesome-reveal`. Without one, `node-workspace` gives it a prerelease version, and it goes to `next`.
    - core or one adapter. `linked-versions` then releases the full group.
 4. Do a dry run, and check that no version has a prerelease suffix.
 5. Merge the release PR. The `publish` job uses `latest`.
