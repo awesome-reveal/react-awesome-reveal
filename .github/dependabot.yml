@@ -9,3 +9,22 @@ updates:
     groups:
       github-actions:
         patterns: ["*"]
+  - package-ecosystem: npm
+    directory: /
+    target-branch: next
+    schedule:
+      interval: weekly
+    # A dependency joins the first group that matches it.
+    groups:
+      react:
+        patterns:
+          - react
+          - react-dom
+          - "@types/react"
+          - "@types/react-dom"
+          - "@testing-library/react"
+          - "@vitejs/plugin-react"
+      vitest:
+        patterns:
+          - vitest
+          - "@vitest/*"

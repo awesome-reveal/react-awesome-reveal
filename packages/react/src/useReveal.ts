@@ -39,6 +39,7 @@ export function useReveal<T extends Element = HTMLElement>(
   useEffect(() => {
     if (!node || when !== undefined || settled) return;
     return observe(node, options, setInView);
+    // oxlint-disable-next-line react/exhaustive-deps -- observe reads only threshold, rootMargin and once from options.
   }, [node, when, settled, threshold, rootMargin, once]);
 
   // Starts in the commit that removes the hidden style. Option changes wait for the next reveal.

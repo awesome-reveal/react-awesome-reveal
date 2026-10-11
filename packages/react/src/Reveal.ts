@@ -40,6 +40,7 @@ function useMergedRef<T>(own: RefCallback<T>, user: Ref<T> | undefined): RefCall
           };
       } else if (user) {
         // The cast also compiles against React 18 types, where RefObject.current is read-only.
+        // oxlint-disable-next-line react/immutability -- a ref callback can write the user's ref object.
         (user as { current: T | null }).current = node;
       }
       return undefined;
