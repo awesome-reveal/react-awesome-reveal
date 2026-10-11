@@ -76,12 +76,13 @@ These have no replacement: exit animations (`reverse`), `Flip`, `JackInTheBox`, 
 Copy the keyframes from the Animate.css source, and convert them to a keyframes array:
 
 1. Split grouped selectors such as `from, 20%, 40%` into one keyframe for each offset.
-2. Merge the keyframes that have the same offset into one keyframe. When two of them set the same property, keep the later value.
-3. Sort the keyframes by offset. `element.animate` throws a `TypeError` when an offset is smaller than the offset before it.
-4. Write each CSS keyframe as an object, with properties in camelCase.
-5. Write `from` as `offset: 0`, `to` as `offset: 1`, and `40%` as `offset: 0.4`.
-6. Write `animation-timing-function` as `easing`.
-7. Add `easing: "ease"` to each other keyframe except the last one. CSS eases these segments with `ease`, but Web Animations eases them linearly.
+2. Give each keyframe a timing function: its own `animation-timing-function`, or else the `animation-timing-function` of the Animate.css class. The default is `ease`.
+3. Merge the keyframes that have the same offset and the same timing function. When two of them set the same property, keep the later value.
+4. Remove the keyframes that set only a timing function. Browsers ignore them, so v4 did not show their easing.
+5. Sort the keyframes by offset. `element.animate` throws a `TypeError` when an offset is smaller than the offset before it.
+6. Write each CSS keyframe as an object, with properties in camelCase.
+7. Write `from` as `offset: 0`, `to` as `offset: 1`, and `40%` as `offset: 0.4`.
+8. Write the timing function of each keyframe except the last one as `easing`. Web Animations eases a keyframe with no `easing` linearly.
 
 ## Behavior changes
 

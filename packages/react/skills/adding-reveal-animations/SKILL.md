@@ -76,7 +76,7 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 | `delay`         | Delay in milliseconds.                                                             | `0`      |
 | `stagger`       | Animates the element children, each one this many milliseconds after the last one. | –        |
 | `threshold`     | Fraction of the element (0 to 1) that must be visible.                             | `0`      |
-| `rootMargin`    | Grows or shrinks the viewport area, as a CSS margin.                               | `"0px"`  |
+| `rootMargin`    | Grows or shrinks the viewport area, as a CSS margin in `px` or `%`.                | `"0px"`  |
 | `once`          | When `false`, the element hides again when it leaves the viewport.                 | `true`   |
 | `when`          | Controls the reveal manually. When set, the viewport is not observed.              | –        |
 | `reducedMotion` | `"user"` follows `prefers-reduced-motion`. `"always"` skips, `"never"` plays.      | `"user"` |
@@ -85,7 +85,7 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 
 - Do not import the effect components of react-awesome-reveal v4 (`Fade`, `Slide`, `Zoom`). This package does not have them. For v4 code, use the `migrating-from-v4` skill of this package.
 - Option changes apply at the next reveal. They do not replay an animation that already played.
-- `stagger` animates element children only. Transforms do not apply to inline elements, so give inline children `display: inline-block`.
+- `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`.
 - Call a `defineKeyframes` factory outside the component when the component renders often. Each call samples the function again.
 - The keyframes factories do not import React. You can call them in a Server Component and pass the result to `Reveal`.
 - Keep `reducedMotion` at `"user"` unless the user asks for a different behavior. It respects the operating system setting of people whom motion makes ill.

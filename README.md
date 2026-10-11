@@ -193,7 +193,7 @@ Option changes apply to the next reveal. They do not replay an animation that al
 | `delay`         | Delay before the animation starts, in milliseconds.                                                                       | `0`      |
 | `stagger`       | Animates the element children instead of the element, each one this many milliseconds after the previous one.             | –        |
 | `threshold`     | Fraction of the element, between 0 and 1, that must be visible to reveal it.                                              | `0`      |
-| `rootMargin`    | Grows or shrinks the viewport area that reveals the element, as a CSS margin.                                             | `"0px"`  |
+| `rootMargin`    | Grows or shrinks the viewport area that reveals the element, as a CSS margin in `px` or `%`.                              | `"0px"`  |
 | `once`          | Reveals the element only the first time. When `false`, the element hides again when it leaves the viewport.               | `true`   |
 | `when`          | Controls the reveal manually. When set, the viewport is not observed.                                                     | –        |
 | `reducedMotion` | `"user"` skips the animation when the user prefers reduced motion. `"always"` always skips it. `"never"` always plays it. | `"user"` |
@@ -210,7 +210,7 @@ Option changes apply to the next reveal. They do not replay an animation that al
 </Reveal>
 ```
 
-`stagger` animates element children only. Transforms do not apply to inline elements, so give inline children `display: inline-block`.
+`stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`.
 
 ### Text, one character at a time
 
