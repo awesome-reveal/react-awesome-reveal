@@ -9,6 +9,7 @@ The framework adapters use this package. If your app uses one of these framework
 
 | Framework | Package                                                                        |
 | --------- | ------------------------------------------------------------------------------ |
+| Astro     | [`@awesome-reveal/astro`](https://www.npmjs.com/package/@awesome-reveal/astro) |
 | React     | [`@awesome-reveal/react`](https://www.npmjs.com/package/@awesome-reveal/react) |
 | Vue       | [`@awesome-reveal/vue`](https://www.npmjs.com/package/@awesome-reveal/vue)     |
 

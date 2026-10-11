@@ -1,0 +1,77 @@
+{
+  "name": "@awesome-reveal/astro",
+  "version": "1.0.0-next.2",
+  "description": "Reveal-on-scroll animations for Astro, built on the Web Animations API and IntersectionObserver.",
+  "keywords": [
+    "animation",
+    "astro-component",
+    "custom-element",
+    "intersection-observer",
+    "reveal",
+    "scroll",
+    "scroll-reveal",
+    "typescript",
+    "waapi",
+    "web-animations",
+    "withastro"
+  ],
+  "homepage": "https://awesome-reveal.morello.dev",
+  "bugs": {
+    "url": "https://github.com/awesome-reveal/awesome-reveal/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dennis Morello",
+    "email": "dennismorello@gmail.com",
+    "url": "https://morello.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awesome-reveal/awesome-reveal.git",
+    "directory": "packages/astro"
+  },
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/morellodev"
+    }
+  ],
+  "files": [
+    "dist",
+    "skills"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./keyframes": {
+      "types": "./dist/keyframes.d.ts",
+      "default": "./dist/keyframes.js"
+    },
+    "./Reveal.astro": "./dist/Reveal.astro",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "check:package": "publint --strict && attw --pack . --profile esm-only --exclude-entrypoints ./Reveal.astro"
+  },
+  "dependencies": {
+    "@awesome-reveal/core": "workspace:^"
+  },
+  "devDependencies": {
+    "astro": "catalog:"
+  },
+  "peerDependencies": {
+    "astro": "^6.0.0 || ^7.0.0"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

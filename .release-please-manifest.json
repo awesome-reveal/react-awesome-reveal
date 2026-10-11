@@ -1,4 +1,5 @@
 {
+  "packages/astro": "1.0.0-next.2",
   "packages/core": "1.0.0-next.2",
   "packages/react": "1.0.0-next.2",
   "packages/react-awesome-reveal": "5.0.0-next.2",

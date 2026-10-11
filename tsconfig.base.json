@@ -8,6 +8,9 @@
     "noImplicitReturns": true,
     // Type-checks workspace packages against their sources, so no build is necessary first.
     "paths": {
+      "@awesome-reveal/astro": ["./packages/astro/src/index.ts"],
+      "@awesome-reveal/astro/Reveal.astro": ["./packages/astro/src/Reveal.astro"],
+      "@awesome-reveal/astro/keyframes": ["./packages/astro/src/keyframes.ts"],
       "@awesome-reveal/core": ["./packages/core/src/index.ts"],
       "@awesome-reveal/core/keyframes": ["./packages/core/src/keyframes/index.ts"],
       "@awesome-reveal/react": ["./packages/react/src/index.ts"],

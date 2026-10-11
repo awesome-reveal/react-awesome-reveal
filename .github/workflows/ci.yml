@@ -81,6 +81,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - name: Astro 6
+            package: "@awesome-reveal/astro"
+            deps: astro@6
+            projects: --project astro:unit --project astro:ssr
           - name: React 18
             package: "@awesome-reveal/react"
             deps: react@18 react-dom@18 @types/react@18 @types/react-dom@18
@@ -175,3 +179,7 @@ jobs:
 
       - name: Check formatting
         run: pnpm format:check
+
+      # tsc cannot read .astro files. The playground tsconfig includes the components of packages/astro.
+      - name: Type-check the Astro components
+        run: pnpm --filter playground-astro exec astro check
