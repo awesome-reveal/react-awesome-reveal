@@ -3,14 +3,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm --filter \"./packages/*\" build",
+    "build": "pnpm --filter \"./packages/*\" --parallel build",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "prepare": "husky",
     "test": "vitest run --project \"*:unit\" --project \"*:ssr\" --project \"*:browser\"",
-    "test:package": "pnpm build && vitest run --project \"*:package\" && pnpm --filter \"./packages/*\" check:package",
+    "test:package": "pnpm build && vitest run --project \"*:package\" && pnpm --filter \"./packages/*\" --parallel check:package",
     "test:watch": "vitest --project \"*:unit\""
   },
   "devDependencies": {
