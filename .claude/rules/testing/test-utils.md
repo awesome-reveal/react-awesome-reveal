@@ -11,3 +11,4 @@ paths:
 - Keep it free of frameworks. Each adapter wraps `intersect()` in its own update scope, such as React `act` or an awaited Vue `nextTick`.
 - Each adapter imports the setup files from its own `test/setup` files. Then `tsc -p packages/<package>/test` sees the jest-dom matcher types.
 - The console setup fails a test on each `console.error` or `console.warn` call, because frameworks report warnings, such as invalid props, only through the console.
+- jsdom does not update the computed style of an element that is not in the document. Attach the element to `document.body` before you check `toHaveStyle` after a change.

@@ -13,5 +13,5 @@ paths:
 - `Reveal` sets `inheritAttrs: false` and merges the attributes before its own props. Vue merges inherited attributes last, so a user `opacity` would override the hidden style.
 - `v-reveal` uses core `reveal()`. It is `deep`, so that a reactive options object that changes in place calls `updated`. Its `updated` hook sets the hidden opacity again, because a patch of a string `style` binding replaces the whole inline style.
 - Of all directives, the hydration check of Vue knows only `v-show`. So `getSSRProps` of `v-reveal` adds `data-allow-mismatch="style"`. Without it, a `style` binding on the element causes a mismatch warning. The attribute needs Vue 3.5, which sets the start of the peer range.
-- jsdom does not update the computed style of a detached element. Mount with `attachTo: document.body` before you check `toHaveStyle` after a change. `test/setup/dom.ts` unmounts the wrappers after each test.
+- Mount with `attachTo: document.body` when a test checks `toHaveStyle` after a change. `test/setup/dom.ts` unmounts the wrappers after each test.
 - `describeSkills` type-checks only the `ts` fences of the consumer skills, not the `vue` fences.

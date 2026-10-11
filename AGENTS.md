@@ -20,7 +20,7 @@ Use the Node version in `.nvmrc`. jsdom needs Node `^22.22.2`, `^24.15.0` or `>=
 - `pnpm exec playwright install --with-deps --only-shell chromium firefox webkit`: run once before the browser tests.
 - `pnpm test`: the unit, SSR and browser tests. Add `--coverage` to check the CI thresholds.
 - `pnpm vitest run --project core:browser`: one project.
-- `pnpm exec tsc -p packages/<package>/test`: type-check the tests. `pnpm build` type-checks only `src`.
+- `pnpm exec tsc -p packages/<package>/test`: type-check the tests. Vue uses `vue-tsc` instead of `tsc`. `pnpm build` type-checks only `src`.
 - `pnpm test:package`: build, then test the `dist` output with Vitest, publint and attw.
 - `pnpm lint` and `pnpm format`.
 
