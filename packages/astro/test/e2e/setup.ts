@@ -38,7 +38,6 @@ function freePort() {
   });
 }
 
-/** Builds the playground and serves it with `astro preview`, as production serves it. */
 export default async function setup(project: TestProject) {
   const outDir = await mkdtemp(join(tmpdir(), "awesome-reveal-astro-"));
   const config = {

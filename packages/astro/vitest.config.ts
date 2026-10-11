@@ -6,8 +6,7 @@ function source(path: string) {
   return fileURLToPath(new URL(path, import.meta.url));
 }
 
-// The root config lists this file, so that the Astro compiler comes from this package.
-// Then the CI job for an older Astro version installs it only here.
+// A config of its own, so that the Astro 6 CI job can install Astro 6 only in this package.
 export default getViteConfig(
   {
     resolve: {

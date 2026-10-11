@@ -24,11 +24,11 @@ export class RevealElement extends HTMLElement {
     if (target) this.controller = reveal(target, this.readOptions());
   }
 
-  // With moveBefore(), as the ClientRouter uses for `transition:persist`, the element keeps its state.
+  // The ClientRouter moves `transition:persist` elements with moveBefore(), which keeps the state.
   connectedMoveCallback() {}
 
   disconnectedCallback() {
-    // Without moveBefore(), a `transition:persist` element leaves and enters the DOM in one task.
+    // Without moveBefore(), a persisted element leaves and enters the DOM in one task.
     queueMicrotask(() => {
       if (this.isConnected) return;
       this.controller?.destroy();

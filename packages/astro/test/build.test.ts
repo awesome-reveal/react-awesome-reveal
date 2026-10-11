@@ -31,4 +31,9 @@ describe("a static build of a page with Reveal", () => {
     );
     expect(page).toMatch(/awesome-reveal\[data-astro-cid-\w+\]\{display:contents\}/);
   });
+
+  it("renders no style attribute, which the security.csp of Astro blocks", () => {
+    expect(site.html).toContain('http-equiv="content-security-policy"');
+    expect(site.html).not.toMatch(/<[^>]*\sstyle=/);
+  });
 });

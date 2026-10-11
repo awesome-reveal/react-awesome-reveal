@@ -12,7 +12,6 @@ function recordViolations() {
   );
 }
 
-/** Waits until the element has no hidden state and no running animation. */
 async function revealed(page: Page, selector: string) {
   await page.waitForFunction((selector) => {
     const element = document.querySelector(selector);
@@ -52,6 +51,14 @@ describe.each([
   beforeEach(async () => {
     page = await browser.newPage({ baseURL, viewport: { width: 1280, height: 720 } });
     await page.addInitScript(recordViolations);
+    // Astro does not support `security.csp` with the ClientRouter.
+    await page.route("**/*", async (route) => {
+      const response = await route.fetch();
+      await route.fulfill({
+        response,
+        headers: { ...response.headers(), "content-security-policy": "style-src-attr 'none'" },
+      });
+    });
     await page.goto("/");
   });
 
@@ -158,13 +165,6 @@ describe("playground server markup", () => {
 
   afterAll(async () => {
     await browser.close();
-  });
-
-  it("has a Content Security Policy", async () => {
-    const page = await browser.newPage({ baseURL });
-    await page.goto("/");
-
-    expect(await page.locator('meta[http-equiv="content-security-policy"]').count()).toBe(1);
   });
 
   it("hides the elements before the custom element starts", async () => {

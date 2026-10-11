@@ -11,11 +11,9 @@ const { build }: typeof import("astro") = await import(
 
 export interface Site {
   html: string;
-  /** The JavaScript and CSS files of the page, by file name. */
   assets: Record<string, string>;
 }
 
-/** Builds `fixtures/site` as a static site, with the imports in `aliases` mapped to files. */
 export async function buildSite(aliases: Record<string, string>): Promise<Site> {
   const outDir = await mkdtemp(join(tmpdir(), "awesome-reveal-astro-"));
   try {
@@ -23,6 +21,7 @@ export async function buildSite(aliases: Record<string, string>): Promise<Site> 
       root: fileURLToPath(new URL("fixtures/site/", import.meta.url)),
       outDir,
       logLevel: "error",
+      security: { csp: true },
       vite: {
         resolve: {
           alias: Object.entries(aliases).map(([specifier, file]) => ({
