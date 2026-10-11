@@ -24,6 +24,12 @@ updates:
           - "@types/react-dom"
           - "@testing-library/react"
           - "@vitejs/plugin-react"
+      vue:
+        patterns:
+          - vue
+          - "@vue/*"
+          - vue-tsc
+          - "@vitejs/plugin-vue"
       vitest:
         patterns:
           - vitest

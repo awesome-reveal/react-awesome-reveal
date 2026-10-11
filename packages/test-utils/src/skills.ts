@@ -9,8 +9,8 @@ interface SkillsOptions {
   keyframes: string;
   /** The keyframes factories that inline calls such as `` `slide()` `` can use. */
   factories: string[];
-  /** The JSX options of the framework. */
-  jsx: Pick<ts.CompilerOptions, "jsx" | "jsxImportSource">;
+  /** The JSX options of the framework, if it uses JSX. */
+  jsx?: Pick<ts.CompilerOptions, "jsx" | "jsxImportSource">;
   /** Fences that match are not type-checked, for example examples of another package. */
   skipFences?: RegExp;
 }

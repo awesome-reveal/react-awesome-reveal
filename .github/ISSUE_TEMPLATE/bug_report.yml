@@ -12,6 +12,7 @@ body:
       label: Package
       options:
         - "@awesome-reveal/react"
+        - "@awesome-reveal/vue"
         - "@awesome-reveal/core"
         - react-awesome-reveal
     validations:
@@ -40,7 +41,7 @@ body:
     id: reproduction
     attributes:
       label: Reproduction
-      description: A StackBlitz link that shows the bug. Start from a template, such as [vite.new/react-ts](https://vite.new/react-ts), and add the package.
+      description: A StackBlitz link that shows the bug. Start from a template, such as [vite.new/react-ts](https://vite.new/react-ts) or [vite.new/vue-ts](https://vite.new/vue-ts), and add the package.
       placeholder: "https://stackblitz.com/edit/..."
     validations:
       required: true
