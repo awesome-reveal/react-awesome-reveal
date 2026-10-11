@@ -60,7 +60,7 @@ export function play(element: Element, options: PlayOptions = {}): () => void {
   const targets = stagger === undefined ? [element] : Array.from(element.children);
   const animations = targets.map((target, index) => {
     // Without Element.animate (jsdom, old engines), or when the engine rejects a keyframe value
-    // (linear() before Safari 17.2 throws a TypeError), the element just appears.
+    // (an unsupported linear() throws a TypeError), the element just appears.
     try {
       return target.animate?.(keyframes, {
         duration,

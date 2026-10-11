@@ -1,0 +1,8 @@
+---
+import { Reveal } from "@awesome-reveal/astro";
+import { pop } from "@awesome-reveal/astro/keyframes";
+---
+
+<Reveal as="p" keyframes={pop()} id="server-island">
+  Revealed in a server island, rendered at {new Date().toLocaleTimeString("en")}
+</Reveal>

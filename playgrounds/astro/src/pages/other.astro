@@ -1,0 +1,26 @@
+---
+import { Reveal } from "@awesome-reveal/astro";
+import { fade, slide } from "@awesome-reveal/astro/keyframes";
+
+import PageSection from "../components/PageSection.astro";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Other page">
+  <PageSection>
+    <Reveal as="h1" keyframes={fade()} id="other">Revealed after a ClientRouter navigation</Reveal>
+  </PageSection>
+  <PageSection>
+    <div transition:persist="persisted">
+      <Reveal as="h2" keyframes={slide()} id="persisted">
+        This element persists across navigations, and does not play again
+      </Reveal>
+    </div>
+    <a href="/">Go back</a>
+  </PageSection>
+  <PageSection>
+    <Reveal as="h2" keyframes={slide()} id="persisted-reveal" transition:persist="persisted-reveal">
+      This element has transition:persist, and reveals after a navigation
+    </Reveal>
+  </PageSection>
+</Layout>

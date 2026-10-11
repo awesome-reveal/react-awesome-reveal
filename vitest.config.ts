@@ -33,12 +33,15 @@ export default defineConfig({
     coverage: {
       provider: "istanbul",
       include: ["**/src/**"],
-      exclude: ["**/test-utils/**"],
+      exclude: ["**/test-utils/**", "**/test/fixtures/**"],
       // CI turns json-summary into the coverage table of the GitHub job summary.
       reporter: [...coverageConfigDefaults.reporter, "json-summary"],
       // Each package must reach the threshold, so that a weak package cannot hide in the total.
       thresholds: Object.fromEntries(
-        ["core", "react", "vue"].map((name) => [`packages/${name}/src/**`, coverageThreshold]),
+        ["astro", "core", "react", "vue"].map((name) => [
+          `packages/${name}/src/**`,
+          coverageThreshold,
+        ]),
       ),
     },
     projects: [
@@ -148,6 +151,44 @@ export default defineConfig({
         resolve: { alias: testUtils },
         test: {
           name: "vue:package",
+          environment: "node",
+          setupFiles: ["./test/setup/console.ts"],
+          include: ["test/package/**/*.test.ts"],
+        },
+      },
+      {
+        root: "packages/astro",
+        resolve: sources,
+        test: {
+          name: "astro:unit",
+          environment: "jsdom",
+          setupFiles: ["./test/setup/console.ts", "./test/setup/dom.ts"],
+          include: ["test/**/*.test.ts"],
+          exclude: ["test/package/**", "test/e2e/**", "test/ssr.test.ts", "test/build.test.ts"],
+          typecheck: {
+            enabled: true,
+            tsconfig: "./test/tsconfig.json",
+            include: ["test/types/**/*.test-d.ts"],
+          },
+        },
+      },
+      "packages/astro/vitest.config.ts",
+      {
+        root: "packages/astro",
+        test: {
+          name: "astro:browser",
+          environment: "node",
+          include: ["test/e2e/**/*.test.ts"],
+          globalSetup: ["./test/e2e/setup.ts"],
+          retry: process.env.CI ? 2 : 0,
+          hookTimeout: 60_000,
+        },
+      },
+      {
+        root: "packages/astro",
+        resolve: { alias: testUtils },
+        test: {
+          name: "astro:package",
           environment: "node",
           setupFiles: ["./test/setup/console.ts"],
           include: ["test/package/**/*.test.ts"],

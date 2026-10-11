@@ -56,7 +56,7 @@ declare module "vue" {
 - `direction` is the direction of the movement. `"up"` starts below the resting position.
 - A number for a length is in pixels, and a number for `rotate` is in degrees. A string can be any CSS length or angle.
 - `opacity` is the start opacity (default `0`). Set it to `1` for movement with no fade.
-- `spring()` returns an easing that follows a spring, for the `easing` option of any factory: `slide({ easing: spring({ bounce: 0.5 }) })`. `bounce` (default `0.3`, from `0` to `0.8`) sets the overshoot. It uses CSS `linear()`. Safari before 17.2 gets the default easing. If you call `spring()` on the server, that Safari shows the element with no animation.
+- `spring()` returns an easing that follows a spring, for the `easing` option of any factory: `slide({ easing: spring({ bounce: 0.5 }) })`. `bounce` (default `0.3`, from `0` to `0.8`) sets the overshoot. It uses CSS `linear()`. Chrome before 113, Firefox before 112 and Safari before 17.2 get the default easing. If you call `spring()` on the server, these browsers show the element with no animation.
 
 For a custom animation, use `defineKeyframes` or a keyframes array:
 
@@ -94,7 +94,7 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 ## Rules
 
 - Option changes apply at the next reveal. They do not replay an animation that already played.
-- `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`.
+- `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. With an inline `as` tag, `Reveal` itself also needs `display: inline-block`, or it only fades.
 - Call `slide()` and the other factories in `<script setup>`, not in the template, when the component renders often. Each call in the template creates the keyframes again at each render.
 - Keep `reducedMotion` at `"user"` unless the user asks for a different behavior. It respects the operating system setting of people whom motion makes ill.
 - Prefer `transform` and `opacity`. `filter` (`blur()`) and `clip-path` repaint on each frame in some engines, so use them on small elements.

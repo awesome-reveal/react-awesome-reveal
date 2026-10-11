@@ -16,6 +16,10 @@ updates:
       interval: weekly
     # A dependency joins the first group that matches it.
     groups:
+      astro:
+        patterns:
+          - astro
+          - "@astrojs/*"
       react:
         patterns:
           - react

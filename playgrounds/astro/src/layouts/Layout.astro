@@ -1,0 +1,47 @@
+---
+import { ClientRouter } from "astro:transitions";
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <ClientRouter />
+  </head>
+  <body>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/other">Other page</a>
+    </nav>
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  body {
+    margin: 0;
+    font-family: system-ui, sans-serif;
+  }
+
+  nav {
+    position: fixed;
+    inset: 0 0 auto;
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: white;
+    z-index: 1;
+  }
+
+  .title {
+    color: teal;
+  }
+</style>
