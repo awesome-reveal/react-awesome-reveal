@@ -32,7 +32,7 @@ function useMergedRef<T>(own: RefCallback<T>, user: Ref<T> | undefined): RefCall
       own(node);
       if (typeof user === "function") {
         const cleanup: unknown = user(node);
-        // React 18 logs an error for any other return value.
+        // React 18 logs an error when a callback ref returns a function.
         if (typeof cleanup === "function")
           return () => {
             own(null);

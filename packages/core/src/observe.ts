@@ -5,7 +5,7 @@ export interface ObserveOptions {
    */
   threshold?: number;
   /**
-   * Grows or shrinks the viewport area that reveals the element, as a CSS margin.
+   * Grows or shrinks the viewport area that reveals the element, as a CSS margin in `px` or `%`.
    * @default "0px"
    */
   rootMargin?: string;
