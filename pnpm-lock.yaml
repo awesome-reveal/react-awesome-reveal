@@ -260,6 +260,22 @@ importers:
         specifier: 'catalog:'
         version: 19.3.0(react@19.3.0)
 
+  packages/react-awesome-reveal:
+    dependencies:
+      '@awesome-reveal/react':
+        specifier: workspace:^
+        version: link:../react
+    devDependencies:
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.3.0
+      react:
+        specifier: 'catalog:'
+        version: 19.3.0
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.0(react@19.3.0)
+
   playgrounds/react:
     dependencies:
       '@awesome-reveal/react':

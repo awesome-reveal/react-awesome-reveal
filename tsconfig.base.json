@@ -10,7 +10,9 @@
     // Type-checks workspace packages against their sources, so no build is necessary first.
     "paths": {
       "@awesome-reveal/core": ["./packages/core/src/index.ts"],
-      "@awesome-reveal/core/keyframes": ["./packages/core/src/keyframes/index.ts"]
+      "@awesome-reveal/core/keyframes": ["./packages/core/src/keyframes/index.ts"],
+      "@awesome-reveal/react": ["./packages/react/src/index.ts"],
+      "@awesome-reveal/react/keyframes": ["./packages/react/src/keyframes.ts"]
     },
     "skipLibCheck": true,
     "strict": true,

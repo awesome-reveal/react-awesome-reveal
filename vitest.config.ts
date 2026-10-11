@@ -94,6 +94,14 @@ export default defineConfig({
           include: ["test/package/**/*.test.ts"],
         },
       },
+      {
+        root: "packages/react-awesome-reveal",
+        test: {
+          name: "react-awesome-reveal:package",
+          environment: "node",
+          include: ["test/package/**/*.test.ts"],
+        },
+      },
     ],
   },
 });
