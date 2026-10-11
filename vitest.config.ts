@@ -22,7 +22,10 @@ export default defineConfig({
       include: ["**/src/**"],
       // CI turns json-summary into the coverage table of the GitHub job summary.
       reporter: [...coverageConfigDefaults.reporter, "json-summary"],
-      thresholds: { lines: 90, functions: 90, branches: 85, statements: 90 },
+      // Each CI job writes a blob with part of the coverage. CI checks the thresholds when it merges the blobs.
+      thresholds: process.env.VITEST_BLOB_LABEL
+        ? undefined
+        : { lines: 90, functions: 90, branches: 85, statements: 90 },
     },
     projects: [
       {
