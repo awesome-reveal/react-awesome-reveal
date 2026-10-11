@@ -8,6 +8,7 @@ paths:
 
 - `Reveal.astro` ships uncompiled. Astro compiles the `.astro` files of a dependency that has the `astro` peer dependency or the `astro-component` keyword. `vite.config.ts` copies the file into `dist`, and keeps the `./Reveal.astro` import of `index.ts` external. Node cannot import `dist/index.js`, so the package tests load the root entry only through an Astro build.
 - `index.ts` exports `Reveal` with an explicit type, because only the Astro language tools resolve a `.astro` import. A `.d.ts` that imports `Reveal.astro` fails attw, and plain `tsc` cannot resolve it.
+- Keep the style of `Reveal.astro` global, with selectors that start with `awesome-reveal`. With a scoped style, the `where` and `class` values of `scopedStyleStrategy` make the compiler add a `class` after the attribute spread, and the `class` prop is lost.
 - The client side is the `<awesome-reveal>` custom element in `src/element.ts`. Astro hydrates nothing, so there is no hydration test.
 - `element.ts` has no class fields, because Safari 13.1 does not support them. Use a `static get` getter and `private declare`.
 - `connectedMoveCallback` and the microtask in `disconnectedCallback` keep the state of a `transition:persist` element. The ClientRouter uses `moveBefore()` where it exists, and a remove and append in one task elsewhere. The e2e persist test fails in all three engines without them.

@@ -47,14 +47,14 @@ const options = JSON.stringify({
   <Tag {...attributes} data-reveal={when ? undefined : "hidden"}><slot /></Tag>
 </awesome-reveal>
 
-<style>
+<style is:global>
   awesome-reveal {
     display: contents;
   }
 
   /* Astro CSP blocks style attributes, so the server markup hides the element with this rule. */
   @media (scripting: enabled) {
-    awesome-reveal > :global([data-reveal="hidden"]) {
+    awesome-reveal > [data-reveal="hidden"] {
       opacity: 0;
     }
   }

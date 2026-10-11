@@ -4,6 +4,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
+import type { AstroInlineConfig } from "astro";
+
 // The Vite config of Astro maps "astro" to its types, so the build API is imported by path.
 const { build }: typeof import("astro") = await import(
   /* @vite-ignore */ pathToFileURL(createRequire(import.meta.url).resolve("astro")).href
@@ -14,7 +16,10 @@ export interface Site {
   assets: Record<string, string>;
 }
 
-export async function buildSite(aliases: Record<string, string>): Promise<Site> {
+export async function buildSite(
+  aliases: Record<string, string>,
+  config: AstroInlineConfig = {},
+): Promise<Site> {
   const outDir = await mkdtemp(join(tmpdir(), "awesome-reveal-astro-"));
   try {
     await build({
@@ -22,6 +27,7 @@ export async function buildSite(aliases: Record<string, string>): Promise<Site> 
       outDir,
       logLevel: "error",
       security: { csp: true },
+      ...config,
       vite: {
         resolve: {
           alias: Object.entries(aliases).map(([specifier, file]) => ({
