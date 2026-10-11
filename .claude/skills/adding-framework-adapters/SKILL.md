@@ -1,11 +1,13 @@
 ---
-name: add-adapter
-description: Adds a framework adapter package (@awesome-reveal/<framework>) to the workspace. Use when starting the Vue, Svelte, Solid, Angular or another adapter.
+name: adding-framework-adapters
+description: Adds a framework adapter package (@awesome-reveal/<framework>) to the workspace, with its build, tests, consumer skills, playground and release config. Use when you start the Vue, Svelte, Solid, Angular or another framework adapter.
 ---
 
 # Add a framework adapter
 
 Use `packages/react` as the model. Keep the option names and defaults of core, so that the docs of all adapters agree.
+
+Copy the steps into your task list, and mark each step when it is done.
 
 1. Create `packages/<framework>` with `package.json`, `tsconfig.json`, `vite.config.ts`, `test/tsconfig.json` and the `test/setup` files. Copy them from `packages/react`, and change:
    - `name`, `description`, `keywords` and `repository.directory`.
@@ -22,7 +24,7 @@ Use `packages/react` as the model. Keep the option names and defaults of core, s
 7. Port the tests of `packages/react/test/package`: the dist files and exports, the server markup, the skills, and the tree-shaking fixtures with size limits.
 8. Add the consumer skills in `packages/<framework>/skills/<name>/SKILL.md`, and add `skills` to `files`. Port `adding-reveal-animations` from the React package.
 9. Add `playgrounds/<framework>`, with the sections of `playgrounds/react`.
-10. Add the package to `release-please-config.json`, with `"component"` set to the package name, and to `linked-versions`. Without `"component"`, release-please drops the npm scope from the tags. Add its path to `.release-please-manifest.json`, with the current version of core.
+10. Add the package to `release-please-config.json`, with `"component"` set to the package name, and to `linked-versions`. Without `"component"`, release-please drops the npm scope from the tags. Add its path to `.release-please-manifest.json`, with the current version of core. Before the release PR merges, do "Publish a new package" in the `releasing-packages` skill.
 11. Add a CI matrix entry only when the peer range covers more than one major version of the framework.
 12. Add `.claude/rules/<framework>/adapter.md` for the gotchas of the framework, with `paths: ["packages/<framework>/**"]`.
 13. Run the checks:

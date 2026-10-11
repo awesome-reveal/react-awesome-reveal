@@ -1,6 +1,6 @@
 ---
 name: adding-reveal-animations
-description: Adds reveal-on-scroll animations to React components with @awesome-reveal/react. Use when the user wants elements to animate as they enter the viewport, or when editing code that imports @awesome-reveal/react.
+description: Adds reveal-on-scroll animations to React components with @awesome-reveal/react, including staggered children and custom keyframes. Use when the user wants elements to animate as they enter the viewport, or when you edit code that imports @awesome-reveal/react.
 ---
 
 # Reveal on scroll with @awesome-reveal/react
