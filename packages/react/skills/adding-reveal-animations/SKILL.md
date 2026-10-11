@@ -44,11 +44,13 @@ function Card() {
 | `slide()` | Fades in and moves in a direction.         | `direction` (`"up"` default, `"down"`, `"left"`, `"right"`), `distance` (`24`), `opacity`, `easing` |
 | `scale()` | Fades in and grows.                        | `from` (`0.95`), `opacity`, `easing`                                                                |
 | `blur()`  | Fades in and removes a blur.               | `amount` (`8`), `opacity`, `easing`                                                                 |
+| `pop()`   | Fades in, grows past its size and settles. | `from` (`0.8`), `opacity`, `easing`                                                                 |
 | `enter()` | Starts from any combination of the others. | `x`, `y`, `scale`, `rotate`, `blur`, `opacity`, `easing`                                            |
 
 - `direction` is the direction of the movement. `"up"` starts below the resting position.
 - A number for a length is in pixels, and a number for `rotate` is in degrees. A string can be any CSS length or angle.
 - `opacity` is the start opacity (default `0`). Set it to `1` for movement with no fade.
+- `spring()` returns an easing that follows a spring, for the `easing` option of any factory: `slide({ easing: spring({ bounce: 0.5 }) })`. `bounce` (default `0.3`, from `0` to `0.8`) sets the overshoot. It uses CSS `linear()`. Safari before 17.2 gets the default easing. If you call `spring()` on the server, that Safari shows the element with no animation.
 
 For a custom animation, use `defineKeyframes` or a keyframes array:
 

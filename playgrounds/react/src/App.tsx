@@ -1,6 +1,15 @@
 import { useRef, useState } from "react";
 import { Reveal, useReveal } from "@awesome-reveal/react";
-import { blur, defineKeyframes, enter, fade, scale, slide } from "@awesome-reveal/react/keyframes";
+import {
+  blur,
+  defineKeyframes,
+  enter,
+  fade,
+  pop,
+  scale,
+  slide,
+  spring,
+} from "@awesome-reveal/react/keyframes";
 
 import { Section } from "./components/Section";
 
@@ -68,13 +77,22 @@ export const App = () => {
         </Section>
       ))}
       <Section>
-        <Reveal
-          as="h1"
-          keyframes={scale({ from: 0.5, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" })}
-        >
-          scale with an overshoot
+        <Reveal as="h1" keyframes={pop()} once={false}>
+          pop
         </Reveal>
       </Section>
+      {[0, 0.3, 0.6].map((bounce) => (
+        <Section key={bounce}>
+          <Reveal
+            as="h1"
+            keyframes={scale({ from: 0.5, easing: spring({ bounce }) })}
+            duration={1000}
+            once={false}
+          >
+            scale with a spring, bounce {bounce}
+          </Reveal>
+        </Section>
+      ))}
       <Section>
         <Reveal as="ul" keyframes={enter({ x: -24 })} stagger={100}>
           <li>I enter first...</li>

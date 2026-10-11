@@ -37,25 +37,26 @@ import { slide } from "@awesome-reveal/react/keyframes";
 
 In v4, `left` and `right` name the side where the element starts, but `up` and `down` name the movement. `slide` `direction` always names the movement, so only `left` and `right` swap.
 
-| v4                             | @awesome-reveal/react                                               |
-| ------------------------------ | ------------------------------------------------------------------- |
-| `import Reveal from "…"`       | `import { Reveal } from "@awesome-reveal/react"`                    |
-| `<Reveal>` with no `keyframes` | `slide({ direction: "right", distance: "100%" })`                   |
-| `<Fade>`                       | `fade()`                                                            |
-| `<Fade direction="up">`        | `slide()`, or `slide({ distance: "100%" })` for the v4 distance     |
-| `<Fade direction="down">`      | `slide({ direction: "down" })`                                      |
-| `<Fade direction="left">`      | `slide({ direction: "right" })`                                     |
-| `<Fade direction="right">`     | `slide({ direction: "left" })`                                      |
-| `<Fade direction="left" big>`  | `slide({ direction: "right", distance: 2000 })`                     |
-| `<Fade direction="top-left">`  | `enter({ x: "-100%", y: "-100%" })`                                 |
-| `<Slide>`                      | `slide({ direction: "right", distance: "100%", opacity: 1 })`       |
-| `<Slide direction="up">`       | `slide({ distance: "100%", opacity: 1 })`                           |
-| `<Zoom>`                       | `scale({ from: 0.3 })`, a close match                               |
-| `<Bounce>`                     | `scale({ from: 0.3, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" })` |
-| `<Rotate>`                     | `enter({ rotate: -200 })`                                           |
-| `<Roll>`                       | `enter({ x: "-100%", rotate: -120 })`                               |
+| v4                             | @awesome-reveal/react                                                                             |
+| ------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `import Reveal from "…"`       | `import { Reveal } from "@awesome-reveal/react"`                                                  |
+| `<Reveal>` with no `keyframes` | `slide({ direction: "right", distance: "100%" })`                                                 |
+| `<Fade>`                       | `fade()`                                                                                          |
+| `<Fade direction="up">`        | `slide()`, or `slide({ distance: "100%" })` for the v4 distance                                   |
+| `<Fade direction="down">`      | `slide({ direction: "down" })`                                                                    |
+| `<Fade direction="left">`      | `slide({ direction: "right" })`                                                                   |
+| `<Fade direction="right">`     | `slide({ direction: "left" })`                                                                    |
+| `<Fade direction="left" big>`  | `slide({ direction: "right", distance: 2000 })`                                                   |
+| `<Fade direction="top-left">`  | `enter({ x: "-100%", y: "-100%" })`                                                               |
+| `<Slide>`                      | `slide({ direction: "right", distance: "100%", opacity: 1 })`                                     |
+| `<Slide direction="up">`       | `slide({ distance: "100%", opacity: 1 })`                                                         |
+| `<Zoom>`                       | `scale({ from: 0.3 })`, a close match                                                             |
+| `<Bounce>`                     | `pop({ from: 0.3 })`, or `scale({ from: 0.3, easing: spring({ bounce: 0.5 }) })` for more bounces |
+| `<JackInTheBox>`               | `pop({ from: 0.1 })`, with no rotation                                                            |
+| `<Rotate>`                     | `enter({ rotate: -200 })`                                                                         |
+| `<Roll>`                       | `enter({ x: "-100%", rotate: -120 })`                                                             |
 
-These have no replacement: exit animations (`reverse`), `Flip`, `JackInTheBox`, `Hinge`, `AttentionSeeker`, and the directional `Bounce`, `Zoom` and `Rotate` variants. To keep one, port its keyframes from Animate.css (see below).
+These have no replacement: exit animations (`reverse`), `Flip`, `Hinge`, `AttentionSeeker`, and the directional `Bounce`, `Zoom` and `Rotate` variants. To keep one, port its keyframes from Animate.css (see below).
 
 ## Props
 

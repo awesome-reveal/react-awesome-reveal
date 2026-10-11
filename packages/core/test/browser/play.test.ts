@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { fade } from "../../src/keyframes/presets";
+import { fade, slide } from "../../src/keyframes/presets";
+import { spring } from "../../src/keyframes/spring";
 import { play } from "../../src/play";
 
 let element: HTMLElement;
@@ -33,6 +34,12 @@ describe("play", () => {
     play(element, { reducedMotion: "never" });
     const [first] = (element.getAnimations()[0]!.effect as KeyframeEffect).getKeyframes();
     expect(first).toMatchObject({ opacity: "0", transform: "translate(0px, 24px)" });
+  });
+
+  it("plays a spring easing", () => {
+    play(element, { keyframes: slide({ easing: spring() }), reducedMotion: "never" });
+    const [first] = (element.getAnimations()[0]!.effect as KeyframeEffect).getKeyframes();
+    expect(first?.easing).toMatch(/^linear\(/);
   });
 
   it("applies the first keyframe in the frame that starts it, also during the delay", () => {
@@ -77,6 +84,12 @@ describe("play", () => {
       expect(element.getAnimations()).toHaveLength(count);
     },
   );
+
+  it("shows the element with no animation when the engine rejects a keyframe", () => {
+    const invalid = [{ opacity: 0, easing: "not-an-easing" }, {}];
+    expect(() => play(element, { keyframes: invalid, reducedMotion: "never" })()).not.toThrow();
+    expect(element.getAnimations()).toEqual([]);
+  });
 
   it("shows the element with no animation without Element.animate", () => {
     const animate = Object.getOwnPropertyDescriptor(Element.prototype, "animate")!;

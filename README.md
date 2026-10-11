@@ -84,12 +84,14 @@ Each keyframes factory is a function. It takes its options, which you can leave 
 | `slide()` | Fades in and moves in a direction.         | `direction` (`"up"`, `"down"`, `"left"` or `"right"`, default `"up"`), `distance` (default `24`), `opacity`, `easing` |
 | `scale()` | Fades in and grows.                        | `from` (default `0.95`), `opacity`, `easing`                                                                          |
 | `blur()`  | Fades in and removes a blur.               | `amount` (default `8`), `opacity`, `easing`                                                                           |
+| `pop()`   | Fades in, grows past its size and settles. | `from` (default `0.8`), `opacity`, `easing`                                                                           |
 | `enter()` | Starts from any combination of the others. | `x`, `y`, `scale`, `rotate`, `blur`, `opacity`, `easing`                                                              |
 
 - `direction` is the direction in which the element moves. `"up"` starts below the resting position.
 - A number for `distance`, `amount`, `x`, `y` or `blur` is in pixels. A number for `rotate` is in degrees. A string can be any CSS length or angle.
 - `opacity` is the start opacity. It is `0` by default. Set it to `1` for movement with no fade.
-- The default `easing` is `"cubic-bezier(0.22, 1, 0.36, 1)"`. An easing with values out of the 0–1 range overshoots: `scale({ from: 0.5, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" })`.
+- The default `easing` is `"cubic-bezier(0.22, 1, 0.36, 1)"`. An easing with values out of the 0–1 range overshoots, as `pop()` does.
+- `spring()` returns an easing that follows a spring, for the `easing` option of any factory: `slide({ easing: spring({ bounce: 0.5 }) })`. `bounce` (default `0.3`, from `0` to `0.8`) sets the overshoot. It uses CSS `linear()`. Safari before 17.2 gets the default easing. If you call `spring()` on the server, that Safari shows the element with no animation.
 - `blur()` animates `filter`. Chromium and Safari composite it, but other engines repaint it on each frame. Use it on small and medium elements.
 
 ```jsx
@@ -289,14 +291,15 @@ v5 has no effect components. Use `Reveal` with a keyframes factory. v4 `directio
 | `<Slide>`                      | `slide({ direction: "right", distance: "100%", opacity: 1 })`                                        |
 | `<Slide direction="up">`       | `slide({ distance: "100%", opacity: 1 })`                                                            |
 | `<Zoom>`                       | `scale({ from: 0.3 })`, a close match                                                                |
-| `<Bounce>`                     | `scale({ from: 0.3, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" })`, a close match                   |
+| `<Bounce>`                     | `pop({ from: 0.3 })`, or `scale({ from: 0.3, easing: spring({ bounce: 0.5 }) })` for more bounces    |
+| `<JackInTheBox>`               | `pop({ from: 0.1 })`, with no rotation                                                               |
 | `<Rotate>`                     | `enter({ rotate: -200 })`                                                                            |
 | `<Roll>`                       | `enter({ x: "-100%", rotate: -120 })`                                                                |
 
 These are removed:
 
 - exit animations (`reverse`)
-- `Flip`, `JackInTheBox`, `Hinge` and `AttentionSeeker`
+- `Flip`, `Hinge` and `AttentionSeeker`
 - the directional `Bounce`, `Zoom` and `Rotate` variants
 
 To keep one, port its keyframes from Animate.css (see [Port an Animate.css animation](#port-an-animatecss-animation)).

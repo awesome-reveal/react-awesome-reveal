@@ -57,3 +57,20 @@ export interface BlurOptions extends Pick<EnterOptions, "opacity" | "easing"> {
  */
 export const blur: KeyframesFactory<BlurOptions> = ({ amount = 8, opacity, easing } = {}) =>
   enter({ blur: amount, opacity, easing });
+
+export interface PopOptions extends Pick<EnterOptions, "opacity" | "easing"> {
+  /**
+   * Scale at the start of the animation.
+   * @default 0.8
+   */
+  from?: number;
+}
+
+/**
+ * With the default easing, grows past its resting size, then settles back.
+ */
+export const pop: KeyframesFactory<PopOptions> = ({
+  from = 0.8,
+  opacity,
+  easing = "cubic-bezier(0.34, 1.56, 0.64, 1)",
+} = {}) => enter({ scale: from, opacity, easing });

@@ -58,14 +58,19 @@ export function play(element: Element, options: PlayOptions = {}): () => void {
   if (skipsAnimation(reducedMotion)) return () => {};
 
   const targets = stagger === undefined ? [element] : Array.from(element.children);
-  const animations = targets.map((target, index) =>
-    // Without Element.animate (jsdom, old engines), the element just appears.
-    target.animate?.(keyframes, {
-      duration,
-      delay: delay + index * (stagger ?? 0),
-      fill: "backwards",
-    }),
-  );
+  const animations = targets.map((target, index) => {
+    // Without Element.animate (jsdom, old engines), or when the engine rejects a keyframe value
+    // (linear() before Safari 17.2 throws a TypeError), the element just appears.
+    try {
+      return target.animate?.(keyframes, {
+        duration,
+        delay: delay + index * (stagger ?? 0),
+        fill: "backwards",
+      });
+    } catch {
+      return undefined;
+    }
+  });
   return () => {
     for (const animation of animations) animation?.cancel();
   };
