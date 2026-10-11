@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.0-next.1](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/core@1.0.0-next.0...@awesome-reveal/core@1.0.0-next.1) (2026-10-11)
+
+
+### Features
+
+* **core:** add the when option to reveal() ([#262](https://github.com/awesome-reveal/awesome-reveal/issues/262)) ([233f85c](https://github.com/awesome-reveal/awesome-reveal/commit/233f85c1d69d6f41bf07ee3533869a456a04c3f6))
+* **vue:** add the Vue adapter ([#264](https://github.com/awesome-reveal/awesome-reveal/issues/264)) ([fc76748](https://github.com/awesome-reveal/awesome-reveal/commit/fc76748668c9c71afc13009c18d1b2fcf2ebbe66))
+
 ## 1.0.0-next.0 (2026-10-11)
 
 

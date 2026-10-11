@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.0-next.1](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/react@1.0.0-next.0...@awesome-reveal/react@1.0.0-next.1) (2026-10-11)
+
+
+### Features
+
+* **core:** add the when option to reveal() ([#262](https://github.com/awesome-reveal/awesome-reveal/issues/262)) ([233f85c](https://github.com/awesome-reveal/awesome-reveal/commit/233f85c1d69d6f41bf07ee3533869a456a04c3f6))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @awesome-reveal/core bumped to 1.0.0-next.1
+
 ## 1.0.0-next.0 (2026-10-11)
 
 
