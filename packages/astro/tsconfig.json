@@ -1,4 +1,7 @@
 {
   "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "preserve"
+  },
   "include": ["src", "test/astro.d.ts"]
 }
