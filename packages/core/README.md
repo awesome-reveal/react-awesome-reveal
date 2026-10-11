@@ -3,7 +3,7 @@
 [![Version](https://badgen.net/npm/v/@awesome-reveal/core)](https://www.npmjs.com/package/@awesome-reveal/core)
 [![License](https://badgen.net/npm/license/@awesome-reveal/core)](https://www.npmjs.com/package/@awesome-reveal/core)
 
-The framework-independent core of [awesome-reveal](https://github.com/awesome-reveal/awesome-reveal). It reveals elements when they enter the viewport. It uses the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to detect the reveal, and the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) to animate it.
+The framework-independent core of [awesome-reveal](https://awesome-reveal.morello.dev). It reveals elements when they enter the viewport. It uses the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to detect the reveal, and the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) to animate it.
 
 The framework adapters use this package. If your app uses one of these frameworks, install its adapter instead:
 
@@ -11,7 +11,19 @@ The framework adapters use this package. If your app uses one of these framework
 | --------- | ------------------------------------------------------------------------------ |
 | React     | [`@awesome-reveal/react`](https://www.npmjs.com/package/@awesome-reveal/react) |
 
-Use this package directly with plain DOM code, or to write an adapter for another framework.
+Use this package directly with plain DOM code, or to write an adapter for another framework. This README also documents the keyframes, the options, accessibility and browser support for all the adapters.
+
+## Table of contents
+
+- [Installation](#installation)
+- [Quick start](#quick-start)
+- [Entry points](#entry-points)
+- [API](#api)
+- [Keyframes](#keyframes)
+- [Options](#options)
+- [Accessibility](#accessibility)
+- [Browser support](#browser-support)
+- [License](#license)
 
 ## Installation
 
@@ -41,7 +53,7 @@ controller.destroy();
 | `@awesome-reveal/core`           | `reveal`, `observe`, `play` and `hiddenStyle`.              |
 | `@awesome-reveal/core/keyframes` | The built-in keyframes, `defineKeyframes`, and their types. |
 
-The keyframes do not touch the DOM, so you can create them on the server. The [`@awesome-reveal/react` README](https://github.com/awesome-reveal/awesome-reveal/tree/next/packages/react#keyframes) documents the keyframes factories.
+The keyframes do not touch the DOM, so you can create them on the server. Each adapter re-exports this entry point, for example as `@awesome-reveal/react/keyframes`.
 
 ## API
 
@@ -69,7 +81,91 @@ The style that hides an element until the reveal. A server renderer applies it t
 
 Use `observe`, `play` and `hiddenStyle` when your framework renders the style of the element. Use `reveal` when your code owns the element.
 
+## Keyframes
+
+Each keyframes factory is a function. It takes its options, which you can leave out, and returns new [Web Animations keyframes](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats). The animation ends at the element's own style.
+
+```js
+import { slide } from "@awesome-reveal/core/keyframes";
+
+reveal(element, { keyframes: slide() });
+reveal(element, { keyframes: slide({ direction: "left", distance: 40 }) });
+```
+
+### Built-in keyframes
+
+| Factory   | Effect                                     | Options                                                                                                               |
+| --------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `fade()`  | Fades in.                                  | `easing`                                                                                                              |
+| `slide()` | Fades in and moves in a direction.         | `direction` (`"up"`, `"down"`, `"left"` or `"right"`, default `"up"`), `distance` (default `24`), `opacity`, `easing` |
+| `scale()` | Fades in and grows.                        | `from` (default `0.95`), `opacity`, `easing`                                                                          |
+| `blur()`  | Fades in and removes a blur.               | `amount` (default `8`), `opacity`, `easing`                                                                           |
+| `pop()`   | Fades in, grows past its size and settles. | `from` (default `0.8`), `opacity`, `easing`                                                                           |
+| `enter()` | Starts from any combination of the others. | `x`, `y`, `scale`, `rotate`, `blur`, `opacity`, `easing`                                                              |
+
+- `direction` is the direction in which the element moves. `"up"` starts below the resting position.
+- A number for `distance`, `amount`, `x`, `y` or `blur` is in pixels. A number for `rotate` is in degrees. A string can be any CSS length or angle.
+- `opacity` is the start opacity. It is `0` by default. Set it to `1` for movement with no fade.
+- The default `easing` is `"cubic-bezier(0.22, 1, 0.36, 1)"`. An easing with values out of the 0–1 range overshoots, as `pop()` does.
+- `spring()` returns an easing that follows a spring, for the `easing` option of any factory: `slide({ easing: spring({ bounce: 0.5 }) })`. `bounce` (default `0.3`, from `0` to `0.8`) sets the overshoot. It uses CSS `linear()`. Safari before 17.2 gets the default easing. If you call `spring()` on the server, that Safari shows the element with no animation.
+- `blur()` animates `filter`. Chromium and Safari composite it, but other engines repaint it on each frame. Use it on small and medium elements.
+
+```js
+import { enter } from "@awesome-reveal/core/keyframes";
+
+enter({ y: 40, scale: 0.9 }); // rise and grow
+enter({ x: "-100%", rotate: -120 }); // roll in from the left
+```
+
+### Custom keyframes with `defineKeyframes`
+
+`defineKeyframes` builds keyframes from a function of the animation progress. You return a `keyframe(t, u)` function, where `t` is the progress from 0 to 1 and `u` is `1 - t`. The library samples the function into keyframes:
+
+```js
+import { defineKeyframes } from "@awesome-reveal/core/keyframes";
+
+const spin = defineKeyframes(({ turns = 1 }) => ({
+  keyframe: (t, u) => ({ opacity: t, transform: `rotate(${u * turns * 360}deg)` }),
+  easing: (t) => 1 - (1 - t) ** 3, // optional, any JavaScript easing function
+  steps: 30, // optional, the number of samples
+}));
+
+reveal(element, { keyframes: spin({ turns: 2 }) });
+```
+
+At `t = 1`, return the element's resting style. In TypeScript, give the options type: `defineKeyframes<{ turns?: number }>(…)`. Your function gets the options as given, so give defaults for all of them.
+
+Each call samples the function again. Where your code runs often, such as a component render, call the factory once outside it, for example `const spinTwice = spin({ turns: 2 })`.
+
+### Keyframes arrays
+
+You can also pass a keyframes array directly. Make sure that the last keyframe is the element's resting style, because the animation does not stay applied after it finishes:
+
+```js
+reveal(element, {
+  keyframes: [
+    { opacity: 0, transform: "translate(-200px, -100px)", easing: "ease-out" },
+    { opacity: 1, transform: "none" },
+  ],
+});
+```
+
+Web Animations eases each keyframe linearly by default. Set `easing` on a keyframe to change the easing up to the next keyframe.
+
+To write a reusable factory with options, type it with `KeyframesFactory`:
+
+```ts
+import type { KeyframesFactory } from "@awesome-reveal/core/keyframes";
+
+export const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
+  { opacity: 0, transform: `translateY(${-height}px)`, easing: "ease-out" },
+  {},
+];
+```
+
 ## Options
+
+The adapters accept the same options. Some adapters add their own options, which their READMEs document.
 
 | Option          | Description                                                                                                               | Default   |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------- | --------- |
@@ -84,9 +180,29 @@ Use `observe`, `play` and `hiddenStyle` when your framework renders the style of
 
 `observe` uses `threshold`, `rootMargin` and `once`. `play` uses the other options.
 
+`stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`.
+
+## Accessibility
+
+- When the user prefers reduced motion, the element appears with no animation. Use `reducedMotion` to change this.
+- Hidden content uses `opacity: 0` only. It stays in the accessibility tree and in the browser's find-in-page.
+- If JavaScript does not run, content rendered on the server stays hidden. To show it, put this CSS in a `<noscript>` element in the document head:
+
+  ```css
+  [data-reveal="hidden"] {
+    opacity: 1 !important;
+  }
+  ```
+
+  `reveal` sets `data-reveal="hidden"` on hidden elements. With `observe`, `play` and `hiddenStyle`, add the attribute yourself.
+
+- The library injects no `<style>` elements. Under a strict Content Security Policy, the inline `opacity: 0` style that the server renders needs `style-src-attr 'unsafe-inline'`.
+
 ## Browser support
 
-Chrome 84, Firefox 75 and Safari 13.1, or later. Without `IntersectionObserver`, elements are revealed immediately. Without `Element.animate`, elements appear with no animation.
+Chrome 84, Firefox 75 and Safari 13.1, or later. These versions support the Web Animations API with implicit keyframes. MDN reports that the implicit keyframes of Safari 13.1 to 15 have bugs. If you support these versions, give each keyframe of your custom keyframes explicit values.
+
+Without `IntersectionObserver`, elements are revealed immediately. Without `Element.animate`, elements appear with no animation.
 
 ## License
 
