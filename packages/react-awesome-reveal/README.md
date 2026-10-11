@@ -19,7 +19,7 @@ pnpm add @awesome-reveal/react
 
 ## Migrating from v4
 
-Version 5 is not compatible with v4. It has no effect components, such as `Fade` or `Slide`, and it does not use Emotion. Read [Migrating from v4](https://github.com/awesome-reveal/awesome-reveal/tree/next/packages/react#migrating-from-v4).
+Version 5 is not compatible with v4. It has no effect components, such as `Fade` or `Slide`, and it does not use Emotion. Read [Migrating from v4](https://www.npmjs.com/package/@awesome-reveal/react#migrating-from-v4).
 
 This package includes the `migrating-from-v4` agent skill, which helps a coding agent do the migration.
 
