@@ -7,17 +7,19 @@ function source(path: string) {
 }
 
 // The package has "sideEffects": false, which must not drop the script and the style of the component.
+const aliases = {
+  "@awesome-reveal/astro": source("../src/index.ts"),
+  "@awesome-reveal/astro/keyframes": source("../src/keyframes.ts"),
+  "@awesome-reveal/core": source("../../core/src/index.ts"),
+  "@awesome-reveal/core/keyframes": source("../../core/src/keyframes/index.ts"),
+};
+
 describe("a static build of a page with Reveal", () => {
   let site: Site;
   let page: string;
 
   beforeAll(async () => {
-    site = await buildSite({
-      "@awesome-reveal/astro": source("../src/index.ts"),
-      "@awesome-reveal/astro/keyframes": source("../src/keyframes.ts"),
-      "@awesome-reveal/core": source("../../core/src/index.ts"),
-      "@awesome-reveal/core/keyframes": source("../../core/src/keyframes/index.ts"),
-    });
+    site = await buildSite(aliases);
     page = [site.html, ...Object.values(site.assets)].join("\n");
   }, 60_000);
 
@@ -27,9 +29,13 @@ describe("a static build of a page with Reveal", () => {
 
   it("hides the element with a stylesheet rule while scripting is enabled", () => {
     expect(page).toMatch(
-      /@media ?\(scripting:enabled\)\{awesome-reveal\[data-astro-cid-\w+\]>\[data-reveal=hidden\]\{opacity:0\}\}/,
+      /@media ?\(scripting:enabled\)\{awesome-reveal>\[data-reveal=hidden\]\{opacity:0\}\}/,
     );
-    expect(page).toMatch(/awesome-reveal\[data-astro-cid-\w+\]\{display:contents\}/);
+    expect(page).toMatch(/awesome-reveal\{display:contents\}/);
+  });
+
+  it("keeps the class prop", () => {
+    expect(site.html).toMatch(/<section class="box"[\s>]/);
   });
 
   it("renders no style attribute, which the security.csp of Astro blocks", () => {
@@ -37,3 +43,13 @@ describe("a static build of a page with Reveal", () => {
     expect(site.html).not.toMatch(/<[^>]*\sstyle=/);
   });
 });
+
+it.each(["where", "class"] as const)(
+  "keeps the class prop with the %s scoped style strategy",
+  async (scopedStyleStrategy) => {
+    const { html } = await buildSite(aliases, { scopedStyleStrategy });
+
+    expect(html).toMatch(/<section class="box"[\s>]/);
+  },
+  60_000,
+);

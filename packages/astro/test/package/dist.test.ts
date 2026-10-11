@@ -85,9 +85,7 @@ describe("a static build of a page with the published component", () => {
   }, 60_000);
 
   it("renders the element hidden", () => {
-    expect(site.html.replace(/ data-astro-cid-\w+(="true")?/g, "")).toContain(
-      '<div data-reveal="hidden"><p>hello</p></div>',
-    );
+    expect(site.html).toContain('<div data-reveal="hidden"><p>hello</p></div>');
   });
 
   it("bundles a small client script with no keyframes factories", () => {
