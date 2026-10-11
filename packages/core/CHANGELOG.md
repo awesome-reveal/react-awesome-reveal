@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0-next.4](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/core@1.0.0-next.3...@awesome-reveal/core@1.0.0-next.4) (2026-10-11)
+
+
+### Miscellaneous Chores
+
+* **@awesome-reveal/core:** Synchronize awesome-reveal versions
+
 ## [1.0.0-next.3](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/core@1.0.0-next.2...@awesome-reveal/core@1.0.0-next.3) (2026-10-11)
 
 
