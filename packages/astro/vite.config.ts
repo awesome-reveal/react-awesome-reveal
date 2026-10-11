@@ -7,7 +7,11 @@ export default defineLibConfig(
   ["src/index.ts", "src/keyframes.ts", "src/element.ts"],
   [
     {
-      name: "copy-astro-components",
+      name: "ship-astro-components",
+      enforce: "pre",
+      resolveId(id) {
+        return id === "./Reveal.astro" ? { id, external: true } : null;
+      },
       async generateBundle() {
         this.emitFile({
           type: "asset",

@@ -19,7 +19,7 @@ function path(relative: string) {
 
 // The playground runs on the sources, so no package build is necessary first.
 const alias = Object.entries({
-  "@awesome-reveal/astro/Reveal.astro": "../../src/Reveal.astro",
+  "@awesome-reveal/astro": "../../src/index.ts",
   "@awesome-reveal/astro/keyframes": "../../src/keyframes.ts",
   "@awesome-reveal/core": "../../../core/src/index.ts",
   "@awesome-reveal/core/keyframes": "../../../core/src/keyframes/index.ts",

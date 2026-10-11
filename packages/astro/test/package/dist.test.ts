@@ -52,20 +52,21 @@ describe("dist", () => {
     expect(imports.filter((id) => !allowed.includes(id))).toEqual([]);
   });
 
-  it.each([
-    [".", []],
-    ["./keyframes", [...factories, "defineKeyframes"].sort()],
-  ])("exposes the public API of %s", async (subpath, names) => {
-    expect(Object.keys(await load(subpath)).sort()).toEqual(names);
+  it("exposes the public API of ./keyframes", async () => {
+    expect(Object.keys(await load("./keyframes")).sort()).toEqual(
+      [...factories, "defineKeyframes"].sort(),
+    );
   });
 
-  it("exports only the subpaths above, the component and package.json", () => {
-    expect(Object.keys(pkg.exports)).toEqual([
-      ".",
-      "./keyframes",
-      "./Reveal.astro",
-      "./package.json",
-    ]);
+  // Node cannot import a .astro file, so only a build with Astro loads the root entry.
+  it("exports the component from the root entry, with declarations that plain TypeScript reads", () => {
+    expect(source("index.js")).toContain('import Component from "./Reveal.astro";');
+    expect(source("index.d.ts")).toContain("export declare const Reveal:");
+    expect(source("index.d.ts")).not.toContain(".astro");
+  });
+
+  it("exports only the subpaths above and package.json", () => {
+    expect(Object.keys(pkg.exports)).toEqual([".", "./keyframes", "./package.json"]);
   });
 });
 
@@ -75,9 +76,10 @@ describe("a static build of a page with the published component", () => {
   beforeAll(async () => {
     site = await buildSite(
       Object.fromEntries(
-        ["@awesome-reveal/astro/Reveal.astro", "@awesome-reveal/astro/keyframes"].map(
-          (specifier) => [specifier, resolve(specifier)],
-        ),
+        ["@awesome-reveal/astro", "@awesome-reveal/astro/keyframes"].map((specifier) => [
+          specifier,
+          resolve(specifier),
+        ]),
       ),
     );
   }, 60_000);

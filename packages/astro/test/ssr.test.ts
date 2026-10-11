@@ -2,7 +2,7 @@ import { experimental_AstroContainer as AstroContainer } from "astro/container";
 
 import { fade } from "@awesome-reveal/core/keyframes";
 
-import Reveal from "../src/Reveal.astro";
+import { Reveal } from "../src";
 
 const container = await AstroContainer.create();
 

@@ -45,7 +45,7 @@ Astro 6 or later is necessary.
 
 ```astro
 ---
-import Reveal from "@awesome-reveal/astro/Reveal.astro";
+import { Reveal } from "@awesome-reveal/astro";
 ---
 
 <Reveal>
@@ -57,11 +57,10 @@ With no `keyframes`, the element fades in and moves up, as with `slide()`. To ch
 
 ## Entry points
 
-| Import path                          | Contents                                                    |
-| ------------------------------------ | ----------------------------------------------------------- |
-| `@awesome-reveal/astro/Reveal.astro` | The `Reveal` component.                                     |
-| `@awesome-reveal/astro/keyframes`    | The built-in keyframes, `defineKeyframes`, and their types. |
-| `@awesome-reveal/astro`              | The `RevealProps` and `RevealOptions` types.                |
+| Import path                       | Contents                                                                 |
+| --------------------------------- | ------------------------------------------------------------------------ |
+| `@awesome-reveal/astro`           | The `Reveal` component, and the `RevealProps` and `RevealOptions` types. |
+| `@awesome-reveal/astro/keyframes` | The built-in keyframes, `defineKeyframes`, and their types.              |
 
 ## Keyframes
 
@@ -69,7 +68,7 @@ The `keyframes` prop takes the keyframes that a factory of `@awesome-reveal/astr
 
 ```astro
 ---
-import Reveal from "@awesome-reveal/astro/Reveal.astro";
+import { Reveal } from "@awesome-reveal/astro";
 import { enter, slide } from "@awesome-reveal/astro/keyframes";
 ---
 

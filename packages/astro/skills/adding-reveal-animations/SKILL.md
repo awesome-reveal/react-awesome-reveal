@@ -13,7 +13,7 @@ description: Adds reveal-on-scroll animations to Astro pages and components with
 
 ```astro
 ---
-import Reveal from "@awesome-reveal/astro/Reveal.astro";
+import { Reveal } from "@awesome-reveal/astro";
 import { fade, slide } from "@awesome-reveal/astro/keyframes";
 ---
 

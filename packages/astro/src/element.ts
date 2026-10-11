@@ -3,10 +3,6 @@ import { type RevealController, reveal, type RevealOptions } from "@awesome-reve
 // The TypeScript DOM lib does not have the Speculation Rules additions yet.
 type PrerenderingDocument = Document & { prerendering?: boolean };
 
-/**
- * `<awesome-reveal>`, the client side of `Reveal.astro`. It reveals its first element child with
- * the options of its `options` attribute, a JSON object.
- */
 export class RevealElement extends HTMLElement {
   // No class fields: Safari 13.1 does not support them.
   static get observedAttributes() {

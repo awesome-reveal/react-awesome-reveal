@@ -52,7 +52,6 @@
       "types": "./dist/keyframes.d.ts",
       "default": "./dist/keyframes.js"
     },
-    "./Reveal.astro": "./dist/Reveal.astro",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -60,7 +59,7 @@
   },
   "scripts": {
     "build": "tsc --noEmit && vite build",
-    "check:package": "publint --strict && attw --pack . --profile esm-only --exclude-entrypoints ./Reveal.astro"
+    "check:package": "publint --strict && attw --pack . --profile esm-only"
   },
   "dependencies": {
     "@awesome-reveal/core": "workspace:^"

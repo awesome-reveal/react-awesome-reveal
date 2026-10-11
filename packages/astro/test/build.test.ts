@@ -13,7 +13,7 @@ describe("a static build of a page with Reveal", () => {
 
   beforeAll(async () => {
     site = await buildSite({
-      "@awesome-reveal/astro/Reveal.astro": source("../src/Reveal.astro"),
+      "@awesome-reveal/astro": source("../src/index.ts"),
       "@awesome-reveal/astro/keyframes": source("../src/keyframes.ts"),
       "@awesome-reveal/core": source("../../core/src/index.ts"),
       "@awesome-reveal/core/keyframes": source("../../core/src/keyframes/index.ts"),

@@ -10,7 +10,6 @@ const { build }: typeof import("astro") = await import(
 );
 
 export interface Site {
-  /** The HTML of the page. */
   html: string;
   /** The JavaScript and CSS files of the page, by file name. */
   assets: Record<string, string>;
@@ -48,7 +47,6 @@ export async function buildSite(aliases: Record<string, string>): Promise<Site> 
   }
 }
 
-/** The inline and external scripts of the page, as one text. */
 export function scripts({ html, assets }: Site): string {
   const inline = [...html.matchAll(/<script type="module">([\s\S]*?)<\/script>/g)].map(
     ([, code]) => code!,
