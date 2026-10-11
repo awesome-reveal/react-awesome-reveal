@@ -1,0 +1,8 @@
+{
+  "name": "@awesome-reveal/test-utils",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@testing-library/jest-dom": "^7.0.1"
+  }
+}

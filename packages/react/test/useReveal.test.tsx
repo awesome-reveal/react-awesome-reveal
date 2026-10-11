@@ -3,8 +3,14 @@ import { StrictMode, useLayoutEffect, version } from "react";
 
 import { slide } from "../src/keyframes";
 import { type RevealOptions, useReveal } from "../src/useReveal";
-import { animations, runningAnimations, uninstallAnimate } from "./mocks/animate";
-import { intersect, observerOf } from "./mocks/intersection-observer";
+import {
+  animations,
+  runningAnimations,
+  uninstallAnimate,
+} from "@awesome-reveal/test-utils/animate";
+import { observerOf } from "@awesome-reveal/test-utils/intersection-observer";
+
+import { intersect } from "./intersect";
 
 function Box(props: Partial<RevealOptions>) {
   const { ref, revealed, style } = useReveal<HTMLDivElement>({ keyframes: slide(), ...props });

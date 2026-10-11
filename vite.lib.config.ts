@@ -1,10 +1,11 @@
-import { defineConfig } from "vite";
+import { defineConfig, type PluginOption } from "vite";
 import dts from "vite-plugin-dts";
 
-export function defineLibConfig(entry: string[]) {
+/** `plugins` takes the compiler plugin of the framework, if it has one. */
+export function defineLibConfig(entry: string[], plugins: PluginOption[] = []) {
   return defineConfig({
     // The tsconfig paths point to the sources of other packages; declarations must keep the package imports.
-    plugins: [dts({ entryRoot: "src", staticImport: true, pathsToAliases: false })],
+    plugins: [...plugins, dts({ entryRoot: "src", staticImport: true, pathsToAliases: false })],
     build: {
       target: "esnext",
       minify: false,

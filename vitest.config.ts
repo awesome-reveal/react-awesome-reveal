@@ -3,16 +3,28 @@ import { fileURLToPath } from "node:url";
 import { playwright } from "@vitest/browser-playwright";
 import { coverageConfigDefaults, defineConfig } from "vitest/config";
 
+function aliases(entries: [string, string][]) {
+  return entries.map(([find, source]) => ({
+    find: new RegExp(`^${find}$`),
+    replacement: fileURLToPath(new URL(source, import.meta.url)),
+  }));
+}
+
+const testUtils = aliases([["@awesome-reveal/test-utils/(.+)", "packages/test-utils/src/$1.ts"]]);
+
 // Unit tests run against the sources of the other workspace packages, so no build is necessary first.
-const resolve = {
+// The :package projects test dist, so they get only the test-utils alias.
+const sources = {
   alias: [
-    ["@awesome-reveal/core", "packages/core/src/index.ts"],
-    ["@awesome-reveal/core/keyframes", "packages/core/src/keyframes/index.ts"],
-  ].map(([specifier, source]) => ({
-    find: new RegExp(`^${specifier}$`),
-    replacement: fileURLToPath(new URL(source!, import.meta.url)),
-  })),
+    ...aliases([
+      ["@awesome-reveal/core", "packages/core/src/index.ts"],
+      ["@awesome-reveal/core/keyframes", "packages/core/src/keyframes/index.ts"],
+    ]),
+    ...testUtils,
+  ],
 };
+
+const coverageThreshold = { lines: 90, functions: 90, branches: 85, statements: 90 };
 
 export default defineConfig({
   test: {
@@ -20,9 +32,13 @@ export default defineConfig({
     coverage: {
       provider: "istanbul",
       include: ["**/src/**"],
+      exclude: ["**/test-utils/**"],
       // CI turns json-summary into the coverage table of the GitHub job summary.
       reporter: [...coverageConfigDefaults.reporter, "json-summary"],
-      thresholds: { lines: 90, functions: 90, branches: 85, statements: 90 },
+      // Each package must reach the threshold, so that a weak package cannot hide in the total.
+      thresholds: Object.fromEntries(
+        ["core", "react"].map((name) => [`packages/${name}/src/**`, coverageThreshold]),
+      ),
     },
     projects: [
       {
@@ -61,7 +77,7 @@ export default defineConfig({
       },
       {
         root: "packages/react",
-        resolve,
+        resolve: sources,
         test: {
           name: "react:unit",
           environment: "jsdom",
@@ -77,7 +93,7 @@ export default defineConfig({
       },
       {
         root: "packages/react",
-        resolve,
+        resolve: sources,
         test: {
           name: "react:ssr",
           environment: "node",
@@ -87,6 +103,7 @@ export default defineConfig({
       },
       {
         root: "packages/react",
+        resolve: { alias: testUtils },
         test: {
           name: "react:package",
           environment: "node",

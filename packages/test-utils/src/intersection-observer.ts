@@ -1,5 +1,3 @@
-import { act } from "@testing-library/react";
-
 export class MockIntersectionObserver {
   static readonly instances = new Set<MockIntersectionObserver>();
 
@@ -35,8 +33,8 @@ export function observerOf(element: Element): MockIntersectionObserver | undefin
   return [...MockIntersectionObserver.instances].find((observer) => observer.elements.has(element));
 }
 
-/** Reports `element` to its observers as visible (`true` or a ratio) or not visible. */
+/** Reports `element` to its observers as visible (`true` or a ratio) or not visible. Adapters wrap it in their update scope, such as React `act`. */
 export function intersect(element: Element, visible: boolean | number) {
   const ratio = typeof visible === "number" ? visible : visible ? 1 : 0;
-  act(() => observerOf(element)?.trigger(element, ratio));
+  observerOf(element)?.trigger(element, ratio);
 }
