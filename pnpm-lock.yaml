@@ -269,9 +269,6 @@ importers:
       react:
         specifier: 'catalog:'
         version: 19.3.0
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.3.0(react@19.3.0)
 
   packages/test-utils:
     dependencies:

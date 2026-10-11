@@ -1,6 +1,23 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "jsPlugins": ["./.oxlint/directives.js"],
   "rules": {
-    "no-unused-vars": ["warn", { "ignoreRestSiblings": true }]
-  }
+    "no-unused-vars": [
+      "warn",
+      {
+        "ignoreRestSiblings": true
+      }
+    ],
+    "directives/require-description": "error"
+  },
+  "overrides": [
+    {
+      "files": ["packages/react/**", "packages/react-awesome-reveal/**", "playgrounds/react/**"],
+      "plugins": ["react"],
+      "rules": {
+        "react/rules-of-hooks": "error",
+        "react/exhaustive-deps": "warn"
+      }
+    }
+  ]
 }

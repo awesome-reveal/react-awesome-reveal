@@ -33,7 +33,10 @@ Copy the steps into your task list, and mark each step when it is done.
 9. Add the consumer skills in `packages/<framework>/skills/<name>/SKILL.md`, and add `skills` to `files`. Port `adding-reveal-animations` from the React package.
 10. Add `playgrounds/<framework>`, with the sections of `playgrounds/react`.
 11. Add the package to `release-please-config.json`, with `"component"` set to the package name, and to `linked-versions`. Without `"component"`, release-please drops the npm scope from the tags. Add its path to `.release-please-manifest.json`, with the current version of core. Before the release PR merges, do "Publish a new package" in the `releasing-packages` skill.
-12. If the peer range covers an older major version of the framework, add it to the `framework` matrix in `.github/workflows/ci.yml`.
+12. Update the repo config for the framework:
+    - If the peer range covers an older major version of the framework, add it to the `framework` matrix in `.github/workflows/ci.yml`.
+    - Add a group with the framework packages to the `npm` entry of `.github/dependabot.yml`.
+    - If oxlint has a plugin for the framework, such as `vue`, enable it in an `overrides` entry of `.oxlintrc.json`. Limit the entry to the package and its playground, as the React entry does.
 13. Add the package to the package tables in the root `README.md` and in `packages/core/README.md`, and to the `package` dropdown in `.github/ISSUE_TEMPLATE/bug_report.yml`.
 14. Add `.claude/rules/<framework>/adapter.md` for the gotchas of the framework, with `paths: ["packages/<framework>/**"]`.
 15. Run the checks:

@@ -65,8 +65,7 @@
   },
   "devDependencies": {
     "@types/react": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:"
+    "react": "catalog:"
   },
   "peerDependencies": {
     "react": ">=18.0.0"
