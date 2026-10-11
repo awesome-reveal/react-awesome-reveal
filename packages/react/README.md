@@ -116,11 +116,7 @@ Option changes apply to the next reveal. They do not replay an animation that al
 
 ## Options
 
-`Reveal` and `useReveal` accept the [options of `@awesome-reveal/core`](https://www.npmjs.com/package/@awesome-reveal/core#options), such as `keyframes`, `duration`, `stagger` and `once`. They also accept this option:
-
-| Option | Description                                                           | Default |
-| ------ | --------------------------------------------------------------------- | ------- |
-| `when` | Controls the reveal manually. When set, the viewport is not observed. | –       |
+`Reveal` and `useReveal` accept the [options of `@awesome-reveal/core`](https://www.npmjs.com/package/@awesome-reveal/core#options), such as `keyframes`, `duration`, `stagger`, `once` and `when`.
 
 ## Recipes
 

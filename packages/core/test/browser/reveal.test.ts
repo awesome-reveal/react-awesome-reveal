@@ -153,6 +153,53 @@ describe("reveal", () => {
     await expect.element(element).toHaveAttribute("data-reveal", "hidden");
   });
 
+  it("follows `when` and does not observe the viewport", async () => {
+    const observers = countObservers();
+    controller = reveal(element, { ...options, when: false });
+    scrollIntoView(element);
+    await settle();
+    expect(isHidden()).toBe(true);
+    expect(observers).toEqual([]);
+
+    controller.update({ ...options, when: true });
+    expect(controller.revealed).toBe(true);
+    expect(isHidden()).toBe(false);
+    const [animation] = element.getAnimations();
+    expect(animation).toBeDefined();
+
+    controller.update({ ...options, when: false });
+    expect(isHidden()).toBe(true);
+    expect(animation!.playState).toBe("idle");
+    expect(observers).toEqual([]);
+  });
+
+  it("observes the viewport when `when` is removed", async () => {
+    controller = reveal(element, { ...options, when: false });
+    controller.update(options);
+    scrollIntoView(element);
+    await waitForReveal();
+  });
+
+  it("hides the element and observes the viewport when `when: true` is removed", async () => {
+    controller = reveal(element, { ...options, when: true });
+    controller.update(options);
+    expect(isHidden()).toBe(true);
+
+    scrollIntoView(element);
+    await waitForReveal();
+  });
+
+  it("restarts the observer when the caller mutates the options object", async () => {
+    const mutable: RevealOptions = { ...options, threshold: 1 };
+    controller = reveal(element, mutable);
+    showTopHalf(element);
+    await settle();
+
+    mutable.threshold = 0.4;
+    controller.update(mutable);
+    await waitForReveal();
+  });
+
   it("stops the observation and the animation when destroyed", async () => {
     await revealInView({ ...options, once: false });
     const [animation] = element.getAnimations();

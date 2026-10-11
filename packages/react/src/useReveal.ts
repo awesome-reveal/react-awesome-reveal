@@ -2,19 +2,9 @@
 
 import { type CSSProperties, type RefCallback, useEffect, useLayoutEffect, useState } from "react";
 
-import {
-  hiddenStyle,
-  observe,
-  play,
-  type RevealOptions as CoreRevealOptions,
-} from "@awesome-reveal/core";
+import { hiddenStyle, observe, play, type RevealOptions } from "@awesome-reveal/core";
 
-export interface RevealOptions extends CoreRevealOptions {
-  /**
-   * Controls the reveal manually. When set, the viewport is not observed.
-   */
-  when?: boolean;
-}
+export type { RevealOptions };
 
 export interface RevealState<T extends Element> {
   /** Attach to the element to reveal. */

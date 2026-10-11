@@ -44,5 +44,9 @@ export function observe(
     { threshold, rootMargin },
   );
   observer.observe(element);
-  return () => observer.disconnect();
+  return () => {
+    observer.disconnect();
+    // disconnect() does not drop the entries that are already queued, so the callback can still run.
+    onChange = () => {};
+  };
 }

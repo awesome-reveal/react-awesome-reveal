@@ -62,7 +62,7 @@ The keyframes do not touch the DOM, so you can create them on the server. Each a
 Hides the element, and plays the keyframes when the element enters the viewport. It returns a controller:
 
 - `revealed`: `true` after the reveal.
-- `update(options)`: replaces the options. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
+- `update(options)`: replaces the options. A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
 - `destroy()`: stops the observation and cancels the animation.
 
 While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes both.
@@ -165,7 +165,7 @@ export const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}
 
 ## Options
 
-The adapters accept the same options. Some adapters add their own options, which their READMEs document.
+The adapters accept the same options.
 
 | Option          | Description                                                                                                               | Default   |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------- | --------- |
@@ -176,9 +176,10 @@ The adapters accept the same options. Some adapters add their own options, which
 | `threshold`     | Fraction of the element, between 0 and 1, that must be visible to reveal it.                                              | `0`       |
 | `rootMargin`    | Grows or shrinks the viewport area that reveals the element, as a CSS margin in `px` or `%`.                              | `"0px"`   |
 | `once`          | Reveals the element only the first time. When `false`, the element hides again when it leaves the viewport.               | `true`    |
+| `when`          | Controls the reveal manually. When set, the viewport is not observed.                                                     | –         |
 | `reducedMotion` | `"user"` skips the animation when the user prefers reduced motion. `"always"` always skips it. `"never"` always plays it. | `"user"`  |
 
-`observe` uses `threshold`, `rootMargin` and `once`. `play` uses the other options.
+`observe` uses `threshold`, `rootMargin` and `once`. `play` uses `keyframes`, `duration`, `delay`, `stagger` and `reducedMotion`. `reveal` and the adapters use all options.
 
 `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`.
 
