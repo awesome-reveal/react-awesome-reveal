@@ -13,7 +13,7 @@ Reveal-on-scroll animations for many frameworks, built on IntersectionObserver a
 
 ## Commands
 
-Use the Node version in `.nvmrc`. jsdom needs Node 22.22, 24.15 or later.
+Use the Node version in `.nvmrc`. jsdom needs Node `^22.22.2`, `^24.15.0` or `>=26`.
 
 - `pnpm exec playwright install --with-deps --only-shell chromium firefox webkit`: run once before the browser tests.
 - `pnpm test`: the unit, SSR and browser tests. Add `--coverage` to check the CI thresholds.
