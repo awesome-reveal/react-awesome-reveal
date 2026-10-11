@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.0-next.4](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/react@1.0.0-next.3...@awesome-reveal/react@1.0.0-next.4) (2026-10-11)
+
+
+### Miscellaneous Chores
+
+* **@awesome-reveal/react:** Synchronize awesome-reveal versions
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @awesome-reveal/core bumped to 1.0.0-next.4
+
 ## [1.0.0-next.3](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/react@1.0.0-next.2...@awesome-reveal/react@1.0.0-next.3) (2026-10-11)
 
 
