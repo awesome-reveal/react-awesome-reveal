@@ -70,6 +70,7 @@ export default defineConfig({
       },
       {
         root: "packages/core",
+        resolve: { alias: testUtils },
         test: {
           name: "core:package",
           environment: "node",
