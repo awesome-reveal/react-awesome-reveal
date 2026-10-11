@@ -7,6 +7,7 @@ Reveal-on-scroll animations for many frameworks, built on IntersectionObserver a
 - `packages/core`: the framework-independent controller and the `/keyframes` entry point.
 - `packages/react`: the React adapter. It depends on core and re-exports `/keyframes`.
 - `packages/react-awesome-reveal`: the compat package for v4 users. It re-exports `@awesome-reveal/react`.
+- `packages/test-utils`: private test mocks, setup files and checks for the adapters.
 - `packages/*/skills`: agent skills for the users of each package. pnpm links them into consumer projects.
 - `playgrounds/react`: a Vite app for manual checks (`pnpm --filter playground-react dev`).
 - `vite.lib.config.ts`: the library build that all packages share.

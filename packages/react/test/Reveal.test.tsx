@@ -3,8 +3,8 @@ import { createRef, version } from "react";
 
 import { fade, slide } from "../src/keyframes";
 import { Reveal } from "../src/Reveal";
-import { animations } from "./mocks/animate";
-import { intersect } from "./mocks/intersection-observer";
+import { animations } from "@awesome-reveal/test-utils/animate";
+import { intersect } from "./intersect";
 
 describe(`Reveal (React ${version})`, () => {
   it("renders one hidden div around its children", () => {

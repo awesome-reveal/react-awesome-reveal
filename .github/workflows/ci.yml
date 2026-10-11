@@ -18,7 +18,7 @@ env:
 
 jobs:
   test:
-    name: Test (React ${{ matrix.react }})
+    name: Test
     runs-on: ubuntu-latest
     # The image has the browsers and their system packages. Its tag must match the playwright version in pnpm-lock.yaml.
     container:
@@ -27,13 +27,6 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: read
-    strategy:
-      fail-fast: false
-      matrix:
-        react: [18, 19]
-        include:
-          - react: 18
-            deps: react@18 react-dom@18 @types/react@18 @types/react-dom@18
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -50,13 +43,7 @@ jobs:
           cache: pnpm
 
       - name: Install dependencies
-        if: ${{ !matrix.deps }}
         run: pnpm install --frozen-lockfile
-
-      # pnpm add installs the rest of the dependencies too.
-      - name: Install dependencies with React ${{ matrix.react }}
-        if: ${{ matrix.deps }}
-        run: pnpm --filter @awesome-reveal/react add -D ${{ matrix.deps }}
 
       - name: Test
         run: pnpm test --coverage
@@ -65,7 +52,7 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: browser-test-results-react-${{ matrix.react }}
+          name: browser-test-results
           path: .vitest/
           include-hidden-files: true
           if-no-files-found: ignore
@@ -82,6 +69,55 @@ jobs:
             console.log(`| ${key[0].toUpperCase()}${key.slice(1)} | ${pct}% | ${covered} / ${all} |`);
           }
           EOF
+
+  # The main job tests the catalog version of each framework. This job tests the older majors in the peer ranges.
+  framework:
+    name: Test (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: React 18
+            package: "@awesome-reveal/react"
+            deps: react@18 react-dom@18 @types/react@18 @types/react-dom@18
+            projects: --project react:unit --project react:ssr
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # A filtered pnpm add installs only the dependencies of that package, so the full install comes first.
+      - name: Install ${{ matrix.name }}
+        env:
+          PACKAGE: ${{ matrix.package }}
+          DEPS: ${{ matrix.deps }}
+        run: |
+          read -r -a deps <<< "$DEPS"
+          pnpm --filter "$PACKAGE" add -D "${deps[@]}"
+
+      - name: Test
+        env:
+          PROJECTS: ${{ matrix.projects }}
+        run: |
+          read -r -a projects <<< "$PROJECTS"
+          pnpm vitest run "${projects[@]}"
 
   package:
     name: Package
