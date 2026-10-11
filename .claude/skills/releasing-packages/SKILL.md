@@ -1,6 +1,6 @@
 ---
-name: release
-description: Releases the awesome-reveal packages with release-please and npm trusted publishing. Use when you merge a release PR, fix a failed publish, set a version, publish a new package for the first time, or do a release-please dry run.
+name: releasing-packages
+description: Releases the awesome-reveal packages with release-please and npm trusted publishing. Use when you merge a release PR, fix a failed publish, set a version, publish a new package for the first time, do a release-please dry run, or leave prerelease mode for a stable release.
 ---
 
 # Release the packages

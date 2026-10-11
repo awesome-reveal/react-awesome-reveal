@@ -1,6 +1,6 @@
 ---
 name: migrating-from-v4
-description: Migrates code from react-awesome-reveal v4 (Fade, Slide, Zoom, Bounce, cascade, triggerOnce, Emotion keyframes) to @awesome-reveal/react. Use when code imports react-awesome-reveal 4.x or its effect components.
+description: Migrates code from react-awesome-reveal v4 (Fade, Slide, Zoom, Bounce, cascade, triggerOnce, Emotion keyframes) to @awesome-reveal/react. Use when code imports react-awesome-reveal 4.x or its effect components, or when the user upgrades react-awesome-reveal to v5.
 ---
 
 # Migrate from react-awesome-reveal v4
