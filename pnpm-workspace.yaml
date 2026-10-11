@@ -2,6 +2,11 @@ packages:
   - "packages/*"
   - "playgrounds/*"
 
+# The Astro 6 CI job installs these. Their binaries come from optional dependencies, so the scripts are not necessary.
+allowBuilds:
+  esbuild: false
+  sharp: false
+
 catalog:
   "@types/react": ^19.3.0
   "@types/react-dom": ^19.3.0
