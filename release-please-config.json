@@ -17,6 +17,9 @@
     },
     "packages/react-awesome-reveal": {
       "component": "react-awesome-reveal"
+    },
+    "packages/vue": {
+      "component": "@awesome-reveal/vue"
     }
   },
   "plugins": [
@@ -27,7 +30,7 @@
     {
       "type": "linked-versions",
       "groupName": "awesome-reveal",
-      "components": ["@awesome-reveal/core", "@awesome-reveal/react"]
+      "components": ["@awesome-reveal/core", "@awesome-reveal/react", "@awesome-reveal/vue"]
     }
   ]
 }

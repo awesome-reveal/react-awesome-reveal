@@ -10,6 +10,7 @@ The framework adapters use this package. If your app uses one of these framework
 | Framework | Package                                                                        |
 | --------- | ------------------------------------------------------------------------------ |
 | React     | [`@awesome-reveal/react`](https://www.npmjs.com/package/@awesome-reveal/react) |
+| Vue       | [`@awesome-reveal/vue`](https://www.npmjs.com/package/@awesome-reveal/vue)     |
 
 Use this package directly with plain DOM code, or to write an adapter for another framework. This README also documents the keyframes, the options, accessibility and browser support for all the adapters.
 

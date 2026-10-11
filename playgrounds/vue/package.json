@@ -1,0 +1,19 @@
+{
+  "name": "playground-vue",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@awesome-reveal/vue": "workspace:*",
+    "vue": "catalog:"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.10",
+    "vite": "catalog:",
+    "vue-tsc": "^3.3.12"
+  }
+}

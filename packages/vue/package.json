@@ -1,0 +1,77 @@
+{
+  "name": "@awesome-reveal/vue",
+  "version": "1.0.0-next.0",
+  "description": "Reveal-on-scroll animations for Vue, built on the Web Animations API and IntersectionObserver.",
+  "keywords": [
+    "animation",
+    "directive",
+    "intersection-observer",
+    "reveal",
+    "scroll",
+    "scroll-reveal",
+    "typescript",
+    "vue",
+    "waapi",
+    "web-animations"
+  ],
+  "homepage": "https://awesome-reveal.morello.dev",
+  "bugs": {
+    "url": "https://github.com/awesome-reveal/awesome-reveal/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Dennis Morello",
+    "email": "dennismorello@gmail.com",
+    "url": "https://morello.dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/awesome-reveal/awesome-reveal.git",
+    "directory": "packages/vue"
+  },
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/morellodev"
+    }
+  ],
+  "files": [
+    "dist",
+    "skills"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./keyframes": {
+      "types": "./dist/keyframes.d.ts",
+      "default": "./dist/keyframes.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc --noEmit && vite build",
+    "check:package": "publint --strict && attw --pack . --profile esm-only"
+  },
+  "dependencies": {
+    "@awesome-reveal/core": "workspace:^"
+  },
+  "devDependencies": {
+    "@vue/test-utils": "^2.5.1",
+    "vue": "catalog:",
+    "vue-tsc": "^3.3.12"
+  },
+  "peerDependencies": {
+    "vue": ">=3.5.0"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  }
+}

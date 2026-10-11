@@ -1,6 +1,7 @@
 import { fileURLToPath } from "node:url";
 
 import { playwright } from "@vitest/browser-playwright";
+import vue from "@vitejs/plugin-vue";
 import { coverageConfigDefaults, defineConfig } from "vitest/config";
 
 function aliases(entries: [string, string][]) {
@@ -37,7 +38,7 @@ export default defineConfig({
       reporter: [...coverageConfigDefaults.reporter, "json-summary"],
       // Each package must reach the threshold, so that a weak package cannot hide in the total.
       thresholds: Object.fromEntries(
-        ["core", "react"].map((name) => [`packages/${name}/src/**`, coverageThreshold]),
+        ["core", "react", "vue"].map((name) => [`packages/${name}/src/**`, coverageThreshold]),
       ),
     },
     projects: [
@@ -106,6 +107,46 @@ export default defineConfig({
         resolve: { alias: testUtils },
         test: {
           name: "react:package",
+          environment: "node",
+          setupFiles: ["./test/setup/console.ts"],
+          include: ["test/package/**/*.test.ts"],
+        },
+      },
+      {
+        root: "packages/vue",
+        plugins: [vue()],
+        resolve: sources,
+        test: {
+          name: "vue:unit",
+          environment: "jsdom",
+          setupFiles: ["./test/setup/console.ts", "./test/setup/dom.ts"],
+          include: ["test/**/*.test.ts"],
+          exclude: ["test/package/**", "test/ssr.test.ts"],
+          typecheck: {
+            enabled: true,
+            // vue-tsc also checks the templates of the .vue files that the tsconfig includes.
+            checker: "vue-tsc",
+            tsconfig: "./test/tsconfig.json",
+            include: ["test/types/**/*.test-d.ts"],
+          },
+        },
+      },
+      {
+        root: "packages/vue",
+        plugins: [vue()],
+        resolve: sources,
+        test: {
+          name: "vue:ssr",
+          environment: "node",
+          setupFiles: ["./test/setup/console.ts"],
+          include: ["test/ssr.test.ts"],
+        },
+      },
+      {
+        root: "packages/vue",
+        resolve: { alias: testUtils },
+        test: {
+          name: "vue:package",
           environment: "node",
           setupFiles: ["./test/setup/console.ts"],
           include: ["test/package/**/*.test.ts"],

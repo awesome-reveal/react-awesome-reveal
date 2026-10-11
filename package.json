@@ -3,19 +3,20 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "pnpm --filter \"./packages/*\" build",
+    "build": "pnpm --filter \"./packages/*\" --parallel build",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
     "prepare": "husky",
     "test": "vitest run --project \"*:unit\" --project \"*:ssr\" --project \"*:browser\"",
-    "test:package": "pnpm build && vitest run --project \"*:package\" && pnpm --filter \"./packages/*\" check:package",
+    "test:package": "pnpm build && vitest run --project \"*:package\" && pnpm --filter \"./packages/*\" --parallel check:package",
     "test:watch": "vitest --project \"*:unit\""
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@types/node": "^24.19.1",
+    "@vitejs/plugin-vue": "^6.0.10",
     "@vitest/browser-playwright": "^5.0.3",
     "@vitest/coverage-istanbul": "^5.0.3",
     "husky": "^9.1.7",
