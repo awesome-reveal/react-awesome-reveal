@@ -33,11 +33,8 @@ export function observe(
     return () => {};
   }
 
-  let active = true;
   const observer = new IntersectionObserver(
     (entries) => {
-      // disconnect() does not drop the entries that are already queued, so a callback can still arrive.
-      if (!active) return;
       // Array.prototype.at is newer than the browsers this library supports.
       const entry = entries[entries.length - 1]!;
       const inView = entry.isIntersecting && entry.intersectionRatio >= threshold;
@@ -48,7 +45,8 @@ export function observe(
   );
   observer.observe(element);
   return () => {
-    active = false;
     observer.disconnect();
+    // disconnect() does not drop the entries that are already queued, so the callback can still run.
+    onChange = () => {};
   };
 }
