@@ -2,7 +2,7 @@ packages:
   - "packages/*"
   - "playgrounds/*"
 
-# The Astro 6 CI job installs these. Their binaries come from optional dependencies, so the scripts are not necessary.
+# These packages get their binaries from optional dependencies, so their build scripts are not necessary.
 allowBuilds:
   esbuild: false
   sharp: false
