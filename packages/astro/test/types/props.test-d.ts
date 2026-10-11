@@ -1,6 +1,6 @@
 import type { RevealOptions } from "@awesome-reveal/core";
 
-import { Reveal, type RevealProps } from "../../src";
+import type { Reveal, RevealProps } from "../../src";
 
 test("Reveal takes the core options and as", () => {
   expectTypeOf<RevealProps>().toExtend<RevealOptions>();
@@ -13,7 +13,5 @@ test("Reveal takes the attributes of the as tag", () => {
 });
 
 test("Reveal takes the props of its as tag", () => {
-  expectTypeOf(Reveal<"a">)
-    .parameter(0)
-    .toEqualTypeOf<RevealProps<"a">>();
+  expectTypeOf<typeof Reveal<"a">>().parameter(0).toEqualTypeOf<RevealProps<"a">>();
 });

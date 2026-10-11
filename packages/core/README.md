@@ -109,7 +109,7 @@ reveal(element, { keyframes: slide({ direction: "left", distance: 40 }) });
 - A number for `distance`, `amount`, `x`, `y` or `blur` is in pixels. A number for `rotate` is in degrees. A string can be any CSS length or angle.
 - `opacity` is the start opacity. It is `0` by default. Set it to `1` for movement with no fade.
 - The default `easing` is `"cubic-bezier(0.22, 1, 0.36, 1)"`. An easing with values out of the 0–1 range overshoots, as `pop()` does.
-- `spring()` returns an easing that follows a spring, for the `easing` option of any factory: `slide({ easing: spring({ bounce: 0.5 }) })`. `bounce` (default `0.3`, from `0` to `0.8`) sets the overshoot. It uses CSS `linear()`. Safari before 17.2 gets the default easing. If you call `spring()` on the server, that Safari shows the element with no animation.
+- `spring()` returns an easing that follows a spring, for the `easing` option of any factory: `slide({ easing: spring({ bounce: 0.5 }) })`. `bounce` (default `0.3`, from `0` to `0.8`) sets the overshoot. It uses CSS `linear()`. Chrome before 113, Firefox before 112 and Safari before 17.2 get the default easing. If you call `spring()` on the server, these browsers show the element with no animation.
 - `blur()` animates `filter`. Chromium and Safari composite it, but other engines repaint it on each frame. Use it on small and medium elements.
 
 ```js
@@ -183,12 +183,12 @@ The adapters accept the same options.
 
 `observe` uses `threshold`, `rootMargin` and `once`. `play` uses `keyframes`, `duration`, `delay`, `stagger` and `reducedMotion`. `reveal` and the adapters use all options.
 
-`stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`.
+`stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. An inline element that you reveal also needs `display: inline-block`, or it only fades.
 
 ## Accessibility
 
 - When the user prefers reduced motion, the element appears with no animation. Use `reducedMotion` to change this.
-- Hidden content uses `opacity: 0` only. It stays in the accessibility tree and in the browser's find-in-page.
+- Hidden content uses `opacity: 0` only. It stays in the accessibility tree and in the browser's find-in-page. Links and buttons in it stay focusable and clickable.
 - If JavaScript does not run, content rendered on the server stays hidden. To show it, put this CSS in a `<noscript>` element in the document head:
 
   ```css
@@ -203,7 +203,7 @@ The adapters accept the same options.
 
 ## Browser support
 
-Chrome 84, Firefox 75 and Safari 13.1, or later. These versions support the Web Animations API with implicit keyframes. MDN reports that the implicit keyframes of Safari 13.1 to 15 have bugs. If you support these versions, give each keyframe of your custom keyframes explicit values.
+Chrome 84, Firefox 75 (79 on Android) and Safari 13.1, or later. These versions support the Web Animations API with implicit keyframes. MDN reports bugs in the implicit keyframes of Safari from 13.1, with no fixed version. To support Safari, give each keyframe of your custom keyframes explicit values.
 
 Without `IntersectionObserver`, elements are revealed immediately. Without `Element.animate`, elements appear with no animation.
 

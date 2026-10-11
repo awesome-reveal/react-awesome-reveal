@@ -90,7 +90,7 @@ Under a strict Content Security Policy, the inline `opacity: 0` style needs `sty
 - `direction` is the direction of the movement. `"up"` starts below the resting position.
 - A number for a length is in pixels, and a number for `rotate` is in degrees. A string can be any CSS length or angle.
 - `opacity` is the start opacity (default `0`). Set it to `1` for movement with no fade.
-- `spring()` returns an easing that follows a spring, for the `easing` option of any factory: `slide({ easing: spring({ bounce: 0.5 }) })`. `bounce` (default `0.3`, from `0` to `0.8`) sets the overshoot. It uses CSS `linear()`. Safari before 17.2 gets the default easing.
+- `spring()` returns an easing that follows a spring, for the `easing` option of any factory: `slide({ easing: spring({ bounce: 0.5 }) })`. `bounce` (default `0.3`, from `0` to `0.8`) sets the overshoot. It uses CSS `linear()`. Chrome before 113, Firefox before 112 and Safari before 17.2 get the default easing.
 
 For a custom animation, use `defineKeyframes` or a keyframes array:
 
@@ -126,7 +126,7 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 ## Rules
 
 - `update` applies a change of `when` at once, and restarts the observer for a change of `threshold`, `rootMargin` or `once`. The other options apply at the next reveal. They do not replay an animation that already played.
-- `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`.
+- `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. An inline element that you reveal also needs `display: inline-block`, or it only fades.
 - Keep `reducedMotion` at `"user"` unless the user asks for a different behavior. It respects the operating system setting of people whom motion makes ill.
 - Prefer `transform` and `opacity`. `filter` (`blur()`) and `clip-path` repaint on each frame in some engines, so use them on small elements.
 - While the element is hidden, its inline `opacity` is `0`. The reveal removes the inline `opacity`, so set your own opacity in a class, not in the `style` attribute.

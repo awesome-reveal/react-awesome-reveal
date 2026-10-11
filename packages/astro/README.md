@@ -28,7 +28,7 @@
 
 - 🪶 **Tiny** – No third-party dependencies. The client script is about 1.1 kB gzipped. The keyframes run on the server, so they add nothing to it.
 - 🧭 **Astro-native** – It works with the `<ClientRouter />`, server islands, `transition:persist` and prerendered pages.
-- 🔒 **CSP-ready** – It works with `security.csp`. The server markup has no `style` attributes.
+- 🔒 **CSP-ready** – It works with `security.csp`. The server markup has no `style` attributes. Astro does not support `security.csp` with the `<ClientRouter />`.
 - ⚙️ **Native APIs** – Intersection Observer detects the reveal. Web Animations run it on the compositor where possible.
 - ♿ **Accessible** – It respects `prefers-reduced-motion` by default. Hidden content stays in the accessibility tree, and shows when JavaScript is off.
 - 🏷 **TypeScript** – Strict types for the props, with the attributes of the tag that you choose.
@@ -39,7 +39,7 @@
 pnpm add @awesome-reveal/astro
 ```
 
-Astro 6 or later is necessary.
+Astro 6 or 7 is necessary.
 
 ## Quick start
 
@@ -121,7 +121,7 @@ Do not put `Reveal` directly in a `<table>`, `<tbody>` or `<tr>`. The HTML parse
 </Reveal>
 ```
 
-`stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. For the same reason, `stagger` cannot animate framework islands that are direct children, because `<astro-island>` has `display: contents`. Put each island in an element.
+`stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. With an inline `as` tag, `Reveal` itself also needs `display: inline-block`, or it only fades. `stagger` cannot animate framework islands that are direct children, because `<astro-island>` has `display: contents`, so it has no box to fade or move. Put each island in an element.
 
 ### Reveal from a script
 
@@ -147,12 +147,12 @@ With `when`, your code controls the reveal, and nothing observes the viewport. `
 ## Accessibility
 
 - When the user prefers reduced motion, the element appears with no animation. Use `reducedMotion` to change this.
-- Hidden content uses `opacity: 0` only. It stays in the accessibility tree and in the browser's find-in-page.
+- Hidden content uses `opacity: 0` only. It stays in the accessibility tree and in the browser's find-in-page. Links and buttons in it stay focusable and clickable.
 - The stylesheet rule that hides the element applies only in `@media (scripting: enabled)`. When JavaScript is off, the content shows. You do not need the `<noscript>` CSS of the other adapters.
 
 ## Browser support
 
-Chrome 84, Firefox 75 and Safari 13.1, or later. Read [Browser support](https://www.npmjs.com/package/@awesome-reveal/core#browser-support) for the fallbacks.
+Chrome 84, Firefox 75 (79 on Android) and Safari 13.1, or later. Read [Browser support](https://www.npmjs.com/package/@awesome-reveal/core#browser-support) for the fallbacks.
 
 The `scripting` media feature needs Chrome 120, Firefox 113 or Safari 17. In older browsers, the stylesheet rule does not apply. The element then shows until the script hides it, and the reveal animation plays as usual.
 

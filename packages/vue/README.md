@@ -143,7 +143,7 @@ On the server, `v-reveal` also renders `data-allow-mismatch="style"`. The client
 </Reveal>
 ```
 
-`stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`.
+`stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. With an inline `as` tag, `Reveal` itself also needs `display: inline-block`, or it only fades.
 
 ### Content that loads
 
@@ -159,7 +159,7 @@ The [Accessibility section of the `@awesome-reveal/core` README](https://www.npm
 
 ## Browser support
 
-Chrome 84, Firefox 75 and Safari 13.1, or later. Read [Browser support](https://www.npmjs.com/package/@awesome-reveal/core#browser-support) for the fallbacks.
+Chrome 84, Firefox 75 (79 on Android) and Safari 13.1, or later. Read [Browser support](https://www.npmjs.com/package/@awesome-reveal/core#browser-support) for the fallbacks.
 
 ## License
 

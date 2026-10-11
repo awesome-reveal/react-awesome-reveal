@@ -21,8 +21,9 @@ function position(t: number, damping: number): number {
 
 /**
  * Returns a CSS `linear()` easing that follows a spring, for the `easing` option of a preset.
- * Browsers without `linear()` (Safari before 17.2) get the default ease-out curve. On the server,
- * `spring` cannot check and returns `linear()`, so these browsers show the element with no animation.
+ * Browsers without `linear()` (Chrome before 113, Firefox before 112, Safari before 17.2) get the
+ * default ease-out curve. On the server, `spring` cannot check and returns `linear()`, so these
+ * browsers show the element with no animation.
  */
 export function spring({ bounce = 0.3 }: SpringOptions = {}): string {
   if (typeof CSS === "object" && !CSS.supports("animation-timing-function", "linear(0, 1)"))
