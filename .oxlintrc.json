@@ -13,7 +13,7 @@
   },
   "overrides": [
     {
-      "files": ["packages/react/**", "packages/react-awesome-reveal/**", "playgrounds/react/**"],
+      "files": ["packages/react/**", "packages/react-awesome-reveal/**", "examples/react/**"],
       "plugins": ["react"],
       "rules": {
         "react/rules-of-hooks": "error",
@@ -21,7 +21,7 @@
       }
     },
     {
-      "files": ["packages/vue/**", "playgrounds/vue/**"],
+      "files": ["packages/vue/**", "examples/vue/**"],
       "plugins": ["vue"]
     }
   ]

@@ -1,6 +1,6 @@
 packages:
   - "packages/*"
-  - "playgrounds/*"
+  - "examples/*"
 
 # These packages get their binaries from optional dependencies, so their build scripts are not necessary.
 allowBuilds:

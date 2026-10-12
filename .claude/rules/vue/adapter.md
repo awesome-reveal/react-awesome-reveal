@@ -1,12 +1,12 @@
 ---
 paths:
   - "packages/vue/**"
-  - "playgrounds/vue/**"
+  - "examples/vue/**"
 ---
 
 # Vue adapter
 
-- The sources are TypeScript render functions, not SFCs. The build needs no Vue plugin, and `vite-plugin-dts` emits the declarations. Only the tests and the playground have `.vue` files. `@vitejs/plugin-vue` is a root dev dependency, because `vitest.config.ts` imports it.
+- The sources are TypeScript render functions, not SFCs. The build needs no Vue plugin, and `vite-plugin-dts` emits the declarations. Only the tests and the example have `.vue` files. `@vitejs/plugin-vue` is a root dev dependency, because `vitest.config.ts` imports it.
 - `vue:unit` type-checks the tests with `vue-tsc`, because `tsc` cannot read `.vue` files. Use `pnpm --filter @awesome-reveal/vue exec vue-tsc -p test`, not `tsc -p packages/vue/test`. `test/types/Templates.vue` checks the template types with `<!-- @vue-expect-error -->`.
 - `Reveal` declares `once` and `when` with `default: undefined`. Vue casts an absent Boolean prop to `false`, which turns off `once` and makes `when` control the reveal.
 - `Reveal` renders the hidden style itself, with `observe` and `play` from core. Vue sets the element ref in a post-flush job, so the `observe` watcher is `sync`: then the observer exists when `mount()` returns. The `play` watcher is post-flush, so it runs after the patch that removes the hidden style, in the same task.

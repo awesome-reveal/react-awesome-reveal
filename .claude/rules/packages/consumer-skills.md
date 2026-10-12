@@ -11,4 +11,4 @@ paths:
 - pnpm puts the package name in each link, such as `.claude/skills/pnpm-<package>-<skill>`. So the skills of core and of an adapter can have the same name.
 - The frontmatter `name` must match the folder name, as the Agent Skills spec requires.
 - The `<package>:package` tests call `describeSkills` from `@awesome-reveal/test-utils/skills`. It checks the frontmatter. It also type-checks each `ts` and `tsx` fence and each inline factory call, such as `` `slide({ distance: 16 })` ``, against the built types. Fences that import `react-awesome-reveal` (v4) are not checked.
-- Update the skills, the READMEs and the playgrounds together when an option, a default or an export changes.
+- Update the skills, the READMEs and the examples together when an option, a default or an export changes.
