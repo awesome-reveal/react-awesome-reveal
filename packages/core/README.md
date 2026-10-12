@@ -83,7 +83,7 @@ The keyframes do not touch the DOM, so you can create them on the server. Each a
 Hides the element, and plays the keyframes when the element enters the viewport. It returns a controller:
 
 - `revealed`: `true` while the element is revealed.
-- `setOptions(options)`: replaces the options. A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal. After code writes the inline `opacity` of a hidden element, call it: the new opacity is the one that the reveal restores, and the element is hidden again.
+- `setOptions(options)`: replaces the options. A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal. After code writes the inline `opacity` of a hidden element, the element shows until the reveal. Call it to hide the element again.
 - `destroy()`: stops the observation, cancels the animation and restores the element.
 
 While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes both, and restores the inline `opacity` that the element had, with its priority. An inline `opacity` of `0` counts as no opacity. If the browser rejects an option, the element shows at once and stays shown, also when you correct the option later. The library reports the error once from a microtask, so it reaches `window.onerror` and does not throw in your code.

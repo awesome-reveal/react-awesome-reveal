@@ -306,6 +306,31 @@ describe("reveal", () => {
     expect(element.style.opacity).toBe("0.5");
   });
 
+  it("takes the opacity of a style patch that comes with a change of when", () => {
+    element.style.opacity = "0.5";
+    controller = reveal(element, { ...options, when: false });
+    element.style.opacity = "0.8";
+    controller.setOptions({ ...options, when: true });
+    expect(element.style.opacity).toBe("0.8");
+    expect(element).not.toHaveAttribute("data-reveal");
+  });
+
+  it("shows hidden server markup when it starts revealed", () => {
+    element.style.opacity = "0";
+    element.setAttribute("data-reveal", "hidden");
+    controller = reveal(element, { ...options, when: true });
+    expect(element.style.opacity).toBe("");
+    expect(element).not.toHaveAttribute("data-reveal");
+  });
+
+  it("keeps the opacity of the user and its priority when it starts revealed and is destroyed", () => {
+    element.style.setProperty("opacity", "0.5", "important");
+    controller = reveal(element, { ...options, when: true });
+    controller.destroy();
+    expect(element.style.getPropertyValue("opacity")).toBe("0.5");
+    expect(element.style.getPropertyPriority("opacity")).toBe("important");
+  });
+
   it("takes hidden server markup as an element with no opacity of its own", async () => {
     element.style.opacity = "0";
     element.setAttribute("data-reveal", "hidden");

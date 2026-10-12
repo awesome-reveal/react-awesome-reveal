@@ -139,22 +139,22 @@ export function reveal(
   let priority = "";
 
   function apply(revealed: boolean) {
+    // The hidden opacity that the server markup or an earlier hide left is not the resting one.
+    if (style.opacity !== hiddenStyle.opacity) {
+      value = style.opacity;
+      priority = style.getPropertyPriority("opacity");
+    }
     if (revealed) {
       style.setProperty("opacity", value, priority);
       element.removeAttribute("data-reveal");
     } else {
-      // The hidden opacity that the server markup or an earlier hide left is not the resting one.
-      if (style.opacity !== hiddenStyle.opacity) {
-        value = style.opacity;
-        priority = style.getPropertyPriority("opacity");
-      }
       style.opacity = hiddenStyle.opacity;
       element.setAttribute("data-reveal", "hidden");
     }
   }
 
   state.subscribe(apply);
-  if (!state.revealed) apply(false);
+  apply(state.revealed);
   state.attach(element);
 
   let destroyed = false;
@@ -165,7 +165,7 @@ export function reveal(
     setOptions(next) {
       if (destroyed) return;
       state.setOptions(next);
-      if (!state.revealed) apply(false);
+      if (!state.revealed && style.opacity !== hiddenStyle.opacity) apply(false);
     },
     destroy() {
       if (destroyed) return;
@@ -173,7 +173,7 @@ export function reveal(
       state.attach(null);
       // Later calls to setOptions change no DOM.
       state.subscribe(() => {});
-      if (!state.revealed) apply(true);
+      apply(true);
     },
   };
 }

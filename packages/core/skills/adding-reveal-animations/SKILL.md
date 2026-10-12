@@ -139,7 +139,7 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 - `data-reveal` is reserved. Do not use it for other data.
 - Keep `reducedMotion` at `"user"` unless the user asks for a different behavior. It respects the operating system setting of people whom motion makes ill.
 - Prefer `transform` and `opacity`. `filter` (`blur()`) and `clip-path` repaint on each frame in some engines, so use them on small elements.
-- While the element is hidden, its inline `opacity` is `0`. The reveal restores the inline `opacity` that the element had, with its priority. An inline `opacity` of `0` counts as no opacity. After code writes the `opacity` of a hidden element, call `setOptions`, so that the new one is restored. Hidden server markup (`opacity: 0` with `data-reveal="hidden"`) counts as no opacity.
+- While the element is hidden, its inline `opacity` is `0`. The reveal restores the inline `opacity` that the element had, with its priority. An inline `opacity` of `0` counts as no opacity. Hidden server markup (`opacity: 0` with `data-reveal="hidden"`) counts as no opacity.
 - Without `IntersectionObserver`, elements are revealed at once. Without `Element.animate`, elements appear with no animation.
 - `null` is the same as leaving a `reveal` option out. This does not apply to the options of the keyframes factories.
 - When the browser rejects an option, such as a `threshold` above `1`, a `rootMargin` with no unit or a keyframe value, the element shows and stays shown, also when you correct the option later. The error is reported once from a microtask. It reaches `window.onerror`. It does not throw in your code.

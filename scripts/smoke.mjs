@@ -7,6 +7,7 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
+// Next.js would send telemetry on each build and start.
 process.env.NEXT_TELEMETRY_DISABLED = "1";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -155,6 +156,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   );
 }
 `,
+      // A Server Component creates the keyframes, so they cross the server boundary as props.
       "app/page.tsx": `
 import Link from "next/link";
 import { Reveal } from "@awesome-reveal/react";
@@ -190,12 +192,14 @@ export function Card() {
   return <article {...getProps({ id: "card" })}>Card</article>;
 }
 `,
+      // The other pages are prerendered. This one renders on each request.
       "app/about/page.tsx": nextPage(
         "about",
         "@awesome-reveal/react",
         "/legacy",
         'export const dynamic = "force-dynamic";',
       ),
+      // The compat package re-exports the React package, so it crosses the same boundary.
       "app/legacy/page.tsx": nextPage("legacy", "react-awesome-reveal", "/"),
     },
   },
