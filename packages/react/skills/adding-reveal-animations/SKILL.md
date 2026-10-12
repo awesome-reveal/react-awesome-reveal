@@ -10,7 +10,7 @@ description: Adds reveal-on-scroll animations to React components with @awesome-
 ## Choose the API
 
 - `Reveal` renders one element and animates it. Use `as` to choose the tag (default `div`). It passes the other props and `ref` to that element.
-- `useReveal(options)` animates your own element or component, with no wrapper. It returns `{ ref, style, revealed }`. Attach `ref` to the element. Spread `style` last into its style, so that the hidden `opacity: 0` overrides your opacity until the reveal.
+- `useReveal(options)` animates your own element or component, with no wrapper. It returns `{ revealed, getProps }`. Spread `getProps(yourProps)` on the element. It merges your `ref` and `style` with the reveal and sets `data-reveal`. Write your own `style` and `ref` inside `getProps`: a `style` after the spread drops the hidden style. With `stagger`, do not render the children of the element only when `revealed` is true: they do not animate.
 
 ```tsx
 import { Reveal, useReveal } from "@awesome-reveal/react";
@@ -21,16 +21,8 @@ import { fade, slide } from "@awesome-reveal/react/keyframes";
 </Reveal>;
 
 function Card() {
-  const { ref, style, revealed } = useReveal({ keyframes: fade(), threshold: 0.3 });
-  return (
-    <article
-      ref={ref}
-      style={{ padding: 16, ...style }}
-      data-reveal={revealed ? undefined : "hidden"}
-    >
-      …
-    </article>
-  );
+  const { getProps, revealed } = useReveal({ keyframes: fade(), threshold: 0.3 });
+  return <article {...getProps({ className: "card", style: { padding: 16 } })}>…</article>;
 }
 ```
 
@@ -104,6 +96,6 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
   </noscript>
   ```
 
-  `Reveal` sets `data-reveal="hidden"` itself. With `useReveal`, set it as in the example above.
+  `Reveal` and `getProps` set `data-reveal="hidden"` themselves.
 
 - Under a strict Content Security Policy, the inline `opacity: 0` style of the server markup needs `style-src-attr 'unsafe-inline'`.

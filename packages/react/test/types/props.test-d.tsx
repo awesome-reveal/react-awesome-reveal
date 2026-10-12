@@ -84,8 +84,14 @@ test("v4 props are removed", () => {
   void (<Reveal keyframes={slide()} onVisibilityChange={() => {}} />);
 });
 
-test("useReveal types the ref by element", () => {
-  const { ref } = useReveal<HTMLImageElement>({ keyframes: slide() });
+test("useReveal types the element props by element", () => {
+  const { getProps } = useReveal<HTMLImageElement>({ keyframes: slide() });
+  const props = getProps({ className: "card", ref: createRef<HTMLImageElement>() });
 
-  expectTypeOf(ref).toEqualTypeOf<RefCallback<HTMLImageElement>>();
+  expectTypeOf(props.ref).toEqualTypeOf<RefCallback<HTMLImageElement>>();
+  expectTypeOf(props.className).toEqualTypeOf<string>();
+  expectTypeOf(props["data-reveal"]).toEqualTypeOf<"hidden" | undefined>();
+  expectTypeOf(getProps()).toHaveProperty("style");
+  // @ts-expect-error an input ref on an image
+  getProps({ ref: createRef<HTMLInputElement>() });
 });
