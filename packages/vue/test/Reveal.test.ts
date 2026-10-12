@@ -135,16 +135,6 @@ describe(`Reveal (Vue ${version})`, () => {
     expect(animations).toHaveLength(1);
   });
 
-  it("plays on the new element when `as` and `when` change in the same tick", async () => {
-    const { wrapper } = mountReveal({ when: false });
-    await wrapper.setProps({ as: "section", when: true });
-
-    expect(wrapper.element.tagName).toBe("SECTION");
-    expect(wrapper.element).not.toHaveAttribute("data-reveal");
-    expect(animations.map(({ element }) => element)).toEqual([wrapper.element]);
-    expect(runningAnimations()).toHaveLength(1);
-  });
-
   it("merges the hidden style into the given style and restores it when revealed", async () => {
     const { element } = mountReveal({}, { style: { color: "red", opacity: 0.5 } });
 

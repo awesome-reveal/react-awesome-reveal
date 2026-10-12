@@ -1,8 +1,7 @@
 import { mount } from "@vue/test-utils";
-import { h, nextTick, reactive, ref, version, withDirectives } from "vue";
+import { nextTick, reactive, version } from "vue";
 
 import { slide } from "../src/keyframes";
-import { vReveal } from "../src/vReveal";
 import { animations, runningAnimations } from "@awesome-reveal/test-utils/animate";
 import { observerOf } from "@awesome-reveal/test-utils/intersection-observer";
 
@@ -100,21 +99,6 @@ describe(`v-reveal (Vue ${version})`, () => {
     await wrapper.setProps({ color: "blue" });
 
     expect(element).toHaveStyle({ color: "rgb(0, 0, 255)", opacity: "0" });
-  });
-
-  it("starts a new reveal when Vue replaces the element", async () => {
-    const tag = ref("div");
-    const wrapper = mount(
-      { render: () => withDirectives(h(tag.value, { key: tag.value }), [[vReveal, {}]]) },
-      { attachTo: document.body },
-    );
-    await intersect(wrapper.element, true);
-    tag.value = "section";
-    await nextTick();
-
-    expect(wrapper.element.tagName).toBe("SECTION");
-    expect(wrapper.element).toHaveAttribute("data-reveal", "hidden");
-    expect(observerOf(wrapper.element)).toBeDefined();
   });
 
   it("stops the observation and the animation on unmount", async () => {

@@ -14,10 +14,9 @@ const children = () => [1, 2, 3].map((n) => h("span", n));
 
 type Tree = (options: ContractOptions, style: object | undefined, swap: boolean) => VNode;
 
-function harness(tree: Tree, boundToElement = false): Harness {
+function harness(tree: Tree): Harness {
   return {
     replacesNode: true,
-    boundToElement,
     async mount(options, init) {
       const state = shallowRef({ options, swap: false });
       let error: unknown;
@@ -51,8 +50,8 @@ function harness(tree: Tree, boundToElement = false): Harness {
           fn();
           await nextTick();
         },
-        replaceNode: async () => {
-          state.value = { ...state.value, swap: true };
+        replaceNode: async (next) => {
+          state.value = { options: next ?? state.value.options, swap: true };
           await nextTick();
         },
       };
@@ -71,14 +70,12 @@ describeContract(
   ),
 );
 
-describeContract(
-  "Vue v-reveal",
-  harness(
-    (options, style, swap) =>
-      withDirectives(
-        h(swap ? "section" : "div", { key: String(swap), style, "data-contract": "" }, children()),
-        [[vReveal, options]],
-      ),
-    true,
+describeContract("Vue v-reveal", {
+  ...harness((options, style, swap) =>
+    withDirectives(
+      h(swap ? "section" : "div", { key: String(swap), style, "data-contract": "" }, children()),
+      [[vReveal, options]],
+    ),
   ),
-);
+  boundToElement: true,
+});

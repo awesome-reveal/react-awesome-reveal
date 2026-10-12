@@ -21,7 +21,6 @@ export const Reveal = /* @__PURE__ */ defineComponent(
     state.subscribe((value) => (revealed.value = value));
     // After the patch, so that a new element of the same tick gets the new options, and plays.
     watch(() => ({ ...props }), state.setOptions, { flush: "post" });
-    // Vue calls a function ref with the element, and with null at unmount.
     const attach = state.attach as VNodeRef;
 
     return () =>
