@@ -226,4 +226,16 @@ describe(`useReveal (React ${version})`, () => {
     expect(animations).toHaveLength(1);
     expect(animations[0]?.options).toMatchObject({ duration: 900 });
   });
+
+  it("does not animate a new element when `when` turns false as it mounts", () => {
+    function Late({ show, when }: { show: boolean; when: boolean }) {
+      const { getProps } = useReveal<HTMLDivElement>({ keyframes: slide(), when });
+      return show ? <div {...getProps({ "data-testid": "box" })} /> : null;
+    }
+    const { rerender } = render(<Late show={false} when />);
+    rerender(<Late show when={false} />);
+
+    expect(animations).toHaveLength(0);
+    expect(box()).toHaveStyle({ opacity: "0" });
+  });
 });
