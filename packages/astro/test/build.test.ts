@@ -27,16 +27,12 @@ describe("a static build of a page with Reveal", () => {
     expect(page).toMatch(/customElements\.define\(["`]awesome-reveal["`]/);
   });
 
+  // !important, so that an inline opacity of the user does not show the element before the script.
   it("hides the element with a stylesheet rule while scripting is enabled", () => {
     expect(page).toMatch(
-      /@media ?\(scripting:enabled\)\{awesome-reveal>\[data-reveal=hidden\]\{opacity:0\}\}/,
+      /@media ?\(scripting:enabled\)\{awesome-reveal>\[data-reveal=hidden\]\{opacity:0!important\}\}/,
     );
     expect(page).toMatch(/awesome-reveal\{display:contents\}/);
-  });
-
-  // An inline opacity of the user must not win over the hidden rule.
-  it.fails("marks the hidden rule !important", () => {
-    expect(page).toMatch(/\[data-reveal=hidden\]\{opacity:0!important\}/);
   });
 
   it("keeps the class prop", () => {
