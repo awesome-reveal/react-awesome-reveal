@@ -12,8 +12,8 @@ Do not run `npm publish`, `npm trust` or `npm dist-tag` yourself. The agent shel
 ## Merge a release PR
 
 1. Read the PR diff. Check the versions in `.release-please-manifest.json` and the new `CHANGELOG.md` entries.
-2. Make sure that each package in the workspace exists on npm and has a trusted publisher: `npm view <package> version` and `npm trust list <package>`. One missing publisher fails the job. Do "Publish a new package" first if necessary.
-3. Wait for the CI checks of the PR, then squash-merge it. CI runs on it when the secret `RELEASE_PLEASE_TOKEN` is set. With `GITHUB_TOKEN` alone, the PR has no CI runs.
+2. Make sure that each public package exists on npm and has a trusted publisher: `npm view <package> version` and `npm trust list <package>`. List the public packages with `pnpm -r ls --json --depth -1 | jq -r '.[] | select(.private | not) | .name'`. One missing publisher fails the job. Do "Publish a new package" first if necessary.
+3. Wait for the CI checks of the PR: `gh pr checks <number> --watch --fail-fast`. Squash-merge it only when all checks pass: `gh pr merge <number> --squash`. CI runs on it when the secret `RELEASE_PLEASE_TOKEN` is set. With `GITHUB_TOKEN` alone, the PR has no CI runs.
 4. Watch the run: `gh run watch <run-id> --exit-status`. Find the ID with `gh run list --workflow release.yml --branch <branch> --limit 1`.
 5. Check the result: `npm view <package> dist-tags`.
 
@@ -49,7 +49,22 @@ Check the versions, the changelog entries, and that the `workspace:` ranges stay
 
 npm can add a trusted publisher only to a package that exists.
 
-1. Make a placeholder in the scratchpad: a `package.json` with the package name, version `0.0.0-placeholder`, `license`, `repository` (with `directory`) and `"publishConfig": { "access": "public" }`, and a short README.
+1. Make a placeholder in the scratchpad: this `package.json`, and a short README.
+
+   ```json
+   {
+     "name": "@awesome-reveal/<framework>",
+     "version": "0.0.0-placeholder",
+     "license": "MIT",
+     "repository": {
+       "type": "git",
+       "url": "git+https://github.com/awesome-reveal/awesome-reveal.git",
+       "directory": "packages/<framework>"
+     },
+     "publishConfig": { "access": "public" }
+   }
+   ```
+
 2. Ask the user to publish it: `npm publish --tag placeholder --otp=<code>` in that directory. npm refuses a prerelease without `--tag`. Use a prerelease placeholder: a stable placeholder keeps `latest`, so `pnpm add <package>` installs the empty placeholder.
 3. Just before you merge the release PR, ask the user to add the trusted publisher. This needs npm 11.15 or later:
 
@@ -66,11 +81,16 @@ The GitHub environment `npm` allows only the `main` and `next` branches. Add a b
 ## Leave prerelease mode
 
 1. Remove `versioning`, `prerelease` and `prerelease-type` from `release-please-config.json`.
-2. In the same PR, set `release-as` on each package to its stable version. A `Release-As:` footer does not work here, because the commit changes no package files.
+2. In the same PR, set `release-as` on each package to its stable version. A `Release-As:` footer does not work here, because the commit changes no package files:
+
+   ```json
+   "packages/core": { "component": "@awesome-reveal/core", "release-as": "1.0.0" }
+   ```
+
 3. Make sure that these packages have a `feat:`, `fix:` or `Release-As:` commit since the last release:
    - `react-awesome-reveal`. Without one, `node-workspace` gives it a prerelease version (`5.0.1-next.N`), and it goes to `next`. A `fix:` commit that changes only this package and has a `Release-As: 5.0.0` footer gives 5.0.0 in the dry run.
    - core or one adapter. `linked-versions` then releases the full group.
-4. Do a dry run, and check that no version has a prerelease suffix.
+4. Do a dry run, and check that no version has a prerelease suffix. If a version has one, fix the cause from steps 1 to 3, push, and do the dry run again. Merge only when no version has a suffix.
 5. Merge the release PR. The `publish` job uses `latest`.
 6. Remove `release-as` in the next PR.
 

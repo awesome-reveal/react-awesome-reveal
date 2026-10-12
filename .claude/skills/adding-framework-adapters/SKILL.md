@@ -1,6 +1,6 @@
 ---
 name: adding-framework-adapters
-description: Adds a framework adapter package (@awesome-reveal/<framework>) to the workspace, with its build, tests, consumer skills, example and release config. Use when you start the Vue, Svelte, Solid, Angular or another framework adapter.
+description: Adds a framework adapter package (@awesome-reveal/<framework>) to the workspace, with its build, tests, consumer skills, example and release config. Use when you start a new framework adapter, such as Svelte, Solid or Angular.
 ---
 
 # Add a framework adapter
@@ -47,6 +47,7 @@ Keep the item of the adapter on the plan board, https://github.com/orgs/awesome-
 11. Add the package to `release-please-config.json`, with `"component"` set to the package name, and to `linked-versions`. Without `"component"`, release-please drops the npm scope from the tags. Add its path to `.release-please-manifest.json`, with the current version of core. Before the release PR merges, do "Publish a new package" in the `releasing-packages` skill. Its steps need the npm one-time codes of the user, so list them in your final report.
 12. Update the repo config for the framework:
     - If the peer range covers an older major version of the framework, add it to the `framework` matrix in `.github/workflows/ci.yml`.
+    - Add a `<framework>` case to `cases` in `scripts/smoke.mjs`, as the `vue` case does: it installs the tarballs, builds a page, and checks the server markup. Add entries to the `smoke` matrix in `ci.yml` for the lowest and the highest version of the peer range. Add the case to the usage comment of `smoke.mjs` and to the `smoke.mjs` command in `AGENTS.md`. The "Require CI" ruleset lists each `smoke` matrix name, and only an admin can change it, so list the new names in your final report.
     - Add a group with the framework packages to the `npm` entry of `.github/dependabot.yml`.
     - If oxlint has a plugin for the framework, such as `vue`, enable it in an `overrides` entry of `.oxlintrc.json`. Limit the entry to the package and its example, as the React entry does.
 13. Add the package to the package tables in the root `README.md` and in `packages/core/README.md`. In `.github/ISSUE_TEMPLATE/bug_report.yml`, add it to the `package` dropdown, and add the `vite.new` template of the framework, such as `vite.new/vue-ts`, to the reproduction field.
@@ -56,5 +57,8 @@ Keep the item of the adapter on the plan board, https://github.com/orgs/awesome-
     - `pnpm test --coverage`
     - `pnpm exec tsc -p packages/<framework>/test`, or the checker of step 6, such as `pnpm --filter @awesome-reveal/vue exec vue-tsc -p test`
     - `pnpm test:package`
+    - `node scripts/smoke.mjs <framework>`, after `pnpm test:package` built the packages
     - `pnpm lint` and `pnpm format:check`
     - A manual check of the example in a browser
+
+    Fix each failure, then run all the checks again. Open the PR only when all of them pass.

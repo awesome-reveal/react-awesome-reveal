@@ -74,7 +74,7 @@ These have no replacement: exit animations (`reverse`), `Flip`, `Hinge`, `Attent
 
 ## Port an Animate.css animation
 
-Copy the keyframes from the Animate.css source, and convert them to a keyframes array:
+Copy the keyframes from the Animate.css source, https://github.com/animate-css/animate.css/tree/main/source, and convert them to a keyframes array:
 
 1. Split grouped selectors such as `from, 20%, 40%` into one keyframe for each offset.
 2. Give each keyframe a timing function: its own `animation-timing-function`, or else the `animation-timing-function` of the Animate.css class. The default is `ease`.

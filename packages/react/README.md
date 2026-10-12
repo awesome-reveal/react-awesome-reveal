@@ -211,7 +211,7 @@ export function FadeIn(props: RevealProps) {
 
 ## Accessibility
 
-The [Accessibility section of the `@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-reveal/core#accessibility) describes reduced motion, the `<noscript>` and print CSS, and Content Security Policy. Server markup hides the content until the script runs, so add that CSS to show it when JavaScript does not run and in print. `Reveal` and `getProps` set `data-reveal="hidden"` on hidden elements. The attribute is reserved.
+The [Accessibility section of the `@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-reveal/core#accessibility) describes reduced motion, the `<noscript>` and print CSS, and Content Security Policy. Server markup hides the content until the script runs, so add that CSS to show it when JavaScript does not run and in print. `Reveal` and `getProps` set `data-reveal="hidden"` on hidden elements. The attribute is reserved. If the script fails or a blocker stops it, the content stays hidden. The [recovery recipe](https://www.npmjs.com/package/@awesome-reveal/core#recover-when-the-script-fails) shows it again. Set its `data-reveal-ready` attribute in a `useEffect` of your root component, not in the entry module: React runs the effect only after the root mounts or hydrates. In the Next.js App Router, the root layout is a Server Component, so put the effect in a small `"use client"` component that the layout renders. The attribute shows that the app started. It does not cover a part of the page that loads later and fails, such as a lazy component.
 
 ## Browser support
 

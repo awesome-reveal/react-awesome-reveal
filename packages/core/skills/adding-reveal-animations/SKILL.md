@@ -48,7 +48,7 @@ const controller = reveal(panel, { when: false });
 controller.setOptions({ when: true });
 ```
 
-`createReveal`, `observe`, `play` and `hiddenStyle` are the parts that `reveal` uses. They are for adapter authors and for code where something else sets the style of the element. `createReveal(options?)` returns a state with `revealed`, `subscribe(listener)`, `attach(element)` and `setOptions(options)`. It plays the animation and leaves the hidden style to your listener. Prefer `reveal` when your code owns the element.
+Prefer `reveal` when your code owns the element. When other code sets the style of the element, use `createReveal`, which https://www.npmjs.com/package/@awesome-reveal/core#createrevealoptions describes. It plays the animation and leaves the hidden style to your listener.
 
 ## Avoid a flash on page load
 
@@ -77,6 +77,22 @@ Then content stays hidden if JavaScript does not run. To show it when JavaScript
     }
   }
 </style>
+```
+
+If the script fails or a blocker stops it, the content stays hidden, and `<noscript>` does not help. Show it again with a timeout. Set `data-reveal-ready` on `<html>` in your entry module, after the code that uses the library. If an import fails or that code throws, the attribute stays unset. The attribute does not cover code that loads later and fails, such as a dynamic `import()`. Then put this in the document head. Use a timeout that is longer than the load time of the script on a slow network. Under a strict Content Security Policy, give the `<style>` and the `<script>` a `nonce`, or put the rule in your stylesheet:
+
+```html
+<style>
+  html[data-reveal-failed] [data-reveal="hidden"] {
+    opacity: 1 !important;
+  }
+</style>
+<script>
+  setTimeout(() => {
+    const html = document.documentElement;
+    if (!html.hasAttribute("data-reveal-ready")) html.setAttribute("data-reveal-failed", "");
+  }, 5000);
+</script>
 ```
 
 Under a strict Content Security Policy, the inline `opacity: 0` style needs `style-src-attr 'unsafe-inline'`. To avoid it, put only `data-reveal="hidden"` in the HTML, and add `[data-reveal="hidden"] { opacity: 0; }` to your stylesheet. `reveal` sets its own styles through `element.style`, which the policy does not block.
@@ -136,9 +152,9 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 - `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. An inline element that you reveal also needs `display: inline-block`, or it only fades. It skips text nodes, so put text in an element. It reads the children when the element is revealed.
 - `when: true` at the start plays the entrance once. It ignores `threshold`, `rootMargin` and `once`. A server renders the element shown, so the entrance can flash when the script runs. To avoid the flash, start with `when` false and set it to true later.
 - `threshold: 1` never reveals an element that is taller than the viewport plus its `rootMargin`. A negative `rootMargin` never reveals an element at the end of the page that cannot scroll into the shrunk area.
+- The library has no focus reveal. Chromium and Firefox scroll a focused hidden link into view, and the observer then reveals it. With `when: false`, a high `threshold` or a negative `rootMargin`, focused content can stay hidden. Do not hide the only way to a control with these options.
 - `data-reveal` is reserved. Do not use it for other data.
 - Keep `reducedMotion` at `"user"` unless the user asks for a different behavior. It respects the operating system setting of people whom motion makes ill.
-- Prefer `transform` and `opacity`. `filter` (`blur()`) and `clip-path` repaint on each frame in some engines, so use them on small elements.
 - While the element is hidden, its inline `opacity` is `0`. The reveal restores the inline `opacity` that the element had, with its priority. An inline `opacity` of `0` counts as no opacity. Hidden server markup (`opacity: 0` with `data-reveal="hidden"`) counts as no opacity.
 - Without `IntersectionObserver`, elements are revealed at once. Without `Element.animate`, elements appear with no animation.
 - `null` is the same as leaving a `reveal` option out. This does not apply to the options of the keyframes factories.

@@ -100,7 +100,6 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 - `data-reveal` is reserved. Do not use it for other data.
 - Call `slide()` and the other factories in `<script setup>`, not in the template, when the component renders often. Each call in the template creates the keyframes again at each render.
 - Keep `reducedMotion` at `"user"` unless the user asks for a different behavior. It respects the operating system setting of people whom motion makes ill.
-- Prefer `transform` and `opacity`. `filter` (`blur()`) and `clip-path` repaint on each frame in some engines, so use them on small elements.
 - While the element is hidden, its inline `opacity` is `0`, also over an `opacity` of your own. After the reveal, `Reveal` restores your `opacity`. `v-reveal` restores the inline `opacity` with its priority, and takes the latest value of your style binding. With server rendering, the server markup does not contain your inline `opacity`, so put an opacity that you need there in a class.
 - Server-rendered content stays hidden (`opacity: 0`) until JavaScript runs. Both APIs render the hidden style on the server. To show the content when JavaScript does not run and in print, put this in the document head:
 
@@ -119,6 +118,30 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
       }
     }
   </style>
+  ```
+
+  If the script fails or a blocker stops it, the content stays hidden. To show it after a timeout, also put this in the document head. Use a timeout that is longer than the load time of the script on a slow network. Under a strict Content Security Policy, give the `<style>` and the `<script>` a `nonce`:
+
+  ```html
+  <style>
+    html[data-reveal-failed] [data-reveal="hidden"] {
+      opacity: 1 !important;
+    }
+  </style>
+  <script>
+    setTimeout(() => {
+      const html = document.documentElement;
+      if (!html.hasAttribute("data-reveal-ready")) html.setAttribute("data-reveal-failed", "");
+    }, 5000);
+  </script>
+  ```
+
+  Set the attribute in `onMounted` of the root component, not in the entry module. Vue calls the hook after the root and its synchronous children mount or hydrate, so the attribute stays unset when the app does not mount. The attribute does not cover a part of the page that loads later and fails, such as an async component.
+
+  ```js
+  onMounted(() => {
+    document.documentElement.setAttribute("data-reveal-ready", "");
+  });
   ```
 
 - On the server, `v-reveal` also renders `data-allow-mismatch="style"`, because the hidden style is not in the client render. It allows a style mismatch on that element only.
