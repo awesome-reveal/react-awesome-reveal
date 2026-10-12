@@ -19,9 +19,9 @@ export const Reveal = /* @__PURE__ */ defineComponent(
     const state = createReveal(props);
     const revealed = ref(state.revealed);
     state.subscribe((value) => (revealed.value = value));
-    // After the patch, so that a new element of the same tick gets the new options, and plays.
+    // After the patch, so that a new element of the same tick plays with the new options.
     watch(() => ({ ...props }), state.setOptions, { flush: "post" });
-    // A mounted hook waits for a pending Suspense, which keeps the element outside the document.
+    // Attaches in onMounted, which a pending Suspense defers while the element is outside the document.
     let element: Element | null = null;
     let mounted = false;
     const attach = (node: unknown) => {
@@ -30,7 +30,7 @@ export const Reveal = /* @__PURE__ */ defineComponent(
     };
     onMounted(() => {
       mounted = true;
-      // A pending Suspense also defers the post-flush watcher, so a change of the props is not applied yet.
+      // Suspense defers the watcher too.
       state.setOptions(props);
       state.attach(element);
     });

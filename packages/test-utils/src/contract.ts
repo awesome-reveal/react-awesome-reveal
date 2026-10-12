@@ -16,7 +16,7 @@ export interface Mounted {
   flush(): Promise<void>;
   /** Wraps a report of the mock observer in the update scope of the framework. */
   run(fn: () => void): Promise<void>;
-  /** Makes the framework render a new element for the same reveal, such as a new `as` tag. Options apply in the same update. */
+  /** Renders a new element for the same reveal, such as a new `as` tag, with these options. */
   replaceNode?(options?: ContractOptions): Promise<void>;
 }
 
