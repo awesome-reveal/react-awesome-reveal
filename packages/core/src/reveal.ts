@@ -36,6 +36,8 @@ export interface RevealController {
   /**
    * Replaces the options. A change of `when` applies at once. A change of `threshold`,
    * `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
+   * After code writes the inline `opacity` of a hidden element, call it: the new opacity is the one
+   * that the reveal restores, and the element is hidden again.
    */
   setOptions(options: RevealOptions): void;
   /**
@@ -124,22 +126,31 @@ export function createReveal(options: RevealOptions = {}): RevealState {
 /**
  * Hides the element, and reveals it with an animation when it enters the viewport.
  * While hidden, the element has the `hiddenStyle` inline style and `data-reveal="hidden"`.
- * The reveal restores the inline `opacity` that the element had.
+ * The reveal restores the inline `opacity` that the element had, with its priority. An inline
+ * opacity of `0` counts as no opacity.
  */
 export function reveal(
   element: Element & ElementCSSInlineStyle,
   options?: RevealOptions,
 ): RevealController {
-  const hidden = element.getAttribute("data-reveal") === "hidden";
-  // A hidden opacity of 0 from the server markup is not the resting opacity.
-  const resting =
-    hidden && element.style.opacity === hiddenStyle.opacity ? "" : element.style.opacity;
+  const { style } = element;
   const state = createReveal(options);
+  let value = "";
+  let priority = "";
 
   function apply(revealed: boolean) {
-    element.style.opacity = revealed ? resting : hiddenStyle.opacity;
-    if (revealed) element.removeAttribute("data-reveal");
-    else element.setAttribute("data-reveal", "hidden");
+    // The hidden opacity that the server markup or an earlier hide left is not the resting one.
+    if (style.opacity !== hiddenStyle.opacity) {
+      value = style.opacity;
+      priority = style.getPropertyPriority("opacity");
+    }
+    if (revealed) {
+      style.setProperty("opacity", value, priority);
+      element.removeAttribute("data-reveal");
+    } else {
+      style.opacity = hiddenStyle.opacity;
+      element.setAttribute("data-reveal", "hidden");
+    }
   }
 
   state.subscribe(apply);
@@ -152,7 +163,9 @@ export function reveal(
       return state.revealed;
     },
     setOptions(next) {
-      if (!destroyed) state.setOptions(next);
+      if (destroyed) return;
+      state.setOptions(next);
+      if (!state.revealed && style.opacity !== hiddenStyle.opacity) apply(false);
     },
     destroy() {
       if (destroyed) return;

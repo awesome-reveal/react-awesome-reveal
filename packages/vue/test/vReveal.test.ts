@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import { nextTick, reactive, version } from "vue";
+import { nextTick, reactive, type StyleValue, version } from "vue";
 
 import { slide } from "../src/keyframes";
 import { animations, runningAnimations } from "@awesome-reveal/test-utils/animate";
@@ -8,9 +8,10 @@ import { observerOf } from "@awesome-reveal/test-utils/intersection-observer";
 import DirectiveBox from "./fixtures/DirectiveBox.vue";
 import { intersect } from "./intersect";
 
-function mountBox(options?: object, color?: string) {
+function mountBox(options?: object, color?: string, style?: StyleValue) {
   const wrapper = mount(DirectiveBox, {
     props: { options: { keyframes: slide(), ...options }, color },
+    attrs: { style },
     attachTo: document.body,
   });
   return { wrapper, element: wrapper.element as HTMLElement };
@@ -99,6 +100,19 @@ describe(`v-reveal (Vue ${version})`, () => {
     await wrapper.setProps({ color: "blue" });
 
     expect(element).toHaveStyle({ color: "rgb(0, 0, 255)", opacity: "0" });
+  });
+
+  it.each([
+    ["an object", { opacity: 0.5 }, { opacity: 0.8 }],
+    ["a string", "opacity: 0.5", "color: red; opacity: 0.8"],
+  ])("restores the latest opacity of %s style binding", async (_, first, second) => {
+    const { wrapper, element } = mountBox({}, undefined, first);
+    await wrapper.setProps({ style: second });
+
+    expect(element).toHaveStyle({ opacity: "0" });
+    expect(element).toHaveAttribute("data-reveal", "hidden");
+    await intersect(element, true);
+    expect(element.style.opacity).toBe("0.8");
   });
 
   it("stops the observation and the animation on unmount", async () => {
