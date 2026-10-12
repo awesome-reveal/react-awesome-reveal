@@ -69,6 +69,17 @@ describe.each([
     await page.close();
   });
 
+  it("shows the hidden elements when a print rule of the page applies", async () => {
+    await page.addStyleTag({
+      content: '@media print { [data-reveal="hidden"] { opacity: 1 !important; } }',
+    });
+    expect(await isHidden(page, "#stagger")).toBe(true);
+
+    await page.emulateMedia({ media: "print" });
+
+    expect(await page.$eval("#stagger", (element) => getComputedStyle(element).opacity)).toBe("1");
+  });
+
   it("reveals the element in the viewport, and keeps the others hidden", async () => {
     await revealed(page, "#default");
 
