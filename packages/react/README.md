@@ -69,6 +69,8 @@ With no `keyframes`, the element fades in and moves up, as with `slide()`. To ch
 
 `@awesome-reveal/react/keyframes` does not import React. You can call it in Server Components, or use it with `element.animate()` directly.
 
+`Reveal` has the `"use client"` directive, so a Server Component can render it. `useReveal` needs a Client Component. Props that cross from a Server Component must be serializable: the keyframes are, but a callback or a `ref` is not. CI builds and runs a Next.js App Router app with Next 14 (React 18), 15 and 16.
+
 ## Keyframes
 
 The `keyframes` option takes the keyframes that a factory of `@awesome-reveal/react/keyframes` returns, or a keyframes array:

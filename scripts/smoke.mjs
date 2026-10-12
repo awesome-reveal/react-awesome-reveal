@@ -1,11 +1,13 @@
 // Installs the packed tarballs into a clean project outside the workspace, then builds and type-checks it.
-// Usage: node scripts/smoke.mjs <core|react|compat|vue|astro> [dependency@version ...]
+// Usage: node scripts/smoke.mjs <core|react|compat|vue|astro|next> [dependency@version ...]
 // The packages must be built first (pnpm build). Extra arguments replace the default framework dependencies.
 import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+
+import { verifyNext } from "./smoke-next.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const [name, ...extra] = process.argv.slice(2);
@@ -115,6 +117,117 @@ ${hiddenCheck("await renderToString(createSSRApp(App))")}
       "src/env.d.ts": `/// <reference types="vite/client" />`,
     },
   },
+  next: {
+    packages: ["core", "react", "react-awesome-reveal"],
+    deps: ["next@16", "react@19", "react-dom@19", "@types/react@19", "@types/react-dom@19"],
+    server: true,
+    files: {
+      "tsconfig.json": JSON.stringify({
+        compilerOptions: {
+          target: "ES2017",
+          lib: ["dom", "dom.iterable", "esnext"],
+          allowJs: true,
+          skipLibCheck: true,
+          strict: true,
+          noEmit: true,
+          esModuleInterop: true,
+          module: "esnext",
+          moduleResolution: "bundler",
+          resolveJsonModule: true,
+          isolatedModules: true,
+          jsx: "react-jsx",
+          incremental: true,
+          plugins: [{ name: "next" }],
+        },
+        include: ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+        exclude: ["node_modules"],
+      }),
+      "app/layout.tsx": `
+import type { ReactNode } from "react";
+
+export default function Layout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
+}
+`,
+      // A Server Component creates the keyframes, so they cross the server boundary as props.
+      "app/page.tsx": `
+import Link from "next/link";
+import { Reveal } from "@awesome-reveal/react";
+import { slide, spring } from "@awesome-reveal/react/keyframes";
+
+import { Card } from "./card";
+
+export default function Page() {
+  return (
+    <main>
+      <Reveal id="top" keyframes={slide()}>
+        Top
+      </Reveal>
+      <div style={{ height: "200vh" }} />
+      <Reveal id="below" keyframes={slide({ easing: spring() })} stagger={50}>
+        <p>One</p>
+        <p>Two</p>
+      </Reveal>
+      <Card />
+      <Link href="/about">About</Link>
+      <Link href="/legacy">Legacy</Link>
+    </main>
+  );
+}
+`,
+      "app/card.tsx": `
+"use client";
+
+import { useReveal } from "@awesome-reveal/react";
+import { fade } from "@awesome-reveal/react/keyframes";
+
+export function Card() {
+  const { getProps } = useReveal<HTMLElement>({ keyframes: fade() });
+  return <article {...getProps({ id: "card" })}>Card</article>;
+}
+`,
+      "app/about/page.tsx": `
+import Link from "next/link";
+import { Reveal } from "@awesome-reveal/react";
+import { fade } from "@awesome-reveal/react/keyframes";
+
+// The other pages are prerendered. This one renders on each request.
+export const dynamic = "force-dynamic";
+
+export default function About() {
+  return (
+    <main>
+      <Reveal id="about" keyframes={fade()}>
+        About
+      </Reveal>
+      <Link href="/">Home</Link>
+    </main>
+  );
+}
+`,
+      // The compat package re-exports the React package, so it crosses the same boundary.
+      "app/legacy/page.tsx": `
+import Link from "next/link";
+import { Reveal } from "react-awesome-reveal";
+import { fade } from "react-awesome-reveal/keyframes";
+
+export default function Legacy() {
+  return (
+    <main>
+      <Reveal id="legacy" keyframes={fade()}>
+        Legacy
+      </Reveal>
+      <Link href="/">Home</Link>
+    </main>
+  );
+}
+`,
+    },
+  },
   astro: {
     packages: ["core", "astro"],
     deps: ["astro@7", "@astrojs/check", "typescript@5.9"],
@@ -204,7 +317,7 @@ try {
       include: ["src"],
     });
   }
-  if (name !== "astro") {
+  if (name !== "astro" && !config.server) {
     files["index.html"] =
       `<!doctype html><script type="module" src="/src/main.${name === "react" || name === "compat" ? "tsx" : "ts"}"></script>`;
     files["vite.config.ts"] =
@@ -223,7 +336,10 @@ try {
   if (core.length !== 1 || !core[0].includes("file"))
     throw new Error(`Core does not come from the tarball: ${core}`);
 
-  if (config.build) {
+  if (config.server) {
+    run("pnpm", ["exec", "next", "build"], app);
+    await verifyNext(app);
+  } else if (config.build) {
     run("pnpm", ["exec", ...(config.check ?? [])], app);
     run("pnpm", ["exec", ...config.build], app);
     const html = readFileSync(join(app, "dist/index.html"), "utf8");
