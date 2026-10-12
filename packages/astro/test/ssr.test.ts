@@ -1,6 +1,7 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 
 import { fade } from "@awesome-reveal/core/keyframes";
+import { describeSSRContract } from "@awesome-reveal/test-utils/contract-ssr";
 
 import { Reveal } from "../src";
 
@@ -62,4 +63,17 @@ describe("Reveal on the server", () => {
   it("renders the element hidden when `when` is false", async () => {
     expect(await render({ when: false })).toContain('<div data-reveal="hidden">');
   });
+});
+
+describeSSRContract("Astro Reveal", {
+  inlineOpacity: false,
+  drift: [],
+  async render(options, style) {
+    const css =
+      style &&
+      Object.entries(style)
+        .map(([name, value]) => `${name}: ${value}`)
+        .join("; ");
+    return render({ ...options, style: css, "data-contract": "" });
+  },
 });

@@ -47,6 +47,7 @@ export default defineConfig({
     projects: [
       {
         root: "packages/core",
+        resolve: { alias: testUtils },
         test: {
           name: "core:unit",
           environment: "node",
