@@ -18,7 +18,7 @@ Read the documentation at [awesome-reveal.morello.dev](https://awesome-reveal.mo
 - 🧩 **One behavior, many frameworks** – All the adapters share one core, so they have the same options and the same behavior.
 - ⚙️ **Native APIs** – No animation loop in JavaScript. Web Animations run on the compositor where possible.
 - ♿ **Accessible** – It respects `prefers-reduced-motion` by default. Hidden content stays in the accessibility tree.
-- 💻 **SSR** – Content renders hidden on the server, so it does not flash before the script runs.
+- 💻 **SSR** – The React, Vue and Astro adapters render content hidden on the server, so it does not flash before the script runs.
 - 🏷 **TypeScript** – Strict types for the options and the keyframes.
 
 ## Quick start
