@@ -161,7 +161,7 @@ Option changes apply to the next reveal. They do not replay an animation that al
 
 ## Accessibility
 
-The [Accessibility section of the `@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-reveal/core#accessibility) describes reduced motion, content without JavaScript and Content Security Policy. For the `<noscript>` CSS, Hidden elements have `data-reveal="hidden"`, from `Reveal` and from `getProps`.
+The [Accessibility section of the `@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-reveal/core#accessibility) describes reduced motion, content without JavaScript and Content Security Policy. For the `<noscript>` CSS, `Reveal` and `getProps` set `data-reveal="hidden"` on hidden elements.
 
 ## Browser support
 
