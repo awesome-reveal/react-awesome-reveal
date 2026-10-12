@@ -6,3 +6,5 @@ coverage
 .vitest
 __traces__
 .astro
+.next
+next-env.d.ts

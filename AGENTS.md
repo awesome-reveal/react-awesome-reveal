@@ -9,7 +9,7 @@ Reveal-on-scroll animations for many frameworks, built on IntersectionObserver a
 - `packages/react-awesome-reveal`: the compat package for v4 users. It re-exports `@awesome-reveal/react`.
 - `packages/test-utils`: private test mocks, setup files and checks for the adapters.
 - `packages/*/skills`: agent skills for the users of each package. pnpm links them into consumer projects.
-- `examples/react`, `examples/vue`, `examples/astro`: apps for manual checks (`pnpm --filter example-react dev`).
+- `examples/react`, `examples/vue`, `examples/astro`, `examples/next`: apps for manual checks (`pnpm --filter example-react dev`). Build the packages first for `examples/next`.
 - `vite.lib.config.ts`: the library build that all packages share.
 - `vitest.config.ts`: one Vitest project for each package and test kind, named `<package>:<kind>`.
 
@@ -22,7 +22,7 @@ Use the Node version in `.nvmrc`. jsdom needs Node `^22.22.2`, `^24.15.0` or `>=
 - `pnpm vitest run --project core:browser`: one project.
 - `pnpm exec tsc -p packages/<package>/test`: type-check the tests. Vue uses `vue-tsc` instead of `tsc`. `pnpm build` type-checks only `src`.
 - `pnpm test:package`: build, then test the `dist` output with Vitest, publint and attw.
-- `pnpm build`, then `node scripts/smoke.mjs <core|react|compat|vue|astro> [dependency@version ...]`: install the packed tarballs into a clean project and build it. CI runs the matrix.
+- `pnpm build`, then `node scripts/smoke.mjs <core|react|compat|vue|astro|next> [dependency@version ...]`: install the packed tarballs into a clean project and build it. CI runs the matrix.
 - `pnpm lint` and `pnpm format`.
 
 The pre-commit hook runs oxlint, oxfmt and the unit and SSR tests related to the staged files.

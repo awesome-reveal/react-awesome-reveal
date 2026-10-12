@@ -13,7 +13,12 @@
   },
   "overrides": [
     {
-      "files": ["packages/react/**", "packages/react-awesome-reveal/**", "examples/react/**"],
+      "files": [
+        "packages/react/**",
+        "packages/react-awesome-reveal/**",
+        "examples/react/**",
+        "examples/next/**"
+      ],
       "plugins": ["react"],
       "rules": {
         "react/rules-of-hooks": "error",

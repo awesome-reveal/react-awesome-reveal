@@ -46,7 +46,7 @@ npm install @awesome-reveal/react
 
 Use `pnpm add`, `yarn add` or `bun add` in the same way.
 
-React 18 or 19 is necessary.
+React 18 or 19 is necessary. TypeScript needs `moduleResolution` set to `bundler`, `node16` or `nodenext`, because the package uses `exports` for `/keyframes`.
 
 ## Quick start
 
@@ -68,6 +68,10 @@ With no `keyframes`, the element fades in and moves up, as with `slide()`. To ch
 | `@awesome-reveal/react/keyframes` | The built-in keyframes, `defineKeyframes`, and their types. |
 
 `@awesome-reveal/react/keyframes` does not import React. You can call it in Server Components, or use it with `element.animate()` directly.
+
+`Reveal` has the `"use client"` directive, so a Server Component can render it. `useReveal` needs a Client Component. Props that cross from a Server Component must be serializable: the keyframes are, but a function, such as a callback `ref`, is not. CI builds and runs a Next.js App Router app with Next 14 (React 18), 15 and 16.
+
+In a Server Component, `spring()` cannot check for `linear()` support, so a browser without it shows the element with no animation. Call `spring()` in a Client Component to get the fallback curve.
 
 ## Keyframes
 
