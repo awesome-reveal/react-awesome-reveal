@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 
-import { describeSkills } from "@awesome-reveal/test-utils/skills";
+import { describeDocs } from "@awesome-reveal/test-utils/docs";
 
 import { buildSite, scripts, type Site } from "../build-site";
 
@@ -98,7 +98,7 @@ describe("a static build of a page with the published component", () => {
   });
 });
 
-describeSkills(root, {
+describeDocs(root, {
   keyframes: "@awesome-reveal/astro/keyframes",
   factories,
 });

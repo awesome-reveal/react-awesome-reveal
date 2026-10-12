@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 
-import { describeSkills } from "@awesome-reveal/test-utils/skills";
+import { describeDocs } from "@awesome-reveal/test-utils/docs";
 
 const root = new URL("../../", import.meta.url);
 const dist = new URL("dist/", root);
@@ -77,7 +77,7 @@ describe("dist", () => {
   });
 });
 
-describeSkills(root, {
+describeDocs(root, {
   keyframes: "@awesome-reveal/core/keyframes",
   factories,
 });

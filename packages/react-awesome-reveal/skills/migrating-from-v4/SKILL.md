@@ -92,4 +92,6 @@ Copy the keyframes from the Animate.css source, and convert them to a keyframes 
 - v4 observed each child separately. One observer now watches the whole `Reveal`, and all children reveal together, also children below the fold. Split a long list into several `Reveal` elements, or use `useReveal` for each item.
 - Use `stagger` to animate the children one after the other.
 - Lists, fragments and text have no special handling. For a list, use `as="ul"` with `stagger`.
-- Animations do not stay applied after they finish, so a transformed element no longer breaks `position: fixed` children or `z-index`.
+- v4 kept the last keyframe applied after the animation. Animations now do not stay applied after they finish, so:
+  - A transformed element no longer breaks `position: fixed` children or `z-index`.
+  - A style such as `opacity: 1` no longer replaces your own `opacity`. Your CSS `opacity` applies after the reveal. While the element is hidden, `opacity: 0` is over your own opacity, and the reveal restores it. Check the elements that have an `opacity` below 1 in your CSS.

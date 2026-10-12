@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 
-import { describeSkills } from "@awesome-reveal/test-utils/skills";
+import { describeDocs } from "@awesome-reveal/test-utils/docs";
 import { createElement } from "react";
 import { renderToString } from "react-dom/server";
 import ts from "typescript";
@@ -80,7 +80,7 @@ describe("dist", () => {
 });
 
 // v4 examples import react-awesome-reveal, which is not installed.
-describeSkills(root, {
+describeDocs(root, {
   keyframes: "@awesome-reveal/react/keyframes",
   factories,
   jsx: { jsx: ts.JsxEmit.ReactJSX },

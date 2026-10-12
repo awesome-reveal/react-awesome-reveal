@@ -15,4 +15,4 @@ paths:
 - `v-reveal` uses core `reveal()`, so the reveal belongs to its element. A directive keeps no state across elements, so a new element, such as a changed `key` or tag, starts a new reveal. The directive is `deep`, so that a reactive options object that changes in place calls `updated`. Its `updated` hook sets the hidden opacity again, because a patch of a string `style` binding replaces the whole inline style.
 - Of all directives, the hydration check of Vue knows only `v-show`. So `getSSRProps` of `v-reveal` adds `data-allow-mismatch="style"`. Without it, a `style` binding on the element causes a mismatch warning. The attribute needs Vue 3.5, which sets the start of the peer range.
 - Mount with `attachTo: document.body` when a test checks `toHaveStyle` after a change. `test/setup/dom.ts` unmounts the wrappers after each test.
-- `describeSkills` type-checks only the `ts` fences of the consumer skills, not the `vue` fences.
+- `describeDocs` does not check the `vue` fences. The `ts` fence of the README imports `./App.vue`, so the Vue package gives `describeDocs` an `ambient` declaration for `*.vue`.

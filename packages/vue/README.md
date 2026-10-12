@@ -125,7 +125,7 @@ While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hid
 
 `once` and `when` are optional. With no value, they keep the core behavior: `<Reveal>` reveals once, and observes the viewport. `<Reveal :once="false">` and `<Reveal :when="loaded">` change them.
 
-Option changes apply to the next reveal. They do not replay an animation that already played.
+A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal, and do not replay an animation that already played.
 
 When Vue replaces the element of `v-reveal`, for example with a new `key` or tag, the new element starts a new reveal. `Reveal` keeps its state when its `as` tag changes, and does not replay.
 
@@ -159,7 +159,7 @@ With `when`, your code controls the reveal, and nothing observes the viewport. `
 
 ## Accessibility
 
-The [Accessibility section of the `@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-reveal/core#accessibility) describes reduced motion, content without JavaScript and Content Security Policy. For the `<noscript>` CSS, both APIs set `data-reveal="hidden"` on hidden elements.
+The [Accessibility section of the `@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-reveal/core#accessibility) describes reduced motion, the `<noscript>` and print CSS, and Content Security Policy. Server markup hides the content until the script runs, so add that CSS to show it when JavaScript does not run and in print. Both APIs set `data-reveal="hidden"` on hidden elements. The attribute is reserved.
 
 ## Browser support
 

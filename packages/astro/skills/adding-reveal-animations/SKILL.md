@@ -63,17 +63,17 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 
 `Reveal` takes the options as props.
 
-| Option          | Description                                                                        | Default   |
-| --------------- | ---------------------------------------------------------------------------------- | --------- |
-| `keyframes`     | The animation.                                                                     | `slide()` |
-| `duration`      | Duration in milliseconds.                                                          | `600`     |
-| `delay`         | Delay in milliseconds.                                                             | `0`       |
-| `stagger`       | Animates the element children, each one this many milliseconds after the last one. | –         |
-| `threshold`     | Fraction of the element (0 to 1) that must be visible.                             | `0`       |
-| `rootMargin`    | Grows or shrinks the viewport area, as a CSS margin in `px` or `%`.                | `"0px"`   |
-| `once`          | When `false`, the element hides again when it leaves the viewport.                 | `true`    |
-| `when`          | Controls the reveal manually. When set, the viewport is not observed.              | –         |
-| `reducedMotion` | `"user"` follows `prefers-reduced-motion`. `"always"` skips, `"never"` plays.      | `"user"`  |
+| Option          | Description                                                                                                    | Default   |
+| --------------- | -------------------------------------------------------------------------------------------------------------- | --------- |
+| `keyframes`     | The animation.                                                                                                 | `slide()` |
+| `duration`      | Duration in milliseconds.                                                                                      | `600`     |
+| `delay`         | Delay in milliseconds.                                                                                         | `0`       |
+| `stagger`       | Animates the element children, each one this many milliseconds after the last one. `0` animates them together. | –         |
+| `threshold`     | Fraction of the element (0 to 1) that must be visible.                                                         | `0`       |
+| `rootMargin`    | Grows or shrinks the viewport area, as a CSS margin in `px` or `%`.                                            | `"0px"`   |
+| `once`          | When `false`, the element hides again when it leaves the viewport.                                             | `true`    |
+| `when`          | Controls the reveal as a level: `true` reveals, `false` hides, `undefined` or `null` lets the viewport decide. | –         |
+| `reducedMotion` | `"user"` follows `prefers-reduced-motion`. `"always"` skips, `"never"` plays.                                  | `"user"`  |
 
 ## How it works
 
@@ -82,16 +82,19 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 - The options go through JSON, so pass only plain values. The keyframes factories return plain values.
 - Each `Reveal` writes its own copy of the options. A `defineKeyframes` factory adds about 3 kB of HTML to each instance, and a preset about 100 to 200 bytes. For a long list, use one `Reveal` with `stagger`.
 - An `options` attribute with invalid JSON is reported to the console. When the element connects, it reveals with the default options. After that, the previous options stay.
-- To change the options in the browser, for example `when`, set the `options` attribute of the `<awesome-reveal>` element to new JSON. The new value replaces all the options, so parse the current value and merge your change into it. Option changes apply at the next reveal, except `when`, which applies at once.
+- To change the options in the browser, for example `when`, set the `options` attribute of the `<awesome-reveal>` element to new JSON. The new value replaces all the options, so parse the current value and merge your change into it. A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
 - It works with the `<ClientRouter />`, with server islands and with `transition:persist`. A persisted element does not play again after a navigation. `transition:persist` works on `Reveal` and on an ancestor.
 - It works with `security.csp`. The server markup hides the element with `data-reveal="hidden"` and a stylesheet rule, not a `style` attribute.
-- The stylesheet rule uses `!important`, so it also hides an element that has an inline `opacity`. It applies only when scripting is enabled, so the content shows when JavaScript is off. Do not add a `<noscript>` style.
+- The stylesheet rule uses `!important`, so it also hides an element that has an inline `opacity`. It applies only when scripting is enabled, so the content shows when JavaScript is off. Do not add a `<noscript>` style. Elements that are not revealed yet stay invisible on a printed page. Add `@media print { [data-reveal="hidden"] { opacity: 1 !important; } }` to your stylesheet. The hidden rule has no specificity, so this rule overrides it.
 
 ## Rules
 
 - Do not put `Reveal` directly in a `<table>`, `<tbody>` or `<tr>`. The HTML parser moves the `<awesome-reveal>` element out of the table. Put `Reveal` around the whole table, or inside a cell.
 - For a list, animate the list with `stagger`, not each item: `<Reveal as="ul" stagger={80}>`. A `<ul>` must contain only `<li>` elements.
-- `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. With an inline `as` tag, `Reveal` itself also needs `display: inline-block`, or it only fades.
+- `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. With an inline `as` tag, `Reveal` itself also needs `display: inline-block`, or it only fades. It skips text nodes, so put text in an element. It reads the children when the element is revealed.
+- `when: true` at the start plays the entrance once. It ignores `threshold`, `rootMargin` and `once`. A server renders the element shown, so the entrance can flash when the script runs. To avoid the flash, start with `when` false and set it to true later.
+- `threshold: 1` never reveals an element that is taller than the viewport. A negative `rootMargin` never reveals an element at the end of the page that cannot scroll into the shrunk area.
+- `data-reveal` is reserved. Do not use it for other data.
 - `stagger` cannot animate framework islands that are direct children, because `<astro-island>` has `display: contents`, so it has no box to fade or move. Put each island in an element.
 - Keep `reducedMotion` at `"user"` unless the user asks for a different behavior. It respects the operating system setting of people whom motion makes ill.
 - Prefer `transform` and `opacity`. `filter` (`blur()`) and `clip-path` repaint on each frame in some engines, so use them on small elements.

@@ -23,6 +23,7 @@ Use this package directly with plain DOM code, or to write an adapter for anothe
 - [API](#api)
 - [Keyframes](#keyframes)
 - [Options](#options)
+- [Recipes](#recipes)
 - [Accessibility](#accessibility)
 - [Browser support](#browser-support)
 - [License](#license)
@@ -88,7 +89,7 @@ Plays the keyframes on the element, or on its children with `stagger`. It return
 
 ### `hiddenStyle`
 
-The style that hides an element until the reveal. A server renderer applies it to the markup, so that the element does not show before the client code runs.
+The style that hides an element until the reveal. A server renderer applies it to the markup, with `data-reveal="hidden"`, so that the element does not show before the client code runs.
 
 Use `createReveal` when your framework renders the style of the element. Use `reveal` when your code owns the element.
 
@@ -175,39 +176,87 @@ export const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}
 
 ## Options
 
-The adapters accept the same options.
+The adapters accept the same options. `observe` uses `threshold`, `rootMargin` and `once`. `play` uses `keyframes`, `duration`, `delay`, `stagger` and `reducedMotion`. `reveal` and the adapters use all options.
 
-| Option          | Description                                                                                                               | Default   |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------- | --------- |
-| `keyframes`     | The animation. The last keyframe must be the resting style of the element.                                                | `slide()` |
-| `duration`      | Animation duration, in milliseconds.                                                                                      | `600`     |
-| `delay`         | Delay before the animation starts, in milliseconds.                                                                       | `0`       |
-| `stagger`       | Animates the element children instead of the element, each one this many milliseconds after the previous one.             | –         |
-| `threshold`     | Fraction of the element, between 0 and 1, that must be visible to reveal it.                                              | `0`       |
-| `rootMargin`    | Grows or shrinks the viewport area that reveals the element, as a CSS margin in `px` or `%`.                              | `"0px"`   |
-| `once`          | Reveals the element only the first time. When `false`, the element hides again when it leaves the viewport.               | `true`    |
-| `when`          | Controls the reveal manually. When set, the viewport is not observed.                                                     | –         |
-| `reducedMotion` | `"user"` skips the animation when the user prefers reduced motion. `"always"` always skips it. `"never"` always plays it. | `"user"`  |
+### Animation
 
-`observe` uses `threshold`, `rootMargin` and `once`. `play` uses `keyframes`, `duration`, `delay`, `stagger` and `reducedMotion`. `reveal` and the adapters use all options.
+| Option      | Description                                                                                                   | Default   |
+| ----------- | ------------------------------------------------------------------------------------------------------------- | --------- |
+| `keyframes` | The animation. The last keyframe must be the resting style of the element.                                    | `slide()` |
+| `duration`  | Animation duration, in milliseconds.                                                                          | `600`     |
+| `delay`     | Delay before the animation starts, in milliseconds.                                                           | `0`       |
+| `stagger`   | Animates the element children instead of the element, each one this many milliseconds after the previous one. | –         |
 
-`stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. An inline element that you reveal also needs `display: inline-block`, or it only fades.
+- `stagger` changes the target of the animation to the element children. `stagger: 0` animates all the children together.
+- `stagger` animates only child elements. It does not animate text nodes, so put text in an element.
+- The library reads the children when the element is revealed. A child that you add before the reveal animates, and a child that you add later does not.
+- Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. An inline element that you reveal also needs `display: inline-block`, or it only fades.
+
+### Trigger
+
+| Option       | Description                                                                                                 | Default |
+| ------------ | ----------------------------------------------------------------------------------------------------------- | ------- |
+| `threshold`  | Fraction of the element, between 0 and 1, that must be visible to reveal it.                                | `0`     |
+| `rootMargin` | Grows or shrinks the viewport area that reveals the element, as a CSS margin in `px` or `%`.                | `"0px"` |
+| `once`       | Reveals the element only the first time. When `false`, the element hides again when it leaves the viewport. | `true`  |
+| `when`       | Controls the reveal as a level. When it is `true` or `false`, the viewport is not observed.                 | –       |
+
+- `when` is a level, not an event. The element is revealed while `when` is `true`, and hidden while it is `false`. `undefined` and `null` mean that the viewport decides.
+- With `when: true` at the start, the entrance plays once. `when` ignores `threshold`, `rootMargin` and `once`.
+- A server renders an element with `when: true` shown, because nothing hides it. After hydration, the entrance starts at its first keyframe, so the element can flash. To avoid the flash, start with `when: false` and set it to `true` after the first render.
+- `threshold: 1` never reveals an element that is taller than the viewport, because the whole element is never visible. Use a lower value.
+- A negative `rootMargin`, such as `"-100px"` or `"0px 0px -10% 0px"`, shrinks the area that reveals the element. An element at the end of the page, which cannot scroll into that area, never reveals. Add space below the last element, or do not use a negative margin there.
+
+### Reduced motion
+
+| Option          | Description                                                                                                               | Default  |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `reducedMotion` | `"user"` skips the animation when the user prefers reduced motion. `"always"` always skips it. `"never"` always plays it. | `"user"` |
+
+## Recipes
+
+### Reveal inside the viewport
+
+A negative `rootMargin` reveals the element only after it is 100px inside the viewport. With the default `once`, it stays revealed:
+
+```js
+reveal(element, { rootMargin: "-100px" });
+```
+
+Read the warning about negative margins in [Trigger](#trigger).
 
 ## Accessibility
 
 - When the user prefers reduced motion, the element appears with no animation. Use `reducedMotion` to change this.
 - Hidden content uses `opacity: 0` only. It stays in the accessibility tree and in the browser's find-in-page. Links and buttons in it stay focusable and clickable.
-- If JavaScript does not run, content rendered on the server stays hidden. To show it, put this CSS in a `<noscript>` element in the document head:
+- When a keyboard user tabs to a hidden link or button, the browser scrolls it into view, and the reveal starts.
+- `data-reveal` is reserved. The reveal sets `data-reveal="hidden"` on hidden elements, and removes it at the reveal. Do not use this attribute for your own data.
 
-  ```css
-  [data-reveal="hidden"] {
-    opacity: 1 !important;
+### Server markup, JavaScript off and print
+
+Code that renders `hiddenStyle` in the server markup, as the React and Vue adapters do, hides the content with an inline `opacity: 0`. The library injects no `<style>` element, so a strict Content Security Policy needs only `style-src-attr 'unsafe-inline'`. The cost is that the content stays hidden when JavaScript does not run. Elements that are not revealed yet stay invisible on a printed page. Put this in the document head to show them:
+
+```html
+<noscript
+  ><style>
+    [data-reveal="hidden"] {
+      opacity: 1 !important;
+    }
+  </style></noscript
+>
+<style>
+  @media print {
+    [data-reveal="hidden"] {
+      opacity: 1 !important;
+    }
   }
-  ```
+</style>
+```
 
-  `reveal` sets `data-reveal="hidden"` on hidden elements. With `observe`, `play` and `hiddenStyle`, add the attribute yourself.
+With a strict Content Security Policy, give each `<style>` a `nonce`, or put the print rule in your stylesheet.
 
-- The library injects no `<style>` elements. Under a strict Content Security Policy, the inline `opacity: 0` style that the server renders needs `style-src-attr 'unsafe-inline'`.
+- `reveal` on markup with no hidden state hides the element only when the script runs, so it needs no `<noscript>` rule. It needs the print rule.
+- A stylesheet rule that applies only when scripting is enabled, as the Astro adapter uses, shows the content without JavaScript. It needs the print rule only.
 
 ## Browser support
 
