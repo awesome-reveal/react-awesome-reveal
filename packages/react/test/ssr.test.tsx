@@ -1,7 +1,11 @@
 import { renderToString } from "react-dom/server";
+import type { CSSProperties } from "react";
+
+import { describeSSRContract } from "@awesome-reveal/test-utils/contract-ssr";
 
 import { slide } from "../src/keyframes";
 import { Reveal } from "../src/Reveal";
+import { type RevealOptions, useReveal } from "../src/useReveal";
 
 // The setup fails the test if React warns, for example about useLayoutEffect on React 18.
 test("renders hidden content on the server without warnings", () => {
@@ -12,4 +16,33 @@ test("renders hidden content on the server without warnings", () => {
   );
 
   expect(html).toBe('<div style="opacity:0" data-reveal="hidden"><p>hello</p></div>');
+});
+
+describeSSRContract("React Reveal", {
+  inlineOpacity: true,
+  async render(options, style) {
+    return renderToString(
+      <Reveal {...(options as RevealOptions)} style={style} data-contract="">
+        x
+      </Reveal>,
+    );
+  },
+});
+
+// The element uses only what the README documents: the ref and the style.
+function HookBox({ options, style }: { options: RevealOptions; style?: CSSProperties }) {
+  const { ref, style: hiddenStyle } = useReveal<HTMLElement>(options);
+  return (
+    <div ref={ref} style={{ ...style, ...hiddenStyle }} data-contract="">
+      x
+    </div>
+  );
+}
+
+describeSSRContract("React useReveal", {
+  inlineOpacity: true,
+  drift: ["SS01a", "SS01b", "SS01c"],
+  async render(options, style) {
+    return renderToString(<HookBox options={options as RevealOptions} style={style} />);
+  },
 });

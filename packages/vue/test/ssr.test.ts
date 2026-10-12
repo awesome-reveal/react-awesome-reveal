@@ -1,6 +1,8 @@
 import { createSSRApp, h, withDirectives } from "vue";
 import { renderToString } from "vue/server-renderer";
 
+import { describeSSRContract } from "@awesome-reveal/test-utils/contract-ssr";
+
 import { slide } from "../src/keyframes";
 import { Reveal } from "../src/Reveal";
 import { vReveal } from "../src/vReveal";
@@ -45,4 +47,21 @@ describe("server render", () => {
 
     expect(html).toBe("<div>hello</div>");
   });
+});
+
+describeSSRContract("Vue Reveal", {
+  inlineOpacity: true,
+  async render(options, style) {
+    return render(() => h(Reveal, { ...options, style, "data-contract": "" } as never, () => "x"));
+  },
+});
+
+describeSSRContract("Vue v-reveal", {
+  inlineOpacity: true,
+  drift: [],
+  async render(options, style) {
+    return render(() =>
+      withDirectives(h("div", { style, "data-contract": "" }, "x"), [[vReveal, options]]),
+    );
+  },
 });

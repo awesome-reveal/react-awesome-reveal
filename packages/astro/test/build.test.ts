@@ -34,6 +34,11 @@ describe("a static build of a page with Reveal", () => {
     expect(page).toMatch(/awesome-reveal\{display:contents\}/);
   });
 
+  // An inline opacity of the user must not win over the hidden rule.
+  it.fails("marks the hidden rule !important", () => {
+    expect(page).toMatch(/\[data-reveal=hidden\]\{opacity:0!important\}/);
+  });
+
   it("keeps the class prop", () => {
     expect(site.html).toMatch(/<section class="box"[\s>]/);
   });
