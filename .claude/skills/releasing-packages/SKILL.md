@@ -74,16 +74,20 @@ The GitHub environment `npm` allows only the `main` and `next` branches. Add a b
 5. Merge the release PR. The `publish` job uses `latest`.
 6. Remove `release-as` in the next PR.
 
-## Move `main` to the stable release
+## Move `main` to a stable release
 
-Do this after the `publish` job of the 1.0.0 release succeeds. A failed publish can then still be re-run from `next`.
+Do this after the `publish` job of a stable release from `next` succeeds, for the first stable release and for each later one. A failed publish can then still be re-run from `next`.
 
-`main` requires linear history and has commits that `next` lacks, so a merge commit or a fast-forward is rejected. A squash puts the release commits and tags outside the history of `main`, and release-please then finds no release there. Reset `main` to `next` instead:
+`main` requires linear history. A merge commit is rejected, and a squash or rebase puts the release commits and tags outside the history of `main`, so release-please finds no release there. Move `main` to the SHA of `next` instead:
 
-1. Check what you drop: `git log origin/next..origin/main`. Only commits that you do not need may appear. The `v4` branch keeps the v4 line.
-2. Run `git push --force-with-lease=main:<old main SHA> origin origin/next:main`. If GitHub rejects the push, allow force pushes on `main` in its branch protection, push, and turn the setting off again.
-3. Set `main` as the default branch.
-4. In a PR: point `.github/dependabot.yml` back to `main`, change "against `next`" in `AGENTS.md`, and decide whether to keep `next`. If you remove `next`, also remove it from the `on.push.branches` of `release.yml` and from the branches of the GitHub environment `npm`.
-5. Check that the release workflow on `main` finds no release to make.
+1. Fetch, and check whether `main` is an ancestor of `next`: `git merge-base --is-ancestor origin/main origin/next`.
+2. If it is, fast-forward: `git push origin origin/next:main`. No force is necessary.
+3. If it is not, `main` has commits that `next` lacks. List them with `git log origin/next..origin/main`. Continue only when you do not need them, or when you first cherry-pick them onto `next` in a PR and re-run the release. Then reset: `git push --force-with-lease=main:<old main SHA> origin origin/next:main`. If GitHub rejects the push, allow force pushes on `main` in its branch protection, push, and turn the setting off again.
+4. Check that the release workflow on `main` finds no release to make.
 
-Do not squash or rebase `next` into `main`.
+Make no direct commits to `main`. Hotfixes go to `next` first, so that `main` stays an ancestor of `next` and step 2 works. The `v4` branch keeps the v4 line.
+
+The first time, also do these steps once:
+
+1. Set `main` as the default branch.
+2. In a PR: point `.github/dependabot.yml` back to `main`, change "against `next`" in `AGENTS.md`, and decide whether to keep `next`. If you remove `next`, also remove it from the `on.push.branches` of `release.yml` and from the branches of the GitHub environment `npm`.
