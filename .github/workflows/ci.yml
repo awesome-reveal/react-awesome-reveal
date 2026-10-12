@@ -215,7 +215,6 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # The cases with a browser check run the app in Chromium.
       - name: Install Chromium
         if: matrix.browser
         run: pnpm exec playwright install --with-deps --only-shell chromium

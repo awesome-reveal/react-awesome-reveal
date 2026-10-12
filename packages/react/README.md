@@ -71,6 +71,8 @@ With no `keyframes`, the element fades in and moves up, as with `slide()`. To ch
 
 `Reveal` has the `"use client"` directive, so a Server Component can render it. `useReveal` needs a Client Component. Props that cross from a Server Component must be serializable: the keyframes are, but a function, such as a callback `ref`, is not. CI builds and runs a Next.js App Router app with Next 14 (React 18), 15 and 16.
 
+In a Server Component, `spring()` cannot check for `linear()` support, so a browser without it shows the element with no animation. Call `spring()` in a Client Component to get the fallback curve.
+
 ## Keyframes
 
 The `keyframes` option takes the keyframes that a factory of `@awesome-reveal/react/keyframes` returns, or a keyframes array:

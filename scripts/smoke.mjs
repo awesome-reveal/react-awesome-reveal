@@ -271,7 +271,11 @@ try {
         private: true,
         type: "module",
         dependencies: { ...own, ...Object.fromEntries(deps.map(toEntry)) },
-        devDependencies: { "@types/node": "^24.0.0", vite: "^8.3.4", typescript: "^5.9.0" },
+        devDependencies: {
+          "@types/node": "^24.0.0",
+          typescript: "^5.9.0",
+          ...(config.scaffold === false ? {} : { vite: "^8.3.4" }),
+        },
       },
       null,
       2,

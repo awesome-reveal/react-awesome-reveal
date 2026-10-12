@@ -1,6 +1,7 @@
 // Starts the built Next.js app of the smoke test and checks it in HTML and in Chromium.
 import { spawn } from "node:child_process";
 import { createServer } from "node:net";
+import { join } from "node:path";
 
 import { chromium } from "playwright";
 
@@ -13,8 +14,9 @@ const freePort = () =>
     });
   });
 
-async function waitFor(url) {
+async function waitFor(url, server) {
   for (let attempt = 0; attempt < 300; attempt++) {
+    if (server.exitCode !== null) throw new Error(`next start exited with code ${server.exitCode}`);
     try {
       return await fetch(url);
     } catch {
@@ -57,7 +59,7 @@ async function checkBrowser(base) {
     await page.locator("#card").scrollIntoViewIfNeeded();
     await page.waitForSelector("#card:not([data-reveal])");
 
-    // Client navigation: each page mounts its own reveal, so it plays again.
+    // Each page mounts its own reveal after a client navigation.
     for (const { path, id } of routes.slice(1)) {
       await page.locator(`a[href="${path}"]`).click();
       await page.waitForURL(`**${path}`);
@@ -70,16 +72,18 @@ async function checkBrowser(base) {
   }
 }
 
-/** Runs `next start` in `cwd`, and checks the server HTML and the browser behavior. */
 export async function verifyNext(cwd) {
   const port = await freePort();
   const base = `http://127.0.0.1:${port}`;
-  const server = spawn("pnpm", ["exec", "next", "start", "-p", String(port), "-H", "127.0.0.1"], {
-    cwd,
-    stdio: "inherit",
-  });
+  // The binary runs directly, so that kill() reaches the server and not a pnpm wrapper.
+  const server = spawn(
+    join(cwd, "node_modules/.bin/next"),
+    ["start", "-p", String(port), "-H", "127.0.0.1"],
+    { cwd, stdio: "inherit" },
+  );
+  const exited = new Promise((resolve) => server.once("exit", resolve));
   try {
-    await waitFor(base);
+    await waitFor(base, server);
     await Promise.all(
       routes.map(async ({ path }) => {
         const response = await fetch(base + path);
@@ -93,5 +97,6 @@ export async function verifyNext(cwd) {
     await checkBrowser(base);
   } finally {
     server.kill();
+    await exited;
   }
 }

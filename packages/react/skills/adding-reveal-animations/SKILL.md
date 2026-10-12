@@ -86,6 +86,7 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 - Call a `defineKeyframes` factory outside the component when the component renders often. Each call samples the function again.
 - The keyframes factories do not import React. You can call them in a Server Component and pass the result to `Reveal`.
 - In a Next.js App Router page, `Reveal` works in a Server Component, and `useReveal` needs a file with `"use client"`. A Server Component cannot pass a function, such as a callback `ref`, to `Reveal`.
+- In a Server Component, `spring()` cannot check for `linear()` support. Call it in a Client Component to get the fallback curve.
 - Keep `reducedMotion` at `"user"` unless the user asks for a different behavior. It respects the operating system setting of people whom motion makes ill.
 - Prefer `transform` and `opacity`. `filter` (`blur()`) and `clip-path` repaint on each frame in some engines, so use them on small elements.
 - Server-rendered content stays hidden (`opacity: 0`) until JavaScript runs. To show it when JavaScript does not run and in print, put this in the document head:
