@@ -29,7 +29,7 @@ describe("a static build of a page with Reveal", () => {
 
   it("hides the element with a stylesheet rule while scripting is enabled", () => {
     expect(page).toMatch(
-      /@media ?\(scripting:enabled\)\{awesome-reveal>\[data-reveal=hidden\]\{opacity:0!important\}\}/,
+      /@media ?\(scripting:enabled\)\{:where\(awesome-reveal\)>:where\(\[data-reveal=hidden\]\)\{opacity:0!important\}\}/,
     );
     expect(page).toMatch(/awesome-reveal\{display:contents\}/);
   });

@@ -53,8 +53,9 @@ const options = JSON.stringify({
   }
 
   /* Astro CSP blocks style attributes, so the server markup hides the element with this rule. */
+  /* :where() gives it no specificity, so one print rule overrides it, as for the other adapters. */
   @media (scripting: enabled) {
-    awesome-reveal > [data-reveal="hidden"] {
+    :where(awesome-reveal) > :where([data-reveal="hidden"]) {
       opacity: 0 !important;
     }
   }
