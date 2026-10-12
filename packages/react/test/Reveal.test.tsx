@@ -142,6 +142,15 @@ describe(`Reveal (React ${version})`, () => {
       expect(ref).toHaveBeenCalledTimes(1);
     });
 
+    it("does not replay the animation when the callback ref changes on each render", () => {
+      const { container, rerender } = render(<Reveal keyframes={fade()} ref={() => {}} />);
+      intersect(container.firstElementChild!, true);
+      rerender(<Reveal keyframes={fade()} ref={() => {}} />);
+      rerender(<Reveal keyframes={fade()} ref={() => {}} />);
+
+      expect(animations).toHaveLength(1);
+    });
+
     // React 18 does not support cleanup functions from callback refs.
     it.runIf(version.startsWith("19."))("runs the cleanup that a callback ref returns", () => {
       const cleanup = vi.fn();

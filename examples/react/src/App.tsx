@@ -21,13 +21,9 @@ const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
 }));
 
 function HookExample() {
-  const { ref, style } = useReveal<HTMLHeadingElement>({ keyframes: blur({ from: 16 }) });
+  const { getProps } = useReveal<HTMLHeadingElement>({ keyframes: blur({ from: 16 }) });
 
-  return (
-    <h2 ref={ref} style={style}>
-      Revealed with the useReveal hook, no wrapper
-    </h2>
-  );
+  return <h2 {...getProps()}>Revealed with the useReveal hook, no wrapper</h2>;
 }
 
 function ManualExample() {

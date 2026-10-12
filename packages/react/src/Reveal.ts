@@ -9,8 +9,6 @@ import {
   type JSX,
   type ReactElement,
   type Ref,
-  type RefCallback,
-  useCallback,
 } from "react";
 
 import { type RevealOptions, useReveal } from "./useReveal.js";
@@ -25,29 +23,6 @@ export type RevealProps<T extends RevealElement = "div"> = RevealOptions & {
   as?: T;
   ref?: Ref<ComponentRef<T>>;
 } & Omit<ComponentPropsWithoutRef<T>, keyof RevealOptions | "as">;
-
-function useMergedRef<T>(own: RefCallback<T>, user: Ref<T> | undefined): RefCallback<T> {
-  return useCallback(
-    (node: T | null) => {
-      own(node);
-      if (typeof user === "function") {
-        const cleanup: unknown = user(node);
-        // React 18 logs an error when a callback ref returns a function.
-        if (typeof cleanup === "function")
-          return () => {
-            own(null);
-            cleanup();
-          };
-      } else if (user) {
-        // The cast also compiles against React 18 types, where RefObject.current is read-only.
-        // oxlint-disable-next-line react/immutability -- a ref callback can write the user's ref object.
-        (user as { current: T | null }).current = node;
-      }
-      return undefined;
-    },
-    [own, user],
-  );
-}
 
 // React 18 only passes a ref to function components wrapped in forwardRef.
 const RevealWithRef = /* @__PURE__ */ forwardRef(function Reveal(
@@ -65,18 +40,12 @@ const RevealWithRef = /* @__PURE__ */ forwardRef(function Reveal(
     once,
     when,
     reducedMotion,
-    style,
     ...rest
   } = props;
-  const reveal = useReveal<Element>(props);
-  const mergedRef = useMergedRef(reveal.ref, ref);
+  const { getProps } = useReveal<Element>(props);
 
-  return createElement(as ?? "div", {
-    ...rest,
-    ref: mergedRef,
-    style: reveal.style ? { ...style, ...reveal.style } : style,
-    "data-reveal": reveal.revealed ? undefined : "hidden",
-  });
+  // oxlint-disable-next-line react/refs -- getProps passes the ref on to the element and does not read it.
+  return createElement(as ?? "div", getProps({ ...rest, ref }));
 });
 
 /**

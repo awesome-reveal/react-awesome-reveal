@@ -29,19 +29,13 @@ describeSSRContract("React Reveal", {
   },
 });
 
-// The element uses only what the README documents: the ref and the style.
 function HookBox({ options, style }: { options: RevealOptions; style?: CSSProperties }) {
-  const { ref, style: hiddenStyle } = useReveal<HTMLElement>(options);
-  return (
-    <div ref={ref} style={{ ...style, ...hiddenStyle }} data-contract="">
-      x
-    </div>
-  );
+  const { getProps } = useReveal<HTMLElement>(options);
+  return <div {...getProps({ style, "data-contract": "" })}>x</div>;
 }
 
 describeSSRContract("React useReveal", {
   inlineOpacity: true,
-  drift: ["SS01a", "SS01b", "SS01c"],
   async render(options, style) {
     return renderToString(<HookBox options={options as RevealOptions} style={style} />);
   },

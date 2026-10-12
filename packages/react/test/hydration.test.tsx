@@ -9,9 +9,9 @@ import { Reveal } from "../src/Reveal";
 import { type RevealOptions, useReveal } from "../src/useReveal";
 
 function HookBox(options: RevealOptions) {
-  const { ref, style } = useReveal<HTMLDivElement>(options);
+  const { getProps } = useReveal<HTMLDivElement>(options);
   return (
-    <div ref={ref} style={style}>
+    <div {...getProps()}>
       <span>one</span>
     </div>
   );
@@ -53,7 +53,10 @@ describe(`hydration (React ${version})`, () => {
   });
 
   it("hydrates useReveal hidden, then reveals it", async () => {
-    const element = await hydrate('<div style="opacity:0"><span>one</span></div>', <HookBox />);
+    const element = await hydrate(
+      '<div style="opacity:0" data-reveal="hidden"><span>one</span></div>',
+      <HookBox />,
+    );
 
     expect(element).toHaveStyle({ opacity: "0" });
     expect(animations).toHaveLength(0);

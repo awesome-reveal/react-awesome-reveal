@@ -28,7 +28,7 @@
 
 ## Features
 
-- 🪶 **Tiny** – No third-party dependencies. `Reveal` with one keyframes factory adds about 1.5 kB gzipped to your bundle.
+- 🪶 **Tiny** – No third-party dependencies. `Reveal` with one keyframes factory adds about 2 kB gzipped to your bundle.
 - 🌳 **Tree-shakeable** – Each keyframes factory is a small function. Your bundle includes only the factories that you import.
 - 🧩 **Composable** – Use the `Reveal` component, or the `useReveal` hook on your own elements and components.
 - ⚙️ **Native APIs** – Intersection Observer detects the reveal. Web Animations run it on the compositor where possible.
@@ -93,22 +93,20 @@ const inputRef = useRef(null);
 
 ## The `useReveal` hook
 
-`useReveal` animates your own element or component, with no wrapper. Attach `ref` to the element, and merge `style` into its style to hide it until it is revealed:
+`useReveal` animates your own element or component, with no wrapper. Spread `getProps(yourProps)` on the element. It merges your `ref` and `style` with the reveal, sets `data-reveal` and hides the element until it is revealed:
 
 ```jsx
 import { useReveal } from "@awesome-reveal/react";
 import { slide } from "@awesome-reveal/react/keyframes";
 
 function Card() {
-  const { ref, style, revealed } = useReveal({ keyframes: slide() });
+  const { getProps, revealed } = useReveal({ keyframes: slide() });
 
-  return (
-    <article ref={ref} style={style}>
-      {revealed ? "Hello!" : null}
-    </article>
-  );
+  return <article {...getProps({ className: "card" })}>{revealed ? "Hello!" : null}</article>;
 }
 ```
+
+While the element is hidden, `opacity: 0` comes after your `style`. After the reveal, your opacity comes back. Write your own `style` and `ref` inside `getProps`. A `style` that you write after the spread replaces the hidden style. To use `getProps` on a component, forward its `ref` to an element (React 18 needs `forwardRef`). With React 18 types, type the props as `ComponentPropsWithoutRef`, because `ComponentProps` allows string refs.
 
 Use `revealed` to run code when the element is revealed, for example in a `useEffect`.
 
@@ -163,7 +161,7 @@ Option changes apply to the next reveal. They do not replay an animation that al
 
 ## Accessibility
 
-The [Accessibility section of the `@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-reveal/core#accessibility) describes reduced motion, content without JavaScript and Content Security Policy. For the `<noscript>` CSS, `Reveal` sets `data-reveal="hidden"` on hidden elements. With `useReveal`, add the attribute yourself.
+The [Accessibility section of the `@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-reveal/core#accessibility) describes reduced motion, content without JavaScript and Content Security Policy. For the `<noscript>` CSS, Hidden elements have `data-reveal="hidden"`, from `Reveal` and from `getProps`.
 
 ## Browser support
 

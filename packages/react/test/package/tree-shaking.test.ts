@@ -56,9 +56,9 @@ describe("consumer bundle", () => {
       "core/dist/observe.js": ["observe"],
       "core/dist/play.js": ["play", "defaultKeyframes"],
       "core/dist/report.js": ["report"],
-      "core/dist/reveal.js": ["hiddenStyle"],
+      "core/dist/reveal.js": ["hiddenStyle", "createReveal"],
     });
-    expect(size).toBeLessThan(3600);
+    expect(size).toBeLessThan(4700);
   });
 
   it("keeps neither Reveal nor keyframes factories for the hook alone", async () => {
@@ -69,8 +69,8 @@ describe("consumer bundle", () => {
       "core/dist/observe.js": ["observe"],
       "core/dist/play.js": ["play", "defaultKeyframes"],
       "core/dist/report.js": ["report"],
-      "core/dist/reveal.js": ["hiddenStyle"],
+      "core/dist/reveal.js": ["hiddenStyle", "createReveal"],
     });
-    expect(size).toBeLessThan(2050);
+    expect(size).toBeLessThan(3500);
   });
 });

@@ -48,19 +48,16 @@ function harness(tree: Tree, drift: string[] = []): Harness {
 
 describeContract(
   "React Reveal",
-  harness(
-    (options, style, swap) => (
-      <Reveal
-        {...(options as RevealOptions)}
-        as={swap ? "section" : "div"}
-        style={style}
-        data-contract=""
-      >
-        {children}
-      </Reveal>
-    ),
-    ["S11a"],
-  ),
+  harness((options, style, swap) => (
+    <Reveal
+      {...(options as RevealOptions)}
+      as={swap ? "section" : "div"}
+      style={style}
+      data-contract=""
+    >
+      {children}
+    </Reveal>
+  )),
 );
 
 function HookBox({
@@ -72,19 +69,12 @@ function HookBox({
   style?: CSSProperties;
   swap: boolean;
 }) {
-  const { ref, style: hiddenStyle } = useReveal<HTMLElement>(options as RevealOptions);
+  const { getProps } = useReveal<HTMLElement>(options as RevealOptions);
   const Tag = swap ? "section" : "div";
-  return (
-    <Tag ref={ref} style={{ ...style, ...hiddenStyle }} data-contract="">
-      {children}
-    </Tag>
-  );
+  return <Tag {...getProps({ style, "data-contract": "" })}>{children}</Tag>;
 }
 
 describeContract(
   "React useReveal",
-  harness(
-    (options, style, swap) => <HookBox options={options} style={style} swap={swap} />,
-    ["S01", "S03", "S04b", "S05", "S11a", "S11b"],
-  ),
+  harness((options, style, swap) => <HookBox options={options} style={style} swap={swap} />),
 );
