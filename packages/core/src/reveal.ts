@@ -105,8 +105,8 @@ export function createReveal(options: RevealOptions = {}): RevealState {
     attach(next) {
       if (next === element) return;
       cancel();
-      // The same element that comes back right after null, as in a Suspense fallback, plays again.
-      // Its animation was cancelled before it could finish.
+      // The same element that comes back right after null plays again, because its animation was
+      // cancelled before it could finish.
       if (next && next === detached) played = false;
       detached = next ? null : element;
       element = next;
