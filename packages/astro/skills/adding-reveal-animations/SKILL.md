@@ -33,7 +33,7 @@ import { fade, slide } from "@awesome-reveal/astro/keyframes";
 | `fade()`  | Fades in.                                  | `easing`                                                                                            |
 | `slide()` | Fades in and moves in a direction.         | `direction` (`"up"` default, `"down"`, `"left"`, `"right"`), `distance` (`24`), `opacity`, `easing` |
 | `scale()` | Fades in and grows.                        | `from` (`0.95`), `opacity`, `easing`                                                                |
-| `blur()`  | Fades in and removes a blur.               | `amount` (`8`), `opacity`, `easing`                                                                 |
+| `blur()`  | Fades in and removes a blur.               | `from` (`8`), `opacity`, `easing`                                                                   |
 | `pop()`   | Fades in, grows past its size and settles. | `from` (`0.8`), `opacity`, `easing`                                                                 |
 | `enter()` | Starts from any combination of the others. | `x`, `y`, `scale`, `rotate`, `blur`, `opacity`, `easing`                                            |
 
@@ -47,9 +47,9 @@ For a custom animation, use `defineKeyframes` or a keyframes array:
 ```ts
 import { defineKeyframes, type KeyframesFactory } from "@awesome-reveal/astro/keyframes";
 
-// keyframe(t, u) gets the progress t from 0 to 1, and u = 1 - t. At t = 1, return the resting style.
+// keyframe(t) gets the progress t from 0 to 1. At t = 1, return the resting style.
 const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
-  keyframe: (t, u) => ({ opacity: t, transform: `rotate(${u * turns * 360}deg)` }),
+  keyframe: (t) => ({ opacity: t, transform: `rotate(${(1 - t) * turns * 360}deg)` }),
 }));
 
 // The last keyframe must be the resting style: the animation does not stay applied.

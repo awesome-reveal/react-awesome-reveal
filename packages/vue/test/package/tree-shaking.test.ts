@@ -54,9 +54,10 @@ describe("consumer bundle", () => {
       "core/dist/keyframes/presets.js": ["slide"],
       "core/dist/observe.js": ["observe"],
       "core/dist/play.js": ["play", "defaultKeyframes"],
+      "core/dist/report.js": ["report"],
       "core/dist/reveal.js": ["hiddenStyle"],
     });
-    expect(size).toBeLessThan(3200);
+    expect(size).toBeLessThan(3500);
   });
 
   it("keeps neither Reveal nor keyframes factories for the directive alone", async () => {
@@ -66,8 +67,9 @@ describe("consumer bundle", () => {
       "vue/dist/vReveal.js": ["vReveal"],
       "core/dist/observe.js": ["observe"],
       "core/dist/play.js": ["play", "defaultKeyframes"],
-      "core/dist/reveal.js": ["hiddenStyle", "reveal"],
+      "core/dist/report.js": ["report"],
+      "core/dist/reveal.js": ["hiddenStyle", "reveal", "createReveal"],
     });
-    expect(size).toBeLessThan(2400);
+    expect(size).toBeLessThan(3350);
   });
 });

@@ -59,7 +59,7 @@ describeContract(
         {children}
       </Reveal>
     ),
-    ["S04d", "S11a", "S13", "S14"],
+    ["S11a"],
   ),
 );
 
@@ -85,6 +85,6 @@ describeContract(
   "React useReveal",
   harness(
     (options, style, swap) => <HookBox options={options} style={style} swap={swap} />,
-    ["S01", "S03", "S04b", "S04d", "S05", "S11a", "S11b", "S13", "S14"],
+    ["S01", "S03", "S04b", "S05", "S11a", "S11b"],
   ),
 );

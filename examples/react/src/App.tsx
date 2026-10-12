@@ -14,12 +14,14 @@ import {
 import { Section } from "./components/Section";
 
 const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
-  keyframe: (t, u) => ({ opacity: t, transform: `rotate(${u * turns * 360}deg) scale(${t})` }),
-  easing: (t) => 1 - (1 - t) ** 3,
+  keyframe: (progress) => {
+    const t = 1 - (1 - progress) ** 3;
+    return { opacity: t, transform: `rotate(${(1 - t) * turns * 360}deg) scale(${t})` };
+  },
 }));
 
 function HookExample() {
-  const { ref, style } = useReveal<HTMLHeadingElement>({ keyframes: blur() });
+  const { ref, style } = useReveal<HTMLHeadingElement>({ keyframes: blur({ from: 16 }) });
 
   return (
     <h2 ref={ref} style={style}>

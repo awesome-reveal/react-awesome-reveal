@@ -2,17 +2,13 @@ import type { KeyframesFactory, RevealKeyframe } from "./types.js";
 
 export interface KeyframesDefinition {
   /**
-   * Returns the keyframe at progress `t`, from 0 to 1, after easing.
-   * `u` is the remaining progress, `1 - t`. At `t = 1`, return the element's resting style.
+   * Returns the keyframe at progress `t`, from 0 to 1.
+   * At `t = 1`, return the element's resting style.
    */
-  keyframe: (t: number, u: number) => RevealKeyframe;
+  keyframe: (t: number) => RevealKeyframe;
   /**
-   * Maps linear progress to eased progress, for example a spring or an elastic curve.
-   * @default (t) => t
-   */
-  easing?: (t: number) => number;
-  /**
-   * Number of samples between the start and the end of the animation.
+   * Number of samples between the start and the end of the animation. The value is rounded
+   * and kept between 1 and 1000.
    * @default 30
    */
   steps?: number;
@@ -25,11 +21,9 @@ export function defineKeyframes<Options extends object = Record<string, never>>(
   define: (options: Partial<Options>) => KeyframesDefinition,
 ): KeyframesFactory<Options> {
   return (options) => {
-    const { keyframe, easing = (t) => t, steps = 30 } = define(options ?? {});
+    const { keyframe, steps } = define(options ?? {});
+    const count = Math.min(1000, Math.max(1, Math.round(steps ?? 30) || 1));
 
-    return Array.from({ length: steps + 1 }, (_, index) => {
-      const t = easing(index / steps);
-      return keyframe(t, 1 - t);
-    });
+    return Array.from({ length: count + 1 }, (_, index) => keyframe(index / count));
   };
 }

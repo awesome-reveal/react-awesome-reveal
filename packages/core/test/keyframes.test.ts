@@ -81,7 +81,7 @@ describe("presets", () => {
     ["scale", scale(), enter({ scale: 0.95 })],
     ["scale from a value", scale({ from: 0.5 }), enter({ scale: 0.5 })],
     ["blur", blur(), enter({ blur: 8 })],
-    ["blur by an amount", blur({ amount: "1rem" }), enter({ blur: "1rem" })],
+    ["blur from a radius", blur({ from: "1rem" }), enter({ blur: "1rem" })],
     ["pop", pop(), enter({ scale: 0.8, easing: "cubic-bezier(0.34, 1.56, 0.64, 1)" })],
     [
       "pop with an easing",
@@ -137,7 +137,7 @@ describe("spring", () => {
 
 describe("defineKeyframes", () => {
   const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
-    keyframe: (t, u) => ({ opacity: t, transform: `rotate(${u * turns * 360}deg)` }),
+    keyframe: (t) => ({ opacity: t, transform: `rotate(${(1 - t) * turns * 360}deg)` }),
     steps: 4,
   }));
 
@@ -155,31 +155,22 @@ describe("defineKeyframes", () => {
     expect(spin()[0]).toEqual({ opacity: 0, transform: "rotate(360deg)" });
   });
 
-  it("applies the easing to the progress", () => {
-    const eased = defineKeyframes(() => ({
-      keyframe: (t) => ({ opacity: t }),
-      easing: (t) => t * t,
-      steps: 2,
-    }));
-
-    expect(eased()).toEqual([{ opacity: 0 }, { opacity: 0.25 }, { opacity: 1 }]);
-  });
-
-  it("passes the remaining eased progress as the second argument", () => {
-    const remaining = defineKeyframes(() => ({
-      keyframe: (t, u) => ({ opacity: t + u, offset: u }),
-      easing: (t) => t * t,
-      steps: 2,
-    }));
-
-    expect(remaining()).toEqual([
-      { opacity: 1, offset: 1 },
-      { opacity: 1, offset: 0.75 },
-      { opacity: 1, offset: 0 },
-    ]);
-  });
-
   it("takes 30 steps by default", () => {
     expect(defineKeyframes(() => ({ keyframe: (t) => ({ opacity: t }) }))()).toHaveLength(31);
+  });
+
+  const steps = (value: number) =>
+    defineKeyframes(() => ({ keyframe: (t) => ({ opacity: t }), steps: value }))().length - 1;
+
+  it("takes at least one step", () => {
+    expect([steps(0), steps(-5), steps(Number.NaN)]).toEqual([1, 1, 1]);
+  });
+
+  it("rounds the steps to an integer", () => {
+    expect([steps(2.4), steps(2.6)]).toEqual([2, 3]);
+  });
+
+  it("takes at most 1000 steps", () => {
+    expect([steps(5000), steps(Number.POSITIVE_INFINITY)]).toEqual([1000, 1000]);
   });
 });

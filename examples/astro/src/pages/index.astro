@@ -16,8 +16,10 @@ import ServerTime from "../components/ServerTime.astro";
 import Layout from "../layouts/Layout.astro";
 
 const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
-  keyframe: (t, u) => ({ opacity: t, transform: `rotate(${u * turns * 360}deg) scale(${t})` }),
-  easing: (t) => 1 - (1 - t) ** 3,
+  keyframe: (progress) => {
+    const t = 1 - (1 - progress) ** 3;
+    return { opacity: t, transform: `rotate(${(1 - t) * turns * 360}deg) scale(${t})` };
+  },
 }));
 
 const directions = ["up", "down", "left", "right"] as const;
@@ -74,7 +76,7 @@ const bounces = [0, 0.3, 0.6];
     </Reveal>
   </PageSection>
   <PageSection>
-    <Reveal as="h2" keyframes={blur()} class="title" title="A title attribute">
+    <Reveal as="h2" keyframes={blur({ from: 16 })} class="title" title="A title attribute">
       Your own attributes stay on the element
     </Reveal>
   </PageSection>

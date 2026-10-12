@@ -1,3 +1,5 @@
+import { report } from "./report.js";
+
 export interface ObserveOptions {
   /**
    * Fraction of the element, between 0 and 1, that must be visible to reveal it.
@@ -19,7 +21,8 @@ export interface ObserveOptions {
 
 /**
  * Calls `onChange` when the element enters the viewport and, without `once`, when it leaves it.
- * Without `IntersectionObserver`, it calls `onChange(true)` at once.
+ * Without `IntersectionObserver`, or when the browser rejects the options, it calls
+ * `onChange(true)` at once. The browser error is reported, but not thrown.
  * @returns A function that stops the observation.
  */
 export function observe(
@@ -27,23 +30,31 @@ export function observe(
   options: ObserveOptions,
   onChange: (inView: boolean) => void,
 ): () => void {
-  const { threshold = 0, rootMargin, once = true } = options;
+  const { threshold, rootMargin, once } = options;
+  const minimum = threshold ?? 0;
   if (typeof IntersectionObserver === "undefined") {
     onChange(true);
     return () => {};
   }
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      // Array.prototype.at is newer than the browsers this library supports.
-      const entry = entries[entries.length - 1]!;
-      const inView = entry.isIntersecting && entry.intersectionRatio >= threshold;
-      if (inView && once) observer.disconnect();
-      if (inView || !once) onChange(inView);
-    },
-    { threshold, rootMargin },
-  );
-  observer.observe(element);
+  let observer: IntersectionObserver;
+  try {
+    observer = new IntersectionObserver(
+      (entries) => {
+        // Array.prototype.at is newer than the browsers this library supports.
+        const entry = entries[entries.length - 1]!;
+        const inView = entry.isIntersecting && entry.intersectionRatio >= minimum;
+        if (inView && once !== false) observer.disconnect();
+        if (inView || once === false) onChange(inView);
+      },
+      { threshold: minimum, rootMargin: rootMargin ?? undefined },
+    );
+    observer.observe(element);
+  } catch (error) {
+    report(error);
+    onChange(true);
+    return () => {};
+  }
   return () => {
     observer.disconnect();
     // disconnect() does not drop the entries that are already queued, so the callback can still run.

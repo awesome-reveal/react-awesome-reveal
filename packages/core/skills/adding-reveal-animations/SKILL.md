@@ -14,8 +14,8 @@ The package is ESM-only. Load it with a bundler, such as Vite, or in a `<script 
 `reveal(element, options?)` hides the element at once and plays the keyframes when the element enters the viewport. It returns a controller:
 
 - `revealed`: `true` while the element is revealed.
-- `update(options)`: replaces all the options. Pass the full options object, not only the changed ones.
-- `destroy()`: stops the observation and cancels the animation. The element keeps its current style, so an element that is still hidden stays at `opacity: 0`. Later calls to `update` do nothing.
+- `setOptions(options)`: replaces all the options. Pass the full options object, not only the changed ones.
+- `destroy()`: stops the observation, cancels the animation and restores the element, so a hidden element shows again. Later calls to `setOptions` do nothing.
 
 ```ts
 import { reveal } from "@awesome-reveal/core";
@@ -45,10 +45,10 @@ const panel = document.querySelector<HTMLElement>("#results")!;
 const controller = reveal(panel, { when: false });
 
 // Later, when the data has loaded:
-controller.update({ when: true });
+controller.setOptions({ when: true });
 ```
 
-`observe`, `play` and `hiddenStyle` are the parts that `reveal` uses. They are for adapter authors and for code where something else sets the style of the element. Prefer `reveal` when your code owns the element.
+`createReveal`, `observe`, `play` and `hiddenStyle` are the parts that `reveal` uses. They are for adapter authors and for code where something else sets the style of the element. `createReveal(options?)` returns a state with `revealed`, `subscribe(listener)`, `attach(element)` and `setOptions(options)`. It plays the animation and leaves the hidden style to your listener. Prefer `reveal` when your code owns the element.
 
 ## Avoid a flash on page load
 
@@ -83,7 +83,7 @@ Under a strict Content Security Policy, the inline `opacity: 0` style needs `sty
 | `fade()`  | Fades in.                                  | `easing`                                                                                            |
 | `slide()` | Fades in and moves in a direction.         | `direction` (`"up"` default, `"down"`, `"left"`, `"right"`), `distance` (`24`), `opacity`, `easing` |
 | `scale()` | Fades in and grows.                        | `from` (`0.95`), `opacity`, `easing`                                                                |
-| `blur()`  | Fades in and removes a blur.               | `amount` (`8`), `opacity`, `easing`                                                                 |
+| `blur()`  | Fades in and removes a blur.               | `from` (`8`), `opacity`, `easing`                                                                   |
 | `pop()`   | Fades in, grows past its size and settles. | `from` (`0.8`), `opacity`, `easing`                                                                 |
 | `enter()` | Starts from any combination of the others. | `x`, `y`, `scale`, `rotate`, `blur`, `opacity`, `easing`                                            |
 
@@ -97,9 +97,9 @@ For a custom animation, use `defineKeyframes` or a keyframes array:
 ```ts
 import { defineKeyframes, type KeyframesFactory } from "@awesome-reveal/core/keyframes";
 
-// keyframe(t, u) gets the progress t from 0 to 1, and u = 1 - t. At t = 1, return the resting style.
+// keyframe(t) gets the progress t from 0 to 1. At t = 1, return the resting style.
 const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
-  keyframe: (t, u) => ({ opacity: t, transform: `rotate(${u * turns * 360}deg)` }),
+  keyframe: (t) => ({ opacity: t, transform: `rotate(${(1 - t) * turns * 360}deg)` }),
 }));
 
 // The last keyframe must be the resting style: the animation does not stay applied.
@@ -125,9 +125,11 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 
 ## Rules
 
-- `update` applies a change of `when` at once, and restarts the observer for a change of `threshold`, `rootMargin` or `once`. The other options apply at the next reveal. They do not replay an animation that already played.
+- `setOptions` applies a change of `when` at once, and restarts the observer for a change of `threshold`, `rootMargin` or `once`. The other options apply at the next reveal. They do not replay an animation that already played.
 - `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. An inline element that you reveal also needs `display: inline-block`, or it only fades.
 - Keep `reducedMotion` at `"user"` unless the user asks for a different behavior. It respects the operating system setting of people whom motion makes ill.
 - Prefer `transform` and `opacity`. `filter` (`blur()`) and `clip-path` repaint on each frame in some engines, so use them on small elements.
-- While the element is hidden, its inline `opacity` is `0`. The reveal removes the inline `opacity`, so set your own opacity in a class, not in the `style` attribute.
+- While the element is hidden, its inline `opacity` is `0`. The reveal restores the inline `opacity` that the element had. Hidden server markup (`opacity: 0` with `data-reveal="hidden"`) counts as no opacity.
 - Without `IntersectionObserver`, elements are revealed at once. Without `Element.animate`, elements appear with no animation.
+- `null` is the same as leaving a `reveal` option out. This does not apply to the options of the keyframes factories.
+- When the browser rejects an option, such as a `threshold` above `1`, a `rootMargin` with no unit or a keyframe value, the element shows and stays shown, also when you correct the option later. The error is reported once from a microtask. It reaches `window.onerror`. It does not throw in your code.

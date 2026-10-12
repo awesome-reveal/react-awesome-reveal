@@ -40,7 +40,7 @@ export const Reveal = /* @__PURE__ */ defineComponent(
         () => props.once,
       ],
       ([node, when, isSettled], _, onCleanup) => {
-        if (!node || when !== undefined || isSettled) return;
+        if (!node || when != null || isSettled) return;
         onCleanup(observe(node, props, (value) => (inView.value = value)));
       },
       // Vue sets the element ref in a post-flush job; a sync watcher observes before mount() returns.

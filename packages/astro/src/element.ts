@@ -37,7 +37,7 @@ export class RevealElement extends HTMLElement {
   }
 
   attributeChangedCallback() {
-    this.controller?.update(this.readOptions());
+    this.controller?.setOptions(this.readOptions());
   }
 
   // Invalid options fall back to the defaults, so that the element does not stay hidden.

@@ -15,8 +15,10 @@ import {
 import PageSection from "./components/PageSection.vue";
 
 const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
-  keyframe: (t, u) => ({ opacity: t, transform: `rotate(${u * turns * 360}deg) scale(${t})` }),
-  easing: (t) => 1 - (1 - t) ** 3,
+  keyframe: (progress) => {
+    const t = 1 - (1 - progress) ** 3;
+    return { opacity: t, transform: `rotate(${(1 - t) * turns * 360}deg) scale(${t})` };
+  },
 }));
 
 const directions = ["up", "down", "left", "right"] as const;
@@ -67,7 +69,9 @@ const color = ref("black");
     </Reveal>
   </PageSection>
   <PageSection>
-    <h2 v-reveal="{ keyframes: blur() }">Revealed with the v-reveal directive, no wrapper</h2>
+    <h2 v-reveal="{ keyframes: blur({ from: 16 }) }">
+      Revealed with the v-reveal directive, no wrapper
+    </h2>
   </PageSection>
   <PageSection>
     <h2 v-reveal="{ keyframes: slide(), once: false }" :style="`color: ${color}`">
