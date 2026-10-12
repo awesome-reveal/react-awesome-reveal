@@ -30,6 +30,8 @@ export const Reveal = /* @__PURE__ */ defineComponent(
     };
     onMounted(() => {
       mounted = true;
+      // A pending Suspense also defers the post-flush watcher, so a change of the props is not applied yet.
+      state.setOptions(props);
       state.attach(element);
     });
 

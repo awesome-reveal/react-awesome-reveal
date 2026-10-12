@@ -1,5 +1,5 @@
 import { flushPromises, mount } from "@vue/test-utils";
-import { defineComponent, h, Suspense, version } from "vue";
+import { defineComponent, h, ref, Suspense, version } from "vue";
 
 import { fade, slide } from "../src/keyframes";
 import { Reveal } from "../src/Reveal";
@@ -154,6 +154,32 @@ describe(`Reveal (Vue ${version})`, () => {
     resolve();
     await flushPromises();
     expect(animations).toHaveLength(1);
+  });
+
+  it("plays with the latest options when a prop changes while Suspense is pending", async () => {
+    let resolve!: () => void;
+    const Slow = defineComponent(async () => {
+      await new Promise<void>((done) => (resolve = done));
+      return () => h("p");
+    });
+    const duration = ref(100);
+    mount(
+      {
+        render: () =>
+          h(Suspense, null, {
+            default: () => h("div", [h(Reveal, { when: true, duration: duration.value }), h(Slow)]),
+          }),
+      },
+      { attachTo: document.body },
+    );
+    await flushPromises();
+    duration.value = 900;
+    await flushPromises();
+    resolve();
+    await flushPromises();
+
+    expect(animations).toHaveLength(1);
+    expect(animations[0]?.options).toMatchObject({ duration: 900 });
   });
 
   it("merges the hidden style into the given style and restores it when revealed", async () => {
