@@ -1,5 +1,5 @@
-import { mount } from "@vue/test-utils";
-import { h, version } from "vue";
+import { flushPromises, mount } from "@vue/test-utils";
+import { defineComponent, h, Suspense, version } from "vue";
 
 import { fade, slide } from "../src/keyframes";
 import { Reveal } from "../src/Reveal";
@@ -132,6 +132,27 @@ describe(`Reveal (Vue ${version})`, () => {
 
     expect(wrapper.element.tagName).toBe("SECTION");
     expect(wrapper.element).not.toHaveAttribute("data-reveal");
+    expect(animations).toHaveLength(1);
+  });
+
+  it("plays after a pending Suspense resolves, not before", async () => {
+    let resolve!: () => void;
+    const Slow = defineComponent(async () => {
+      await new Promise<void>((done) => (resolve = done));
+      return () => h("p");
+    });
+    mount(
+      {
+        render: () =>
+          h(Suspense, null, { default: () => h("div", [h(Reveal, { when: true }), h(Slow)]) }),
+      },
+      { attachTo: document.body },
+    );
+    await flushPromises();
+    expect(animations).toHaveLength(0);
+
+    resolve();
+    await flushPromises();
     expect(animations).toHaveLength(1);
   });
 

@@ -107,7 +107,7 @@ declare module "vue" {
 }
 ```
 
-While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes `data-reveal` and restores your inline `opacity`.
+While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes `data-reveal` and restores the inline `opacity` that the element had when `v-reveal` mounted. Set an opacity that changes in a class.
 
 ## The `Reveal` component
 

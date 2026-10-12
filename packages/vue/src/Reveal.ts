@@ -1,4 +1,4 @@
-import { defineComponent, h, mergeProps, type PropType, ref, type VNodeRef, watch } from "vue";
+import { defineComponent, h, mergeProps, onMounted, type PropType, ref, watch } from "vue";
 
 import { createReveal, hiddenStyle, type RevealOptions } from "@awesome-reveal/core";
 
@@ -21,7 +21,17 @@ export const Reveal = /* @__PURE__ */ defineComponent(
     state.subscribe((value) => (revealed.value = value));
     // After the patch, so that a new element of the same tick gets the new options, and plays.
     watch(() => ({ ...props }), state.setOptions, { flush: "post" });
-    const attach = state.attach as VNodeRef;
+    // A mounted hook waits for a pending Suspense, which keeps the element outside the document.
+    let element: Element | null = null;
+    let mounted = false;
+    const attach = (node: unknown) => {
+      element = node as Element | null;
+      if (mounted) state.attach(element);
+    };
+    onMounted(() => {
+      mounted = true;
+      state.attach(element);
+    });
 
     return () =>
       h(
