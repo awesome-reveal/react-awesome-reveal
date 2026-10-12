@@ -70,12 +70,15 @@ export function describeContract(name: string, harness: Harness) {
       return current;
     }
 
+    const rerender = (m: Mounted, options: ContractOptions) =>
+      m.rerender({ reducedMotion: "never", ...options });
+
     async function intersect(m: Mounted, visible: boolean | number) {
       await m.run(() => report(m.element(), visible));
     }
 
     afterEach(async () => {
-      await current?.unmount().catch(() => {});
+      await current?.unmount();
       current = undefined;
       document.body.innerHTML = "";
     });
@@ -133,12 +136,12 @@ export function describeContract(name: string, harness: Harness) {
 
     scenario("S05", "a toggle of when replays", async () => {
       const m = await mount({ when: false });
-      await m.rerender({ when: true });
+      await rerender(m, { when: true });
       expect(shown(m.element())).toBe(true);
-      await m.rerender({ when: false });
+      await rerender(m, { when: false });
       expect(hidden(m.element())).toBe(true);
       expect(runningAnimations()).toHaveLength(0);
-      await m.rerender({ when: true });
+      await rerender(m, { when: true });
       expect(animations).toHaveLength(2);
       expect(runningAnimations()).toHaveLength(1);
     });
@@ -151,7 +154,7 @@ export function describeContract(name: string, harness: Harness) {
       scenario(id, `a change of ${option} restarts the observer`, async () => {
         const m = await mount({ [option]: from });
         const before = observerOf(m.element());
-        await m.rerender({ [option]: to });
+        await rerender(m, { [option]: to });
         const after = observerOf(m.element());
         expect(after).toBeDefined();
         expect(after).not.toBe(before);
@@ -162,10 +165,10 @@ export function describeContract(name: string, harness: Harness) {
     scenario("S06d", "the other options apply at the next reveal", async () => {
       const m = await mount({ once: false, duration: 300 });
       const before = observerOf(m.element());
-      await m.rerender({ once: false, duration: 400 });
+      await rerender(m, { once: false, duration: 400 });
       expect(observerOf(m.element())).toBe(before);
       await intersect(m, true);
-      await m.rerender({ once: false, duration: 500 });
+      await rerender(m, { once: false, duration: 500 });
       expect(animations).toHaveLength(1);
       expect(animations[0]!.options).toMatchObject({ duration: 400 });
       await intersect(m, false);
@@ -268,8 +271,6 @@ export function describeContract(name: string, harness: Harness) {
         await settle();
       } finally {
         window.removeEventListener("error", onError);
-        // A framework in the drift state reports the error through the console.
-        vi.mocked(console.error).mockReset();
       }
       expect(thrown).toBeUndefined();
       expect(windowErrors).toEqual([]);
@@ -286,16 +287,11 @@ export function describeContract(name: string, harness: Harness) {
         return original.call(this, keyframes, options);
       };
       const reports = collectReports();
-      let m!: Mounted;
-      try {
-        m = await mount({ once: false, keyframes: [{ opacity: 0, easing: "bogus" }, {}] });
-        await intersect(m, true);
-        await intersect(m, false);
-        await intersect(m, true);
-        await settle();
-      } finally {
-        vi.mocked(console.warn).mockReset();
-      }
+      const m = await mount({ once: false, keyframes: [{ opacity: 0, easing: "bogus" }, {}] });
+      await intersect(m, true);
+      await intersect(m, false);
+      await intersect(m, true);
+      await settle();
       expect(shown(m.element())).toBe(true);
       expect(reports).toEqual([expect.objectContaining({ message })]);
     });

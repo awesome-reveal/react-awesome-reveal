@@ -35,7 +35,10 @@ function harness(tree: Tree, drift: string[] = []): Harness {
         },
       );
       await nextTick();
-      if (error) throw error;
+      if (error) {
+        wrapper.unmount();
+        throw error;
+      }
       return {
         element: () => document.querySelector<HTMLElement>("[data-contract]")!,
         rerender: async (next) => {

@@ -72,15 +72,10 @@ function HookBox({
   style?: CSSProperties;
   swap: boolean;
 }) {
-  const { ref, revealed, style: hiddenStyle } = useReveal<HTMLElement>(options as RevealOptions);
+  const { ref, style: hiddenStyle } = useReveal<HTMLElement>(options as RevealOptions);
   const Tag = swap ? "section" : "div";
   return (
-    <Tag
-      ref={ref}
-      style={{ ...style, ...hiddenStyle }}
-      data-reveal={revealed ? undefined : "hidden"}
-      data-contract=""
-    >
+    <Tag ref={ref} style={{ ...style, ...hiddenStyle }} data-contract="">
       {children}
     </Tag>
   );
@@ -90,6 +85,6 @@ describeContract(
   "React useReveal",
   harness(
     (options, style, swap) => <HookBox options={options} style={style} swap={swap} />,
-    ["S04d", "S11a", "S13", "S14"],
+    ["S01", "S03", "S04b", "S04d", "S05", "S11a", "S11b", "S13", "S14"],
   ),
 );

@@ -11,6 +11,7 @@ export interface SSRHarness {
 
 function declarations(html: string) {
   const tag = /<[a-z][^>]*\bdata-contract\b[^>]*>/i.exec(html)?.[0] ?? "";
+  expect(tag, "the markup has an element with data-contract").not.toBe("");
   const style = /\bstyle="([^"]*)"/.exec(tag)?.[1] ?? "";
   return {
     hidden: /\bdata-reveal="hidden"/.test(tag),
