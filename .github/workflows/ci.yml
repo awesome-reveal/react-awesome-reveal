@@ -166,9 +166,9 @@ jobs:
           - name: React 19
             case: react
             deps: react@19 react-dom@19 @types/react@19 @types/react-dom@19
-          - name: React 18
+          - name: React 18.0.0
             case: react
-            deps: react@18 react-dom@18 @types/react@18 @types/react-dom@18
+            deps: react@18.0.0 react-dom@18.0.0 @types/react@18 @types/react-dom@18
           - name: react-awesome-reveal
             case: compat
           - name: Vue 3.5.0
@@ -177,9 +177,9 @@ jobs:
           - name: Vue 3
             case: vue
             deps: vue@3 @vitejs/plugin-vue vue-tsc
-          - name: Astro 6
+          - name: Astro 6.0.0
             case: astro
-            deps: astro@6 @astrojs/check typescript@5.9
+            deps: astro@6.0.0 @astrojs/check typescript@5.9
           - name: Astro 7
             case: astro
             deps: astro@7 @astrojs/check typescript@5.9

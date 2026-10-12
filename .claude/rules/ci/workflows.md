@@ -16,6 +16,6 @@ paths:
 - In the container, `run` steps use `sh`, not `bash`, and `jq` is not available.
 - Do not cache the Playwright browsers. The Playwright docs say that a cache restore takes about as long as the download.
 - `actions/upload-artifact` skips hidden files by default. An upload of `.vitest/` needs `include-hidden-files: true`.
-- The `smoke` job runs `scripts/smoke.mjs`. It packs the packages, installs the tarballs into a clean project outside the workspace, and builds, type-checks and server-renders it. A pnpm override makes the adapters use the core tarball and not the registry. Its matrix covers the minimum and the newest framework version of each peer range. Change a peer range and this matrix together.
+- The `smoke` job runs `scripts/smoke.mjs`. It packs the packages, installs the tarballs into a clean project outside the workspace, and builds, type-checks and server-renders it. A pnpm override makes the adapters use the core tarball and not the registry. Its matrix covers the exact minimum and the newest framework version of each peer range. Change a peer range and this matrix together.
 - A PR that `GITHUB_TOKEN` opens starts no workflows. The `release-please` job uses the secret `RELEASE_PLEASE_TOKEN` (a token of a user, with `contents` and `pull requests` write access) so that CI runs on the release PR. Without the secret it falls back to `GITHUB_TOKEN`.
 - The `publish` job runs `pnpm test:package` and nothing else from CI, so the checks of the release PR are the gate for the rest.
