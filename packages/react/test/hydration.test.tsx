@@ -1,7 +1,6 @@
 import { act } from "@testing-library/react";
 import { type ReactElement, version } from "react";
 import { hydrateRoot, type Root } from "react-dom/client";
-import { renderToString } from "react-dom/server";
 
 import { animations } from "@awesome-reveal/test-utils/animate";
 
@@ -20,9 +19,11 @@ function HookBox(options: RevealOptions) {
 
 let root: Root | undefined;
 
-async function hydrate(tree: ReactElement) {
+// The server markup is a literal, because React 18 warns when jsdom, which has a document, renders it.
+// ssr.test.tsx checks the real server output.
+async function hydrate(html: string, tree: ReactElement) {
   const container = document.createElement("div");
-  container.innerHTML = renderToString(tree);
+  container.innerHTML = html;
   document.body.append(container);
   await act(async () => {
     root = hydrateRoot(container, tree);
@@ -38,11 +39,11 @@ describe(`hydration (React ${version})`, () => {
     document.body.innerHTML = "";
   });
 
-  it.each([
-    ["Reveal", () => <Reveal>x</Reveal>],
-    ["useReveal", () => <HookBox />],
-  ])("hydrates %s hidden, then reveals it", async (_name, tree) => {
-    const element = await hydrate(tree());
+  it("hydrates Reveal hidden, then reveals it", async () => {
+    const element = await hydrate(
+      '<div style="opacity:0" data-reveal="hidden">x</div>',
+      <Reveal>x</Reveal>,
+    );
 
     expect(element).toHaveStyle({ opacity: "0" });
     expect(animations).toHaveLength(0);
@@ -51,13 +52,25 @@ describe(`hydration (React ${version})`, () => {
     expect(animations).toHaveLength(1);
   });
 
-  it.each([
-    ["Reveal", () => <Reveal when>x</Reveal>],
-    ["useReveal", () => <HookBox when />],
-  ])("hydrates %s with when and plays the entrance once", async (_name, tree) => {
-    const element = await hydrate(tree());
+  it("hydrates useReveal hidden, then reveals it", async () => {
+    const element = await hydrate('<div style="opacity:0"><span>one</span></div>', <HookBox />);
 
+    expect(element).toHaveStyle({ opacity: "0" });
+    expect(animations).toHaveLength(0);
+    intersect(element, true);
     expect(element.style.opacity).toBe("");
+    expect(animations).toHaveLength(1);
+  });
+
+  it("hydrates Reveal with when and plays the entrance once", async () => {
+    const element = await hydrate("<div>x</div>", <Reveal when>x</Reveal>);
+
+    expect(animations.map((animation) => animation.element)).toEqual([element]);
+  });
+
+  it("hydrates useReveal with when and plays the entrance once", async () => {
+    const element = await hydrate("<div><span>one</span></div>", <HookBox when />);
+
     expect(animations.map((animation) => animation.element)).toEqual([element]);
   });
 });
