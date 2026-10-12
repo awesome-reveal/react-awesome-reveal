@@ -74,4 +74,15 @@ The GitHub environment `npm` allows only the `main` and `next` branches. Add a b
 5. Merge the release PR. The `publish` job uses `latest`.
 6. Remove `release-as` in the next PR.
 
-Bring `next` into `main` with a merge commit, or a fast-forward when `main` has no other commits. Do not squash or rebase: both change the SHAs of the release commits, so the tags are not on `main`.
+## Move `main` to a stable release
+
+Do this after the `publish` job of a stable release from `next` succeeds. A failed publish can then still be re-run from `next`.
+
+`main` requires linear history. A merge commit is rejected, and a squash or rebase puts the release commits and tags outside the history of `main`, so release-please finds no release there. Move `main` to the SHA of `next` instead:
+
+1. Fetch, and check whether `main` is an ancestor of `next`: `git merge-base --is-ancestor origin/main origin/next`.
+2. If it is, fast-forward: `git push origin origin/next:main`. No force is necessary.
+3. If it is not, `main` has commits that `next` lacks. List them with `git log origin/next..origin/main`. Continue only when you do not need them, or when you first cherry-pick them onto `next` in a PR and re-run the release. Then reset: `git push --force-with-lease=main:<old main SHA> origin origin/next:main`. If GitHub rejects the push, allow force pushes on `main` in its branch protection, push, and turn the setting off again.
+4. Check that the release workflow on `main` finds no release to make.
+
+Make no direct commits to `main`. Hotfixes go to `next` first, so that `main` stays an ancestor of `next` and step 2 works.
