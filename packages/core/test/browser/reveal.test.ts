@@ -277,6 +277,41 @@ describe("reveal", () => {
     expect(element.style.opacity).toBe("0.5");
   });
 
+  it("keeps the priority of the inline opacity of the user", async () => {
+    element.style.setProperty("opacity", "0.5", "important");
+    await revealInView();
+    expect(element.style.getPropertyValue("opacity")).toBe("0.5");
+    expect(element.style.getPropertyPriority("opacity")).toBe("important");
+  });
+
+  it("keeps the priority of the inline opacity when it is destroyed", () => {
+    element.style.setProperty("opacity", "0.5", "important");
+    controller = reveal(element, options);
+    controller.destroy();
+    expect(element.style.getPropertyValue("opacity")).toBe("0.5");
+    expect(element.style.getPropertyPriority("opacity")).toBe("important");
+  });
+
+  it("takes an opacity that is written while the element is hidden as the new one", async () => {
+    element.style.opacity = "0.5";
+    controller = reveal(element, options);
+    element.style.opacity = "0.8";
+    scrollIntoView(element);
+    await waitForReveal();
+    expect(element.style.opacity).toBe("0.8");
+  });
+
+  it("hides the element again and takes its new opacity when setOptions runs after a style patch", async () => {
+    element.style.opacity = "0.5";
+    controller = reveal(element, options);
+    element.style.cssText = "color: red; opacity: 0.8";
+    controller.setOptions(options);
+    expect(isHidden()).toBe(true);
+    scrollIntoView(element);
+    await waitForReveal();
+    expect(element.style.opacity).toBe("0.8");
+  });
+
   it("restores a hidden element when it is destroyed", () => {
     element.style.opacity = "0.5";
     controller = reveal(element, options);

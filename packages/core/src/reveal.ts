@@ -124,22 +124,33 @@ export function createReveal(options: RevealOptions = {}): RevealState {
 /**
  * Hides the element, and reveals it with an animation when it enters the viewport.
  * While hidden, the element has the `hiddenStyle` inline style and `data-reveal="hidden"`.
- * The reveal restores the inline `opacity` that the element had.
+ * The reveal restores the inline `opacity` that the element had, with its priority. An opacity
+ * that is written while the element is hidden replaces it. After a patch that replaces the style
+ * of a hidden element, `setOptions` hides the element again.
  */
 export function reveal(
   element: Element & ElementCSSInlineStyle,
   options?: RevealOptions,
 ): RevealController {
-  const hidden = element.getAttribute("data-reveal") === "hidden";
-  // A hidden opacity of 0 from the server markup is not the resting opacity.
-  const resting =
-    hidden && element.style.opacity === hiddenStyle.opacity ? "" : element.style.opacity;
+  const { style } = element;
   const state = createReveal(options);
+  let value = "";
+  let priority = "";
 
   function apply(revealed: boolean) {
-    element.style.opacity = revealed ? resting : hiddenStyle.opacity;
-    if (revealed) element.removeAttribute("data-reveal");
-    else element.setAttribute("data-reveal", "hidden");
+    if (revealed) {
+      // Another opacity means that something wrote it while the element was hidden.
+      if (style.opacity === hiddenStyle.opacity) style.setProperty("opacity", value, priority);
+      element.removeAttribute("data-reveal");
+    } else {
+      // The hidden opacity of the server markup is not the resting opacity.
+      if (style.opacity !== hiddenStyle.opacity) {
+        value = style.opacity;
+        priority = style.getPropertyPriority("opacity");
+      }
+      style.opacity = hiddenStyle.opacity;
+      element.setAttribute("data-reveal", "hidden");
+    }
   }
 
   state.subscribe(apply);
@@ -152,7 +163,9 @@ export function reveal(
       return state.revealed;
     },
     setOptions(next) {
-      if (!destroyed) state.setOptions(next);
+      if (destroyed) return;
+      state.setOptions(next);
+      if (!state.revealed) apply(false);
     },
     destroy() {
       if (destroyed) return;

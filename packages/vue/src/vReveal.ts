@@ -20,9 +20,8 @@ export const vReveal: Directive<HTMLElement, RevealOptions | undefined> = {
   },
   updated(element, { value }) {
     const controller = controllers.get(element)!;
+    // A patch of the style can replace the hidden opacity. setOptions hides the element again.
     controller.setOptions(value ?? {});
-    // A patch of a string style replaces the whole inline style, with the hidden opacity.
-    if (!controller.revealed) element.style.opacity = hiddenStyle.opacity;
   },
   beforeUnmount(element) {
     controllers.get(element)?.destroy();

@@ -14,7 +14,6 @@ import { HookExample } from "./hook-example";
 import { ManualExample } from "./manual-example";
 import { Section } from "./section";
 
-// The keyframes factories run in this Server Component. The result is an array, so it crosses to Reveal.
 const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
   keyframe: (progress) => {
     const t = 1 - (1 - progress) ** 3;

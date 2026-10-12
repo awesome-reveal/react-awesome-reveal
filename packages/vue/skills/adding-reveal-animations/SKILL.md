@@ -101,7 +101,7 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 - Call `slide()` and the other factories in `<script setup>`, not in the template, when the component renders often. Each call in the template creates the keyframes again at each render.
 - Keep `reducedMotion` at `"user"` unless the user asks for a different behavior. It respects the operating system setting of people whom motion makes ill.
 - Prefer `transform` and `opacity`. `filter` (`blur()`) and `clip-path` repaint on each frame in some engines, so use them on small elements.
-- While the element is hidden, its inline `opacity` is `0`, also over an `opacity` of your own. After the reveal, `Reveal` restores your `opacity`. `v-reveal` restores the inline `opacity` of its mount, and with server rendering it cannot. Set an opacity that changes, or that you need with server rendering, in a class.
+- While the element is hidden, its inline `opacity` is `0`, also over an `opacity` of your own. After the reveal, `Reveal` restores your `opacity`. `v-reveal` restores the inline `opacity` with its priority, and takes the latest value of your style binding. With server rendering, the server markup does not contain your inline `opacity`, so put an opacity that you need there in a class.
 - Server-rendered content stays hidden (`opacity: 0`) until JavaScript runs. Both APIs render the hidden style on the server. To show the content when JavaScript does not run and in print, put this in the document head:
 
   ```html

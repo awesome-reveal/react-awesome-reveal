@@ -48,7 +48,6 @@ async function checkBrowser(base) {
     page.on("pageerror", (error) => problems.push(error.message));
 
     await page.goto(base);
-    // The first element is in view, so it reveals. The one below the fold stays hidden until scrolled to.
     await page.waitForSelector("#top:not([data-reveal])");
     expect(
       (await page.locator("#below").getAttribute("data-reveal")) === "hidden",
@@ -59,7 +58,6 @@ async function checkBrowser(base) {
     await page.locator("#card").scrollIntoViewIfNeeded();
     await page.waitForSelector("#card:not([data-reveal])");
 
-    // Each page mounts its own reveal after a client navigation.
     for (const { path, id } of routes.slice(1)) {
       await page.locator(`a[href="${path}"]`).click();
       await page.waitForURL(`**${path}`);
