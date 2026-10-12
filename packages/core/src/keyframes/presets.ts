@@ -48,15 +48,15 @@ export interface BlurOptions extends Pick<EnterOptions, "opacity" | "easing"> {
    * Blur radius at the start of the animation. A number is in pixels.
    * @default 8
    */
-  amount?: number | string;
+  from?: number | string;
 }
 
 /**
  * Chromium and Safari composite `filter`; other engines repaint it on every frame,
  * so prefer it for small and medium elements.
  */
-export const blur: KeyframesFactory<BlurOptions> = ({ amount = 8, opacity, easing } = {}) =>
-  enter({ blur: amount, opacity, easing });
+export const blur: KeyframesFactory<BlurOptions> = ({ from = 8, opacity, easing } = {}) =>
+  enter({ blur: from, opacity, easing });
 
 export interface PopOptions extends Pick<EnterOptions, "opacity" | "easing"> {
   /**

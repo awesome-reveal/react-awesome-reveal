@@ -6,7 +6,6 @@ if (!customElements.get("awesome-reveal")) customElements.define("awesome-reveal
 
 // Builds the markup of Reveal.astro by hand. contract.ssr.test.ts checks the real server output.
 describeContract("Astro <awesome-reveal>", {
-  drift: ["S04d", "S09", "S13", "S14"],
   async mount(options, init) {
     const host = document.createElement("awesome-reveal");
     host.setAttribute("options", JSON.stringify(options));

@@ -1,7 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { observe } from "../../src/observe";
-import { mountBelowTheFold, scrollIntoView, scrollToTop, settle, showTopHalf } from "./helpers";
+import {
+  captureReports,
+  mountBelowTheFold,
+  scrollIntoView,
+  scrollToTop,
+  settle,
+  showTopHalf,
+} from "./helpers";
 
 let element: HTMLElement;
 let stop: (() => void) | undefined;
@@ -111,5 +118,27 @@ describe("observe", () => {
     const onChange = vi.fn();
     stop = observe(element, {}, onChange);
     expect(onChange.mock.calls).toEqual([[true]]);
+  });
+
+  it.each([
+    ["a threshold above 1", { threshold: 2 }],
+    ["a threshold that is NaN", { threshold: Number.NaN }],
+    ["a root margin with no unit", { rootMargin: "foo" }],
+    ["a root margin in em", { rootMargin: "1em" }],
+  ])(
+    "reports the element as in view when the browser rejects the options: %s",
+    async (_, options) => {
+      captureReports();
+      const onChange = vi.fn();
+      expect(() => (stop = observe(element, options, onChange))).not.toThrow();
+      expect(onChange.mock.calls).toEqual([[true]]);
+    },
+  );
+
+  it("treats null options as unset", async () => {
+    const onChange = vi.fn();
+    stop = observe(element, { threshold: null, rootMargin: null, once: null } as never, onChange);
+    scrollIntoView(element);
+    await vi.waitFor(() => expect(onChange).toHaveBeenCalledWith(true));
   });
 });

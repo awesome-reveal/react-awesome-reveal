@@ -50,10 +50,10 @@ controller.destroy();
 
 ## Entry points
 
-| Import path                      | Contents                                                    |
-| -------------------------------- | ----------------------------------------------------------- |
-| `@awesome-reveal/core`           | `reveal`, `observe`, `play` and `hiddenStyle`.              |
-| `@awesome-reveal/core/keyframes` | The built-in keyframes, `defineKeyframes`, and their types. |
+| Import path                      | Contents                                                       |
+| -------------------------------- | -------------------------------------------------------------- |
+| `@awesome-reveal/core`           | `reveal`, `createReveal`, `observe`, `play` and `hiddenStyle`. |
+| `@awesome-reveal/core/keyframes` | The built-in keyframes, `defineKeyframes`, and their types.    |
 
 The keyframes do not touch the DOM, so you can create them on the server. Each adapter re-exports this entry point, for example as `@awesome-reveal/react/keyframes`.
 
@@ -64,10 +64,19 @@ The keyframes do not touch the DOM, so you can create them on the server. Each a
 Hides the element, and plays the keyframes when the element enters the viewport. It returns a controller:
 
 - `revealed`: `true` while the element is revealed.
-- `update(options)`: replaces the options. A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
-- `destroy()`: stops the observation and cancels the animation.
+- `setOptions(options)`: replaces the options. A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
+- `destroy()`: stops the observation, cancels the animation and restores the element.
 
-While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes both.
+While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes both, and restores the inline `opacity` that the element had. If the browser rejects an option, the element shows at once. The library reports the error once from a microtask, so it reaches `window.onerror` and does not throw in your code.
+
+### `createReveal(options?)`
+
+The state that `reveal` uses, for adapters and for code that sets the style itself. It does not change the DOM. It observes the element, plays the animation and tells you when to hide or show the element:
+
+- `revealed`: `true` while the element is revealed. Before `attach`, it is `true` only when `when` is `true`.
+- `subscribe(listener)`: calls `listener(revealed)` when `revealed` changes. Hide or show the element in it. There is one listener, and a new call replaces it. It returns a function that removes the listener.
+- `attach(element)`: observes and animates the element. A new element keeps the state and does not play the animation again. `attach(null)` stops the observation and cancels the animation.
+- `setOptions(options)`: replaces the options, as for `reveal`.
 
 ### `observe(element, options, onChange)`
 
@@ -81,7 +90,7 @@ Plays the keyframes on the element, or on its children with `stagger`. It return
 
 The style that hides an element until the reveal. A server renderer applies it to the markup, so that the element does not show before the client code runs.
 
-Use `observe`, `play` and `hiddenStyle` when your framework renders the style of the element. Use `reveal` when your code owns the element.
+Use `createReveal` when your framework renders the style of the element. Use `reveal` when your code owns the element.
 
 ## Keyframes
 
@@ -101,12 +110,12 @@ reveal(element, { keyframes: slide({ direction: "left", distance: 40 }) });
 | `fade()`  | Fades in.                                  | `easing`                                                                                                              |
 | `slide()` | Fades in and moves in a direction.         | `direction` (`"up"`, `"down"`, `"left"` or `"right"`, default `"up"`), `distance` (default `24`), `opacity`, `easing` |
 | `scale()` | Fades in and grows.                        | `from` (default `0.95`), `opacity`, `easing`                                                                          |
-| `blur()`  | Fades in and removes a blur.               | `amount` (default `8`), `opacity`, `easing`                                                                           |
+| `blur()`  | Fades in and removes a blur.               | `from` (default `8`), `opacity`, `easing`                                                                             |
 | `pop()`   | Fades in, grows past its size and settles. | `from` (default `0.8`), `opacity`, `easing`                                                                           |
 | `enter()` | Starts from any combination of the others. | `x`, `y`, `scale`, `rotate`, `blur`, `opacity`, `easing`                                                              |
 
 - `direction` is the direction in which the element moves. `"up"` starts below the resting position.
-- A number for `distance`, `amount`, `x`, `y` or `blur` is in pixels. A number for `rotate` is in degrees. A string can be any CSS length or angle.
+- A number for `distance`, `from` of `blur()`, `x`, `y` or `blur` is in pixels. A number for `rotate` is in degrees. A string can be any CSS length or angle.
 - `opacity` is the start opacity. It is `0` by default. Set it to `1` for movement with no fade.
 - The default `easing` is `"cubic-bezier(0.22, 1, 0.36, 1)"`. An easing with values out of the 0–1 range overshoots, as `pop()` does.
 - `spring()` returns an easing that follows a spring, for the `easing` option of any factory: `slide({ easing: spring({ bounce: 0.5 }) })`. `bounce` (default `0.3`, from `0` to `0.8`) sets the overshoot. It uses CSS `linear()`. Chrome before 113, Firefox before 112 and Safari before 17.2 get the default easing. If you call `spring()` on the server, these browsers show the element with no animation.
@@ -121,15 +130,14 @@ enter({ x: "-100%", rotate: -120 }); // roll in from the left
 
 ### Custom keyframes with `defineKeyframes`
 
-`defineKeyframes` builds keyframes from a function of the animation progress. You return a `keyframe(t, u)` function, where `t` is the progress from 0 to 1 and `u` is `1 - t`. The library samples the function into keyframes:
+`defineKeyframes` builds keyframes from a function of the animation progress. You return a `keyframe(t)` function, where `t` is the progress from 0 to 1. The library samples the function into keyframes:
 
 ```js
 import { defineKeyframes } from "@awesome-reveal/core/keyframes";
 
 const spin = defineKeyframes(({ turns = 1 }) => ({
-  keyframe: (t, u) => ({ opacity: t, transform: `rotate(${u * turns * 360}deg)` }),
-  easing: (t) => 1 - (1 - t) ** 3, // optional, any JavaScript easing function
-  steps: 30, // optional, the number of samples
+  keyframe: (t) => ({ opacity: t, transform: `rotate(${(1 - t) * turns * 360}deg)` }),
+  steps: 30, // optional, the number of samples, from 1 to 1000
 }));
 
 reveal(element, { keyframes: spin({ turns: 2 }) });

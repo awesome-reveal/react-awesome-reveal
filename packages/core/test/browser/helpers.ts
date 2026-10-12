@@ -1,3 +1,5 @@
+import { vi } from "vitest";
+
 export function mountBelowTheFold(): HTMLElement {
   document.body.innerHTML = `<div style="height: 150vh"></div><div id="target" style="height: 100px"><p>a</p><p>b</p><p>c</p></div><div style="height: 150vh"></div>`;
   scrollTo(0, 0);
@@ -21,4 +23,20 @@ export function settle(): Promise<void> {
   return new Promise((resolve) =>
     requestAnimationFrame(() => requestAnimationFrame(() => setTimeout(resolve))),
   );
+}
+
+/** Collects the errors that the library reports from a microtask, which a test runner counts as unhandled. */
+export function captureReports(): unknown[] {
+  const reports: unknown[] = [];
+  const original = queueMicrotask;
+  vi.stubGlobal("queueMicrotask", (callback: VoidFunction) =>
+    original(() => {
+      try {
+        callback();
+      } catch (error) {
+        reports.push(error);
+      }
+    }),
+  );
+  return reports;
 }

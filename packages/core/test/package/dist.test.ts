@@ -33,6 +33,7 @@ describe("dist", () => {
       "keyframes/spring.js",
       "observe.js",
       "play.js",
+      "report.js",
       "reveal.js",
     ]);
     expect(distFiles).toContain("index.d.ts");
@@ -57,6 +58,7 @@ describe("dist", () => {
 
   it("exposes the public API of the root", async () => {
     expect(Object.keys(await load(".")).sort()).toEqual([
+      "createReveal",
       "hiddenStyle",
       "observe",
       "play",

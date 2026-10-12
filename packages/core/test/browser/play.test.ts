@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fade, slide } from "../../src/keyframes/presets";
 import { spring } from "../../src/keyframes/spring";
 import { play } from "../../src/play";
+import { captureReports } from "./helpers";
 
 let element: HTMLElement;
 const keyframes = fade();
@@ -85,10 +86,15 @@ describe("play", () => {
     },
   );
 
-  it("shows the element with no animation when the engine rejects a keyframe", () => {
-    const invalid = [{ opacity: 0, easing: "not-an-easing" }, {}];
+  it("shows the element and reports the error when the engine rejects a keyframe", async () => {
+    const reports = captureReports();
+    // Some engines put the value in the message. A new value is a new message, so a retry reports again.
+    const invalid = [{ opacity: 0, easing: `not-an-easing-${Math.random()}` }, {}];
     expect(() => play(element, { keyframes: invalid, reducedMotion: "never" })()).not.toThrow();
     expect(element.getAnimations()).toEqual([]);
+    await Promise.resolve();
+    expect(reports).toHaveLength(1);
+    expect(reports[0]).toBeInstanceOf(TypeError);
   });
 
   it("shows the element with no animation without Element.animate", () => {

@@ -27,7 +27,7 @@ export function useReveal<T extends Element = HTMLElement>(
   const settled = once && inView;
 
   useEffect(() => {
-    if (!node || when !== undefined || settled) return;
+    if (!node || when != null || settled) return;
     return observe(node, options, setInView);
     // oxlint-disable-next-line react/exhaustive-deps -- observe reads only threshold, rootMargin and once from options.
   }, [node, when, settled, threshold, rootMargin, once]);

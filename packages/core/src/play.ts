@@ -1,4 +1,5 @@
 import type { RevealKeyframe } from "./keyframes/types.js";
+import { report } from "./report.js";
 
 export interface PlayOptions {
   /**
@@ -36,6 +37,10 @@ export const defaultKeyframes: RevealKeyframe[] = [
   {},
 ];
 
+function supportsLinear(): boolean {
+  return typeof CSS !== "object" || CSS.supports("animation-timing-function", "linear(0, 1)");
+}
+
 function skipsAnimation(reducedMotion: PlayOptions["reducedMotion"]): boolean {
   if (reducedMotion !== "user") return reducedMotion === "always";
   return typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -48,26 +53,24 @@ function skipsAnimation(reducedMotion: PlayOptions["reducedMotion"]): boolean {
  * @returns A function that cancels the animation.
  */
 export function play(element: Element, options: PlayOptions = {}): () => void {
-  const {
-    keyframes = defaultKeyframes,
-    duration = 600,
-    delay = 0,
-    stagger,
-    reducedMotion = "user",
-  } = options;
-  if (skipsAnimation(reducedMotion)) return () => {};
+  const { stagger } = options;
+  const keyframes = options.keyframes ?? defaultKeyframes;
+  const duration = options.duration ?? 600;
+  const delay = options.delay ?? 0;
+  if (skipsAnimation(options.reducedMotion ?? "user")) return () => {};
 
-  const targets = stagger === undefined ? [element] : Array.from(element.children);
+  const targets = stagger == null ? [element] : Array.from(element.children);
   const animations = targets.map((target, index) => {
-    // Without Element.animate (jsdom, old engines), or when the engine rejects a keyframe value
-    // (an unsupported linear() throws a TypeError), the element just appears.
+    // Without Element.animate (jsdom, old engines), the element just appears.
     try {
       return target.animate?.(keyframes, {
         duration,
         delay: delay + index * (stagger ?? 0),
         fill: "backwards",
       });
-    } catch {
+    } catch (error) {
+      // An engine without linear() throws a TypeError for a spring. The element shows at its resting style.
+      if (supportsLinear()) report(error);
       return undefined;
     }
   });

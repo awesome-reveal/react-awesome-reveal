@@ -69,7 +69,7 @@ describeContract(
         { ...options, as: swap ? "section" : "div", style, "data-contract": "" } as never,
         children,
       ),
-    ["S04d", "S13", "S14"],
+    [],
   ),
 );
 
@@ -81,6 +81,6 @@ describeContract(
         h(swap ? "section" : "div", { key: String(swap), style, "data-contract": "" }, children()),
         [[vReveal, options]],
       ),
-    ["S04d", "S09", "S11a", "S13", "S14"],
+    ["S11a"],
   ),
 );

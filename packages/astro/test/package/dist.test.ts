@@ -94,7 +94,7 @@ describe("a static build of a page with the published component", () => {
     expect(code).toMatch(/customElements\.define\(["`]awesome-reveal["`]/);
     // slide() runs in the frontmatter, so enter(), which it calls, stays on the server.
     expect(code).not.toContain("rotate");
-    expect(code.length).toBeLessThan(2300);
+    expect(code.length).toBeLessThan(2850);
   });
 });
 
