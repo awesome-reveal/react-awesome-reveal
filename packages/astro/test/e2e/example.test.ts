@@ -36,7 +36,7 @@ describe.each([
   ["chromium", chromium],
   ["firefox", firefox],
   ["webkit", webkit],
-])("playground in %s", (_, browserType) => {
+])("example in %s", (_, browserType) => {
   let browser: Browser;
   let page: Page;
 
@@ -156,7 +156,7 @@ describe.each([
   });
 });
 
-describe("playground server markup", () => {
+describe("example server markup", () => {
   let browser: Browser;
 
   beforeAll(async () => {

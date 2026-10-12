@@ -1,6 +1,6 @@
 ---
 name: adding-framework-adapters
-description: Adds a framework adapter package (@awesome-reveal/<framework>) to the workspace, with its build, tests, consumer skills, playground and release config. Use when you start the Vue, Svelte, Solid, Angular or another framework adapter.
+description: Adds a framework adapter package (@awesome-reveal/<framework>) to the workspace, with its build, tests, consumer skills, example and release config. Use when you start the Vue, Svelte, Solid, Angular or another framework adapter.
 ---
 
 # Add a framework adapter
@@ -16,7 +16,7 @@ Keep the item of the adapter on the plan board, https://github.com/orgs/awesome-
    - The framework peer dependency and its dev dependencies.
    - The JSX options in `tsconfig.json`, such as `jsxImportSource`. Remove them if the framework has no JSX.
    - `"@awesome-reveal/core": "workspace:^"` stays. Keep `"version"` equal to the other packages.
-   - Add the package and its `/keyframes` entry to the `paths` in `tsconfig.base.json`, so that the playground type-checks against the sources.
+   - Add the package and its `/keyframes` entry to the `paths` in `tsconfig.base.json`, so that the example type-checks against the sources.
 2. Prefer plain TypeScript sources, such as render functions, when the framework allows it. Then the build needs no compiler plugin, and `vite-plugin-dts` emits the declarations. If the framework needs a compiler plugin, pass it to `defineLibConfig` in `vite.config.ts` as the second argument. Check the declarations and the output format:
    - `vite-plugin-dts` emits declarations for `.vue` files only when `@vue/language-core` is installed.
    - `vite-plugin-dts` cannot emit declarations for `.svelte` files. Svelte libraries use `@sveltejs/package`.
@@ -36,18 +36,18 @@ Keep the item of the adapter on the plan board, https://github.com/orgs/awesome-
 7. Write the unit tests with the mocks of `@awesome-reveal/test-utils`. Add a `test/intersect.ts` that wraps `intersect()` in the update scope of the framework, as `packages/react/test/intersect.ts` does.
 8. Port the tests of `packages/react/test/package`: the dist files and exports, the server markup, `describeSkills`, and the tree-shaking fixtures with size limits. Drop the `"use client"` test if the framework has no server components. `describeSkills` type-checks only `ts` and `tsx` fences, so put setup and keyframes examples of the consumer skills in `ts` fences.
 9. Add the consumer skills in `packages/<framework>/skills/<name>/SKILL.md`, and add `skills` to `files`. Port `adding-reveal-animations` from the React package.
-10. Add `playgrounds/<framework>`, with the sections of `playgrounds/react`.
+10. Add `examples/<framework>`, with the sections of `examples/react`.
 11. Add the package to `release-please-config.json`, with `"component"` set to the package name, and to `linked-versions`. Without `"component"`, release-please drops the npm scope from the tags. Add its path to `.release-please-manifest.json`, with the current version of core. Before the release PR merges, do "Publish a new package" in the `releasing-packages` skill. Its steps need the npm one-time codes of the user, so list them in your final report.
 12. Update the repo config for the framework:
     - If the peer range covers an older major version of the framework, add it to the `framework` matrix in `.github/workflows/ci.yml`.
     - Add a group with the framework packages to the `npm` entry of `.github/dependabot.yml`.
-    - If oxlint has a plugin for the framework, such as `vue`, enable it in an `overrides` entry of `.oxlintrc.json`. Limit the entry to the package and its playground, as the React entry does.
+    - If oxlint has a plugin for the framework, such as `vue`, enable it in an `overrides` entry of `.oxlintrc.json`. Limit the entry to the package and its example, as the React entry does.
 13. Add the package to the package tables in the root `README.md` and in `packages/core/README.md`. In `.github/ISSUE_TEMPLATE/bug_report.yml`, add it to the `package` dropdown, and add the `vite.new` template of the framework, such as `vite.new/vue-ts`, to the reproduction field.
-14. Add `.claude/rules/<framework>/adapter.md` for the gotchas of the framework, with `paths: ["packages/<framework>/**", "playgrounds/<framework>/**"]`.
+14. Add `.claude/rules/<framework>/adapter.md` for the gotchas of the framework, with `paths: ["packages/<framework>/**", "examples/<framework>/**"]`.
 15. Add the docs work for the adapter page to the "adapter pages" item of the docs project, https://github.com/users/morellodev/projects/4. The docs site is a separate repo.
 16. Run the checks:
     - `pnpm test --coverage`
     - `pnpm exec tsc -p packages/<framework>/test`, or the checker of step 6, such as `pnpm --filter @awesome-reveal/vue exec vue-tsc -p test`
     - `pnpm test:package`
     - `pnpm lint` and `pnpm format:check`
-    - A manual check of the playground in a browser
+    - A manual check of the example in a browser

@@ -17,7 +17,7 @@ function path(relative: string) {
   return fileURLToPath(new URL(relative, import.meta.url));
 }
 
-// The playground runs on the sources, so no package build is necessary first.
+// The example runs on the sources, so no package build is necessary first.
 const alias = Object.entries({
   "@awesome-reveal/astro": "../../src/index.ts",
   "@awesome-reveal/astro/keyframes": "../../src/keyframes.ts",
@@ -41,7 +41,7 @@ function freePort() {
 export default async function setup(project: TestProject) {
   const outDir = await mkdtemp(join(tmpdir(), "awesome-reveal-astro-"));
   const config = {
-    root: path("../../../../playgrounds/astro/"),
+    root: path("../../../../examples/astro/"),
     outDir,
     logLevel: "error" as const,
     vite: { resolve: { alias } },

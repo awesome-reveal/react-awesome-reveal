@@ -180,6 +180,6 @@ jobs:
       - name: Check formatting
         run: pnpm format:check
 
-      # tsc cannot read .astro files. The playground tsconfig includes the components of packages/astro.
+      # tsc cannot read .astro files. The example tsconfig includes the components of packages/astro.
       - name: Type-check the Astro components
-        run: pnpm --filter playground-astro exec astro check
+        run: pnpm --filter example-astro exec astro check
