@@ -35,7 +35,7 @@ export interface RevealState<T extends Element> {
 // React 18 warns about useLayoutEffect during server rendering.
 const useIsomorphicLayoutEffect = typeof document === "undefined" ? useEffect : useLayoutEffect;
 
-function mergeRefs<T>(own: RefCallback<T>, user: Ref<T>): RefCallback<T> {
+function mergeRefs<T>(own: RefCallback<T>, user: NonNullable<Ref<T>>): RefCallback<T> {
   return (node) => {
     own(node);
     if (typeof user === "function") {
@@ -46,7 +46,7 @@ function mergeRefs<T>(own: RefCallback<T>, user: Ref<T>): RefCallback<T> {
           own(null);
           cleanup();
         };
-    } else if (user) {
+    } else {
       // The cast also compiles against React 18 types, where RefObject.current is read-only.
       // oxlint-disable-next-line react/immutability -- a ref callback can write the user's ref object.
       (user as { current: T | null }).current = node;
@@ -55,52 +55,51 @@ function mergeRefs<T>(own: RefCallback<T>, user: Ref<T>): RefCallback<T> {
   };
 }
 
-// The element reaches core in the layout effect, after the options of the same commit. React
-// detaches and attaches the same element again in one commit when a callback ref changes, as an
-// inline callback does on each render. A detach that waits one microtask does not restart the reveal.
-function createBinding<T extends Element>(state: ReturnType<typeof createReveal>) {
+// Core gets the element in the layout effect, after the options of the same commit. A detach waits
+// one microtask, so a callback ref that changes in one commit does not replay the animation.
+function createBinding<T extends Element>(options: RevealOptions) {
+  const state = createReveal(options);
+  // Stops a stable user ref from being called with null and the node again on each render.
+  const refs = new WeakMap<object, RefCallback<T>>();
   let element: T | null = null;
   let attached: T | null = null;
-  function sync(options?: RevealOptions) {
+  function sync(next?: RevealOptions) {
     // Drops an old element before the options apply, so that a reveal does not play on it.
     if (element !== attached) state.attach(null);
-    if (options) state.setOptions(options);
+    if (next) state.setOptions(next);
     state.attach((attached = element));
   }
   function ref(node: T | null) {
     element = node;
-    if (!node) queueMicrotask(() => sync());
+    if (!node) queueMicrotask(sync);
   }
-  return { ref, sync };
+  // A new function on each render makes React run an effect on each commit.
+  const getRevealed = () => state.revealed;
+  return { state, refs, ref, sync, getRevealed };
 }
 
 export function useReveal<T extends Element = HTMLElement>(
   options: RevealOptions = {},
 ): RevealState<T> {
-  const [{ state, ref, sync }] = useState(() => {
-    const state = createReveal(options);
-    return { state, ...createBinding<T>(state) };
-  });
-  // Keeps the merged callback of each user ref stable, so that React does not detach the element.
-  const [refs] = useState(() => new WeakMap<object, RefCallback<T>>());
+  const [{ state, refs, ref, sync, getRevealed }] = useState(() => createBinding<T>(options));
   // A store update renders in a microtask, before the frame of the animation start.
-  const getRevealed = () => state.revealed;
   const revealed = useSyncExternalStore(state.subscribe, getRevealed, getRevealed);
   useIsomorphicLayoutEffect(() => sync(options));
 
   function getProps<P extends object = object>(
     props?: P & { ref?: Ref<T>; style?: CSSProperties },
   ) {
-    const { ref: user, style, ...rest } = props ?? {};
+    const user = props?.ref;
     let target = ref;
     if (user) {
       target = refs.get(user) ?? mergeRefs(ref, user);
       refs.set(user, target);
     }
+    const style = props?.style;
     return {
-      ...rest,
+      ...props,
       ref: target,
-      style: revealed ? style : { ...style, ...hiddenStyle },
+      style: revealed ? style : style ? { ...style, ...hiddenStyle } : hiddenStyle,
       "data-reveal": revealed ? undefined : "hidden",
     } as Omit<P, "ref" | "style"> & RevealTargetProps<T>;
   }

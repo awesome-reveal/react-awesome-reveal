@@ -18,10 +18,9 @@ type Tree = (
   swap: boolean,
 ) => ReactElement;
 
-function harness(tree: Tree, drift: string[] = []): Harness {
+function harness(tree: Tree): Harness {
   return {
     replacesNode: true,
-    drift,
     async mount(options, init) {
       const style = init?.style as CSSProperties | undefined;
       let current = options;
