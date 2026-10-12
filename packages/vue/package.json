@@ -76,7 +76,7 @@
     "vue-tsc": "^3.3.12"
   },
   "peerDependencies": {
-    "vue": ">=3.5.0"
+    "vue": "^3.5.0"
   },
   "engines": {
     "node": ">=20.19.0"

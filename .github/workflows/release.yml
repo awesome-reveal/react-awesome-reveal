@@ -34,6 +34,8 @@ jobs:
         uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
           target-branch: ${{ github.ref_name }}
+          # A PR that GITHUB_TOKEN opens starts no workflows. A personal token starts CI on the release PR.
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
 
       # A queued run can release a commit other than github.sha. One release PR releases all packages from one commit.
       - name: Find the release commit
@@ -78,8 +80,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build
+      # The release PR can come from a token that starts no CI, so the publish job checks the packages itself.
+      - name: Test package
+        run: pnpm test:package
 
       # The release commit is checked out as a detached HEAD, so pnpm's branch check would fail.
       # pnpm skips the versions that are already on npm, so a re-run publishes only the missing packages.

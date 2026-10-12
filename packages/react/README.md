@@ -46,7 +46,7 @@ npm install @awesome-reveal/react
 
 Use `pnpm add`, `yarn add` or `bun add` in the same way.
 
-React 18 or later is necessary.
+React 18 or 19 is necessary.
 
 ## Quick start
 
@@ -219,7 +219,7 @@ Chrome 84, Firefox 75 (79 on Android) and Safari 13.1, or later. Read [Browser s
 
 1. Replace `react-awesome-reveal` with `@awesome-reveal/react`. You can also upgrade `react-awesome-reveal` to 5, which re-exports this package.
 2. Remove `@emotion/react`, unless your app uses it.
-3. Upgrade to React 18 or later.
+3. Upgrade to React 18 or 19.
 
 ### Components
 

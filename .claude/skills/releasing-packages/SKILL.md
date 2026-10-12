@@ -13,7 +13,7 @@ Do not run `npm publish`, `npm trust` or `npm dist-tag` yourself. The agent shel
 
 1. Read the PR diff. Check the versions in `.release-please-manifest.json` and the new `CHANGELOG.md` entries.
 2. Make sure that each package in the workspace exists on npm and has a trusted publisher: `npm view <package> version` and `npm trust list <package>`. One missing publisher fails the job. Do "Publish a new package" first if necessary.
-3. Squash-merge the PR. It has no CI runs, because `GITHUB_TOKEN` opened it.
+3. Wait for the CI checks of the PR, then squash-merge it. CI runs on it when the secret `RELEASE_PLEASE_TOKEN` is set. With `GITHUB_TOKEN` alone, the PR has no CI runs.
 4. Watch the run: `gh run watch <run-id> --exit-status`. Find the ID with `gh run list --workflow release.yml --branch <branch> --limit 1`.
 5. Check the result: `npm view <package> dist-tags`.
 
@@ -68,7 +68,7 @@ The GitHub environment `npm` allows only the `main` and `next` branches. Add a b
 1. Remove `versioning`, `prerelease` and `prerelease-type` from `release-please-config.json`.
 2. In the same PR, set `release-as` on each package to its stable version. A `Release-As:` footer does not work here, because the commit changes no package files.
 3. Make sure that these packages have a `feat:`, `fix:` or `Release-As:` commit since the last release:
-   - `react-awesome-reveal`. Without one, `node-workspace` gives it a prerelease version, and it goes to `next`.
+   - `react-awesome-reveal`. Without one, `node-workspace` gives it a prerelease version (`5.0.1-next.N`), and it goes to `next`. A `fix:` commit that changes only this package and has a `Release-As: 5.0.0` footer gives 5.0.0 in the dry run.
    - core or one adapter. `linked-versions` then releases the full group.
 4. Do a dry run, and check that no version has a prerelease suffix.
 5. Merge the release PR. The `publish` job uses `latest`.
