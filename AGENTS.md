@@ -22,6 +22,7 @@ Use the Node version in `.nvmrc`. jsdom needs Node `^22.22.2`, `^24.15.0` or `>=
 - `pnpm vitest run --project core:browser`: one project.
 - `pnpm exec tsc -p packages/<package>/test`: type-check the tests. Vue uses `vue-tsc` instead of `tsc`. `pnpm build` type-checks only `src`.
 - `pnpm test:package`: build, then test the `dist` output with Vitest, publint and attw.
+- `pnpm build`, then `node scripts/smoke.mjs <core|react|compat|vue|astro> [dependency@version ...]`: install the packed tarballs into a clean project and build it. CI runs the matrix.
 - `pnpm lint` and `pnpm format`.
 
 The pre-commit hook runs oxlint, oxfmt and the unit and SSR tests related to the staged files.

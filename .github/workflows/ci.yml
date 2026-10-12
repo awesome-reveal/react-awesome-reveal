@@ -150,6 +150,68 @@ jobs:
       - name: Test package
         run: pnpm test:package
 
+  # Installs the packed tarballs into a clean project outside the workspace, as a consumer does.
+  smoke:
+    name: Smoke (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: core
+            case: core
+          - name: React 19
+            case: react
+            deps: react@19 react-dom@19 @types/react@19 @types/react-dom@19
+          - name: React 18
+            case: react
+            deps: react@18 react-dom@18 @types/react@18 @types/react-dom@18
+          - name: react-awesome-reveal
+            case: compat
+          - name: Vue 3.5.0
+            case: vue
+            deps: vue@3.5.0 @vitejs/plugin-vue vue-tsc
+          - name: Vue 3
+            case: vue
+            deps: vue@3 @vitejs/plugin-vue vue-tsc
+          - name: Astro 6
+            case: astro
+            deps: astro@6 @astrojs/check typescript@5.9
+          - name: Astro 7
+            case: astro
+            deps: astro@7 @astrojs/check typescript@5.9
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      - name: Smoke test
+        env:
+          CASE: ${{ matrix.case }}
+          DEPS: ${{ matrix.deps }}
+        run: |
+          read -r -a deps <<< "$DEPS"
+          node scripts/smoke.mjs "$CASE" "${deps[@]}"
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
