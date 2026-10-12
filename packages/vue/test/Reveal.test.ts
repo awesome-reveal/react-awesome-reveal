@@ -43,20 +43,15 @@ describe(`Reveal (Vue ${version})`, () => {
     });
   });
 
-  it("starts the animation after the patch that removes the hidden style", async () => {
-    const opacities: string[] = [];
-    const animate = Element.prototype.animate;
-    vi.spyOn(Element.prototype, "animate").mockImplementation(function (
-      this: HTMLElement,
-      ...args
-    ) {
-      opacities.push(this.style.opacity);
-      return animate.apply(this, args);
-    });
+  it("starts the animation and removes the hidden style in the task of the report", async () => {
     const { element } = mountReveal();
+    let timerRan = false;
+    setTimeout(() => (timerRan = true));
     await intersect(element, true);
 
-    expect(opacities).toEqual([""]);
+    expect(timerRan).toBe(false);
+    expect(animations).toHaveLength(1);
+    expect(element.style.opacity).toBe("");
   });
 
   it("plays the default keyframes without keyframes", async () => {
@@ -138,6 +133,16 @@ describe(`Reveal (Vue ${version})`, () => {
     expect(wrapper.element.tagName).toBe("SECTION");
     expect(wrapper.element).not.toHaveAttribute("data-reveal");
     expect(animations).toHaveLength(1);
+  });
+
+  it("plays on the new element when `as` and `when` change in the same tick", async () => {
+    const { wrapper } = mountReveal({ when: false });
+    await wrapper.setProps({ as: "section", when: true });
+
+    expect(wrapper.element.tagName).toBe("SECTION");
+    expect(wrapper.element).not.toHaveAttribute("data-reveal");
+    expect(animations.map(({ element }) => element)).toEqual([wrapper.element]);
+    expect(runningAnimations()).toHaveLength(1);
   });
 
   it("merges the hidden style into the given style and restores it when revealed", async () => {

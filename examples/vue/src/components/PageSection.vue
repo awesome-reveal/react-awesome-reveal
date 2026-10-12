@@ -1,13 +1,15 @@
 <template>
-  <section
-    style="
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-    "
-  >
+  <section>
     <slot />
   </section>
 </template>
+
+<style scoped>
+section {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+</style>

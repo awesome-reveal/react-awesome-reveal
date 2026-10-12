@@ -27,7 +27,7 @@
 
 ## Features
 
-- 🪶 **Tiny** – No third-party dependencies. `v-reveal` adds about 1.1 kB gzipped to your bundle, and `Reveal` with one keyframes factory adds about 1.5 kB.
+- 🪶 **Tiny** – No third-party dependencies. `v-reveal` adds about 1.5 kB gzipped to your bundle, and `Reveal` with one keyframes factory adds about 1.7 kB.
 - 🌳 **Tree-shakeable** – Each keyframes factory is a small function. Your bundle includes only the factories that you import.
 - 🧩 **Composable** – Use the `v-reveal` directive on your own elements, or the `Reveal` component.
 - ⚙️ **Native APIs** – Intersection Observer detects the reveal. Web Animations run it on the compositor where possible.
@@ -107,7 +107,7 @@ declare module "vue" {
 }
 ```
 
-While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes both, so an inline `opacity` of your own does not stay. Set your opacity in a class.
+While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes `data-reveal` and restores your inline `opacity`.
 
 ## The `Reveal` component
 
@@ -117,7 +117,7 @@ While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hid
 <Reveal as="section" :keyframes="slide()" class="hero" id="intro">…</Reveal>
 ```
 
-`Reveal` keeps your own `style`. The hidden `opacity: 0` overrides your opacity until the reveal.
+`Reveal` keeps your own `style`. The hidden `opacity: 0` overrides your opacity until the reveal, which restores it.
 
 ## Options
 
@@ -127,11 +127,15 @@ While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hid
 
 Option changes apply to the next reveal. They do not replay an animation that already played.
 
+When Vue replaces the element of `v-reveal`, for example with a new `key` or tag, the new element starts a new reveal. `Reveal` keeps its state when its `as` tag changes, and does not replay.
+
 ## Server-side rendering
 
 Both APIs render the element hidden on the server, with `opacity: 0` and `data-reveal="hidden"`, unless `when` is `true`. The animation starts in the browser, when the element enters the viewport.
 
 On the server, `v-reveal` also renders `data-allow-mismatch="style"`. The client render of the element does not have the hidden style, so without this attribute, a `style` binding on the element causes a hydration mismatch warning. The attribute allows a style mismatch on that element only.
+
+The server markup of `v-reveal` replaces an inline `opacity` of your own. After the reveal, the element has the opacity of your stylesheet. Set the opacity in a class when you render on the server.
 
 ## Recipes
 
