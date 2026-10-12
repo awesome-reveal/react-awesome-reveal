@@ -204,7 +204,7 @@ The adapters accept the same options. `observe` uses `threshold`, `rootMargin` a
 - `when` is a level, not an event. The element is revealed while `when` is `true`, and hidden while it is `false`. `undefined` and `null` mean that the viewport decides.
 - With `when: true` at the start, the entrance plays once. `when` ignores `threshold`, `rootMargin` and `once`.
 - A server renders an element with `when: true` shown, because nothing hides it. After hydration, the entrance starts at its first keyframe, so the element can flash. To avoid the flash, start with `when: false` and set it to `true` after the first render.
-- `threshold: 1` never reveals an element that is taller than the viewport, because the whole element is never visible. Use a lower value.
+- `threshold: 1` never reveals an element that is taller than the observed area, because the whole element is never inside it. The observed area is the viewport plus `rootMargin`. Use a lower value.
 - A negative `rootMargin`, such as `"-100px"` or `"0px 0px -10% 0px"`, shrinks the area that reveals the element. An element at the end of the page, which cannot scroll into that area, never reveals. Add space below the last element, or do not use a negative margin there.
 
 ### Reduced motion

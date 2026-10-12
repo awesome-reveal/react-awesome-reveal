@@ -93,7 +93,7 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 - For a list, animate the list with `stagger`, not each item: `<Reveal as="ul" stagger={80}>`. A `<ul>` must contain only `<li>` elements.
 - `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. With an inline `as` tag, `Reveal` itself also needs `display: inline-block`, or it only fades. It skips text nodes, so put text in an element. It reads the children when the element is revealed.
 - `when: true` at the start plays the entrance once. It ignores `threshold`, `rootMargin` and `once`. A server renders the element shown, so the entrance can flash when the script runs. To avoid the flash, start with `when` false and set it to true later.
-- `threshold: 1` never reveals an element that is taller than the viewport. A negative `rootMargin` never reveals an element at the end of the page that cannot scroll into the shrunk area.
+- `threshold: 1` never reveals an element that is taller than the viewport plus its `rootMargin`. A negative `rootMargin` never reveals an element at the end of the page that cannot scroll into the shrunk area.
 - `data-reveal` is reserved. Do not use it for other data.
 - `stagger` cannot animate framework islands that are direct children, because `<astro-island>` has `display: contents`, so it has no box to fade or move. Put each island in an element.
 - Keep `reducedMotion` at `"user"` unless the user asks for a different behavior. It respects the operating system setting of people whom motion makes ill.

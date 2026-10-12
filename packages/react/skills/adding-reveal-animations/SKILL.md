@@ -81,7 +81,7 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 - A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal, and do not replay an animation that already played.
 - `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. With an inline `as` tag, `Reveal` itself also needs `display: inline-block`, or it only fades. It skips text nodes, so put text in an element. It reads the children when the element is revealed.
 - `when: true` at the start plays the entrance once. It ignores `threshold`, `rootMargin` and `once`. A server renders the element shown, so the entrance can flash after hydration. To avoid the flash, start with `when` false and set it to true later.
-- `threshold: 1` never reveals an element that is taller than the viewport. A negative `rootMargin` never reveals an element at the end of the page that cannot scroll into the shrunk area.
+- `threshold: 1` never reveals an element that is taller than the viewport plus its `rootMargin`. A negative `rootMargin` never reveals an element at the end of the page that cannot scroll into the shrunk area.
 - `data-reveal` is reserved. Do not use it for other data.
 - Call a `defineKeyframes` factory outside the component when the component renders often. Each call samples the function again.
 - The keyframes factories do not import React. You can call them in a Server Component and pass the result to `Reveal`.
