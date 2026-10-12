@@ -25,7 +25,8 @@ export interface RevealState {
   attach(element: Element | null): void;
   /**
    * Replaces the options. A change of `when`, `threshold`, `rootMargin` or `once` applies at once.
-   * The other options apply at the next reveal.
+   * The other options apply at the next reveal. A reveal plays on the attached element, so when the
+   * element and `when` change together, attach the new element first.
    */
   setOptions(options: RevealOptions): void;
 }

@@ -36,7 +36,8 @@ function harness(tree: Tree): Harness {
         unmount: async () => result.unmount(),
         flush: async () => act(async () => {}),
         run: async (fn) => act(fn),
-        replaceNode: async () => {
+        replaceNode: async (next) => {
+          if (next) current = next;
           swap = true;
           await update();
         },

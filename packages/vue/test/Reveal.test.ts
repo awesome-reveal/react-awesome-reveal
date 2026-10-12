@@ -1,5 +1,5 @@
-import { mount } from "@vue/test-utils";
-import { h, version } from "vue";
+import { flushPromises, mount } from "@vue/test-utils";
+import { defineComponent, h, ref, Suspense, version } from "vue";
 
 import { fade, slide } from "../src/keyframes";
 import { Reveal } from "../src/Reveal";
@@ -43,20 +43,15 @@ describe(`Reveal (Vue ${version})`, () => {
     });
   });
 
-  it("starts the animation after the patch that removes the hidden style", async () => {
-    const opacities: string[] = [];
-    const animate = Element.prototype.animate;
-    vi.spyOn(Element.prototype, "animate").mockImplementation(function (
-      this: HTMLElement,
-      ...args
-    ) {
-      opacities.push(this.style.opacity);
-      return animate.apply(this, args);
-    });
+  it("starts the animation and removes the hidden style in the task of the report", async () => {
     const { element } = mountReveal();
+    let timerRan = false;
+    setTimeout(() => (timerRan = true));
     await intersect(element, true);
 
-    expect(opacities).toEqual([""]);
+    expect(timerRan).toBe(false);
+    expect(animations).toHaveLength(1);
+    expect(element.style.opacity).toBe("");
   });
 
   it("plays the default keyframes without keyframes", async () => {
@@ -138,6 +133,53 @@ describe(`Reveal (Vue ${version})`, () => {
     expect(wrapper.element.tagName).toBe("SECTION");
     expect(wrapper.element).not.toHaveAttribute("data-reveal");
     expect(animations).toHaveLength(1);
+  });
+
+  it("plays after a pending Suspense resolves, not before", async () => {
+    let resolve!: () => void;
+    const Slow = defineComponent(async () => {
+      await new Promise<void>((done) => (resolve = done));
+      return () => h("p");
+    });
+    mount(
+      {
+        render: () =>
+          h(Suspense, null, { default: () => h("div", [h(Reveal, { when: true }), h(Slow)]) }),
+      },
+      { attachTo: document.body },
+    );
+    await flushPromises();
+    expect(animations).toHaveLength(0);
+
+    resolve();
+    await flushPromises();
+    expect(animations).toHaveLength(1);
+  });
+
+  it("plays with the latest options when a prop changes while Suspense is pending", async () => {
+    let resolve!: () => void;
+    const Slow = defineComponent(async () => {
+      await new Promise<void>((done) => (resolve = done));
+      return () => h("p");
+    });
+    const duration = ref(100);
+    mount(
+      {
+        render: () =>
+          h(Suspense, null, {
+            default: () => h("div", [h(Reveal, { when: true, duration: duration.value }), h(Slow)]),
+          }),
+      },
+      { attachTo: document.body },
+    );
+    await flushPromises();
+    duration.value = 900;
+    await flushPromises();
+    resolve();
+    await flushPromises();
+
+    expect(animations).toHaveLength(1);
+    expect(animations[0]?.options).toMatchObject({ duration: 900 });
   });
 
   it("merges the hidden style into the given style and restores it when revealed", async () => {

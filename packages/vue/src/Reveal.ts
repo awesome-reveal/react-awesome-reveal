@@ -1,15 +1,6 @@
-import {
-  computed,
-  defineComponent,
-  h,
-  mergeProps,
-  type PropType,
-  ref,
-  shallowRef,
-  watch,
-} from "vue";
+import { defineComponent, h, mergeProps, onMounted, type PropType, ref, watch } from "vue";
 
-import { hiddenStyle, observe, play, type RevealOptions } from "@awesome-reveal/core";
+import { createReveal, hiddenStyle, type RevealOptions } from "@awesome-reveal/core";
 
 export interface RevealProps extends RevealOptions {
   /**
@@ -25,39 +16,24 @@ export interface RevealProps extends RevealOptions {
  */
 export const Reveal = /* @__PURE__ */ defineComponent(
   (props: RevealProps, { attrs, slots }) => {
-    const element = shallowRef<Element>();
-    const inView = ref(false);
-    const revealed = computed(() => props.when ?? inView.value);
-    const settled = computed(() => props.once !== false && inView.value);
-
-    watch(
-      [
-        element,
-        () => props.when,
-        settled,
-        () => props.threshold,
-        () => props.rootMargin,
-        () => props.once,
-      ],
-      ([node, when, isSettled], _, onCleanup) => {
-        if (!node || when != null || isSettled) return;
-        onCleanup(observe(node, props, (value) => (inView.value = value)));
-      },
-      // Vue sets the element ref in a post-flush job; a sync watcher observes before mount() returns.
-      { flush: "sync" },
-    );
-
-    // Post-flush watchers run after the patch that removes the hidden style, in the same task.
-    // Option changes wait for the next reveal.
-    watch(
-      [element, revealed],
-      ([node, isRevealed], [previousNode, wasRevealed], onCleanup) => {
-        // A new `as` tag after the reveal swaps the element, and does not replay the animation.
-        if (!node || !isRevealed || (previousNode && wasRevealed)) return;
-        onCleanup(play(node, props));
-      },
-      { flush: "post" },
-    );
+    const state = createReveal(props);
+    const revealed = ref(state.revealed);
+    state.subscribe((value) => (revealed.value = value));
+    // After the patch, so that a new element of the same tick plays with the new options.
+    watch(() => ({ ...props }), state.setOptions, { flush: "post" });
+    // Attaches in onMounted, which a pending Suspense defers while the element is outside the document.
+    let element: Element | null = null;
+    let mounted = false;
+    const attach = (node: unknown) => {
+      element = node as Element | null;
+      if (mounted) state.attach(element);
+    };
+    onMounted(() => {
+      mounted = true;
+      // Suspense defers the watcher too.
+      state.setOptions(props);
+      state.attach(element);
+    });
 
     return () =>
       h(
@@ -65,8 +41,8 @@ export const Reveal = /* @__PURE__ */ defineComponent(
         mergeProps(
           attrs,
           revealed.value
-            ? { ref: element }
-            : { ref: element, style: hiddenStyle, "data-reveal": "hidden" },
+            ? { ref: attach }
+            : { ref: attach, style: hiddenStyle, "data-reveal": "hidden" },
         ),
         slots.default?.(),
       );

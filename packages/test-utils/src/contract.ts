@@ -16,8 +16,8 @@ export interface Mounted {
   flush(): Promise<void>;
   /** Wraps a report of the mock observer in the update scope of the framework. */
   run(fn: () => void): Promise<void>;
-  /** Makes the framework render a new element for the same reveal, such as a new `as` tag. */
-  replaceNode?(): Promise<void>;
+  /** Renders a new element for the same reveal, such as a new `as` tag, with these options. */
+  replaceNode?(options?: ContractOptions): Promise<void>;
 }
 
 export interface Harness {
@@ -27,6 +27,8 @@ export interface Harness {
   keepsElement?: boolean;
   /** The framework can render a new element for the same reveal. */
   replacesNode?: boolean;
+  /** The reveal belongs to its element, so a new element starts a new reveal. */
+  boundToElement?: boolean;
   /** Scenario ids that fail until a later phase fixes them. A scenario that passes anyway fails the run. */
   drift?: string[];
 }
@@ -219,16 +221,27 @@ export function describeContract(name: string, harness: Harness) {
       });
 
     if (harness.replacesNode) {
-      scenario("S11a", "a new element after the reveal does not replay", async () => {
-        const m = await mount();
-        await intersect(m, true);
-        const old = m.element();
-        await m.replaceNode?.();
-        expect(m.element()).not.toBe(old);
-        expect(shown(m.element())).toBe(true);
-        expect(animations).toHaveLength(1);
-        expect(MockIntersectionObserver.instances.size).toBe(0);
-      });
+      scenario(
+        "S11a",
+        harness.boundToElement
+          ? "a new element after the reveal starts a new reveal"
+          : "a new element after the reveal does not replay",
+        async () => {
+          const m = await mount();
+          await intersect(m, true);
+          const old = m.element();
+          await m.replaceNode?.();
+          expect(m.element()).not.toBe(old);
+          if (harness.boundToElement) {
+            expect(hidden(m.element())).toBe(true);
+            expect(observerOf(m.element())).toBeDefined();
+          } else {
+            expect(shown(m.element())).toBe(true);
+            expect(animations).toHaveLength(1);
+            expect(MockIntersectionObserver.instances.size).toBe(0);
+          }
+        },
+      );
 
       scenario("S11b", "a new element before the reveal is observed", async () => {
         const m = await mount();
@@ -237,6 +250,18 @@ export function describeContract(name: string, harness: Harness) {
         expect(observerOf(m.element())).toBeDefined();
         expect(MockIntersectionObserver.instances.size).toBe(1);
       });
+
+      scenario(
+        "S11c",
+        "a new element and `when: true` in one update play on the new element",
+        async () => {
+          const m = await mount({ when: false });
+          await m.replaceNode?.({ when: true });
+          expect(shown(m.element())).toBe(true);
+          expect(animations.map((a) => a.element)).toEqual([m.element()]);
+          expect(runningAnimations()).toHaveLength(1);
+        },
+      );
     }
 
     scenario("S12", "with no IntersectionObserver the element shows at once", async () => {
