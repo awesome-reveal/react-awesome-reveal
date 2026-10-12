@@ -36,6 +36,8 @@ export interface RevealController {
   /**
    * Replaces the options. A change of `when` applies at once. A change of `threshold`,
    * `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
+   * After code writes the inline `opacity` of a hidden element, call it: the new opacity is the one
+   * that the reveal restores, and the element is hidden again.
    */
   setOptions(options: RevealOptions): void;
   /**
@@ -124,9 +126,8 @@ export function createReveal(options: RevealOptions = {}): RevealState {
 /**
  * Hides the element, and reveals it with an animation when it enters the viewport.
  * While hidden, the element has the `hiddenStyle` inline style and `data-reveal="hidden"`.
- * The reveal restores the inline `opacity` that the element had, with its priority. An opacity
- * that is written while the element is hidden replaces it. After a patch that replaces the style
- * of a hidden element, `setOptions` hides the element again.
+ * The reveal restores the inline `opacity` that the element had, with its priority. An inline
+ * opacity of `0` counts as no opacity.
  */
 export function reveal(
   element: Element & ElementCSSInlineStyle,
@@ -139,11 +140,10 @@ export function reveal(
 
   function apply(revealed: boolean) {
     if (revealed) {
-      // Another opacity means that something wrote it while the element was hidden.
-      if (style.opacity === hiddenStyle.opacity) style.setProperty("opacity", value, priority);
+      style.setProperty("opacity", value, priority);
       element.removeAttribute("data-reveal");
     } else {
-      // The hidden opacity of the server markup is not the resting opacity.
+      // The hidden opacity that the server markup or an earlier hide left is not the resting one.
       if (style.opacity !== hiddenStyle.opacity) {
         value = style.opacity;
         priority = style.getPropertyPriority("opacity");
@@ -154,7 +154,7 @@ export function reveal(
   }
 
   state.subscribe(apply);
-  apply(state.revealed);
+  if (!state.revealed) apply(false);
   state.attach(element);
 
   let destroyed = false;
@@ -173,7 +173,7 @@ export function reveal(
       state.attach(null);
       // Later calls to setOptions change no DOM.
       state.subscribe(() => {});
-      apply(true);
+      if (!state.revealed) apply(true);
     },
   };
 }

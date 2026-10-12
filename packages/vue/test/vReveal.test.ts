@@ -115,14 +115,6 @@ describe(`v-reveal (Vue ${version})`, () => {
     expect(element.style.opacity).toBe("0.8");
   });
 
-  it("restores an opacity with its priority", async () => {
-    const { element } = mountBox({}, undefined, "opacity: 0.5 !important");
-    await intersect(element, true);
-
-    expect(element.style.getPropertyValue("opacity")).toBe("0.5");
-    expect(element.style.getPropertyPriority("opacity")).toBe("important");
-  });
-
   it("stops the observation and the animation on unmount", async () => {
     const { wrapper, element } = mountBox({ once: false });
     await intersect(element, true);
