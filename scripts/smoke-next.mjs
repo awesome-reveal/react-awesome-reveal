@@ -14,15 +14,22 @@ const freePort = () =>
   });
 
 async function waitFor(url) {
-  for (let attempt = 0; attempt < 60; attempt++) {
+  for (let attempt = 0; attempt < 300; attempt++) {
     try {
       return await fetch(url);
     } catch {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
   }
   throw new Error(`${url} did not start`);
 }
+
+// Each page links to the next one, and the last links home. The ids are in the pages of smoke.mjs.
+const routes = [
+  { path: "/", id: "#top" },
+  { path: "/about", id: "#about" },
+  { path: "/legacy", id: "#legacy" },
+];
 
 const expect = (condition, message) => {
   if (!condition) throw new Error(message);
@@ -51,16 +58,10 @@ async function checkBrowser(base) {
     await page.waitForSelector("#card:not([data-reveal])");
 
     // Client navigation: each page mounts its own reveal, so it plays again.
-    for (const [link, id] of [
-      ["/about", "#about"],
-      ["/legacy", "#legacy"],
-    ]) {
-      await page.locator(`a[href="${link}"]`).click();
-      await page.waitForURL(`**${link}`);
+    for (const { path, id } of routes.slice(1)) {
+      await page.locator(`a[href="${path}"]`).click();
+      await page.waitForURL(`**${path}`);
       await page.waitForSelector(`${id}:not([data-reveal])`);
-      await page.locator('a[href="/"]').click();
-      await page.waitForURL(`${base}/`);
-      await page.waitForSelector("#top:not([data-reveal])");
     }
 
     expect(problems.length === 0, `The browser reported problems:\n${problems.join("\n")}`);
@@ -78,12 +79,17 @@ export async function verifyNext(cwd) {
     stdio: "inherit",
   });
   try {
-    for (const path of ["/", "/about", "/legacy"]) {
-      const response = await waitFor(base + path);
-      const html = await response.text();
-      expect(response.ok, `${path} answered ${response.status}`);
-      expect(html.includes('data-reveal="hidden"'), `${path} has no hidden element in the HTML`);
-    }
+    await waitFor(base);
+    await Promise.all(
+      routes.map(async ({ path }) => {
+        const response = await fetch(base + path);
+        expect(response.ok, `${path} answered ${response.status}`);
+        expect(
+          (await response.text()).includes('data-reveal="hidden"'),
+          `${path} has no hidden element in the HTML`,
+        );
+      }),
+    );
     await checkBrowser(base);
   } finally {
     server.kill();

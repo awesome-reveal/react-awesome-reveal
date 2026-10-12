@@ -7,7 +7,8 @@ import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { verifyNext } from "./smoke-next.mjs";
+// Next.js would send telemetry on each build and start.
+process.env.NEXT_TELEMETRY_DISABLED = "1";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const [name, ...extra] = process.argv.slice(2);
@@ -16,6 +17,24 @@ const hiddenCheck = (render) => `
 const html = ${render};
 if (!html.includes('data-reveal="hidden"')) throw new Error("The server markup is not hidden: " + html);
 console.log(html);
+`;
+
+const nextPage = (id, module, next, extra = "") => `
+import Link from "next/link";
+import { Reveal } from "${module}";
+import { fade } from "${module}/keyframes";
+
+${extra}
+export default function Page() {
+  return (
+    <main>
+      <Reveal id="${id}" keyframes={fade()}>
+        ${id}
+      </Reveal>
+      <Link href="${next}">Next</Link>
+    </main>
+  );
+}
 `;
 
 const cases = {
@@ -120,28 +139,12 @@ ${hiddenCheck("await renderToString(createSSRApp(App))")}
   next: {
     packages: ["core", "react", "react-awesome-reveal"],
     deps: ["next@16", "react@19", "react-dom@19", "@types/react@19", "@types/react-dom@19"],
-    server: true,
+    scaffold: false,
+    build: ["next", "build"],
+    verify: async (app) => (await import("./smoke-next.mjs")).verifyNext(app),
     files: {
-      "tsconfig.json": JSON.stringify({
-        compilerOptions: {
-          target: "ES2017",
-          lib: ["dom", "dom.iterable", "esnext"],
-          allowJs: true,
-          skipLibCheck: true,
-          strict: true,
-          noEmit: true,
-          esModuleInterop: true,
-          module: "esnext",
-          moduleResolution: "bundler",
-          resolveJsonModule: true,
-          isolatedModules: true,
-          jsx: "react-jsx",
-          incremental: true,
-          plugins: [{ name: "next" }],
-        },
-        include: ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-        exclude: ["node_modules"],
-      }),
+      // Next writes the rest. Some Next versions set "node", which cannot resolve the package exports.
+      "tsconfig.json": `{ "compilerOptions": { "module": "esnext", "moduleResolution": "bundler" } }\n`,
       "app/layout.tsx": `
 import type { ReactNode } from "react";
 
@@ -174,7 +177,6 @@ export default function Page() {
       </Reveal>
       <Card />
       <Link href="/about">About</Link>
-      <Link href="/legacy">Legacy</Link>
     </main>
   );
 }
@@ -190,49 +192,28 @@ export function Card() {
   return <article {...getProps({ id: "card" })}>Card</article>;
 }
 `,
-      "app/about/page.tsx": `
-import Link from "next/link";
-import { Reveal } from "@awesome-reveal/react";
-import { fade } from "@awesome-reveal/react/keyframes";
-
-// The other pages are prerendered. This one renders on each request.
-export const dynamic = "force-dynamic";
-
-export default function About() {
-  return (
-    <main>
-      <Reveal id="about" keyframes={fade()}>
-        About
-      </Reveal>
-      <Link href="/">Home</Link>
-    </main>
-  );
-}
-`,
+      // The other pages are prerendered. This one renders on each request.
+      "app/about/page.tsx": nextPage(
+        "about",
+        "@awesome-reveal/react",
+        "/legacy",
+        'export const dynamic = "force-dynamic";',
+      ),
       // The compat package re-exports the React package, so it crosses the same boundary.
-      "app/legacy/page.tsx": `
-import Link from "next/link";
-import { Reveal } from "react-awesome-reveal";
-import { fade } from "react-awesome-reveal/keyframes";
-
-export default function Legacy() {
-  return (
-    <main>
-      <Reveal id="legacy" keyframes={fade()}>
-        Legacy
-      </Reveal>
-      <Link href="/">Home</Link>
-    </main>
-  );
-}
-`,
+      "app/legacy/page.tsx": nextPage("legacy", "react-awesome-reveal", "/"),
     },
   },
   astro: {
     packages: ["core", "astro"],
     deps: ["astro@7", "@astrojs/check", "typescript@5.9"],
+    scaffold: false,
     check: ["astro", "check"],
     build: ["astro", "build"],
+    verify: (app) => {
+      const html = readFileSync(join(app, "dist/index.html"), "utf8");
+      if (!html.includes('data-reveal="hidden"'))
+        throw new Error("The built page has no hidden element");
+    },
     files: {
       "astro.config.mjs": `import { defineConfig } from "astro/config";\nexport default defineConfig({});\n`,
       "tsconfig.json": `{ "extends": "astro/tsconfigs/strict", "include": [".astro/types.d.ts", "**/*"], "exclude": ["dist"] }\n`,
@@ -317,7 +298,7 @@ try {
       include: ["src"],
     });
   }
-  if (name !== "astro" && !config.server) {
+  if (config.scaffold !== false) {
     files["index.html"] =
       `<!doctype html><script type="module" src="/src/main.${name === "react" || name === "compat" ? "tsx" : "ts"}"></script>`;
     files["vite.config.ts"] =
@@ -336,15 +317,10 @@ try {
   if (core.length !== 1 || !core[0].includes("file"))
     throw new Error(`Core does not come from the tarball: ${core}`);
 
-  if (config.server) {
-    run("pnpm", ["exec", "next", "build"], app);
-    await verifyNext(app);
-  } else if (config.build) {
-    run("pnpm", ["exec", ...(config.check ?? [])], app);
+  if (config.build) {
+    if (config.check) run("pnpm", ["exec", ...config.check], app);
     run("pnpm", ["exec", ...config.build], app);
-    const html = readFileSync(join(app, "dist/index.html"), "utf8");
-    if (!html.includes('data-reveal="hidden"'))
-      throw new Error("The built page has no hidden element");
+    await config.verify(app);
   } else {
     run("pnpm", ["exec", "vite", "build"], app);
     run(

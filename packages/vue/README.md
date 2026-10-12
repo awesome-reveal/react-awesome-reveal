@@ -45,7 +45,7 @@ npm install @awesome-reveal/vue
 
 Use `pnpm add`, `yarn add` or `bun add` in the same way.
 
-Vue 3.5 or a later Vue 3 version is necessary.
+Vue 3.5 or a later Vue 3 version is necessary. TypeScript needs `moduleResolution` set to `bundler`, `node16` or `nodenext`, because the package uses `exports` for `/keyframes`.
 
 ## Quick start
 

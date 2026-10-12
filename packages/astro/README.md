@@ -43,7 +43,7 @@ npm install @awesome-reveal/astro
 
 Use `pnpm add`, `yarn add` or `bun add` in the same way.
 
-Astro 6 or 7 is necessary.
+Astro 6 or 7 is necessary. TypeScript needs `moduleResolution` set to `bundler`, `node16` or `nodenext`, because the package uses `exports` for `/keyframes`.
 
 ## Quick start
 

@@ -185,11 +185,14 @@ jobs:
             deps: astro@7 @astrojs/check typescript@5.9
           - name: Next 16
             case: next
+            browser: true
           - name: Next 15
             case: next
+            browser: true
             deps: next@15 react@19 react-dom@19 @types/react@19 @types/react-dom@19
           - name: Next 14 (React 18)
             case: next
+            browser: true
             deps: next@14 react@18 react-dom@18 @types/react@18 @types/react-dom@18
     steps:
       - name: Checkout
@@ -212,9 +215,9 @@ jobs:
       - name: Build
         run: pnpm build
 
-      # The next case checks the app in Chromium.
+      # The cases with a browser check run the app in Chromium.
       - name: Install Chromium
-        if: matrix.case == 'next'
+        if: matrix.browser
         run: pnpm exec playwright install --with-deps --only-shell chromium
 
       - name: Smoke test

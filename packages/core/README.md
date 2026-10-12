@@ -50,7 +50,7 @@ Use this package directly with plain DOM code, or to write an adapter for anothe
 npm install @awesome-reveal/core
 ```
 
-Use `pnpm add`, `yarn add` or `bun add` in the same way. The package is ESM-only. Load it with a bundler, such as Vite, or in a `<script type="module">`.
+Use `pnpm add`, `yarn add` or `bun add` in the same way. The package is ESM-only. Load it with a bundler, such as Vite, or in a `<script type="module">`. TypeScript needs `moduleResolution` set to `bundler`, `node16` or `nodenext`, because the package uses `exports` for `/keyframes`.
 
 ## Quick start
 
