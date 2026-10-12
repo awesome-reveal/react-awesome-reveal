@@ -63,28 +63,31 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 
 ## Options
 
-| Option          | Description                                                                        | Default   |
-| --------------- | ---------------------------------------------------------------------------------- | --------- |
-| `keyframes`     | The animation.                                                                     | `slide()` |
-| `duration`      | Duration in milliseconds.                                                          | `600`     |
-| `delay`         | Delay in milliseconds.                                                             | `0`       |
-| `stagger`       | Animates the element children, each one this many milliseconds after the last one. | –         |
-| `threshold`     | Fraction of the element (0 to 1) that must be visible.                             | `0`       |
-| `rootMargin`    | Grows or shrinks the viewport area, as a CSS margin in `px` or `%`.                | `"0px"`   |
-| `once`          | When `false`, the element hides again when it leaves the viewport.                 | `true`    |
-| `when`          | Controls the reveal manually. When set, the viewport is not observed.              | –         |
-| `reducedMotion` | `"user"` follows `prefers-reduced-motion`. `"always"` skips, `"never"` plays.      | `"user"`  |
+| Option          | Description                                                                                                    | Default   |
+| --------------- | -------------------------------------------------------------------------------------------------------------- | --------- |
+| `keyframes`     | The animation.                                                                                                 | `slide()` |
+| `duration`      | Duration in milliseconds.                                                                                      | `600`     |
+| `delay`         | Delay in milliseconds.                                                                                         | `0`       |
+| `stagger`       | Animates the element children, each one this many milliseconds after the last one. `0` animates them together. | –         |
+| `threshold`     | Fraction of the element (0 to 1) that must be visible.                                                         | `0`       |
+| `rootMargin`    | Grows or shrinks the viewport area, as a CSS margin in `px` or `%`.                                            | `"0px"`   |
+| `once`          | When `false`, the element hides again when it leaves the viewport.                                             | `true`    |
+| `when`          | Controls the reveal as a level: `true` reveals, `false` hides, `undefined` or `null` lets the viewport decide. | –         |
+| `reducedMotion` | `"user"` follows `prefers-reduced-motion`. `"always"` skips, `"never"` plays.                                  | `"user"`  |
 
 ## Rules
 
 - Do not import the effect components of react-awesome-reveal v4 (`Fade`, `Slide`, `Zoom`). This package does not have them. For v4 code, use the `migrating-from-v4` skill of this package.
-- Option changes apply at the next reveal. They do not replay an animation that already played.
-- `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. With an inline `as` tag, `Reveal` itself also needs `display: inline-block`, or it only fades.
+- A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal, and do not replay an animation that already played.
+- `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. With an inline `as` tag, `Reveal` itself also needs `display: inline-block`, or it only fades. It skips text nodes, so put text in an element. It reads the children when the element is revealed.
+- `when: true` at the start plays the entrance once. It ignores `threshold`, `rootMargin` and `once`. A server renders the element shown, so the entrance can flash after hydration. To avoid the flash, start with `when` false and set it to true later.
+- `threshold: 1` never reveals an element that is taller than the viewport plus its `rootMargin`. A negative `rootMargin` never reveals an element at the end of the page that cannot scroll into the shrunk area.
+- `data-reveal` is reserved. Do not use it for other data.
 - Call a `defineKeyframes` factory outside the component when the component renders often. Each call samples the function again.
 - The keyframes factories do not import React. You can call them in a Server Component and pass the result to `Reveal`.
 - Keep `reducedMotion` at `"user"` unless the user asks for a different behavior. It respects the operating system setting of people whom motion makes ill.
 - Prefer `transform` and `opacity`. `filter` (`blur()`) and `clip-path` repaint on each frame in some engines, so use them on small elements.
-- Server-rendered content stays hidden (`opacity: 0`) until JavaScript runs. To show it when JavaScript does not run, put this in the document head:
+- Server-rendered content stays hidden (`opacity: 0`) until JavaScript runs. To show it when JavaScript does not run and in print, put this in the document head:
 
   ```html
   <noscript>
@@ -94,6 +97,13 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
       }
     </style>
   </noscript>
+  <style>
+    @media print {
+      [data-reveal="hidden"] {
+        opacity: 1 !important;
+      }
+    }
+  </style>
   ```
 
   `Reveal` and `getProps` set `data-reveal="hidden"` themselves.

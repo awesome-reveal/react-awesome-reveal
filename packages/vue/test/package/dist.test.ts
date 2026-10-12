@@ -2,7 +2,7 @@ import { readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { pathToFileURL } from "node:url";
 
-import { describeSkills } from "@awesome-reveal/test-utils/skills";
+import { describeDocs } from "@awesome-reveal/test-utils/docs";
 import { createSSRApp, h, withDirectives } from "vue";
 import { renderToString } from "vue/server-renderer";
 
@@ -76,7 +76,9 @@ describe("dist", () => {
   });
 });
 
-describeSkills(root, {
+describeDocs(root, {
   keyframes: "@awesome-reveal/vue/keyframes",
   factories,
+  ambient:
+    'declare module "*.vue" { const component: import("vue").Component; export default component; }',
 });

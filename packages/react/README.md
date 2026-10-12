@@ -46,7 +46,7 @@ React 18 or later is necessary.
 
 ## Quick start
 
-```jsx
+```tsx
 import { Reveal } from "@awesome-reveal/react";
 
 <Reveal>
@@ -69,11 +69,12 @@ With no `keyframes`, the element fades in and moves up, as with `slide()`. To ch
 
 The `keyframes` option takes the keyframes that a factory of `@awesome-reveal/react/keyframes` returns, or a keyframes array:
 
-```jsx
+```tsx
+import { Reveal } from "@awesome-reveal/react";
 import { enter, slide } from "@awesome-reveal/react/keyframes";
 
-<Reveal keyframes={slide({ direction: "left", distance: 40 })}>…</Reveal>
-<Reveal keyframes={enter({ y: 40, scale: 0.9 })}>…</Reveal>
+<Reveal keyframes={slide({ direction: "left", distance: 40 })}>…</Reveal>;
+<Reveal keyframes={enter({ y: 40, scale: 0.9 })}>…</Reveal>;
 ```
 
 The [`@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-reveal/core#keyframes) documents the built-in keyframes, `spring()`, `defineKeyframes` and keyframes arrays.
@@ -82,20 +83,30 @@ The [`@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-revea
 
 `Reveal` renders one element around its children. Use `as` to choose the tag. Other props go to that element, and so does `ref`:
 
-```jsx
-const inputRef = useRef(null);
+```tsx
+import { useRef } from "react";
+import { Reveal } from "@awesome-reveal/react";
+import { fade, slide } from "@awesome-reveal/react/keyframes";
 
-<Reveal as="section" keyframes={slide()} className="hero" id="intro">
-  …
-</Reveal>;
-<Reveal as="input" keyframes={fade()} ref={inputRef} />;
+function Page() {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <>
+      <Reveal as="section" keyframes={slide()} className="hero" id="intro">
+        …
+      </Reveal>
+      <Reveal as="input" keyframes={fade()} ref={inputRef} />
+    </>
+  );
+}
 ```
 
 ## The `useReveal` hook
 
 `useReveal` animates your own element or component, with no wrapper. Spread `getProps(yourProps)` on the element. It merges your `ref` and `style` with the reveal, sets `data-reveal` and hides the element until it is revealed:
 
-```jsx
+```tsx
 import { useReveal } from "@awesome-reveal/react";
 import { slide } from "@awesome-reveal/react/keyframes";
 
@@ -110,7 +121,7 @@ While the element is hidden, `opacity: 0` comes after your `style`. After the re
 
 Use `revealed` to run code when the element is revealed, for example in a `useEffect`. The animation starts in the same task as the reveal, before React renders the change of `revealed`. With `stagger`, render the children of the element all the time. Children that you render only when `revealed` is true do not animate.
 
-Option changes apply to the next reveal. They do not replay an animation that already played.
+A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal, and do not replay an animation that already played.
 
 ## Options
 
@@ -120,29 +131,39 @@ Option changes apply to the next reveal. They do not replay an animation that al
 
 ### Lists
 
-```jsx
+```tsx
+import { Reveal } from "@awesome-reveal/react";
+import { slide } from "@awesome-reveal/react/keyframes";
+
 <Reveal as="ul" keyframes={slide()} stagger={80}>
   <li>I enter first...</li>
   <li>...then comes my turn...</li>
   <li>...and finally you see me!</li>
-</Reveal>
+</Reveal>;
 ```
 
 `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. With an inline `as` tag, `Reveal` itself also needs `display: inline-block`, or it only fades.
 
 ### Text, one character at a time
 
-```jsx
-<p>
-  <span className="visually-hidden">{text}</span>
-  <Reveal as="span" keyframes={fade()} stagger={30} aria-hidden>
-    {[...text].map((char, index) => (
-      <span key={index} style={{ display: "inline-block", whiteSpace: "pre" }}>
-        {char}
-      </span>
-    ))}
-  </Reveal>
-</p>
+```tsx
+import { Reveal } from "@awesome-reveal/react";
+import { fade } from "@awesome-reveal/react/keyframes";
+
+function Title({ text }: { text: string }) {
+  return (
+    <p>
+      <span className="visually-hidden">{text}</span>
+      <Reveal as="span" keyframes={fade()} stagger={30} aria-hidden>
+        {[...text].map((char, index) => (
+          <span key={index} style={{ display: "inline-block", whiteSpace: "pre" }}>
+            {char}
+          </span>
+        ))}
+      </Reveal>
+    </p>
+  );
+}
 ```
 
 `visually-hidden` is your class that hides content visually but keeps it for screen readers. Screen readers read the full text once, and skip the animated characters.
@@ -151,17 +172,38 @@ Option changes apply to the next reveal. They do not replay an animation that al
 
 `clip-path` paints on the main thread in most engines, so use it on small elements:
 
-```jsx
+```tsx
+import { Reveal } from "@awesome-reveal/react";
+
 <Reveal
   keyframes={[{ clipPath: "inset(0 100% 0 0)", easing: "ease-out" }, { clipPath: "inset(0)" }]}
 >
   …
-</Reveal>
+</Reveal>;
 ```
+
+### App-wide defaults
+
+Wrap `Reveal` in your own component. Create the keyframes once, outside the component. The wrapper renders a `div`. Props that you pass override the defaults:
+
+```tsx
+import { Reveal, type RevealProps } from "@awesome-reveal/react";
+import { fade } from "@awesome-reveal/react/keyframes";
+
+const keyframes = fade();
+
+export function FadeIn(props: RevealProps) {
+  return <Reveal keyframes={keyframes} {...props} />;
+}
+```
+
+### Reveal inside the viewport
+
+`rootMargin: "-100px"` reveals the element after it is 100px inside the viewport. Read the warning about negative margins in [Trigger](https://www.npmjs.com/package/@awesome-reveal/core#trigger).
 
 ## Accessibility
 
-The [Accessibility section of the `@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-reveal/core#accessibility) describes reduced motion, content without JavaScript and Content Security Policy. For the `<noscript>` CSS, `Reveal` and `getProps` set `data-reveal="hidden"` on hidden elements.
+The [Accessibility section of the `@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-reveal/core#accessibility) describes reduced motion, the `<noscript>` and print CSS, and Content Security Policy. Server markup hides the content until the script runs, so add that CSS to show it when JavaScript does not run and in print. `Reveal` and `getProps` set `data-reveal="hidden"` on hidden elements. The attribute is reserved.
 
 ## Browser support
 
@@ -234,7 +276,9 @@ Copy the keyframes from the [Animate.css source](https://github.com/animate-css/
 - `Reveal` renders one element (`as`, `div` by default) around all its children. v4 rendered one `div` for each child.
 - Children animate together. Use `stagger` to animate them one after the other.
 - Lists, fragments and text have no special handling. For lists, use `as="ul"` with `stagger`. For text, see [Text, one character at a time](#text-one-character-at-a-time).
-- Animations do not stay applied after they finish, so a transformed element no longer breaks `position: fixed` children or `z-index`.
+- v4 kept the last keyframe applied after the animation. Animations now do not stay applied after they finish, so:
+  - A transformed element no longer breaks `position: fixed` children or `z-index`.
+  - A style such as `opacity: 1` no longer replaces your own `opacity`. Your CSS `opacity` applies after the reveal. While the element is hidden, `opacity: 0` is over your own opacity, and the reveal restores it.
 
 ## Past releases
 

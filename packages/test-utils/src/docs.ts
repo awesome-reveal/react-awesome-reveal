@@ -4,23 +4,25 @@ import { fileURLToPath } from "node:url";
 
 import ts from "typescript";
 
-interface SkillsOptions {
+interface DocsOptions {
   /** The package keyframes entry point, such as `@awesome-reveal/react/keyframes`. */
   keyframes: string;
   /** The keyframes factories that inline calls such as `` `slide()` `` can use. */
   factories: string[];
   /** The JSX options of the framework, if it uses JSX. */
   jsx?: Pick<ts.CompilerOptions, "jsx" | "jsxImportSource">;
-  /** Fences that match are not type-checked, for example examples of another package. */
+  /** Ambient declarations for the examples, such as `declare module "*.vue"` for a component import. */
+  ambient?: string;
+  /** Fences that match are not type-checked, for example examples of another package or of a component file. */
   skipFences?: RegExp;
 }
 
-/** Checks the consumer skills in `<root>/skills` against the built package types. */
-export function describeSkills(
+/** Checks the consumer skills in `<root>/skills` and the README against the built package types. */
+export function describeDocs(
   root: URL,
-  { keyframes, factories, jsx, skipFences }: SkillsOptions,
+  { keyframes, factories, jsx, ambient, skipFences }: DocsOptions,
 ) {
-  describe("skills", () => {
+  describe("docs", () => {
     const pkg = JSON.parse(readFileSync(new URL("package.json", root), "utf8"));
     const skillsDir = new URL("skills/", root);
     // A missing folder fails the first test below, not the whole file.
@@ -59,17 +61,24 @@ export function describeSkills(
     it("type-checks the TypeScript examples and inline factory calls against the package types", () => {
       const inlineCall = new RegExp(`\`((?:${factories.join("|")})\\([^\`]*\\))\``, "g");
       const files = new Map<string, string>();
-      for (const skill of skills) {
-        const text = skillText(skill);
+      const documents = [
+        ...skills.map((skill) => ({ directory: `docs-check/${skill}`, text: skillText(skill) })),
+        {
+          directory: "docs-check/readme",
+          text: readFileSync(new URL("README.md", root), "utf8"),
+        },
+      ];
+      if (ambient) files.set(fileURLToPath(new URL("docs-check/ambient.d.ts", root)), ambient);
+      for (const { directory, text } of documents) {
         const fences = [...text.matchAll(/^```tsx?\r?\n([\s\S]*?)^```$/gm)]
           .map(([, code]) => code!)
           .filter((code) => !skipFences?.test(code));
         const calls = [...text.matchAll(inlineCall)].map(([, call]) => call!);
         fences.forEach((code, index) =>
-          files.set(fileURLToPath(new URL(`${skill}/example-${index + 1}.tsx`, skillsDir)), code),
+          files.set(fileURLToPath(new URL(`${directory}/example-${index + 1}.tsx`, root)), code),
         );
         files.set(
-          fileURLToPath(new URL(`${skill}/factory-calls.ts`, skillsDir)),
+          fileURLToPath(new URL(`${directory}/factory-calls.ts`, root)),
           `import { ${factories.join(", ")} } from "${keyframes}";\n` +
             `export const calls = [${[...factories, ...calls].join(", ")}];\n`,
         );
@@ -97,13 +106,11 @@ export function describeSkills(
 
       const program = ts.createProgram([...files.keys()], options, host);
       const errors = ts.getPreEmitDiagnostics(program).map((diagnostic) => {
-        const file = diagnostic.file
-          ? relative(fileURLToPath(skillsDir), diagnostic.file.fileName)
-          : "";
+        const file = diagnostic.file ? relative(fileURLToPath(root), diagnostic.file.fileName) : "";
         return `${file}: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")}`;
       });
 
-      expect(files.size).toBeGreaterThan(skills.length);
+      expect(files.size).toBeGreaterThan(documents.length);
       expect(errors).toEqual([]);
     }, 30_000);
   });

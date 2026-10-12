@@ -106,7 +106,7 @@ The factories run on the server, when Astro renders the page. The [`@awesome-rev
 - `Reveal` writes the options into the `options` attribute as JSON. So pass only plain values. The keyframes factories return plain values.
 - Each `Reveal` has its own copy of its options in the HTML. A preset adds about 100 to 200 bytes. A `defineKeyframes` factory with the default 30 steps adds about 3 kB, and `spring()` adds about 300 bytes. Gzip makes repeated copies small. For a long list, put one `Reveal` around the list and use `stagger`, so the options appear once.
 - If the `options` attribute is not valid JSON when the element connects, the browser reports the error to the console, and the element reveals with the default options. If a later change is not valid JSON, the browser reports the error, and the previous options stay. A value that is `null`, a string or a number gives the default options.
-- To change the options in the browser, set the `options` attribute to new JSON. The new value replaces all the options, so merge it with the current value. A change of `when` applies at once. The other changes apply at the next reveal.
+- To change the options in the browser, set the `options` attribute to new JSON. The new value replaces all the options, so merge it with the current value. A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
 - The element starts hidden in the server markup, with `data-reveal="hidden"` and a stylesheet rule. The rule uses `!important`, so an inline `opacity` of your own does not show the element before the script runs. The reveal restores that inline `opacity`. The element has no `style` attribute, because the `security.csp` of Astro blocks style attributes.
 - It works with the `<ClientRouter />` and with server islands, because the custom element starts when it enters the page. A `transition:persist` element keeps its state, and does not play again after a navigation. You can put `transition:persist` on `Reveal` or on an ancestor.
 - On a page that the browser prerenders, the animation waits until the user opens the page.
@@ -151,6 +151,8 @@ With `when`, your code controls the reveal, and nothing observes the viewport. `
 - When the user prefers reduced motion, the element appears with no animation. Use `reducedMotion` to change this.
 - Hidden content uses `opacity: 0` only. It stays in the accessibility tree and in the browser's find-in-page. Links and buttons in it stay focusable and clickable.
 - The stylesheet rule that hides the element applies only in `@media (scripting: enabled)`. When JavaScript is off, the content shows. You do not need the `<noscript>` CSS of the other adapters.
+- Elements that are not revealed yet stay invisible on a printed page. Add the print rule of the [`@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-reveal/core#server-markup-javascript-off-and-print) to your stylesheet. The hidden rule has no specificity, so the print rule overrides it.
+- `data-reveal` is reserved. The reveal sets it on hidden elements, and removes it at the reveal.
 
 ## Browser support
 
