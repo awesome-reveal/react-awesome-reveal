@@ -1,6 +1,8 @@
 # @awesome-reveal/core
 
-[![Version](https://badgen.net/npm/v/@awesome-reveal/core)](https://www.npmjs.com/package/@awesome-reveal/core)
+[![npm version](https://badgen.net/npm/v/@awesome-reveal/core)](https://www.npmjs.com/package/@awesome-reveal/core)
+[![npm downloads](https://badgen.net/npm/dt/@awesome-reveal/core)](https://www.npmjs.com/package/@awesome-reveal/core)
+[![Types](https://badgen.net/npm/types/@awesome-reveal/core)](https://www.npmjs.com/package/@awesome-reveal/core)
 [![License](https://badgen.net/npm/license/@awesome-reveal/core)](https://www.npmjs.com/package/@awesome-reveal/core)
 
 The framework-independent core of [awesome-reveal](https://awesome-reveal.morello.dev). It reveals elements when they enter the viewport. It uses the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to detect the reveal, and the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) to animate it.
@@ -15,8 +17,11 @@ The framework adapters use this package. If your app uses one of these framework
 
 Use this package directly with plain DOM code, or to write an adapter for another framework. This README also documents the keyframes, the options, accessibility and browser support for all the adapters.
 
+<p align="center"><img src="https://raw.githubusercontent.com/awesome-reveal/awesome-reveal/next/.github/assets/demo.gif" alt="Elements fade, slide, scale and blur in as the page scrolls" width="640"></p>
+
 ## Table of contents
 
+- [Features](#features)
 - [Installation](#installation)
 - [Quick start](#quick-start)
 - [Entry points](#entry-points)
@@ -26,13 +31,26 @@ Use this package directly with plain DOM code, or to write an adapter for anothe
 - [Recipes](#recipes)
 - [Accessibility](#accessibility)
 - [Browser support](#browser-support)
+- [Agent skills](#agent-skills)
+- [Support](#support)
 - [License](#license)
+
+## Features
+
+- 🪶 **Tiny** – No third-party dependencies. Your bundle includes only the keyframes factories that you import.
+- 🌳 **Tree-shakeable** – The package is ESM-only, with `"sideEffects": false` and one file for each module.
+- ⚙️ **Native APIs** – Intersection Observer detects the reveal. Web Animations run it on the compositor where possible.
+- ♿ **Accessible** – It respects `prefers-reduced-motion` by default. Hidden content stays in the accessibility tree.
+- 🧱 **Framework-independent** – Use it with plain DOM code, or build an adapter on `createReveal`.
+- 🏷 **TypeScript** – Strict types for the options, the controller and the keyframes.
 
 ## Installation
 
 ```sh
-pnpm add @awesome-reveal/core
+npm install @awesome-reveal/core
 ```
+
+Use `pnpm add`, `yarn add` or `bun add` in the same way. The package is ESM-only. Load it with a bundler, such as Vite, or in a `<script type="module">`.
 
 ## Quick start
 
@@ -263,6 +281,17 @@ With a strict Content Security Policy, give each `<style>` a `nonce`, or put the
 Chrome 84, Firefox 75 (79 on Android) and Safari 13.1, or later. These versions support the Web Animations API with implicit keyframes. MDN reports bugs in the implicit keyframes of Safari from 13.1, with no fixed version. To support Safari, give each keyframe of your custom keyframes explicit values.
 
 Without `IntersectionObserver`, elements are revealed immediately. Without `Element.animate`, elements appear with no animation.
+
+## Agent skills
+
+This package ships the `adding-reveal-animations` agent skill, which helps a coding agent add reveal animations to your project. pnpm 12.11 or later links it into your agent folders after you run `pnpm approve`.
+
+## Support
+
+- Report a bug in the [issue tracker](https://github.com/awesome-reveal/awesome-reveal/issues).
+- Ask a question or suggest a feature in [Discussions](https://github.com/awesome-reveal/awesome-reveal/discussions).
+- Read the [changelog](https://github.com/awesome-reveal/awesome-reveal/blob/next/packages/core/CHANGELOG.md) for the changes of each release.
+- If you like this library, [consider supporting its creator](https://github.com/sponsors/morellodev).
 
 ## License
 

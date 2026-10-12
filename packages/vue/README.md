@@ -1,13 +1,13 @@
 # @awesome-reveal/vue
 
-[![Version](https://badgen.net/npm/v/@awesome-reveal/vue)](https://www.npmjs.com/package/@awesome-reveal/vue)
-[![Downloads](https://badgen.net/npm/dt/@awesome-reveal/vue)](https://www.npmjs.com/package/@awesome-reveal/vue)
+[![npm version](https://badgen.net/npm/v/@awesome-reveal/vue)](https://www.npmjs.com/package/@awesome-reveal/vue)
+[![npm downloads](https://badgen.net/npm/dt/@awesome-reveal/vue)](https://www.npmjs.com/package/@awesome-reveal/vue)
+[![Types](https://badgen.net/npm/types/@awesome-reveal/vue)](https://www.npmjs.com/package/@awesome-reveal/vue)
 [![License](https://badgen.net/npm/license/@awesome-reveal/vue)](https://www.npmjs.com/package/@awesome-reveal/vue)
 
-> [!TIP]
-> If you like this library, please [consider supporting its creator](https://github.com/sponsors/morellodev).
-
 [awesome-reveal](https://awesome-reveal.morello.dev) adds reveal-on-scroll animations to Vue apps. It uses the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to detect when an element enters the viewport, and the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) to animate it.
+
+<p align="center"><img src="https://raw.githubusercontent.com/awesome-reveal/awesome-reveal/next/.github/assets/demo.gif" alt="Elements fade, slide, scale and blur in as the page scrolls" width="640"></p>
 
 ## Table of contents
 
@@ -23,6 +23,8 @@
 - [Recipes](#recipes)
 - [Accessibility](#accessibility)
 - [Browser support](#browser-support)
+- [Agent skills](#agent-skills)
+- [Support](#support)
 - [License](#license)
 
 ## Features
@@ -38,8 +40,10 @@
 ## Installation
 
 ```sh
-pnpm add @awesome-reveal/vue
+npm install @awesome-reveal/vue
 ```
+
+Use `pnpm add`, `yarn add` or `bun add` in the same way.
 
 Vue 3.5 or later is necessary.
 
@@ -164,6 +168,17 @@ The [Accessibility section of the `@awesome-reveal/core` README](https://www.npm
 ## Browser support
 
 Chrome 84, Firefox 75 (79 on Android) and Safari 13.1, or later. Read [Browser support](https://www.npmjs.com/package/@awesome-reveal/core#browser-support) for the fallbacks.
+
+## Agent skills
+
+This package ships the `adding-reveal-animations` agent skill, which helps a coding agent add reveal animations to your project. pnpm 12.11 or later links it into your agent folders after you run `pnpm approve`.
+
+## Support
+
+- Report a bug in the [issue tracker](https://github.com/awesome-reveal/awesome-reveal/issues).
+- Ask a question or suggest a feature in [Discussions](https://github.com/awesome-reveal/awesome-reveal/discussions).
+- Read the [changelog](https://github.com/awesome-reveal/awesome-reveal/blob/next/packages/vue/CHANGELOG.md) for the changes of each release.
+- If you like this library, [consider supporting its creator](https://github.com/sponsors/morellodev).
 
 ## License
 
