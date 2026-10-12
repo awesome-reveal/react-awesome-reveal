@@ -185,13 +185,24 @@ describe("<awesome-reveal>", () => {
     expect(animations[0]?.options).toMatchObject({ duration: 600 });
   });
 
-  it("uses the default options when the attribute changes to an invalid value", () => {
+  it("uses the default options when the attribute changes to null", () => {
     const { host, element } = connect({ duration: 100 });
 
     host.setAttribute("options", "null");
     intersect(element, true);
 
     expect(animations[0]).toMatchObject({ element, options: { duration: 600 } });
+  });
+
+  it("keeps the previous options when the attribute changes to invalid JSON", () => {
+    const { host, element } = connect({ duration: 100 });
+    const onError = (event: ErrorEvent) => event.preventDefault();
+    window.addEventListener("error", onError);
+    host.setAttribute("options", "{");
+    window.removeEventListener("error", onError);
+    intersect(element, true);
+
+    expect(animations[0]).toMatchObject({ element, options: { duration: 100 } });
   });
 
   it("does nothing without an element child", () => {
