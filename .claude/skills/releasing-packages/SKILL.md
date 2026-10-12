@@ -74,4 +74,16 @@ The GitHub environment `npm` allows only the `main` and `next` branches. Add a b
 5. Merge the release PR. The `publish` job uses `latest`.
 6. Remove `release-as` in the next PR.
 
-Bring `next` into `main` with a merge commit, or a fast-forward when `main` has no other commits. Do not squash or rebase: both change the SHAs of the release commits, so the tags are not on `main`.
+## Move `main` to the stable release
+
+Do this after the `publish` job of the 1.0.0 release succeeds. A failed publish can then still be re-run from `next`.
+
+`main` requires linear history and has commits that `next` lacks, so a merge commit or a fast-forward is rejected. A squash puts the release commits and tags outside the history of `main`, and release-please then finds no release there. Reset `main` to `next` instead:
+
+1. Check what you drop: `git log origin/next..origin/main`. Only commits that you do not need may appear. The `v4` branch keeps the v4 line.
+2. Run `git push --force-with-lease=main:<old main SHA> origin origin/next:main`. If GitHub rejects the push, allow force pushes on `main` in its branch protection, push, and turn the setting off again.
+3. Set `main` as the default branch.
+4. In a PR: point `.github/dependabot.yml` back to `main`, change "against `next`" in `AGENTS.md`, and decide whether to keep `next`. If you remove `next`, also remove it from the `on.push.branches` of `release.yml` and from the branches of the GitHub environment `npm`.
+5. Check that the release workflow on `main` finds no release to make.
+
+Do not squash or rebase `next` into `main`.
