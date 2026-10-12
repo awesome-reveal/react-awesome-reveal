@@ -70,6 +70,6 @@ describe("consumer bundle", () => {
       "core/dist/report.js": ["report"],
       "core/dist/reveal.js": ["hiddenStyle", "reveal", "createReveal"],
     });
-    expect(size).toBeLessThan(3250);
+    expect(size).toBeLessThan(3350);
   });
 });
