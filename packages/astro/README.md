@@ -26,7 +26,7 @@
 
 ## Features
 
-- 🪶 **Tiny** – No third-party dependencies. The client script is about 1.1 kB gzipped. The keyframes run on the server, so they add nothing to it.
+- 🪶 **Tiny** – No third-party dependencies. The client script is about 1.4 kB gzipped. The keyframes run on the server, so they add nothing to it.
 - 🧭 **Astro-native** – It works with the `<ClientRouter />`, server islands, `transition:persist` and prerendered pages.
 - 🔒 **CSP-ready** – It works with `security.csp`. The server markup has no `style` attributes. Astro does not support `security.csp` with the `<ClientRouter />`.
 - ⚙️ **Native APIs** – Intersection Observer detects the reveal. Web Animations run it on the compositor where possible.
@@ -104,8 +104,10 @@ The factories run on the server, when Astro renders the page. The [`@awesome-rev
 
 - The custom element reveals its first element child. One script, which Astro bundles and adds once to the page, defines it.
 - `Reveal` writes the options into the `options` attribute as JSON. So pass only plain values. The keyframes factories return plain values.
+- Each `Reveal` has its own copy of its options in the HTML. A preset adds about 100 to 200 bytes. A `defineKeyframes` factory with the default 30 steps adds about 3 kB, and `spring()` adds about 300 bytes. Gzip makes repeated copies small. For a long list, put one `Reveal` around the list and use `stagger`, so the options appear once.
+- If the `options` attribute is not valid JSON when the element connects, the browser reports the error to the console, and the element reveals with the default options. If a later change is not valid JSON, the browser reports the error, and the previous options stay. A value that is `null`, a string or a number gives the default options.
 - To change the options in the browser, set the `options` attribute to new JSON. The new value replaces all the options, so merge it with the current value. A change of `when` applies at once. The other changes apply at the next reveal.
-- The element starts hidden in the server markup, with `data-reveal="hidden"` and a stylesheet rule. It has no `style` attribute, because the `security.csp` of Astro blocks style attributes.
+- The element starts hidden in the server markup, with `data-reveal="hidden"` and a stylesheet rule. The rule uses `!important`, so an inline `opacity` of your own does not show the element before the script runs. The reveal restores that inline `opacity`. The element has no `style` attribute, because the `security.csp` of Astro blocks style attributes.
 - It works with the `<ClientRouter />` and with server islands, because the custom element starts when it enters the page. A `transition:persist` element keeps its state, and does not play again after a navigation. You can put `transition:persist` on `Reveal` or on an ancestor.
 - On a page that the browser prerenders, the animation waits until the user opens the page.
 

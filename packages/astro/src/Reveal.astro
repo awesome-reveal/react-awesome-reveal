@@ -55,7 +55,7 @@ const options = JSON.stringify({
   /* Astro CSP blocks style attributes, so the server markup hides the element with this rule. */
   @media (scripting: enabled) {
     awesome-reveal > [data-reveal="hidden"] {
-      opacity: 0;
+      opacity: 0 !important;
     }
   }
 </style>

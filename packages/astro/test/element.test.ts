@@ -147,14 +147,18 @@ describe("<awesome-reveal>", () => {
     });
   });
 
-  it.each(["{", "null", '"slide"'])(
+  function connectRaw(value: string) {
+    const host = document.createElement("awesome-reveal") as RevealElement;
+    host.setAttribute("options", value);
+    host.innerHTML = `<p data-reveal="hidden">hello</p>`;
+    document.body.append(host);
+    return host.firstElementChild as HTMLElement;
+  }
+
+  it.each(["null", '"slide"', "5"])(
     "reveals with the default options when the attribute is %s",
     (value) => {
-      const host = document.createElement("awesome-reveal") as RevealElement;
-      host.setAttribute("options", value);
-      host.innerHTML = `<p data-reveal="hidden">hello</p>`;
-      document.body.append(host);
-      const element = host.firstElementChild as HTMLElement;
+      const element = connectRaw(value);
 
       intersect(element, true);
 
@@ -163,13 +167,42 @@ describe("<awesome-reveal>", () => {
     },
   );
 
-  it("uses the default options when the attribute changes to an invalid value", () => {
+  it("reports an invalid options attribute and reveals with the defaults", () => {
+    const errors: unknown[] = [];
+    // jsdom reports the error of a custom element callback to the window, and fails the run on it.
+    const onError = (event: ErrorEvent) => {
+      event.preventDefault();
+      errors.push(event.error);
+    };
+    window.addEventListener("error", onError);
+    const element = connectRaw("{");
+    window.removeEventListener("error", onError);
+
+    intersect(element, true);
+
+    expect(errors).toEqual([expect.any(SyntaxError)]);
+    expect(element).not.toHaveAttribute("data-reveal");
+    expect(animations[0]?.options).toMatchObject({ duration: 600 });
+  });
+
+  it("uses the default options when the attribute changes to null", () => {
     const { host, element } = connect({ duration: 100 });
 
     host.setAttribute("options", "null");
     intersect(element, true);
 
     expect(animations[0]).toMatchObject({ element, options: { duration: 600 } });
+  });
+
+  it("keeps the previous options when the attribute changes to invalid JSON", () => {
+    const { host, element } = connect({ duration: 100 });
+    const onError = (event: ErrorEvent) => event.preventDefault();
+    window.addEventListener("error", onError);
+    host.setAttribute("options", "{");
+    window.removeEventListener("error", onError);
+    intersect(element, true);
+
+    expect(animations[0]).toMatchObject({ element, options: { duration: 100 } });
   });
 
   it("does nothing without an element child", () => {
