@@ -132,4 +132,4 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 - While the element is hidden, its inline `opacity` is `0`. The reveal restores the inline `opacity` that the element had. Hidden server markup (`opacity: 0` with `data-reveal="hidden"`) counts as no opacity.
 - Without `IntersectionObserver`, elements are revealed at once. Without `Element.animate`, elements appear with no animation.
 - `null` is the same as leaving a `reveal` option out. This does not apply to the options of the keyframes factories.
-- When the browser rejects an option, such as a `threshold` above `1`, a `rootMargin` with no unit or a keyframe value, the element shows and the error is reported once from a microtask. It reaches `window.onerror`. It does not throw in your code.
+- When the browser rejects an option, such as a `threshold` above `1`, a `rootMargin` with no unit or a keyframe value, the element shows and stays shown, also when you correct the option later. The error is reported once from a microtask. It reaches `window.onerror`. It does not throw in your code.
