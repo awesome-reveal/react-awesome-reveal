@@ -190,7 +190,7 @@ jobs:
             case: next
             browser: true
             deps: next@15 react@19 react-dom@19 @types/react@19 @types/react-dom@19
-          - name: Next 14 (React 18)
+          - name: Next 14 + React 18
             case: next
             browser: true
             deps: next@14 react@18 react-dom@18 @types/react@18 @types/react-dom@18
