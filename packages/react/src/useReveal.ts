@@ -55,60 +55,51 @@ function mergeRefs<T>(own: RefCallback<T>, user: Ref<T>): RefCallback<T> {
   };
 }
 
-// React detaches and attaches the same element again in one commit when a ref callback changes, as
-// an inline callback does on each render. A detach that waits one microtask does not restart the reveal.
-function createAttach<T extends Element>(state: ReturnType<typeof createReveal>) {
+// The element reaches core in the layout effect, after the options of the same commit. React
+// detaches and attaches the same element again in one commit when a callback ref changes, as an
+// inline callback does on each render. A detach that waits one microtask does not restart the reveal.
+function createBinding<T extends Element>(state: ReturnType<typeof createReveal>) {
   let element: T | null = null;
-  let leaving = false;
-  function flush() {
-    if (!leaving) return;
-    leaving = false;
-    element = null;
-    state.attach(null);
+  let attached: T | null = null;
+  function sync(options?: RevealOptions) {
+    // Drops an old element before the options apply, so that a reveal does not play on it.
+    if (element !== attached) state.attach(null);
+    if (options) state.setOptions(options);
+    state.attach((attached = element));
   }
-  function attach(node: T | null) {
-    if (node) {
-      if (!leaving || node !== element) state.attach(node);
-      element = node;
-      leaving = false;
-    } else if (element && !leaving) {
-      leaving = true;
-      queueMicrotask(flush);
-    }
+  function ref(node: T | null) {
+    element = node;
+    if (!node) queueMicrotask(() => sync());
   }
-  return { attach, flush };
+  return { ref, sync };
 }
 
 export function useReveal<T extends Element = HTMLElement>(
   options: RevealOptions = {},
 ): RevealState<T> {
-  const [{ state, attach, flush }] = useState(() => {
+  const [{ state, ref, sync }] = useState(() => {
     const state = createReveal(options);
-    return { state, ...createAttach<T>(state) };
+    return { state, ...createBinding<T>(state) };
   });
   // Keeps the merged callback of each user ref stable, so that React does not detach the element.
   const [refs] = useState(() => new WeakMap<object, RefCallback<T>>());
   // A store update renders in a microtask, before the frame of the animation start.
   const getRevealed = () => state.revealed;
   const revealed = useSyncExternalStore(state.subscribe, getRevealed, getRevealed);
-  useIsomorphicLayoutEffect(() => {
-    // A ref that detached without attaching again in this commit leaves the element for good.
-    flush();
-    state.setOptions(options);
-  });
+  useIsomorphicLayoutEffect(() => sync(options));
 
   function getProps<P extends object = object>(
     props?: P & { ref?: Ref<T>; style?: CSSProperties },
   ) {
     const { ref: user, style, ...rest } = props ?? {};
-    let ref = attach;
+    let target = ref;
     if (user) {
-      ref = refs.get(user) ?? mergeRefs(attach, user);
-      refs.set(user, ref);
+      target = refs.get(user) ?? mergeRefs(ref, user);
+      refs.set(user, target);
     }
     return {
       ...rest,
-      ref,
+      ref: target,
       style: revealed ? style : { ...style, ...hiddenStyle },
       "data-reveal": revealed ? undefined : "hidden",
     } as Omit<P, "ref" | "style"> & RevealTargetProps<T>;

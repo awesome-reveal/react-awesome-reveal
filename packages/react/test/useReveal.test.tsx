@@ -214,4 +214,16 @@ describe(`useReveal (React ${version})`, () => {
 
     expect(animations.map(({ element }) => element)).toEqual([box()]);
   });
+
+  it("plays the entrance of a new element with the options of the same commit", () => {
+    function Late({ show, duration }: { show: boolean; duration: number }) {
+      const { getProps } = useReveal<HTMLDivElement>({ keyframes: slide(), when: true, duration });
+      return show ? <div {...getProps({ "data-testid": "box" })} /> : null;
+    }
+    const { rerender } = render(<Late show={false} duration={100} />);
+    rerender(<Late show duration={900} />);
+
+    expect(animations).toHaveLength(1);
+    expect(animations[0]?.options).toMatchObject({ duration: 900 });
+  });
 });

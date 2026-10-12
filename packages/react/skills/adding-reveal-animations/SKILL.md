@@ -10,7 +10,7 @@ description: Adds reveal-on-scroll animations to React components with @awesome-
 ## Choose the API
 
 - `Reveal` renders one element and animates it. Use `as` to choose the tag (default `div`). It passes the other props and `ref` to that element.
-- `useReveal(options)` animates your own element or component, with no wrapper. It returns `{ revealed, getProps }`. Spread `getProps(yourProps)` on the element. It merges your `ref` and `style` with the reveal and sets `data-reveal`. Write your own `style` and `ref` inside `getProps`: a `style` after the spread drops the hidden style.
+- `useReveal(options)` animates your own element or component, with no wrapper. It returns `{ revealed, getProps }`. Spread `getProps(yourProps)` on the element. It merges your `ref` and `style` with the reveal and sets `data-reveal`. Write your own `style` and `ref` inside `getProps`: a `style` after the spread drops the hidden style. With `stagger`, do not render the children of the element only when `revealed` is true: they do not animate.
 
 ```tsx
 import { Reveal, useReveal } from "@awesome-reveal/react";

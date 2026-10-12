@@ -108,7 +108,7 @@ function Card() {
 
 While the element is hidden, `opacity: 0` comes after your `style`. After the reveal, your opacity comes back. Write your own `style` and `ref` inside `getProps`. A `style` that you write after the spread replaces the hidden style. To use `getProps` on a component, forward its `ref` to an element (React 18 needs `forwardRef`). With React 18 types, type the props as `ComponentPropsWithoutRef`, because `ComponentProps` allows string refs.
 
-Use `revealed` to run code when the element is revealed, for example in a `useEffect`.
+Use `revealed` to run code when the element is revealed, for example in a `useEffect`. The animation starts in the same task as the reveal, before React renders the change of `revealed`. With `stagger`, render the children of the element all the time. Children that you render only when `revealed` is true do not animate.
 
 Option changes apply to the next reveal. They do not replay an animation that already played.
 
