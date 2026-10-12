@@ -68,7 +68,7 @@ The GitHub environment `npm` allows only the `main` and `next` branches. Add a b
 1. Remove `versioning`, `prerelease` and `prerelease-type` from `release-please-config.json`.
 2. In the same PR, set `release-as` on each package to its stable version. A `Release-As:` footer does not work here, because the commit changes no package files.
 3. Make sure that these packages have a `feat:`, `fix:` or `Release-As:` commit since the last release:
-   - `react-awesome-reveal`. Without one, `node-workspace` gives it a prerelease version, and it goes to `next`.
+   - `react-awesome-reveal`. Without one, `node-workspace` gives it a prerelease version (`5.0.1-next.N`), and it goes to `next`. A `fix:` commit that changes only this package and has a `Release-As: 5.0.0` footer gives 5.0.0 in the dry run.
    - core or one adapter. `linked-versions` then releases the full group.
 4. Do a dry run, and check that no version has a prerelease suffix.
 5. Merge the release PR. The `publish` job uses `latest`.
