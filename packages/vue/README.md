@@ -27,7 +27,7 @@
 
 ## Features
 
-- 🪶 **Tiny** – No third-party dependencies. `v-reveal` adds about 1.5 kB gzipped to your bundle, and `Reveal` with one keyframes factory adds about 1.7 kB.
+- 🪶 **Tiny** – No third-party dependencies. `v-reveal` adds about 1.5 kB gzipped to your bundle, and `Reveal` with one keyframes factory adds about 1.8 kB.
 - 🌳 **Tree-shakeable** – Each keyframes factory is a small function. Your bundle includes only the factories that you import.
 - 🧩 **Composable** – Use the `v-reveal` directive on your own elements, or the `Reveal` component.
 - ⚙️ **Native APIs** – Intersection Observer detects the reveal. Web Animations run it on the compositor where possible.

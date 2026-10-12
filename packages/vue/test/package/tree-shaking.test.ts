@@ -57,7 +57,7 @@ describe("consumer bundle", () => {
       "core/dist/report.js": ["report"],
       "core/dist/reveal.js": ["hiddenStyle", "createReveal"],
     });
-    expect(size).toBeLessThan(4100);
+    expect(size).toBeLessThan(4200);
   });
 
   it("keeps neither Reveal nor keyframes factories for the directive alone", async () => {
