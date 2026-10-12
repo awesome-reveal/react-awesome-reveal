@@ -1,13 +1,13 @@
 # @awesome-reveal/astro
 
-[![Version](https://badgen.net/npm/v/@awesome-reveal/astro)](https://www.npmjs.com/package/@awesome-reveal/astro)
-[![Downloads](https://badgen.net/npm/dt/@awesome-reveal/astro)](https://www.npmjs.com/package/@awesome-reveal/astro)
+[![npm version](https://badgen.net/npm/v/@awesome-reveal/astro)](https://www.npmjs.com/package/@awesome-reveal/astro)
+[![npm downloads](https://badgen.net/npm/dt/@awesome-reveal/astro)](https://www.npmjs.com/package/@awesome-reveal/astro)
+[![Types](https://badgen.net/npm/types/@awesome-reveal/astro)](https://www.npmjs.com/package/@awesome-reveal/astro)
 [![License](https://badgen.net/npm/license/@awesome-reveal/astro)](https://www.npmjs.com/package/@awesome-reveal/astro)
 
-> [!TIP]
-> If you like this library, please [consider supporting its creator](https://github.com/sponsors/morellodev).
-
 [awesome-reveal](https://awesome-reveal.morello.dev) adds reveal-on-scroll animations to Astro sites. It uses the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to detect when an element enters the viewport, and the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) to animate it.
+
+<p align="center"><img src="https://raw.githubusercontent.com/awesome-reveal/awesome-reveal/next/.github/assets/demo.gif" alt="Elements fade, slide, scale and blur in as the page scrolls" width="640"></p>
 
 ## Table of contents
 
@@ -22,6 +22,8 @@
 - [Recipes](#recipes)
 - [Accessibility](#accessibility)
 - [Browser support](#browser-support)
+- [Agent skills](#agent-skills)
+- [Support](#support)
 - [License](#license)
 
 ## Features
@@ -36,8 +38,10 @@
 ## Installation
 
 ```sh
-pnpm add @awesome-reveal/astro
+npm install @awesome-reveal/astro
 ```
+
+Use `pnpm add`, `yarn add` or `bun add` in the same way.
 
 Astro 6 or 7 is necessary.
 
@@ -159,6 +163,17 @@ With `when`, your code controls the reveal, and nothing observes the viewport. `
 Chrome 84, Firefox 75 (79 on Android) and Safari 13.1, or later. Read [Browser support](https://www.npmjs.com/package/@awesome-reveal/core#browser-support) for the fallbacks.
 
 The `scripting` media feature needs Chrome 120, Firefox 113 or Safari 17. In older browsers, the stylesheet rule does not apply. The element then shows until the script hides it, and the reveal animation plays as usual.
+
+## Agent skills
+
+This package ships the `adding-reveal-animations` agent skill, which helps a coding agent add reveal animations to your project. pnpm 12.11 or later links it into your agent folders after you run `pnpm approve`.
+
+## Support
+
+- Report a bug in the [issue tracker](https://github.com/awesome-reveal/awesome-reveal/issues).
+- Ask a question or suggest a feature in [Discussions](https://github.com/awesome-reveal/awesome-reveal/discussions).
+- Read the [changelog](https://github.com/awesome-reveal/awesome-reveal/blob/next/packages/astro/CHANGELOG.md) for the changes of each release.
+- If you like this library, [consider supporting its creator](https://github.com/sponsors/morellodev).
 
 ## License
 

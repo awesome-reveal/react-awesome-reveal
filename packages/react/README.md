@@ -1,13 +1,13 @@
 # @awesome-reveal/react
 
-[![Version](https://badgen.net/npm/v/@awesome-reveal/react)](https://www.npmjs.com/package/@awesome-reveal/react)
-[![Downloads](https://badgen.net/npm/dt/@awesome-reveal/react)](https://www.npmjs.com/package/@awesome-reveal/react)
+[![npm version](https://badgen.net/npm/v/@awesome-reveal/react)](https://www.npmjs.com/package/@awesome-reveal/react)
+[![npm downloads](https://badgen.net/npm/dt/@awesome-reveal/react)](https://www.npmjs.com/package/@awesome-reveal/react)
+[![Types](https://badgen.net/npm/types/@awesome-reveal/react)](https://www.npmjs.com/package/@awesome-reveal/react)
 [![License](https://badgen.net/npm/license/@awesome-reveal/react)](https://www.npmjs.com/package/@awesome-reveal/react)
 
-> [!TIP]
-> If you like this library, please [consider supporting its creator](https://github.com/sponsors/morellodev).
-
 [awesome-reveal](https://awesome-reveal.morello.dev) adds reveal-on-scroll animations to React apps. It uses the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to detect when an element enters the viewport, and the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) to animate it.
+
+<p align="center"><img src="https://raw.githubusercontent.com/awesome-reveal/awesome-reveal/next/.github/assets/demo.gif" alt="Elements fade, slide, scale and blur in as the page scrolls" width="640"></p>
 
 ## Table of contents
 
@@ -24,6 +24,8 @@
 - [Browser support](#browser-support)
 - [Migrating from v4](#migrating-from-v4)
 - [Past releases](#past-releases)
+- [Agent skills](#agent-skills)
+- [Support](#support)
 - [License](#license)
 
 ## Features
@@ -39,8 +41,10 @@
 ## Installation
 
 ```sh
-pnpm add @awesome-reveal/react
+npm install @awesome-reveal/react
 ```
+
+Use `pnpm add`, `yarn add` or `bun add` in the same way.
 
 React 18 or later is necessary.
 
@@ -283,6 +287,17 @@ Copy the keyframes from the [Animate.css source](https://github.com/animate-css/
 ## Past releases
 
 The v4 documentation is in the [README of `react-awesome-reveal@4.3.1`](https://github.com/awesome-reveal/awesome-reveal/blob/react-awesome-reveal%404.3.1/README.md).
+
+## Agent skills
+
+This package ships the `adding-reveal-animations` agent skill, which helps a coding agent add reveal animations to your project. pnpm 12.11 or later links it into your agent folders after you run `pnpm approve`.
+
+## Support
+
+- Report a bug in the [issue tracker](https://github.com/awesome-reveal/awesome-reveal/issues).
+- Ask a question or suggest a feature in [Discussions](https://github.com/awesome-reveal/awesome-reveal/discussions).
+- Read the [changelog](https://github.com/awesome-reveal/awesome-reveal/blob/next/packages/react/CHANGELOG.md) for the changes of each release.
+- If you like this library, [consider supporting its creator](https://github.com/sponsors/morellodev).
 
 ## License
 
