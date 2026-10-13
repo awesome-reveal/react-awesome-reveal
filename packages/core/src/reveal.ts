@@ -201,10 +201,10 @@ export function reveal(
   options?: RevealOptions,
 ): RevealGroup {
   if (typeof target !== "string" && "nodeType" in target) return revealElement(target, options);
+  // A copy first: onReveal can run at once and change a live collection, such as `children`.
   const controllers = Array.from(
     typeof target === "string" ? document.querySelectorAll(target) : target,
-    (element) => revealElement(element, options),
-  );
+  ).map((element) => revealElement(element, options));
   return {
     setOptions(next) {
       for (const controller of controllers) controller.setOptions(next);

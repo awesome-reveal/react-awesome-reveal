@@ -354,4 +354,13 @@ describe("reveal with a list", () => {
     group.destroy();
     expect(items.map((item) => item.hasAttribute("data-reveal"))).toEqual([false, false]);
   });
+
+  it("reveals each element of a live collection that onReveal changes", () => {
+    document.body.innerHTML = `<div><p>a</p><p>b</p><p>c</p></div>`;
+    const parent = document.querySelector("div")!;
+    const items = [...parent.children];
+    const onReveal = vi.fn((item: Element) => item.remove());
+    group = reveal(parent.children, { ...options, when: true, onReveal });
+    expect(onReveal.mock.calls.map(([item]) => item)).toEqual(items);
+  });
 });
