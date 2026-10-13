@@ -23,6 +23,7 @@ const alias = Object.entries({
   "@awesome-reveal/astro/keyframes": "../../src/keyframes.ts",
   "@awesome-reveal/core": "../../../core/src/index.ts",
   "@awesome-reveal/core/keyframes": "../../../core/src/keyframes/index.ts",
+  "@awesome-reveal/core/reveal.css": "../../../core/src/reveal.css",
 }).map(([specifier, source]) => ({
   find: new RegExp(`^${specifier.replaceAll(".", "\\.")}$`),
   replacement: path(source),
