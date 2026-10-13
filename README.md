@@ -10,7 +10,7 @@ awesome-reveal adds reveal-on-scroll animations (fade-in, slide-in and more) to 
 
 <p align="center"><img src="https://raw.githubusercontent.com/awesome-reveal/awesome-reveal/next/.github/assets/demo.gif" alt="Elements fade, slide, scale and blur in as the page scrolls" width="640"></p>
 
-Read the documentation at [awesome-reveal.morello.dev](https://awesome-reveal.morello.dev).
+Read the documentation at [awesome-reveal.dev](https://awesome-reveal.dev).
 
 ## Features
 

@@ -5,7 +5,7 @@
 [![Types](https://badgen.net/npm/types/@awesome-reveal/vue)](https://www.npmjs.com/package/@awesome-reveal/vue)
 [![License](https://badgen.net/npm/license/@awesome-reveal/vue)](https://www.npmjs.com/package/@awesome-reveal/vue)
 
-[awesome-reveal](https://awesome-reveal.morello.dev) adds reveal-on-scroll animations to Vue apps. It uses the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to detect when an element enters the viewport, and the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) to animate it.
+[awesome-reveal](https://awesome-reveal.dev) adds reveal-on-scroll animations to Vue apps. It uses the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to detect when an element enters the viewport, and the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) to animate it.
 
 <p align="center"><img src="https://raw.githubusercontent.com/awesome-reveal/awesome-reveal/next/.github/assets/demo.gif" alt="Elements fade, slide, scale and blur in as the page scrolls" width="640"></p>
 

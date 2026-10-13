@@ -53,7 +53,7 @@ Keep the item of the adapter on the plan board, https://github.com/orgs/awesome-
     - If oxlint has a plugin for the framework, such as `vue`, enable it in an `overrides` entry of `.oxlintrc.json`. Limit the entry to the package and its example, as the React entry does.
 13. Add the package to the package tables in the root `README.md` and in `packages/core/README.md`. In `.github/ISSUE_TEMPLATE/bug_report.yml`, add it to the `package` dropdown, and add the `vite.new` template of the framework, such as `vite.new/vue-ts`, to the reproduction field.
 14. Add `.claude/rules/<framework>/adapter.md` for the gotchas of the framework, with `paths: ["packages/<framework>/**", "examples/<framework>/**"]`.
-15. Add the docs work for the adapter page to the "adapter pages" item of the docs project, https://github.com/users/morellodev/projects/4. The docs site is a separate repo.
+15. The docs site is the separate repo `awesome-reveal/website`. List the adapter page in your final report as work for that repo.
 16. Run the checks:
     - `pnpm test --coverage`
     - `pnpm exec tsc -p packages/<framework>/test`, or the checker of step 6, such as `pnpm --filter @awesome-reveal/vue exec vue-tsc -p test`
