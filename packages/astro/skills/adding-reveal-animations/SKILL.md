@@ -80,12 +80,26 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 `Reveal` renders an `<awesome-reveal>` custom element with `display: contents` around your element. A script that Astro bundles defines the custom element. The custom element reveals its first element child, with the options that `Reveal` writes into its `options` attribute as JSON.
 
 - The options go through JSON, so pass only plain values. The keyframes factories return plain values.
-- Each `Reveal` writes its own copy of the options. A `defineKeyframes` factory adds about 3 kB of HTML to each instance, and a preset about 100 to 200 bytes. For a long list, use one `Reveal` with `stagger`.
+- Each `Reveal` writes its own copy of the options. A `defineKeyframes` factory adds about 3 kB of HTML to each instance, a built-in factory, such as `slide()`, about 100 to 200 bytes, and `spring()` about 300 bytes. For a long list, use one `Reveal` with `stagger`.
 - An `options` attribute with invalid JSON is reported to the console. When the element connects, it reveals with the default options. After that, the previous options stay.
 - To change the options in the browser, for example `when`, set the `options` attribute of the `<awesome-reveal>` element to new JSON. The new value replaces all the options, so parse the current value and merge your change into it. A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
 - It works with the `<ClientRouter />`, with server islands and with `transition:persist`. A persisted element does not play again after a navigation. `transition:persist` works on `Reveal` and on an ancestor.
 - It works with `security.csp`. The server markup hides the element with `data-reveal="hidden"` and a stylesheet rule, not a `style` attribute.
 - The stylesheet rule uses `!important`, so it also hides an element that has an inline `opacity`. It applies only when scripting is enabled, so the content shows when JavaScript is off. Do not add a `<noscript>` style. Elements that are not revealed yet stay invisible on a printed page. Add `@media print { [data-reveal="hidden"] { opacity: 1 !important; } }` to your stylesheet. The hidden rule has no specificity, so this rule overrides it.
+- If the script fails or a blocker stops it, the content stays hidden, because scripting is enabled. To show it after a timeout, put this in the document head. The script checks that the `<awesome-reveal>` element is defined. `is:inline` keeps Astro from scoping the style and bundling the script. Use a timeout that is longer than the load time of the script on a slow network. With `security.csp`, allow the two inline tags, for example with `Astro.csp.insertStyleHash()` and `Astro.csp.insertScriptHash()`:
+
+  ```astro
+  <style is:inline>
+    html[data-reveal-failed] [data-reveal="hidden"] {
+      opacity: 1 !important;
+    }
+  </style>
+  <script is:inline>
+    setTimeout(() => {
+      if (!customElements.get("awesome-reveal")) document.documentElement.setAttribute("data-reveal-failed", "");
+    }, 5000);
+  </script>
+  ```
 
 ## Rules
 
@@ -97,5 +111,4 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 - `data-reveal` is reserved. Do not use it for other data.
 - `stagger` cannot animate framework islands that are direct children, because `<astro-island>` has `display: contents`, so it has no box to fade or move. Put each island in an element.
 - Keep `reducedMotion` at `"user"` unless the user asks for a different behavior. It respects the operating system setting of people whom motion makes ill.
-- Prefer `transform` and `opacity`. `filter` (`blur()`) and `clip-path` repaint on each frame in some engines, so use them on small elements.
 - While the element is hidden, its `opacity` is `0`, also over an `opacity` of your own. The reveal restores your inline `opacity`.

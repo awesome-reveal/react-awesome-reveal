@@ -247,7 +247,7 @@ Read the warning about negative margins in [Trigger](#trigger).
 
 - When the user prefers reduced motion, the element appears with no animation. Use `reducedMotion` to change this.
 - Hidden content uses `opacity: 0` only. It stays in the accessibility tree and in the browser's find-in-page. Links and buttons in it stay focusable and clickable.
-- When a keyboard user tabs to a hidden link or button, the browser scrolls it into view, and the reveal starts.
+- When a keyboard user tabs to a hidden link or button, Chromium and Firefox scroll it into view, and the reveal starts. The library has no focus reveal. Focused content can stay hidden when `when` is `false`, when `threshold` is high, or when a negative `rootMargin` shrinks the observed area. Do not hide the only way to a control with these options. Use `when: true` or a larger `rootMargin` for it.
 - `data-reveal` is reserved. The reveal sets `data-reveal="hidden"` on hidden elements, and removes it at the reveal. Do not use this attribute for your own data.
 
 ### Server markup, JavaScript off and print
@@ -275,6 +275,40 @@ With a strict Content Security Policy, give each `<style>` a `nonce`, or put the
 
 - `reveal` on markup with no hidden state hides the element only when the script runs, so it needs no `<noscript>` rule. It needs the print rule.
 - A stylesheet rule that applies only when scripting is enabled, as the Astro adapter uses, shows the content without JavaScript. It needs the print rule only.
+
+### Recover when the script fails
+
+The `<noscript>` rule covers a browser with JavaScript off. It does not cover a script that fails or that a blocker stops, because the browser still runs scripts, so the content stays hidden. To show the content in this case, set an attribute when your code has set up the reveals, and check it after a timeout. With a framework adapter, set it after the mount, as the adapter README describes.
+
+Put this in the document head. The rule shows the hidden elements when the attribute `data-reveal-failed` is on `<html>`. The script sets it when the page did not set `data-reveal-ready` in time:
+
+```html
+<style>
+  html[data-reveal-failed] [data-reveal="hidden"] {
+    opacity: 1 !important;
+  }
+</style>
+<script>
+  setTimeout(() => {
+    const html = document.documentElement;
+    if (!html.hasAttribute("data-reveal-ready")) html.setAttribute("data-reveal-failed", "");
+  }, 5000);
+</script>
+```
+
+Set `data-reveal-ready` in your entry module, after the code that uses the library. If an import of the module graph fails or the code before it throws, the entry stops, so the attribute stays unset. `reveal` does not throw: it shows the element when its setup fails.
+
+```ts
+import { reveal } from "@awesome-reveal/core";
+
+document.querySelectorAll<HTMLElement>(".card").forEach((element) => reveal(element));
+document.documentElement.setAttribute("data-reveal-ready", "");
+```
+
+- Use a timeout that is longer than the load time of your script on a slow network. A script that loads after the timeout still reveals its elements, but the elements are already shown.
+- The attribute shows that the entry module ran. The recipe does not cover code that loads later and fails, such as a dynamic `import()`.
+- With a strict Content Security Policy, give the `<style>` and the `<script>` a `nonce`, or put the rule in your stylesheet. A blocked rule cannot show the content.
+- `data-reveal-ready` and `data-reveal-failed` are names for this recipe. Only `data-reveal` is reserved.
 
 ## Browser support
 

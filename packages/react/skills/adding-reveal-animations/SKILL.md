@@ -21,7 +21,7 @@ import { fade, slide } from "@awesome-reveal/react/keyframes";
 </Reveal>;
 
 function Card() {
-  const { getProps, revealed } = useReveal({ keyframes: fade(), threshold: 0.3 });
+  const { getProps } = useReveal({ keyframes: fade(), threshold: 0.3 });
   return <article {...getProps({ className: "card", style: { padding: 16 } })}>…</article>;
 }
 ```
@@ -88,7 +88,6 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
 - In a Next.js App Router page, `Reveal` works in a Server Component, and `useReveal` needs a file with `"use client"`. A Server Component cannot pass a function, such as a callback `ref`, to `Reveal`.
 - In a Server Component, `spring()` cannot check for `linear()` support. Call it in a Client Component to get the fallback curve.
 - Keep `reducedMotion` at `"user"` unless the user asks for a different behavior. It respects the operating system setting of people whom motion makes ill.
-- Prefer `transform` and `opacity`. `filter` (`blur()`) and `clip-path` repaint on each frame in some engines, so use them on small elements.
 - Server-rendered content stays hidden (`opacity: 0`) until JavaScript runs. To show it when JavaScript does not run and in print, put this in the document head:
 
   ```html
@@ -106,6 +105,30 @@ const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
       }
     }
   </style>
+  ```
+
+  If the script fails or a blocker stops it, the content stays hidden. To show it after a timeout, also put this in the document head. Use a timeout that is longer than the load time of the script on a slow network. Under a strict Content Security Policy, give the `<style>` and the `<script>` a `nonce`:
+
+  ```html
+  <style>
+    html[data-reveal-failed] [data-reveal="hidden"] {
+      opacity: 1 !important;
+    }
+  </style>
+  <script>
+    setTimeout(() => {
+      const html = document.documentElement;
+      if (!html.hasAttribute("data-reveal-ready")) html.setAttribute("data-reveal-failed", "");
+    }, 5000);
+  </script>
+  ```
+
+  Set the attribute in an effect of the root component, not in the entry module. React runs the effect only after the root mounts or hydrates, so a failed render leaves the attribute unset. The attribute does not cover a part of the page that loads later and fails, such as a lazy component. In the Next.js App Router, the root layout is a Server Component, so put the effect in a small `"use client"` component that the layout renders:
+
+  ```js
+  useEffect(() => {
+    document.documentElement.setAttribute("data-reveal-ready", "");
+  }, []);
   ```
 
   `Reveal` and `getProps` set `data-reveal="hidden"` themselves.
