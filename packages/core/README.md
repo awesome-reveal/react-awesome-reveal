@@ -5,7 +5,7 @@
 [![Types](https://badgen.net/npm/types/@awesome-reveal/core)](https://www.npmjs.com/package/@awesome-reveal/core)
 [![License](https://badgen.net/npm/license/@awesome-reveal/core)](https://www.npmjs.com/package/@awesome-reveal/core)
 
-The framework-independent core of [awesome-reveal](https://awesome-reveal.morello.dev). It reveals elements when they enter the viewport. It uses the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to detect the reveal, and the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) to animate it.
+The framework-independent core of [awesome-reveal](https://awesome-reveal.dev). It reveals elements when they enter the viewport. It uses the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to detect the reveal, and the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API) to animate it.
 
 The framework adapters use this package. If your app uses one of these frameworks, install its adapter instead:
 
