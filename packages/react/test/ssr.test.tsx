@@ -15,11 +15,10 @@ test("renders hidden content on the server without warnings", () => {
     </Reveal>,
   );
 
-  expect(html).toBe('<div style="opacity:0" data-reveal="hidden"><p>hello</p></div>');
+  expect(html).toBe('<div data-reveal="hidden"><p>hello</p></div>');
 });
 
 describeSSRContract("React Reveal", {
-  inlineOpacity: true,
   async render(options, style) {
     return renderToString(
       <Reveal {...(options as RevealOptions)} style={style} data-contract="">
@@ -35,7 +34,6 @@ function HookBox({ options, style }: { options: RevealOptions; style?: CSSProper
 }
 
 describeSSRContract("React useReveal", {
-  inlineOpacity: true,
   async render(options, style) {
     return renderToString(<HookBox options={options as RevealOptions} style={style} />);
   },

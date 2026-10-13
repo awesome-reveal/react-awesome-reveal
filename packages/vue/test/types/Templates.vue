@@ -18,4 +18,18 @@ import { slide } from "../../src/keyframes";
   <Reveal :threshold="'half'" />
   <!-- @vue-expect-error -->
   <Reveal reduced-motion="sometimes" />
+
+  <Reveal
+    from="left"
+    distance="2rem"
+    easing="spring"
+    :bounce="0.4"
+    @reveal="(element: Element) => element.tagName"
+    v-slot="{ revealed }"
+  >
+    <p>{{ revealed satisfies boolean }}</p>
+  </Reveal>
+  <Reveal :from="{ scale: 0.9, blur: 8 }" />
+  <!-- @vue-expect-error -->
+  <Reveal from="up" />
 </template>

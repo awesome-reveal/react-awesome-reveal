@@ -38,7 +38,8 @@ Use this package directly with plain DOM code, or to write an adapter for anothe
 ## Features
 
 - 🪶 **Tiny** – No third-party dependencies. Your bundle includes only the keyframes factories that you import.
-- 🌳 **Tree-shakeable** – The package is ESM-only, with `"sideEffects": false` and one file for each module.
+- 🌳 **Tree-shakeable** – The package is ESM-only, with one file for each module. Only `reveal.css` has side effects.
+- 🔒 **CSP-ready** – A stylesheet hides the content. The library writes no inline style.
 - ⚙️ **Native APIs** – Intersection Observer detects the reveal. Web Animations run it on the compositor where possible.
 - ♿ **Accessible** – It respects `prefers-reduced-motion` by default. Hidden content stays in the accessibility tree.
 - 🧱 **Framework-independent** – Use it with plain DOM code, or build an adapter on `createReveal`.
@@ -50,49 +51,57 @@ Use this package directly with plain DOM code, or to write an adapter for anothe
 npm install @awesome-reveal/core
 ```
 
-Use `pnpm add`, `yarn add` or `bun add` in the same way. The package is ESM-only. Load it with a bundler, such as Vite, or in a `<script type="module">`. TypeScript needs `moduleResolution` set to `bundler`, `node16` or `nodenext`, because the package uses `exports` for `/keyframes`.
+Use `pnpm add`, `yarn add` or `bun add` in the same way. The package is ESM-only. Load it with a bundler, such as Vite, or in a `<script type="module">`. TypeScript needs `moduleResolution` set to `bundler`, `node16` or `nodenext`, because the package uses `exports` for its entry points.
+
+Import `reveal.css` once, for example in your entry module. It hides the elements until the reveal. Without it, the elements show before the reveal, and the library reports an error:
+
+```js
+import "@awesome-reveal/core/reveal.css";
+```
+
+To load it without a bundler, link `node_modules/@awesome-reveal/core/dist/reveal.css` in the document head.
 
 ## Quick start
 
 ```js
+import "@awesome-reveal/core/reveal.css";
 import { reveal } from "@awesome-reveal/core";
-import { slide } from "@awesome-reveal/core/keyframes";
 
-const controller = reveal(document.querySelector(".hero"), {
-  keyframes: slide({ direction: "left" }),
-  duration: 800,
-});
+const cards = reveal(".card", { from: "left", duration: 800 });
 
-// Later, for example when the element leaves the page:
-controller.destroy();
+// Later, for example when the elements leave the page:
+cards.destroy();
 ```
 
 ## Entry points
 
-| Import path                      | Contents                                                       |
-| -------------------------------- | -------------------------------------------------------------- |
-| `@awesome-reveal/core`           | `reveal`, `createReveal`, `observe`, `play` and `hiddenStyle`. |
-| `@awesome-reveal/core/keyframes` | The built-in keyframes, `defineKeyframes`, and their types.    |
+| Import path                       | Contents                                                                           |
+| --------------------------------- | ---------------------------------------------------------------------------------- |
+| `@awesome-reveal/core`            | `reveal`, `createReveal`, `observe`, `play`, `hiddenAttributes` and the keyframes. |
+| `@awesome-reveal/core/keyframes`  | Only the built-in keyframes, `defineKeyframes`, and their types.                   |
+| `@awesome-reveal/core/reveal.css` | The stylesheet that hides the elements until the reveal.                           |
 
-The keyframes do not touch the DOM, so you can create them on the server. Each adapter re-exports this entry point, for example as `@awesome-reveal/react/keyframes`.
+The keyframes do not touch the DOM, so you can create them on the server. Each adapter re-exports them from its root entry and from `/keyframes`, for example `@awesome-reveal/react/keyframes`.
 
 ## API
 
-### `reveal(element, options?)`
+### `reveal(target, options?)`
 
-Hides the element, and plays the keyframes when the element enters the viewport. It returns a controller:
+Hides the element, and plays the entrance when the element enters the viewport. `target` is an element, a CSS selector or a list of elements, such as a `NodeList`. With an element, it returns a controller:
 
 - `revealed`: `true` while the element is revealed.
-- `setOptions(options)`: replaces the options. A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal. After code writes the inline `opacity` of a hidden element, the element shows until the reveal. Call it to hide the element again.
-- `destroy()`: stops the observation, cancels the animation and restores the element.
+- `setOptions(options)`: replaces the options. A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
+- `destroy()`: stops the observation, cancels the animation and shows the element.
 
-While the element is hidden, it has an inline `opacity: 0` and `data-reveal="hidden"`. The reveal removes both, and restores the inline `opacity` that the element had, with its priority. An inline `opacity` of `0` counts as no opacity. If the browser rejects an option, the element shows at once and stays shown, also when you correct the option later. The library reports the error once from a microtask, so it reaches `window.onerror` and does not throw in your code.
+With a selector or a list, it reveals each element as `reveal(element)` does, and returns a group with `setOptions` and `destroy` for all the elements. It finds the elements once, when you call it. Each element has its own state, so each one reveals when it enters the viewport.
+
+While the element is hidden, it has `data-reveal="hidden"`, which `reveal.css` hides. The reveal removes the attribute. The library does not write the `style` of the element. If the browser rejects an option, the element shows at once and stays shown, also when you correct the option later. The library reports the error once from a microtask, so it reaches `window.onerror` and does not throw in your code.
 
 ### `createReveal(options?)`
 
-The state that `reveal` uses, for adapters and for code that sets the style itself. It does not change the DOM. It observes the element, plays the animation and tells you when to hide or show the element:
+The state that `reveal` uses, for adapters and for code that renders the attributes of the element itself. It does not change the DOM. It observes the element, plays the animation and tells you when to hide or show the element:
 
-- `revealed`: `true` while the element is revealed. Before `attach`, it is `true` only when `when` is `true`.
+- `revealed`: `true` while the element is revealed. It is `false` when you create the state, also with `when: true`, so that a server renders the element hidden.
 - `subscribe(listener)`: calls `listener(revealed)` when `revealed` changes. Hide or show the element in it. There is one listener, and a new call replaces it. It returns a function that removes the listener.
 - `attach(element)`: observes and animates the element. A new element keeps the state and does not play the animation again. `attach(null)` stops the observation and cancels the animation.
 - `setOptions(options)`: replaces the options, as for `reveal`.
@@ -103,13 +112,13 @@ Calls `onChange(true)` when the element enters the viewport. When `once` is `fal
 
 ### `play(element, options?)`
 
-Plays the keyframes on the element, or on its children with `stagger`. It returns a function that cancels the animation. Call it in the same frame that removes the hidden style, or the element shows at its resting style for one frame.
+Plays the keyframes on the element, or on its children with `stagger`. It returns a function that cancels the animation. Call it in the same frame that removes `data-reveal`, or the element shows at its resting style for one frame.
 
-### `hiddenStyle`
+### `hiddenAttributes`
 
-The style that hides an element until the reveal. A server renderer applies it to the markup, with `data-reveal="hidden"`, so that the element does not show before the client code runs.
+The attributes that hide an element until the reveal: `{ "data-reveal": "hidden" }`. A server renderer puts them on the markup, so that the element does not show before the client code runs. `reveal.css` must load on the page.
 
-Use `createReveal` when your framework renders the style of the element. Use `reveal` when your code owns the element.
+Use `createReveal` when your framework renders the attributes of the element. Use `reveal` when your code owns the element.
 
 ## Keyframes
 
@@ -119,25 +128,25 @@ Each keyframes factory is a function. It takes its options, which you can leave 
 import { slide } from "@awesome-reveal/core/keyframes";
 
 reveal(element, { keyframes: slide() });
-reveal(element, { keyframes: slide({ direction: "left", distance: 40 }) });
+reveal(element, { keyframes: slide({ from: "left", distance: 40 }) });
 ```
 
 ### Built-in keyframes
 
-| Factory   | Effect                                     | Options                                                                                                               |
-| --------- | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| `fade()`  | Fades in.                                  | `easing`                                                                                                              |
-| `slide()` | Fades in and moves in a direction.         | `direction` (`"up"`, `"down"`, `"left"` or `"right"`, default `"up"`), `distance` (default `24`), `opacity`, `easing` |
-| `scale()` | Fades in and grows.                        | `from` (default `0.95`), `opacity`, `easing`                                                                          |
-| `blur()`  | Fades in and removes a blur.               | `from` (default `8`), `opacity`, `easing`                                                                             |
-| `pop()`   | Fades in, grows past its size and settles. | `from` (default `0.8`), `opacity`, `easing`                                                                           |
-| `enter()` | Starts from any combination of the others. | `x`, `y`, `scale`, `rotate`, `blur`, `opacity`, `easing`                                                              |
+| Factory   | Effect                                     | Options                                                                                                                 |
+| --------- | ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| `fade()`  | Fades in.                                  | `easing`                                                                                                                |
+| `slide()` | Fades in and moves in from a side.         | `from` (`"top"`, `"bottom"`, `"left"` or `"right"`, default `"bottom"`), `distance` (default `24`), `opacity`, `easing` |
+| `scale()` | Fades in and grows.                        | `from` (default `0.95`), `opacity`, `easing`                                                                            |
+| `blur()`  | Fades in and removes a blur.               | `from` (default `8`), `opacity`, `easing`                                                                               |
+| `pop()`   | Fades in, grows past its size and settles. | `from` (default `0.8`), `opacity`, `easing`                                                                             |
+| `enter()` | Starts from any combination of the others. | `x`, `y`, `scale`, `rotate`, `blur`, `opacity`, `easing`                                                                |
 
-- `direction` is the direction in which the element moves. `"up"` starts below the resting position.
+- The `from` of `slide()` is the side where the element starts. `"bottom"` moves the element up.
 - A number for `distance`, `from` of `blur()`, `x`, `y` or `blur` is in pixels. A number for `rotate` is in degrees. A string can be any CSS length or angle.
 - `opacity` is the start opacity. It is `0` by default. Set it to `1` for movement with no fade.
 - The default `easing` is `"cubic-bezier(0.22, 1, 0.36, 1)"`. An easing with values out of the 0–1 range overshoots, as `pop()` does.
-- `spring()` returns an easing that follows a spring, for the `easing` option of any factory: `slide({ easing: spring({ bounce: 0.5 }) })`. `bounce` (default `0.3`, from `0` to `0.8`) sets the overshoot. It uses CSS `linear()`. Chrome before 113, Firefox before 112 and Safari before 17.2 get the default easing. If you call `spring()` on the server, these browsers show the element with no animation.
+- `spring()` returns an easing that follows a spring, for the `easing` option of any factory: `slide({ easing: spring({ bounce: 0.5 }) })`. `bounce` (default `0.3`, from `0` to `0.8`) sets the overshoot. It uses CSS `linear()`. Chrome before 113, Firefox before 112 and Safari before 17.2 get the default easing. If you call `spring()` on the server, these browsers show the element with no animation. The `easing: "spring"` option does not have this limit, because it resolves in the browser.
 - `blur()` animates `filter`. Chromium and Safari composite it, but other engines repaint it on each frame. Use it on small and medium elements.
 
 ```js
@@ -194,16 +203,35 @@ export const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}
 
 ## Options
 
-The adapters accept the same options. `observe` uses `threshold`, `rootMargin` and `once`. `play` uses `keyframes`, `duration`, `delay`, `stagger` and `reducedMotion`. `reveal` and the adapters use all options.
+The adapters accept the same options. `observe` uses the trigger options. `play` uses the entrance and animation options and `reducedMotion`. `reveal` and the adapters use all options.
+
+### Entrance
+
+| Option     | Description                                                                                                              | Default                            |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------- |
+| `from`     | Where the element starts: a side of its resting position (`"top"`, `"bottom"`, `"left"` or `"right"`), or a start state. | `"bottom"`                         |
+| `distance` | The distance from the side of `from`. A number is in pixels. A string can be any CSS length.                             | `24`                               |
+| `easing`   | A CSS easing, or `"spring"`.                                                                                             | `"cubic-bezier(0.22, 1, 0.36, 1)"` |
+| `bounce`   | The overshoot of the spring, from `0` to `0.8`. When `easing` is not set, `bounce` selects the spring.                   | `0.3`                              |
+
+```js
+reveal(".card", { from: "left", distance: 40 });
+reveal(".photo", { from: { scale: 0.9, blur: 8 }, bounce: 0.4 });
+```
+
+- The element fades in from `opacity: 0` and moves from the side of `from`. With no options, it moves up 24px, as with `slide()`.
+- A start state takes the options of [`enter()`](#built-in-keyframes): `x`, `y`, `scale`, `rotate`, `blur` and `opacity`. Set `opacity: 1` for movement with no fade. `distance` applies only to a side.
+- `"spring"` resolves in the browser. Chrome before 113, Firefox before 112 and Safari before 17.2 do not support CSS `linear()`, so they get the default easing.
+- `keyframes` replaces the entrance options. Use it for an animation that they cannot give.
 
 ### Animation
 
-| Option      | Description                                                                                                   | Default   |
-| ----------- | ------------------------------------------------------------------------------------------------------------- | --------- |
-| `keyframes` | The animation. The last keyframe must be the resting style of the element.                                    | `slide()` |
-| `duration`  | Animation duration, in milliseconds.                                                                          | `600`     |
-| `delay`     | Delay before the animation starts, in milliseconds.                                                           | `0`       |
-| `stagger`   | Animates the element children instead of the element, each one this many milliseconds after the previous one. | –         |
+| Option      | Description                                                                                                   | Default |
+| ----------- | ------------------------------------------------------------------------------------------------------------- | ------- |
+| `keyframes` | The animation. The last keyframe must be the resting style of the element.                                    | –       |
+| `duration`  | Animation duration, in milliseconds.                                                                          | `600`   |
+| `delay`     | Delay before the animation starts, in milliseconds.                                                           | `0`     |
+| `stagger`   | Animates the element children instead of the element, each one this many milliseconds after the previous one. | –       |
 
 - `stagger` changes the target of the animation to the element children. `stagger: 0` animates all the children together.
 - `stagger` animates only child elements. It does not animate text nodes, so put text in an element.
@@ -218,10 +246,12 @@ The adapters accept the same options. `observe` uses `threshold`, `rootMargin` a
 | `rootMargin` | Grows or shrinks the viewport area that reveals the element, as a CSS margin in `px` or `%`.                | `"0px"` |
 | `once`       | Reveals the element only the first time. When `false`, the element hides again when it leaves the viewport. | `true`  |
 | `when`       | Controls the reveal as a level. When it is `true` or `false`, the viewport is not observed.                 | –       |
+| `onReveal`   | Called with the element each time it is revealed, in the task that starts the animation.                    | –       |
 
 - `when` is a level, not an event. The element is revealed while `when` is `true`, and hidden while it is `false`. `undefined` and `null` mean that the viewport decides.
 - With `when: true` at the start, the entrance plays once. `when` ignores `threshold`, `rootMargin` and `once`.
-- A server renders an element with `when: true` shown, because nothing hides it. After hydration, the entrance starts at its first keyframe, so the element can flash. To avoid the flash, start with `when: false` and set it to `true` after the first render.
+- A server renders the element hidden, also with `when: true`. The entrance plays when the client code attaches the element.
+- `onReveal` is not called again when a framework replays an effect on the same element, such as in React `StrictMode`.
 - `threshold: 1` never reveals an element that is taller than the observed area, because the whole element is never inside it. The observed area is the viewport plus `rootMargin`. Use a lower value.
 - A negative `rootMargin`, such as `"-100px"` or `"0px 0px -10% 0px"`, shrinks the area that reveals the element. An element at the end of the page, which cannot scroll into that area, never reveals. Add space below the last element, or do not use a negative margin there.
 
@@ -250,44 +280,25 @@ Read the warning about negative margins in [Trigger](#trigger).
 - When a keyboard user tabs to a hidden link or button, Chromium and Firefox scroll it into view, and the reveal starts. The library has no focus reveal. Focused content can stay hidden when `when` is `false`, when `threshold` is high, or when a negative `rootMargin` shrinks the observed area. Do not hide the only way to a control with these options. Use `when: true` or a larger `rootMargin` for it.
 - `data-reveal` is reserved. The reveal sets `data-reveal="hidden"` on hidden elements, and removes it at the reveal. Do not use this attribute for your own data.
 
-### Server markup, JavaScript off and print
+### The stylesheet
 
-Code that renders `hiddenStyle` in the server markup, as the React and Vue adapters do, hides the content with an inline `opacity: 0`. The library injects no `<style>` element, so a strict Content Security Policy needs only `style-src-attr 'unsafe-inline'`. The cost is that the content stays hidden when JavaScript does not run. Elements that are not revealed yet stay invisible on a printed page. Put this in the document head to show them:
+`reveal.css` hides each element that has `data-reveal="hidden"`, with `opacity: 0 !important`. It shows the hidden elements again in these cases:
 
-```html
-<noscript
-  ><style>
-    [data-reveal="hidden"] {
-      opacity: 1 !important;
-    }
-  </style></noscript
->
-<style>
-  @media print {
-    [data-reveal="hidden"] {
-      opacity: 1 !important;
-    }
-  }
-</style>
-```
+- JavaScript is off. The rule uses `@media (scripting: none)`, which needs Chrome 120, Firefox 113 or Safari 17. In older browsers, the content stays hidden when JavaScript is off.
+- The page prints.
+- `<html>` has `data-reveal-failed`. See [Recover when the script fails](#recover-when-the-script-fails).
 
-With a strict Content Security Policy, give each `<style>` a `nonce`, or put the print rule in your stylesheet.
+A document stylesheet does not reach a shadow root. For an element in a shadow root, add `reveal.css` to the shadow root too, for example with `adoptedStyleSheets`. Its `data-reveal-failed` rule does not apply there, because a shadow root has no `<html>` element.
 
-- `reveal` on markup with no hidden state hides the element only when the script runs, so it needs no `<noscript>` rule. It needs the print rule.
-- A stylesheet rule that applies only when scripting is enabled, as the Astro adapter uses, shows the content without JavaScript. It needs the print rule only.
+The library writes no inline style, so a strict Content Security Policy needs no `'unsafe-inline'`. Serve the stylesheet from a source that `style-src` allows.
+
+Do not give a hidden element an inline `opacity` with `!important`. An inline `!important` declaration wins over the stylesheet, so the element shows before the reveal. An inline `opacity` with no `!important` is safe. It applies after the reveal.
 
 ### Recover when the script fails
 
-The `<noscript>` rule covers a browser with JavaScript off. It does not cover a script that fails or that a blocker stops, because the browser still runs scripts, so the content stays hidden. To show the content in this case, set an attribute when your code has set up the reveals, and check it after a timeout. With a framework adapter, set it after the mount, as the adapter README describes.
-
-Put this in the document head. The rule shows the hidden elements when the attribute `data-reveal-failed` is on `<html>`. The script sets it when the page did not set `data-reveal-ready` in time:
+The stylesheet shows the content when JavaScript is off. It does not show the content when a script fails or a blocker stops it, because the browser still runs scripts. To show the content in this case, put this script in the document head:
 
 ```html
-<style>
-  html[data-reveal-failed] [data-reveal="hidden"] {
-    opacity: 1 !important;
-  }
-</style>
 <script>
   setTimeout(() => {
     const html = document.documentElement;
@@ -296,23 +307,15 @@ Put this in the document head. The rule shows the hidden elements when the attri
 </script>
 ```
 
-Set `data-reveal-ready` in your entry module, after the code that uses the library. If an import of the module graph fails or the code before it throws, the entry stops, so the attribute stays unset. `reveal` does not throw: it shows the element when its setup fails.
-
-```ts
-import { reveal } from "@awesome-reveal/core";
-
-document.querySelectorAll<HTMLElement>(".card").forEach((element) => reveal(element));
-document.documentElement.setAttribute("data-reveal-ready", "");
-```
+The library sets `data-reveal-ready` on `<html>` when it attaches the first element. If the attribute is not there after the timeout, the script sets `data-reveal-failed`, and `reveal.css` shows the hidden elements.
 
 - Use a timeout that is longer than the load time of your script on a slow network. A script that loads after the timeout still reveals its elements, but the elements are already shown.
-- The attribute shows that the entry module ran. The recipe does not cover code that loads later and fails, such as a dynamic `import()`.
-- With a strict Content Security Policy, give the `<style>` and the `<script>` a `nonce`, or put the rule in your stylesheet. A blocked rule cannot show the content.
-- `data-reveal-ready` and `data-reveal-failed` are names for this recipe. Only `data-reveal` is reserved.
+- The attribute shows that the library started on the page. The recipe does not cover code that loads later and fails, such as a dynamic `import()`.
+- With a strict Content Security Policy, give the `<script>` a `nonce`, or allow its hash.
 
 ## Browser support
 
-Chrome 84, Firefox 75 (79 on Android) and Safari 13.1, or later. These versions support the Web Animations API with implicit keyframes. MDN reports bugs in the implicit keyframes of Safari from 13.1, with no fixed version. To support Safari, give each keyframe of your custom keyframes explicit values.
+Chrome 84, Firefox 75 (79 on Android) and Safari 13.1, or later. These versions support the Web Animations API with implicit keyframes. MDN marks the implicit keyframes of Safari as a partial implementation, with no details. One open WebKit bug ([212409](https://bugs.webkit.org/show_bug.cgi?id=212409)) can take an implicit start value from an earlier animation of the element. The built-in keyframes give explicit start values. In your custom keyframes, give explicit values to the first keyframe.
 
 Without `IntersectionObserver`, elements are revealed immediately. Without `Element.animate`, elements appear with no animation.
 

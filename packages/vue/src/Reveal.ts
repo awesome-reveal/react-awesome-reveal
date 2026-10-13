@@ -1,8 +1,8 @@
-import { defineComponent, h, mergeProps, onMounted, type PropType, ref, watch } from "vue";
+import { defineComponent, h, onMounted, type PropType, ref, type SlotsType, watch } from "vue";
 
-import { createReveal, hiddenStyle, type RevealOptions } from "@awesome-reveal/core";
+import { createReveal, type RevealOptions } from "@awesome-reveal/core";
 
-export interface RevealProps extends RevealOptions {
+export interface RevealProps extends Omit<RevealOptions, "onReveal"> {
   /**
    * Tag of the rendered element.
    * @default "div"
@@ -11,16 +11,21 @@ export interface RevealProps extends RevealOptions {
 }
 
 /**
- * Renders one element that animates when it enters the viewport.
+ * Renders one element that animates when it enters the viewport. It emits `reveal` with the
+ * element each time it is revealed, and gives `revealed` to its default slot.
  * To animate an element of your own without a wrapper, use `v-reveal`.
  */
 export const Reveal = /* @__PURE__ */ defineComponent(
-  (props: RevealProps, { attrs, slots }) => {
-    const state = createReveal(props);
+  (props: RevealProps, { emit, slots }) => {
+    const options = (): RevealOptions => ({
+      ...props,
+      onReveal: (element) => emit("reveal", element),
+    });
+    const state = createReveal(options());
     const revealed = ref(state.revealed);
     state.subscribe((value) => (revealed.value = value));
     // After the patch, so that a new element of the same tick plays with the new options.
-    watch(() => ({ ...props }), state.setOptions, { flush: "post" });
+    watch(options, state.setOptions, { flush: "post" });
     // Attaches in onMounted, which a pending Suspense defers while the element is outside the document.
     let element: Element | null = null;
     let mounted = false;
@@ -31,29 +36,26 @@ export const Reveal = /* @__PURE__ */ defineComponent(
     onMounted(() => {
       mounted = true;
       // Suspense defers the watcher too.
-      state.setOptions(props);
+      state.setOptions(options());
       state.attach(element);
     });
 
     return () =>
       h(
         props.as ?? "div",
-        mergeProps(
-          attrs,
-          revealed.value
-            ? { ref: attach }
-            : { ref: attach, style: hiddenStyle, "data-reveal": "hidden" },
-        ),
-        slots.default?.(),
+        revealed.value ? { ref: attach } : { ref: attach, "data-reveal": "hidden" },
+        slots.default?.({ revealed: revealed.value }),
       );
   },
   {
     name: "Reveal",
-    // Vue merges inherited attributes after the props of the root element, so a user opacity would win.
-    inheritAttrs: false,
     props: {
       as: String,
       keyframes: Array as PropType<RevealOptions["keyframes"]>,
+      from: [String, Object] as PropType<RevealOptions["from"]>,
+      distance: [Number, String],
+      easing: String,
+      bounce: Number,
       duration: Number,
       delay: Number,
       stagger: Number,
@@ -64,5 +66,7 @@ export const Reveal = /* @__PURE__ */ defineComponent(
       when: { type: Boolean, default: undefined },
       reducedMotion: String as PropType<RevealOptions["reducedMotion"]>,
     },
+    emits: { reveal: (element: Element) => element != null },
+    slots: Object as SlotsType<{ default: { revealed: boolean } }>,
   },
 );

@@ -30,7 +30,7 @@ describe(`Reveal (React ${version})`, () => {
     const element = container.firstElementChild as HTMLElement;
     intersect(element, true);
 
-    expect(element.style.opacity).toBe("");
+    expect(element).toHaveStyle({ opacity: "1" });
     expect(element).not.toHaveAttribute("data-reveal");
     expect(animations[0]?.element).toBe(element);
   });
@@ -62,7 +62,7 @@ describe(`Reveal (React ${version})`, () => {
     expect(screen.getByRole("link")).toHaveClass("link", { exact: true });
   });
 
-  it("merges the hidden style into the given style and restores it when revealed", () => {
+  it("hides an element with its own style, and keeps that style when revealed", () => {
     const { container } = render(
       <Reveal keyframes={fade()} style={{ color: "red", opacity: 0.5 }}>
         child

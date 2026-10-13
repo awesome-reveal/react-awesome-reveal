@@ -30,7 +30,7 @@ describe(`v-reveal (Vue ${version})`, () => {
     const { element } = mountBox();
     await intersect(element, true);
 
-    expect(element.style.opacity).toBe("");
+    expect(element).toHaveStyle({ opacity: "1" });
     expect(element).not.toHaveAttribute("data-reveal");
     expect(animations[0]).toMatchObject({
       element,
@@ -73,7 +73,7 @@ describe(`v-reveal (Vue ${version})`, () => {
     expect(element).toHaveStyle({ opacity: "0" });
 
     await wrapper.setProps({ options: { keyframes: slide(), when: true } });
-    expect(element.style.opacity).toBe("");
+    expect(element).toHaveStyle({ opacity: "1" });
     expect(animations).toHaveLength(1);
   });
 
@@ -105,7 +105,7 @@ describe(`v-reveal (Vue ${version})`, () => {
   it.each([
     ["an object", { opacity: 0.5 }, { opacity: 0.8 }],
     ["a string", "opacity: 0.5", "color: red; opacity: 0.8"],
-  ])("restores the latest opacity of %s style binding", async (_, first, second) => {
+  ])("keeps the latest opacity of %s style binding", async (_, first, second) => {
     const { wrapper, element } = mountBox({}, undefined, first);
     await wrapper.setProps({ style: second });
 

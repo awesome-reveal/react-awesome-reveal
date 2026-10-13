@@ -51,25 +51,31 @@ describe("consumer bundle", () => {
     expect(keptExports).toEqual({
       "vue/dist/Reveal.js": ["Reveal"],
       "core/dist/keyframes/enter.js": ["enter"],
+      "core/dist/keyframes/from.js": ["offsetFrom"],
       "core/dist/keyframes/presets.js": ["slide"],
+      "core/dist/keyframes/spring.js": ["spring"],
       "core/dist/observe.js": ["observe"],
-      "core/dist/play.js": ["play", "defaultKeyframes"],
+      "core/dist/play.js": ["play"],
       "core/dist/report.js": ["report"],
-      "core/dist/reveal.js": ["hiddenStyle", "createReveal"],
+      "core/dist/reveal.js": ["createReveal"],
     });
-    expect(size).toBeLessThan(4200);
+    expect(size).toBeLessThan(5650);
   });
 
-  it("keeps neither Reveal nor keyframes factories for the directive alone", async () => {
+  // play() keeps enter(), offsetFrom() and spring(), because it builds the keyframes of `from`.
+  it("keeps neither Reveal nor the presets for the directive alone", async () => {
     const { keptExports, size } = await bundle("directive-only.js");
 
     expect(keptExports).toEqual({
       "vue/dist/vReveal.js": ["vReveal"],
+      "core/dist/keyframes/enter.js": ["enter"],
+      "core/dist/keyframes/from.js": ["offsetFrom"],
+      "core/dist/keyframes/spring.js": ["spring"],
       "core/dist/observe.js": ["observe"],
-      "core/dist/play.js": ["play", "defaultKeyframes"],
+      "core/dist/play.js": ["play"],
       "core/dist/report.js": ["report"],
-      "core/dist/reveal.js": ["hiddenStyle", "reveal", "createReveal"],
+      "core/dist/reveal.js": ["hiddenAttributes", "createReveal", "reveal"],
     });
-    expect(size).toBeLessThan(3350);
+    expect(size).toBeLessThan(5450);
   });
 });

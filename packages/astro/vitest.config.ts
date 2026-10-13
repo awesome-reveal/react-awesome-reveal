@@ -17,6 +17,10 @@ export default getViteConfig(
           replacement: source("../core/src/keyframes/index.ts"),
         },
         {
+          find: /^@awesome-reveal\/core\/reveal\.css$/,
+          replacement: source("../core/src/reveal.css"),
+        },
+        {
           find: /^@awesome-reveal\/test-utils\/(.+)$/,
           replacement: source("../test-utils/src/$1.ts"),
         },

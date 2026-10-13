@@ -1,3 +1,6 @@
+import { enter } from "./keyframes/enter.js";
+import { offsetFrom, type Side, type StartState } from "./keyframes/from.js";
+import { spring } from "./keyframes/spring.js";
 import type { RevealKeyframe } from "./keyframes/types.js";
 import { report } from "./report.js";
 
@@ -5,9 +8,30 @@ export interface PlayOptions {
   /**
    * Keyframes to play when the element is revealed. They must end at the element's resting
    * style, because the animation does not persist after it finishes.
-   * @default slide()
+   * They replace `from`, `distance`, `easing` and `bounce`.
    */
   keyframes?: RevealKeyframe[];
+  /**
+   * Where the element starts: a side of its resting position, or a start state, such as
+   * `{ scale: 0.9, blur: 8 }`. The element fades in from the start `opacity`, which is `0`.
+   * @default "bottom"
+   */
+  from?: Side | StartState;
+  /**
+   * Distance from the side of `from`. A number is in pixels.
+   * @default 24
+   */
+  distance?: number | string;
+  /**
+   * CSS easing of the entrance, or `"spring"` for a spring with `bounce`.
+   * @default "cubic-bezier(0.22, 1, 0.36, 1)"
+   */
+  easing?: string;
+  /**
+   * Overshoot of the spring, from 0 to 0.8. It turns the spring on when `easing` is not set.
+   * @default 0.3
+   */
+  bounce?: number;
   /**
    * Animation duration, in milliseconds.
    * @default 600
@@ -31,11 +55,18 @@ export interface PlayOptions {
   reducedMotion?: "user" | "always" | "never";
 }
 
-// The output of slide(), inlined so that consumers who pass their own keyframes do not bundle it.
-export const defaultKeyframes: RevealKeyframe[] = [
-  { opacity: 0, easing: "cubic-bezier(0.22, 1, 0.36, 1)", transform: "translate(0px, 24px)" },
-  {},
-];
+function keyframesOf(options: PlayOptions): RevealKeyframe[] {
+  const { keyframes, from, distance, easing, bounce } = options;
+  if (keyframes != null) return keyframes;
+  const start =
+    typeof from === "object" && from ? from : offsetFrom(from ?? "bottom", distance ?? 24);
+  // The spring resolves here, in the browser, which can check the support of linear().
+  const springs = easing === "spring" || (easing == null && bounce != null);
+  return enter({
+    ...start,
+    easing: springs ? spring({ bounce: bounce ?? undefined }) : (easing ?? undefined),
+  });
+}
 
 function supportsLinear(): boolean {
   return typeof CSS !== "object" || CSS.supports("animation-timing-function", "linear(0, 1)");
@@ -48,13 +79,13 @@ function skipsAnimation(reducedMotion: PlayOptions["reducedMotion"]): boolean {
 
 /**
  * Plays the keyframes on the element, or on its children with `stagger`.
- * Call it in the same frame that removes the hidden style, or the element flashes at its
+ * Call it in the same frame that removes the hidden attribute, or the element flashes at its
  * resting style for one frame.
  * @returns A function that cancels the animation.
  */
 export function play(element: Element, options: PlayOptions = {}): () => void {
   const { stagger } = options;
-  const keyframes = options.keyframes ?? defaultKeyframes;
+  const keyframes = keyframesOf(options);
   const duration = options.duration ?? 600;
   const delay = options.delay ?? 0;
   if (skipsAnimation(options.reducedMotion ?? "user")) return () => {};

@@ -1,4 +1,4 @@
-import { createSSRApp } from "vue";
+import { createSSRApp, nextTick } from "vue";
 import { renderToString } from "vue/server-renderer";
 
 import { animations } from "@awesome-reveal/test-utils/animate";
@@ -30,7 +30,8 @@ describe("hydration", () => {
 
     expect(element).toHaveStyle({ opacity: "0" });
     await intersect(element, true);
-    expect(element.style.opacity).toBe("");
+    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).toHaveStyle({ opacity: "1" });
     expect(animations).toHaveLength(1);
     app.unmount();
   });
@@ -40,7 +41,20 @@ describe("hydration", () => {
 
     expect(element).toHaveStyle({ opacity: "0" });
     await intersect(element, true);
-    expect(element.style.opacity).toBe("");
+    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).toHaveStyle({ opacity: "1" });
+    app.unmount();
+  });
+
+  it.each([
+    ["the Reveal component", RevealCard, { when: true }],
+    ["a v-reveal element", DirectiveBox, { options: { when: true } }],
+  ])("hydrates %s with when hidden, then plays the entrance once", async (_, component, props) => {
+    const { app, element } = await hydrate(component, props);
+
+    await nextTick();
+    expect(element).not.toHaveAttribute("data-reveal");
+    expect(animations.map((animation) => animation.element)).toEqual([element]);
     app.unmount();
   });
 

@@ -1,2 +1,1 @@
-export { Reveal } from "@awesome-reveal/vue";
-export { slide } from "@awesome-reveal/vue/keyframes";
+export { Reveal, slide } from "@awesome-reveal/vue";

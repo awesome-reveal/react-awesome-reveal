@@ -54,6 +54,11 @@ async function checkBrowser(base) {
       (await page.locator("#below").getAttribute("data-reveal")) === "hidden",
       "#below is not hidden before it scrolls into view",
     );
+    expect(
+      (await page.locator("#below").evaluate((element) => getComputedStyle(element).opacity)) ===
+        "0",
+      "reveal.css does not hide #below",
+    );
     await page.locator("#below").scrollIntoViewIfNeeded();
     await page.waitForSelector("#below:not([data-reveal])");
     await page.locator("#card").scrollIntoViewIfNeeded();

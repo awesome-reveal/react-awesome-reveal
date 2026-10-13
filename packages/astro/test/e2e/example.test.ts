@@ -69,13 +69,20 @@ describe.each([
     await page.close();
   });
 
-  it("shows the hidden elements when a print rule of the page applies", async () => {
-    await page.addStyleTag({
-      content: '@media print { [data-reveal="hidden"] { opacity: 1 !important; } }',
-    });
+  it("shows the hidden elements in print, with the rule of reveal.css", async () => {
     expect(await isHidden(page, "#stagger")).toBe(true);
 
     await page.emulateMedia({ media: "print" });
+
+    expect(await page.$eval("#stagger", (element) => getComputedStyle(element).opacity)).toBe("1");
+  });
+
+  it("shows the hidden elements when the page marks the reveal as failed", async () => {
+    expect(
+      await page.evaluate(() => document.documentElement.hasAttribute("data-reveal-ready")),
+    ).toBe(true);
+
+    await page.evaluate(() => document.documentElement.setAttribute("data-reveal-failed", ""));
 
     expect(await page.$eval("#stagger", (element) => getComputedStyle(element).opacity)).toBe("1");
   });
@@ -121,13 +128,14 @@ describe.each([
     await revealed(page, "#server-island");
   });
 
-  it("reveals with `when` when the options attribute changes", async () => {
+  it("reveals with the `when` property, and dispatches a reveal event", async () => {
     await page.locator("#toggle").scrollIntoViewIfNeeded();
     expect(await isHidden(page, "#manual")).toBe(true);
 
     await page.locator("#toggle").click();
 
     await revealed(page, "#manual");
+    expect(await page.locator("#reveal-count").textContent()).toBe("1");
   });
 
   it("reveals the elements of a page after a ClientRouter navigation", async () => {

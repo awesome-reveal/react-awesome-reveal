@@ -1,6 +1,8 @@
 ---
 import type { HTMLTag } from "astro/types";
 
+import "@awesome-reveal/core/reveal.css";
+
 import type { RevealProps } from "./index.js";
 
 type Props<Tag extends HTMLTag = "div"> = RevealProps<Tag>;
@@ -8,6 +10,10 @@ type Props<Tag extends HTMLTag = "div"> = RevealProps<Tag>;
 const {
   as: Tag = "div",
   keyframes,
+  from,
+  distance,
+  easing,
+  bounce,
   duration,
   delay,
   stagger,
@@ -28,36 +34,32 @@ const {
 
 const options = JSON.stringify({
   keyframes,
+  from,
+  distance,
+  easing,
+  bounce,
   duration,
   delay,
   stagger,
   threshold,
   rootMargin,
   once,
-  when,
   reducedMotion,
 });
 ---
 
 <awesome-reveal
   options={options}
+  when={when == null ? undefined : String(when)}
   data-astro-transition-persist={persist}
   data-astro-transition-persist-props={persistProps}
 >
-  <Tag {...attributes} data-reveal={when ? undefined : "hidden"}><slot /></Tag>
+  <Tag {...attributes} data-reveal="hidden"><slot /></Tag>
 </awesome-reveal>
 
 <style is:global>
   awesome-reveal {
     display: contents;
-  }
-
-  /* Astro CSP blocks style attributes, so the server markup hides the element with this rule. */
-  /* :where() gives it no specificity, so one print rule overrides it, as for the other adapters. */
-  @media (scripting: enabled) {
-    :where(awesome-reveal) > :where([data-reveal="hidden"]) {
-      opacity: 0 !important;
-    }
   }
 </style>
 

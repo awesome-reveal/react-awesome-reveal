@@ -1,15 +1,14 @@
 ---
-import { Reveal } from "@awesome-reveal/astro";
 import {
   blur,
   defineKeyframes,
   enter,
   fade,
   pop,
+  Reveal,
   scale,
   slide,
-  spring,
-} from "@awesome-reveal/astro/keyframes";
+} from "@awesome-reveal/astro";
 
 import PageSection from "../components/PageSection.astro";
 import ServerTime from "../components/ServerTime.astro";
@@ -22,7 +21,7 @@ const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
   },
 }));
 
-const directions = ["up", "down", "left", "right"] as const;
+const sides = ["top", "bottom", "left", "right"] as const;
 const bounces = [0, 0.3, 0.6];
 ---
 
@@ -38,26 +37,26 @@ const bounces = [0, 0.3, 0.6];
     </Reveal>
   </PageSection>
   {
-    directions.map((direction) => (
+    sides.map((side) => (
       <PageSection>
-        <Reveal as="h1" keyframes={slide({ direction, distance: 40 })} once={false}>
-          slide {direction}, every time it enters the viewport
+        <Reveal as="h1" from={side} distance={40} once={false}>
+          from the {side}, every time it enters the viewport
         </Reveal>
       </PageSection>
     ))
   }
+  <PageSection>
+    <Reveal as="h1" keyframes={slide({ from: "left", distance: "2rem" })}>
+      slide from the left, with a factory
+    </Reveal>
+  </PageSection>
   <PageSection>
     <Reveal as="h1" keyframes={pop()} once={false}>pop</Reveal>
   </PageSection>
   {
     bounces.map((bounce) => (
       <PageSection>
-        <Reveal
-          as="h1"
-          keyframes={scale({ from: 0.5, easing: spring({ bounce }) })}
-          duration={1000}
-          once={false}
-        >
+        <Reveal as="h1" from={{ scale: 0.5 }} bounce={bounce} duration={1000} once={false}>
           scale with a spring, bounce {bounce}
         </Reveal>
       </PageSection>
@@ -87,6 +86,7 @@ const bounces = [0, 0.3, 0.6];
   </PageSection>
   <PageSection>
     <button type="button" id="toggle">Toggle</button>
+    <output id="reveal-count">0</output> reveals
     <Reveal keyframes={scale()} when={false} id="manual">
       <p>Revealed manually with `when`</p>
     </Reveal>
@@ -109,10 +109,13 @@ const bounces = [0, 0.3, 0.6];
 <script>
   document.addEventListener("astro:page-load", () => {
     const toggle = document.querySelector("#toggle");
-    const manual = document.querySelector("#manual")?.parentElement;
+    const count = document.querySelector("#reveal-count");
+    const manual = document.querySelector("#manual")?.closest("awesome-reveal");
     toggle?.addEventListener("click", () => {
-      const options = JSON.parse(manual?.getAttribute("options") ?? "{}");
-      manual?.setAttribute("options", JSON.stringify({ ...options, when: !options.when }));
+      if (manual) manual.when = !manual.when;
+    });
+    manual?.addEventListener("reveal", () => {
+      if (count) count.textContent = String(Number(count.textContent) + 1);
     });
   });
 </script>

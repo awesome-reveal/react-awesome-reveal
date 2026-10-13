@@ -52,25 +52,31 @@ describe("consumer bundle", () => {
       "react/dist/Reveal.js": ["Reveal"],
       "react/dist/useReveal.js": ["useReveal"],
       "core/dist/keyframes/enter.js": ["enter"],
+      "core/dist/keyframes/from.js": ["offsetFrom"],
       "core/dist/keyframes/presets.js": ["slide"],
+      "core/dist/keyframes/spring.js": ["spring"],
       "core/dist/observe.js": ["observe"],
-      "core/dist/play.js": ["play", "defaultKeyframes"],
+      "core/dist/play.js": ["play"],
       "core/dist/report.js": ["report"],
-      "core/dist/reveal.js": ["hiddenStyle", "createReveal"],
+      "core/dist/reveal.js": ["createReveal"],
     });
-    expect(size).toBeLessThan(4700);
+    expect(size).toBeLessThan(6000);
   });
 
-  it("keeps neither Reveal nor keyframes factories for the hook alone", async () => {
+  // play() keeps enter(), offsetFrom() and spring(), because it builds the keyframes of `from`.
+  it("keeps neither Reveal nor the presets for the hook alone", async () => {
     const { keptExports, size } = await bundle("hook-only.js");
 
     expect(keptExports).toEqual({
       "react/dist/useReveal.js": ["useReveal"],
+      "core/dist/keyframes/enter.js": ["enter"],
+      "core/dist/keyframes/from.js": ["offsetFrom"],
+      "core/dist/keyframes/spring.js": ["spring"],
       "core/dist/observe.js": ["observe"],
-      "core/dist/play.js": ["play", "defaultKeyframes"],
+      "core/dist/play.js": ["play"],
       "core/dist/report.js": ["report"],
-      "core/dist/reveal.js": ["hiddenStyle", "createReveal"],
+      "core/dist/reveal.js": ["createReveal"],
     });
-    expect(size).toBeLessThan(3500);
+    expect(size).toBeLessThan(5500);
   });
 });

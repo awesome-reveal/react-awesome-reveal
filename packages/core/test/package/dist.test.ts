@@ -28,6 +28,7 @@ describe("dist", () => {
       "index.js",
       "keyframes/define.js",
       "keyframes/enter.js",
+      "keyframes/from.js",
       "keyframes/index.js",
       "keyframes/presets.js",
       "keyframes/spring.js",
@@ -57,13 +58,17 @@ describe("dist", () => {
   });
 
   it("exposes the public API of the root", async () => {
-    expect(Object.keys(await load(".")).sort()).toEqual([
-      "createReveal",
-      "hiddenStyle",
-      "observe",
-      "play",
-      "reveal",
-    ]);
+    expect(Object.keys(await load(".")).sort()).toEqual(
+      [
+        ...factories,
+        "createReveal",
+        "defineKeyframes",
+        "hiddenAttributes",
+        "observe",
+        "play",
+        "reveal",
+      ].sort(),
+    );
   });
 
   it("exposes the public API of ./keyframes", async () => {
@@ -72,8 +77,19 @@ describe("dist", () => {
     );
   });
 
+  it("ships reveal.css with types for a side-effect import", () => {
+    expect(source("reveal.css")).toBe(readFileSync(new URL("src/reveal.css", root), "utf8"));
+    expect(source("reveal.css.d.ts")).toBe("export {};\n");
+    expect(resolve("@awesome-reveal/core/reveal.css")).toBe(new URL("reveal.css", dist).pathname);
+  });
+
   it("exports only the subpaths above and package.json", () => {
-    expect(Object.keys(pkg.exports)).toEqual([".", "./keyframes", "./package.json"]);
+    expect(Object.keys(pkg.exports)).toEqual([
+      ".",
+      "./keyframes",
+      "./reveal.css",
+      "./package.json",
+    ]);
   });
 });
 

@@ -32,6 +32,10 @@ const RevealWithRef = /* @__PURE__ */ forwardRef(function Reveal(
   const {
     as,
     keyframes,
+    from,
+    distance,
+    easing,
+    bounce,
     duration,
     delay,
     stagger,
@@ -40,6 +44,7 @@ const RevealWithRef = /* @__PURE__ */ forwardRef(function Reveal(
     once,
     when,
     reducedMotion,
+    onReveal,
     ...rest
   } = props;
   const { getProps } = useReveal<Element>(props);

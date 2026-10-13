@@ -56,17 +56,31 @@ describe("Reveal on the server", () => {
     );
   });
 
-  it("renders the element visible when `when` is true", async () => {
-    expect(await render({ when: true })).toContain("<div><p>hello</p></div>");
+  it.each([true, false])("renders `when: %s` in its own attribute, hidden", async (when) => {
+    expect(await render({ when })).toBe(
+      `<awesome-reveal options="{}" when="${when}"><div data-reveal="hidden"><p>hello</p></div></awesome-reveal>`,
+    );
   });
 
-  it("renders the element hidden when `when` is false", async () => {
-    expect(await render({ when: false })).toContain('<div data-reveal="hidden">');
+  it("serializes the entrance options", async () => {
+    const html = await render({
+      from: { scale: 0.9 },
+      distance: "2rem",
+      easing: "spring",
+      bounce: 0.4,
+    });
+    const attribute = /options="([^"]*)"/.exec(html)![1]!.replaceAll("&quot;", '"');
+
+    expect(JSON.parse(attribute)).toEqual({
+      from: { scale: 0.9 },
+      distance: "2rem",
+      easing: "spring",
+      bounce: 0.4,
+    });
   });
 });
 
 describeSSRContract("Astro Reveal", {
-  inlineOpacity: false,
   drift: [],
   async render(options, style) {
     const css =

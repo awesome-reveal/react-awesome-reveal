@@ -1,2 +1,1 @@
-export { Reveal } from "@awesome-reveal/react";
-export { slide } from "@awesome-reveal/react/keyframes";
+export { Reveal, slide } from "@awesome-reveal/react";

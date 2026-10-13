@@ -111,3 +111,62 @@ describe("play reports", () => {
     expect(queued).toEqual([]);
   });
 });
+
+describe("stylesheet reports", () => {
+  function hiddenElement(opacity: string, rootAttributes = ["data-reveal-ready"]) {
+    vi.stubGlobal("getComputedStyle", () => ({ opacity }));
+    const documentElement = {
+      hasAttribute: (name: string) => rootAttributes.includes(name),
+      setAttribute() {},
+    };
+    return {
+      animate: () => ({ cancel() {} }),
+      children: [],
+      isConnected: true,
+      ownerDocument: { documentElement },
+      getAttribute: (name: string) => (name === "data-reveal" ? "hidden" : null),
+    } as unknown as Element;
+  }
+
+  it("reports a hidden element that is visible, once for each page", async () => {
+    const { createReveal } = await import("../src/reveal");
+    createReveal().attach(hiddenElement("1"));
+    createReveal().attach(hiddenElement("1"));
+    expect(thrownBy(queued)).toEqual([
+      expect.objectContaining({ message: expect.stringContaining("reveal.css") }),
+    ]);
+  });
+
+  it("does not report when reveal.css hides the element", async () => {
+    const { createReveal } = await import("../src/reveal");
+    createReveal().attach(hiddenElement("0"));
+    expect(queued).toEqual([]);
+  });
+
+  it("does not report when the recovery script showed the hidden elements", async () => {
+    const { createReveal } = await import("../src/reveal");
+    createReveal().attach(hiddenElement("1", ["data-reveal-failed"]));
+    expect(queued).toEqual([]);
+  });
+});
+
+describe("onReveal reports", () => {
+  it("reports a throwing callback from a microtask, and still plays", async () => {
+    vi.stubGlobal("getComputedStyle", () => ({ opacity: "0" }));
+    const { createReveal } = await import("../src/reveal");
+    const animate = vi.fn(() => ({ cancel() {} }));
+    const element = {
+      animate,
+      children: [],
+      isConnected: false,
+      ownerDocument: { documentElement: { hasAttribute: () => true, setAttribute() {} } },
+    } as unknown as Element;
+    const onReveal = () => {
+      throw new Error("analytics failed");
+    };
+
+    expect(() => createReveal({ when: true, onReveal }).attach(element)).not.toThrow();
+    expect(animate).toHaveBeenCalledOnce();
+    expect(thrownBy(queued)).toEqual([expect.objectContaining({ message: "analytics failed" })]);
+  });
+});

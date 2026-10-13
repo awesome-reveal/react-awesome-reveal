@@ -18,46 +18,42 @@ function render(component: Parameters<typeof createSSRApp>[0], props?: Record<st
 describe("server render", () => {
   it("renders the Reveal component hidden", async () => {
     expect(await render(RevealCard)).toBe(
-      '<section style="color:red;opacity:0;" data-reveal="hidden"><p>hello</p></section>',
+      '<section data-reveal="hidden" style="color:red;"><p>hello</p></section>',
     );
   });
 
-  it("renders the Reveal component visible with when", async () => {
+  it("renders the Reveal component hidden with when", async () => {
     const html = await render(() => h(Reveal, { when: true }, () => "hello"));
 
-    expect(html).toBe("<div>hello</div>");
+    expect(html).toBe('<div data-reveal="hidden">hello</div>');
   });
 
   it("renders a compiled v-reveal element hidden", async () => {
     expect(await render(DirectiveBox, { options: { keyframes: slide() } })).toBe(
-      '<div style="opacity:0;" data-reveal="hidden" data-allow-mismatch="style"><span>a</span><span>b</span></div>',
+      '<div style="" data-reveal="hidden"><span>a</span><span>b</span></div>',
     );
   });
 
   it("renders a v-reveal element of a render function hidden", async () => {
     const html = await render(() => withDirectives(h("div", "hello"), [[vReveal]]));
 
-    expect(html).toBe(
-      '<div style="opacity:0;" data-reveal="hidden" data-allow-mismatch="style">hello</div>',
-    );
+    expect(html).toBe('<div data-reveal="hidden">hello</div>');
   });
 
-  it("renders a v-reveal element visible with when", async () => {
+  it("renders a v-reveal element hidden with when", async () => {
     const html = await render(() => withDirectives(h("div", "hello"), [[vReveal, { when: true }]]));
 
-    expect(html).toBe("<div>hello</div>");
+    expect(html).toBe('<div data-reveal="hidden">hello</div>');
   });
 });
 
 describeSSRContract("Vue Reveal", {
-  inlineOpacity: true,
   async render(options, style) {
     return render(() => h(Reveal, { ...options, style, "data-contract": "" } as never, () => "x"));
   },
 });
 
 describeSSRContract("Vue v-reveal", {
-  inlineOpacity: true,
   drift: [],
   async render(options, style) {
     return render(() =>

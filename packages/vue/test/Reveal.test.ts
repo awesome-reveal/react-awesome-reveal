@@ -34,7 +34,7 @@ describe(`Reveal (Vue ${version})`, () => {
     const { element } = mountReveal();
     await intersect(element, true);
 
-    expect(element.style.opacity).toBe("");
+    expect(element).toHaveStyle({ opacity: "1" });
     expect(element).not.toHaveAttribute("data-reveal");
     expect(animations[0]).toMatchObject({
       element,
@@ -43,7 +43,7 @@ describe(`Reveal (Vue ${version})`, () => {
     });
   });
 
-  it("starts the animation and removes the hidden style in the task of the report", async () => {
+  it("starts the animation and removes data-reveal in the task of the report", async () => {
     const { element } = mountReveal();
     let timerRan = false;
     setTimeout(() => (timerRan = true));
@@ -51,7 +51,25 @@ describe(`Reveal (Vue ${version})`, () => {
 
     expect(timerRan).toBe(false);
     expect(animations).toHaveLength(1);
-    expect(element.style.opacity).toBe("");
+    expect(element).toHaveStyle({ opacity: "1" });
+  });
+
+  it("emits reveal with the element, and gives revealed to its slot", async () => {
+    const wrapper = mount(Reveal, {
+      props: { once: false },
+      slots: { default: ({ revealed }: { revealed: boolean }) => String(revealed) },
+      attachTo: document.body,
+    });
+    const element = wrapper.element as HTMLElement;
+    expect(element).toHaveTextContent("false");
+
+    await intersect(element, true);
+    expect(element).toHaveTextContent("true");
+    expect(wrapper.emitted("reveal")).toEqual([[element]]);
+    await intersect(element, false);
+    await intersect(element, true);
+    expect(wrapper.emitted("reveal")).toHaveLength(2);
+    wrapper.unmount();
   });
 
   it("plays the default keyframes without keyframes", async () => {
@@ -101,7 +119,7 @@ describe(`Reveal (Vue ${version})`, () => {
     expect(element).toHaveStyle({ opacity: "0" });
 
     await wrapper.setProps({ when: true });
-    expect(element.style.opacity).toBe("");
+    expect(element).toHaveStyle({ opacity: "1" });
     expect(animations).toHaveLength(1);
   });
 
@@ -182,7 +200,7 @@ describe(`Reveal (Vue ${version})`, () => {
     expect(animations[0]?.options).toMatchObject({ duration: 900 });
   });
 
-  it("merges the hidden style into the given style and restores it when revealed", async () => {
+  it("keeps the given style, which shows its opacity after the reveal", async () => {
     const { element } = mountReveal({}, { style: { color: "red", opacity: 0.5 } });
 
     expect(element).toHaveStyle({ color: "rgb(255, 0, 0)", opacity: "0" });
@@ -214,7 +232,7 @@ describe(`Reveal (Vue ${version})`, () => {
     const { element } = mountReveal();
     await Promise.resolve();
 
-    expect(element.style.opacity).toBe("");
+    expect(element).toHaveStyle({ opacity: "1" });
     expect(animations).toHaveLength(1);
   });
 });

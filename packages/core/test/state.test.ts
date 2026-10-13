@@ -1,4 +1,4 @@
-import { createReveal, type RevealState } from "../src/reveal";
+import { createReveal, type RevealStore } from "../src/reveal";
 
 class FakeObserver {
   static instances: FakeObserver[] = [];
@@ -25,16 +25,26 @@ class FakeObserver {
   }
 }
 
+const root = new Map<string, string>();
+const ownerDocument = {
+  documentElement: {
+    hasAttribute: (name: string) => root.has(name),
+    setAttribute: (name: string, value: string) => root.set(name, value),
+  },
+};
+
 function fakeElement() {
   const cancel = vi.fn();
   const animate = vi.fn(() => ({ cancel }));
-  return { element: { animate, children: [] } as unknown as Element, animate, cancel };
+  const element = { animate, children: [], isConnected: false, ownerDocument };
+  return { element: element as unknown as Element, animate, cancel };
 }
 
 const live = () => FakeObserver.instances.filter((observer) => !observer.disconnected);
 
 beforeEach(() => {
   FakeObserver.instances = [];
+  root.clear();
   vi.stubGlobal("IntersectionObserver", FakeObserver);
 });
 
@@ -45,19 +55,52 @@ afterEach(() => {
 describe("createReveal", () => {
   const options = { reducedMotion: "never" } as const;
 
-  it("is revealed before the first attach only with when: true", () => {
+  // The server renders the element hidden, so the entrance of `when: true` plays after hydration.
+  it("is hidden before the first attach, also with when: true", () => {
     expect(createReveal(options).revealed).toBe(false);
     expect(createReveal({ ...options, when: null }).revealed).toBe(false);
-    expect(createReveal({ ...options, when: true }).revealed).toBe(true);
+    expect(createReveal({ ...options, when: true }).revealed).toBe(false);
   });
 
   it("tells the listener, but observes and plays nothing, before it has an element", () => {
+    const state = createReveal({ ...options, when: false });
+    const listener = vi.fn();
+    state.subscribe(listener);
+    state.setOptions({ ...options, when: true });
+    expect(listener.mock.calls).toEqual([[true]]);
+    expect(FakeObserver.instances).toEqual([]);
+  });
+
+  it("reveals at the first attach with when: true", () => {
+    const { element, animate } = fakeElement();
     const state = createReveal({ ...options, when: true });
     const listener = vi.fn();
     state.subscribe(listener);
-    state.setOptions({ ...options, when: false });
-    expect(listener.mock.calls).toEqual([[false]]);
-    expect(FakeObserver.instances).toEqual([]);
+    state.attach(element);
+    expect(listener.mock.calls).toEqual([[true]]);
+    expect(animate).toHaveBeenCalledTimes(1);
+  });
+
+  it("marks the document as ready at the first attach", () => {
+    const state = createReveal(options);
+    expect(root.has("data-reveal-ready")).toBe(false);
+    state.attach(fakeElement().element);
+    expect(root.get("data-reveal-ready")).toBe("");
+  });
+
+  it("calls onReveal once for each reveal, also when the same element plays again", () => {
+    const { element } = fakeElement();
+    const onReveal = vi.fn();
+    const state = createReveal({ ...options, once: false, onReveal });
+    state.attach(element);
+    const observer = live()[0]!;
+    observer.report(true);
+    state.attach(null);
+    state.attach(element);
+    expect(onReveal.mock.calls).toEqual([[element]]);
+    live()[0]!.report(false);
+    live()[0]!.report(true);
+    expect(onReveal).toHaveBeenCalledTimes(2);
   });
 
   it("tells the listener and plays the animation when the element enters the viewport", () => {
@@ -192,7 +235,7 @@ describe("createReveal", () => {
   });
 
   it("calls only the last listener, and a removed listener not at all", () => {
-    const state: RevealState = createReveal({ ...options, when: false });
+    const state: RevealStore = createReveal({ ...options, when: false });
     const first = vi.fn();
     const second = vi.fn();
     state.subscribe(first);

@@ -3,7 +3,7 @@ import { enter } from "../src/keyframes/enter";
 import { blur, fade, pop, scale, slide } from "../src/keyframes/presets";
 import { spring } from "../src/keyframes/spring";
 import type { RevealKeyframe } from "../src/keyframes/types";
-import { defaultKeyframes } from "../src/play";
+import { play, type PlayOptions } from "../src/play";
 
 const factories: [string, () => RevealKeyframe[]][] = Object.entries({
   fade,
@@ -36,8 +36,26 @@ describe.each(all)("%s", (_, keyframes) => {
   });
 });
 
-test("the default keyframes match slide()", () => {
-  expect(defaultKeyframes).toEqual(slide());
+describe("play", () => {
+  function keyframesOf(options?: PlayOptions): Keyframe[] | undefined {
+    const animate = vi.fn<(keyframes: Keyframe[]) => Pick<Animation, "cancel">>(() => ({
+      cancel() {},
+    }));
+    play({ animate } as unknown as Element, options);
+    return animate.mock.calls[0]?.[0];
+  }
+
+  it.each<[string, PlayOptions | undefined, RevealKeyframe[]]>([
+    ["slides by default", undefined, slide()],
+    ["slides from a side", { from: "left", distance: 40 }, slide({ from: "left", distance: 40 })],
+    ["starts from a state", { from: { scale: 0.9, blur: 8 } }, enter({ scale: 0.9, blur: 8 })],
+    ["sets the easing", { easing: "linear" }, slide({ easing: "linear" })],
+    ["springs with a bounce", { bounce: 0.5 }, slide({ easing: spring({ bounce: 0.5 }) })],
+    ["springs with the keyword", { easing: "spring" }, slide({ easing: spring() })],
+    ["plays the keyframes as given", { keyframes: fade(), from: "left" }, fade()],
+  ])("%s", (_, options, expected) => {
+    expect(keyframesOf(options)).toEqual(expected);
+  });
 });
 
 describe("enter", () => {
@@ -69,12 +87,12 @@ describe("enter", () => {
 describe("presets", () => {
   it.each<[string, RevealKeyframe[], RevealKeyframe[]]>([
     ["fade", fade({ easing: "linear" }), enter({ easing: "linear" })],
-    ["slide moves up 24px by default", slide(), enter({ y: 24 })],
-    ["slide down", slide({ direction: "down" }), enter({ y: -24 })],
-    ["slide left", slide({ direction: "left", distance: 40 }), enter({ x: 40 })],
+    ["slide starts 24px below by default", slide(), enter({ y: 24 })],
+    ["slide from the top", slide({ from: "top" }), enter({ y: -24 })],
+    ["slide from the right", slide({ from: "right", distance: 40 }), enter({ x: 40 })],
     [
-      "slide right with a string distance",
-      slide({ direction: "right", distance: "2rem" }),
+      "slide from the left with a string distance",
+      slide({ from: "left", distance: "2rem" }),
       enter({ x: "calc(-1 * 2rem)" }),
     ],
     ["slide without a fade", slide({ opacity: 1 }), enter({ y: 24, opacity: 1 })],

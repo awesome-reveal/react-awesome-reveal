@@ -15,6 +15,7 @@
 - [Installation](#installation)
 - [Quick start](#quick-start)
 - [Entry points](#entry-points)
+- [Entrance](#entrance)
 - [Keyframes](#keyframes)
 - [The `Reveal` component](#the-reveal-component)
 - [Options](#options)
@@ -28,11 +29,11 @@
 
 ## Features
 
-- 🪶 **Tiny** – No third-party dependencies. The client script is about 1.4 kB gzipped. The keyframes run on the server, so they add nothing to it.
+- 🪶 **Tiny** – No third-party dependencies. The client script is about 2.1 kB gzipped. The keyframes run on the server, so they add nothing to it.
 - 🧭 **Astro-native** – It works with the `<ClientRouter />`, server islands, `transition:persist` and prerendered pages.
 - 🔒 **CSP-ready** – It works with `security.csp`. The server markup has no `style` attributes. Astro does not support `security.csp` with the `<ClientRouter />`.
 - ⚙️ **Native APIs** – Intersection Observer detects the reveal. Web Animations run it on the compositor where possible.
-- ♿ **Accessible** – It respects `prefers-reduced-motion` by default. Hidden content stays in the accessibility tree, and shows when JavaScript is off.
+- ♿ **Accessible** – It respects `prefers-reduced-motion` by default. Hidden content stays in the accessibility tree, and shows when JavaScript is off in current browsers.
 - 🏷 **TypeScript** – Strict types for the props, with the attributes of the tag that you choose.
 
 ## Installation
@@ -43,7 +44,7 @@ npm install @awesome-reveal/astro
 
 Use `pnpm add`, `yarn add` or `bun add` in the same way.
 
-Astro 6 or 7 is necessary. TypeScript needs `moduleResolution` set to `bundler`, `node16` or `nodenext`, because the package uses `exports` for `/keyframes`.
+Astro 6 or 7 is necessary. TypeScript needs `moduleResolution` set to `bundler`, `node16` or `nodenext`, because the package uses `exports` for its entry points.
 
 ## Quick start
 
@@ -55,63 +56,83 @@ import { Reveal } from "@awesome-reveal/astro";
 <Reveal>
   <p>I gently appear as I enter the viewport</p>
 </Reveal>
+
+<Reveal from="left">
+  <p>I come from the left</p>
+</Reveal>
 ```
 
-With no `keyframes`, the element fades in and moves up, as with `slide()`. To choose another animation, see [Keyframes](#keyframes).
+With no options, the element fades in and moves up. To change the entrance, see [Entrance](#entrance). `Reveal` adds the stylesheet that hides the elements, so you do not import a CSS file.
 
 ## Entry points
 
-| Import path                       | Contents                                                                 |
-| --------------------------------- | ------------------------------------------------------------------------ |
-| `@awesome-reveal/astro`           | The `Reveal` component, and the `RevealProps` and `RevealOptions` types. |
-| `@awesome-reveal/astro/keyframes` | The built-in keyframes, `defineKeyframes`, and their types.              |
+| Import path                       | Contents                                                                                |
+| --------------------------------- | --------------------------------------------------------------------------------------- |
+| `@awesome-reveal/astro`           | The `Reveal` component, the keyframes, and the `RevealProps` and `RevealOptions` types. |
+| `@awesome-reveal/astro/keyframes` | Only the built-in keyframes, `defineKeyframes`, and their types.                        |
 
-## Keyframes
+## Entrance
 
-The `keyframes` prop takes the keyframes that a factory of `@awesome-reveal/astro/keyframes` returns, or a keyframes array:
+The `from`, `distance`, `easing` and `bounce` props set the entrance:
 
 ```astro
 ---
 import { Reveal } from "@awesome-reveal/astro";
-import { enter, slide } from "@awesome-reveal/astro/keyframes";
 ---
 
-<Reveal keyframes={slide({ direction: "left", distance: 40 })}>…</Reveal>
-<Reveal keyframes={enter({ y: 40, scale: 0.9 })}>…</Reveal>
+<Reveal from="left" distance={40}>…</Reveal>
+<Reveal from={{ scale: 0.9, blur: 8 }} bounce={0.4}>…</Reveal>
 ```
 
-The factories run on the server, when Astro renders the page. The [`@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-reveal/core#keyframes) documents the built-in keyframes, `spring()`, `defineKeyframes` and keyframes arrays.
+`from` is a side (`"top"`, `"bottom"`, `"left"` or `"right"`) or a start state. The [Entrance options of `@awesome-reveal/core`](https://www.npmjs.com/package/@awesome-reveal/core#entrance) describe them. `easing="spring"` and `bounce` resolve in the browser.
+
+## Keyframes
+
+For an animation that the entrance props cannot give, set `keyframes`. It takes the keyframes that a factory returns, or a keyframes array:
+
+```astro
+---
+import { Reveal, enter, slide } from "@awesome-reveal/astro";
+---
+
+<Reveal keyframes={slide({ from: "left", distance: 40 })}>…</Reveal>
+<Reveal keyframes={enter({ y: 40, rotate: -5 })}>…</Reveal>
+```
+
+The factories run on the server, when Astro renders the page. So prefer `easing="spring"` to `spring()`, which can check the browser support only in the browser. The [`@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-reveal/core#keyframes) documents the built-in keyframes, `spring()`, `defineKeyframes` and keyframes arrays.
 
 ## The `Reveal` component
 
 `Reveal` renders one element around its default slot. Use `as` to choose the tag. Other attributes go to that element:
 
 ```astro
-<Reveal as="section" keyframes={slide()} class="hero" id="intro">…</Reveal>
+<Reveal as="section" from="left" class="hero" id="intro">…</Reveal>
 ```
 
 `Reveal` is an Astro component. In a React or Vue island, use [`@awesome-reveal/react`](https://www.npmjs.com/package/@awesome-reveal/react) or [`@awesome-reveal/vue`](https://www.npmjs.com/package/@awesome-reveal/vue).
 
 ## Options
 
-`Reveal` takes the [options of `@awesome-reveal/core`](https://www.npmjs.com/package/@awesome-reveal/core#options) as props. Examples are `keyframes`, `duration`, `stagger`, `once` and `when`.
+`Reveal` takes the [options of `@awesome-reveal/core`](https://www.npmjs.com/package/@awesome-reveal/core#options) as props, except `onReveal`. Examples are `from`, `duration`, `stagger`, `once` and `when`. To run code at each reveal, listen to the `reveal` event (see [Reveal from a script](#reveal-from-a-script)).
+
+With `when` set to `true`, the server renders the element hidden, and the entrance plays when the script starts.
 
 ## How it works
 
 `Reveal` renders your element inside an `<awesome-reveal>` custom element with `display: contents`:
 
 ```html
-<awesome-reveal options='{"duration":800}'>
+<awesome-reveal options='{"duration":800}' when="false">
   <section class="hero" data-reveal="hidden">…</section>
 </awesome-reveal>
 ```
 
 - The custom element reveals its first element child. One script, which Astro bundles and adds once to the page, defines it.
-- `Reveal` writes the options into the `options` attribute as JSON. So pass only plain values. The keyframes factories return plain values.
-- Each `Reveal` has its own copy of its options in the HTML. A built-in factory, such as `slide()`, adds about 100 to 200 bytes. A `defineKeyframes` factory with the default 30 steps adds about 3 kB, and `spring()` adds about 300 bytes. Gzip makes repeated copies small. For a long list, put one `Reveal` around the list and use `stagger`, so the options appear once.
+- `Reveal` writes `when` into the `when` attribute, and the other options into the `options` attribute as JSON. So pass only plain values. The keyframes factories return plain values.
+- Each `Reveal` has its own copy of its options in the HTML. The entrance props add a few bytes. A built-in factory, such as `slide()`, adds about 100 to 200 bytes. A `defineKeyframes` factory with the default 30 steps adds about 3 kB, and `spring()` adds about 300 bytes. Gzip makes repeated copies small. For a long list, put one `Reveal` around the list and use `stagger`, so the options appear once.
 - If the `options` attribute is not valid JSON when the element connects, the browser reports the error to the console, and the element reveals with the default options. If a later change is not valid JSON, the browser reports the error, and the previous options stay. A value that is `null`, a string or a number gives the default options.
-- To change the options in the browser, set the `options` attribute to new JSON. The new value replaces all the options, so merge it with the current value. A change of `when` applies at once. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
-- The element starts hidden in the server markup, with `data-reveal="hidden"` and a stylesheet rule. The rule uses `!important`, so an inline `opacity` of your own does not show the element before the script runs. The reveal restores that inline `opacity`. The element has no `style` attribute, because the `security.csp` of Astro blocks style attributes.
+- To change the other options in the browser, set the `options` attribute to new JSON. The new value replaces all the options, so merge it with the current value. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
+- The element starts hidden in the server markup, with `data-reveal="hidden"`. The `reveal.css` of `@awesome-reveal/core`, which `Reveal` imports, hides it with `opacity: 0 !important`. Your inline `opacity` applies after the reveal. The element has no `style` attribute, because the `security.csp` of Astro blocks style attributes.
 - It works with the `<ClientRouter />` and with server islands, because the custom element starts when it enters the page. A `transition:persist` element keeps its state, and does not play again after a navigation. You can put `transition:persist` on `Reveal` or on an ancestor.
 - On a page that the browser prerenders, the animation waits until the user opens the page.
 
@@ -137,14 +158,21 @@ Do not put `Reveal` directly in a `<table>`, `<tbody>` or `<tr>`. The HTML parse
 
 <script>
   document.addEventListener("astro:page-load", () => {
+    const host = document.querySelector("#details")?.closest("awesome-reveal");
+    host?.addEventListener("reveal", (event) => console.log("revealed", event.target));
     document.querySelector("#show")?.addEventListener("click", () => {
-      const host = document.querySelector("#details")?.parentElement;
-      const options = JSON.parse(host?.getAttribute("options") ?? "{}");
-      host?.setAttribute("options", JSON.stringify({ ...options, when: true }));
+      if (host) host.when = true;
     });
   });
 </script>
 ```
+
+The `<awesome-reveal>` element has these members:
+
+- `when`: `true` reveals, `false` hides, and `null` gives the control to the viewport. It is the same as the `when` attribute.
+- `revealed`: `true` while the element is revealed.
+
+The element that you render dispatches a `reveal` event, which bubbles, each time it is revealed.
 
 A bundled script runs once. The `<ClientRouter />` fires `astro:page-load` on the first load and after each navigation, so the listener comes back on the new page. Without the router, run the code directly.
 
@@ -154,16 +182,25 @@ With `when`, your code controls the reveal, and nothing observes the viewport. `
 
 - When the user prefers reduced motion, the element appears with no animation. Use `reducedMotion` to change this.
 - Hidden content uses `opacity: 0` only. It stays in the accessibility tree and in the browser's find-in-page. Links and buttons in it stay focusable and clickable.
-- The stylesheet rule that hides the element applies only in `@media (scripting: enabled)`. When JavaScript is off, the content shows. You do not need the `<noscript>` CSS of the other adapters.
-- Elements that are not revealed yet stay invisible on a printed page. Add the print rule of the [`@awesome-reveal/core` README](https://www.npmjs.com/package/@awesome-reveal/core#server-markup-javascript-off-and-print) to your stylesheet. The hidden rule has no specificity, so the print rule overrides it.
 - `data-reveal` is reserved. The reveal sets it on hidden elements, and removes it at the reveal.
-- If the script fails or a blocker stops it, the content stays hidden, because scripting is enabled. Use the [recovery recipe](https://www.npmjs.com/package/@awesome-reveal/core#recover-when-the-script-fails) of the core README. Check `customElements.get("awesome-reveal")` in its timeout, in place of the `data-reveal-ready` attribute, and add `is:inline` to its `<style>` and `<script>`, so that Astro does not scope or bundle them. With `security.csp`, allow the two inline tags with `Astro.csp.insertStyleHash()` and `Astro.csp.insertScriptHash()`.
+- The stylesheet shows the hidden elements when JavaScript is off, in Chrome 120, Firefox 113 and Safari 17 or later, and in print. You do not need a `<noscript>` or a print style.
+- If the script fails or a blocker stops it, the content stays hidden. To show it after a timeout, put this script in the document head. When the `<awesome-reveal>` element is not defined in time, the script sets `data-reveal-failed` on `<html>`, and the stylesheet shows the hidden elements. `is:inline` keeps Astro from bundling the script. Use a timeout that is longer than the load time of the script on a slow network. With `security.csp`, allow the inline script with `Astro.csp.insertScriptHash()`.
+
+```astro
+<script is:inline>
+  setTimeout(() => {
+    if (!customElements.get("awesome-reveal")) document.documentElement.setAttribute("data-reveal-failed", "");
+  }, 5000);
+</script>
+```
+
+The script checks the custom element, not the `data-reveal-ready` attribute of the [core recipe](https://www.npmjs.com/package/@awesome-reveal/core#recover-when-the-script-fails). On a prerendered page, the custom element waits until the user opens the page, so the attribute can come late.
 
 ## Browser support
 
 Chrome 84, Firefox 75 (79 on Android) and Safari 13.1, or later. Read [Browser support](https://www.npmjs.com/package/@awesome-reveal/core#browser-support) for the fallbacks.
 
-The `scripting` media feature needs Chrome 120, Firefox 113 or Safari 17. In older browsers, the stylesheet rule does not apply. The element then shows until the script hides it, and the reveal animation plays as usual.
+The `scripting` media feature needs Chrome 120, Firefox 113 or Safari 17. In older browsers, the content stays hidden when JavaScript is off.
 
 ## Agent skills
 

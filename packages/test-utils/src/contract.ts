@@ -33,11 +33,9 @@ export interface Harness {
   drift?: string[];
 }
 
-const hidden = (element: HTMLElement) =>
-  element.style.opacity === "0" && element.getAttribute("data-reveal") === "hidden";
+const hidden = (element: HTMLElement) => element.getAttribute("data-reveal") === "hidden";
 
-const shown = (element: HTMLElement) =>
-  element.style.opacity !== "0" && !element.hasAttribute("data-reveal");
+const shown = (element: HTMLElement) => !element.hasAttribute("data-reveal");
 
 const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
 
@@ -195,9 +193,9 @@ export function describeContract(name: string, harness: Harness) {
       ]);
     });
 
-    scenario("S09", "the reveal restores the inline opacity of the user", async () => {
+    scenario("S09", "the reveal keeps the inline style of the user", async () => {
       const m = await mount({}, { style: { opacity: "0.5", color: "red" } });
-      expect(m.element().style.opacity).toBe("0");
+      expect(m.element().style.opacity).toBe("0.5");
       await intersect(m, true);
       expect(m.element().style.opacity).toBe("0.5");
       expect(m.element().style.color).toBe("red");
@@ -213,7 +211,7 @@ export function describeContract(name: string, harness: Harness) {
     });
 
     if (harness.keepsElement)
-      scenario("S10b", "destroy restores a hidden element", async () => {
+      scenario("S10b", "destroy shows a hidden element", async () => {
         const m = await mount({}, { style: { opacity: "0.5" } });
         await m.unmount();
         expect(m.element().style.opacity).toBe("0.5");
@@ -263,6 +261,31 @@ export function describeContract(name: string, harness: Harness) {
         },
       );
     }
+
+    scenario("S15", "onReveal is called with the element at each reveal", async () => {
+      const onReveal = vi.fn();
+      const m = await mount({ once: false, onReveal });
+      expect(onReveal).not.toHaveBeenCalled();
+      await intersect(m, true);
+      expect(onReveal.mock.calls).toEqual([[m.element()]]);
+      await intersect(m, false);
+      await intersect(m, true);
+      expect(onReveal).toHaveBeenCalledTimes(2);
+    });
+
+    scenario("S16", "from, distance and bounce build the entrance", async () => {
+      const m = await mount({ from: "left", distance: 40, bounce: 0.5 });
+      await intersect(m, true);
+      const [start] = animations[0]!.keyframes as Keyframe[];
+      expect(start).toMatchObject({ opacity: 0, transform: "translate(-40px, 0px)" });
+      expect(start!.easing).toMatch(/^linear\(/);
+    });
+
+    scenario("S17", "the first reveal marks the document as started", async () => {
+      document.documentElement.removeAttribute("data-reveal-ready");
+      await mount();
+      expect(document.documentElement.hasAttribute("data-reveal-ready")).toBe(true);
+    });
 
     scenario("S12", "with no IntersectionObserver the element shows at once", async () => {
       vi.stubGlobal("IntersectionObserver", undefined);

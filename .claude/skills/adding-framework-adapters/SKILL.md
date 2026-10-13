@@ -21,19 +21,20 @@ Keep the item of the adapter on the plan board, https://github.com/orgs/awesome-
    - `vite-plugin-dts` emits declarations for `.vue` files only when `@vue/language-core` is installed.
    - `vite-plugin-dts` cannot emit declarations for `.svelte` files. Svelte libraries use `@sveltejs/package`.
    - Solid libraries also publish uncompiled JSX under a `"solid"` export condition, so that the consumer compiles it for the DOM or the server.
-3. Add `src/keyframes.ts` with `export * from "@awesome-reveal/core/keyframes";`, and the `./keyframes` export.
+3. Add `src/keyframes.ts` with `export * from "@awesome-reveal/core/keyframes";`, and the `./keyframes` export. Re-export the keyframes from `src/index.ts` too. Ship the stylesheet: pass `revealCss` to `defineLibConfig`, add the `./reveal.css` export with its `.d.ts`, and set `"sideEffects": ["*.css"]`. TypeScript 6 rejects a side-effect import with no declaration. A component that can import the CSS of core itself, as `Reveal.astro` does, needs no export.
 4. Write the API as a binding on core. Choose the layer for each API, not for the whole adapter, because one adapter can have both kinds:
-   - Use `reveal()` when the adapter owns an element and the framework does not render its style (directives, actions, attachments, custom elements).
-   - Use `createReveal` when the framework renders the element, as the React adapter and the Vue `<Reveal>` do. Do not call `reveal()` there: it changes the style after the framework rendered it, and that breaks hydration.
+   - Use `reveal()` when the adapter owns an element and the framework does not render its attributes (directives, actions, attachments, custom elements).
+   - Use `createReveal` when the framework renders the element, as the React adapter and the Vue `<Reveal>` do. Do not call `reveal()` there: it changes the attributes after the framework rendered them, and that breaks hydration.
    - Obey the adapter contract:
      - Take exactly the options of core, with the same names, defaults and `null` meaning. Do not add an option or a default.
      - Let one core object own the observer, the animation and `when`. Do not rebuild that state machine in the adapter.
-     - Render the hidden state of core on the revealed element: `hiddenStyle` after the user `style`, and `data-reveal="hidden"`, while `revealed` is false. The client render must equal the server markup. A stylesheet rule instead of an inline style is allowed when the framework forbids style attributes, as `security.csp` does for Astro. Then the rule must hide the element before the script, win over an inline `opacity` (`!important`), and have no specificity, so that the print rule of the docs overrides it.
+     - Render `hiddenAttributes` of core on the revealed element while `revealed` is false. Do not write a style: `reveal.css` hides the element. The client render must equal the server markup.
      - Do not replay the animation on a new element, such as a changed `as` tag. `attach` keeps the state. A directive that is bound to its element is the only exception.
-     - Treat `data-reveal` as reserved, and give back the inline `opacity` of the user at the reveal.
+     - Treat `data-reveal` as reserved, and leave the `style` of the user as it is.
+     - Pass `onReveal` to core. If the framework has events, emit an event from it, as the Vue `<Reveal>` and the Astro custom element do.
      - Do not delay the start of the animation: core starts it in the task of the report.
      - Do not catch the errors of core. It reports them.
-5. Render the hidden state in the server markup, so that the element does not show before hydration. Add a hydration test that renders on the server, hydrates in jsdom, and fails on a mismatch warning, as `packages/react/test/hydration.test.tsx` and `packages/vue/test/hydration.test.ts` do. A style that only the server renders can cause a mismatch.
+5. Render the hidden state in the server markup, so that the element does not show before hydration. Add a hydration test that renders on the server, hydrates in jsdom, and fails on a mismatch warning, as `packages/react/test/hydration.test.tsx` and `packages/vue/test/hydration.test.ts` do. An attribute that only the server renders can cause a mismatch.
 6. Add the Vitest projects to `vitest.config.ts`: `<framework>:unit`, `<framework>:package`, and `<framework>:ssr` when the framework renders on a server.
    - Give the `sources` alias to `:unit` and `:ssr`, and only the `testUtils` alias to `:package`, because `:package` tests `dist`.
    - Add the package to the coverage thresholds.
@@ -42,7 +43,7 @@ Keep the item of the adapter on the plan board, https://github.com/orgs/awesome-
    - If the components have their own file extension, such as `.vue`, make sure that `.lintstagedrc.mjs` passes it to `vitest related`.
 7. Write the unit tests with the mocks of `@awesome-reveal/test-utils`. Add a `test/intersect.ts` that wraps `intersect()` in the update scope of the framework, as `packages/react/test/intersect.ts` does. Add `test/contract.test.ts` with a harness for `describeContract` of each public API, and run `describeSSRContract` from the SSR test, as the React and Vue packages do. A scenario that fails is a bug of the adapter. Do not skip it. Use `drift` only for a known gap that has an item on the board.
 8. Port the tests of `packages/react/test/package`: the dist files and exports, the server markup, `describeDocs`, and the tree-shaking fixtures with size limits. Drop the `"use client"` test if the framework has no server components. `describeDocs` type-checks only the `ts` and `tsx` fences of the consumer skills and of the README, so put setup and keyframes examples in these fences, as whole modules with their imports.
-9. Add the consumer skills in `packages/<framework>/skills/<name>/SKILL.md`, and add `skills` to `files`. Port `adding-reveal-animations` from the React package. Include the `<noscript>` and print CSS of the core README, or say why the adapter needs none.
+9. Add the consumer skills in `packages/<framework>/skills/<name>/SKILL.md`, and add `skills` to `files`. Port `adding-reveal-animations` from the React package. Include the `reveal.css` import and the recovery script of the core README. `core/test/recipes.test.ts` checks that the script of each skill equals the script of the README.
 10. Add `examples/<framework>`, with the sections of `examples/react`.
 11. Add the package to `release-please-config.json`, with `"component"` set to the package name, and to `linked-versions`. Without `"component"`, release-please drops the npm scope from the tags. Add its path to `.release-please-manifest.json`, with the current version of core. Before the release PR merges, do "Publish a new package" in the `releasing-packages` skill. Its steps need the npm one-time codes of the user, so list them in your final report.
 12. Update the repo config for the framework:

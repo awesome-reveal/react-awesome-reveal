@@ -11,9 +11,10 @@ function render(options?: object) {
   return { host, element: host.firstElementChild as HTMLElement };
 }
 
-function connect(options: object) {
+function connect(options: object, when?: string) {
   const host = document.createElement("awesome-reveal") as RevealElement;
   host.setAttribute("options", JSON.stringify(options));
+  if (when != null) host.setAttribute("when", when);
   host.innerHTML = `<p data-reveal="hidden">hello</p>`;
   document.body.append(host);
   return { host, element: host.firstElementChild as HTMLElement };
@@ -28,7 +29,6 @@ describe("<awesome-reveal>", () => {
 
     intersect(element, true);
 
-    expect(element.style.opacity).toBe("");
     expect(element).not.toHaveAttribute("data-reveal");
     expect(animations).toHaveLength(1);
     expect(animations[0]).toMatchObject({ element, options: { duration: 100 } });
@@ -43,20 +43,49 @@ describe("<awesome-reveal>", () => {
   });
 
   it("reveals at once with `when`, and does not observe the viewport", () => {
-    const { element } = connect({ when: true });
+    const { element } = connect({}, "true");
 
-    expect(element.style.opacity).toBe("");
+    expect(element).not.toHaveAttribute("data-reveal");
     expect(observerOf(element)).toBeUndefined();
     expect(animations).toHaveLength(1);
   });
 
   it("applies a change of the options attribute", () => {
-    const { host, element } = connect({ when: false });
+    const { host, element } = connect({ duration: 100 }, "false");
+
+    host.setAttribute("options", JSON.stringify({ duration: 200 }));
+    host.when = true;
+
+    expect(animations[0]).toMatchObject({ element, options: { duration: 200 } });
+  });
+
+  it("reflects `when` in its attribute, and tells whether it is revealed", () => {
+    const { host, element } = connect({}, "false");
+    expect(host.when).toBe(false);
+    expect(host.revealed).toBe(false);
     expect(element).toHaveStyle({ opacity: "0" });
 
-    host.setAttribute("options", JSON.stringify({ when: true }));
+    host.when = true;
+    expect(host.getAttribute("when")).toBe("true");
+    expect(host.revealed).toBe(true);
+    expect(element).not.toHaveAttribute("data-reveal");
 
-    expect(element.style.opacity).toBe("");
+    host.when = null;
+    expect(host.hasAttribute("when")).toBe(false);
+    expect(host.when).toBeNull();
+    expect(observerOf(element)).toBeDefined();
+  });
+
+  it("dispatches a reveal event that bubbles from the element at each reveal", () => {
+    const { host, element } = connect({ once: false });
+    const targets: EventTarget[] = [];
+    host.addEventListener("reveal", (event) => targets.push(event.target!));
+
+    intersect(element, true);
+    intersect(element, false);
+    intersect(element, true);
+
+    expect(targets).toEqual([element, element]);
   });
 
   it("stops the observation when it leaves the document", async () => {
@@ -75,7 +104,7 @@ describe("<awesome-reveal>", () => {
     document.body.append(document.createElement("div"), host);
     await Promise.resolve();
 
-    expect(element.style.opacity).toBe("");
+    expect(element).not.toHaveAttribute("data-reveal");
     expect(observerOf(element)).toBeDefined();
     expect(animations).toHaveLength(1);
   });
@@ -87,7 +116,7 @@ describe("<awesome-reveal>", () => {
     // jsdom has no moveBefore(), which calls this callback instead of the disconnection.
     host.connectedMoveCallback();
 
-    expect(element.style.opacity).toBe("");
+    expect(element).not.toHaveAttribute("data-reveal");
     expect(observerOf(element)).toBeDefined();
   });
 
