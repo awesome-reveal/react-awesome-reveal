@@ -40,40 +40,41 @@ describe(`hydration (React ${version})`, () => {
   });
 
   it("hydrates Reveal hidden, then reveals it", async () => {
-    const element = await hydrate(
-      '<div style="opacity:0" data-reveal="hidden">x</div>',
-      <Reveal>x</Reveal>,
-    );
+    const element = await hydrate('<div data-reveal="hidden">x</div>', <Reveal>x</Reveal>);
 
     expect(element).toHaveStyle({ opacity: "0" });
     expect(animations).toHaveLength(0);
     intersect(element, true);
-    expect(element.style.opacity).toBe("");
+    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).toHaveStyle({ opacity: "1" });
     expect(animations).toHaveLength(1);
   });
 
   it("hydrates useReveal hidden, then reveals it", async () => {
-    const element = await hydrate(
-      '<div style="opacity:0" data-reveal="hidden"><span>one</span></div>',
-      <HookBox />,
-    );
+    const element = await hydrate('<div data-reveal="hidden"><span>one</span></div>', <HookBox />);
 
     expect(element).toHaveStyle({ opacity: "0" });
     expect(animations).toHaveLength(0);
     intersect(element, true);
-    expect(element.style.opacity).toBe("");
+    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).toHaveStyle({ opacity: "1" });
     expect(animations).toHaveLength(1);
   });
 
-  it("hydrates Reveal with when and plays the entrance once", async () => {
-    const element = await hydrate("<div>x</div>", <Reveal when>x</Reveal>);
+  it("hydrates Reveal with when hidden, then plays the entrance once", async () => {
+    const element = await hydrate('<div data-reveal="hidden">x</div>', <Reveal when>x</Reveal>);
 
+    expect(element).not.toHaveAttribute("data-reveal");
     expect(animations.map((animation) => animation.element)).toEqual([element]);
   });
 
-  it("hydrates useReveal with when and plays the entrance once", async () => {
-    const element = await hydrate("<div><span>one</span></div>", <HookBox when />);
+  it("hydrates useReveal with when hidden, then plays the entrance once", async () => {
+    const element = await hydrate(
+      '<div data-reveal="hidden"><span>one</span></div>',
+      <HookBox when />,
+    );
 
+    expect(element).not.toHaveAttribute("data-reveal");
     expect(animations.map((animation) => animation.element)).toEqual([element]);
   });
 });

@@ -1,7 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fade } from "../../src/keyframes/presets";
-import { type RevealController, type RevealOptions, reveal } from "../../src/reveal";
+import {
+  type RevealController,
+  type RevealGroup,
+  type RevealOptions,
+  reveal,
+} from "../../src/reveal";
 import {
   captureReports,
   mountBelowTheFold,
@@ -28,7 +33,7 @@ afterEach(() => {
 });
 
 function isHidden() {
-  return element.style.opacity === "0" && element.dataset.reveal === "hidden";
+  return element.dataset.reveal === "hidden" && getComputedStyle(element).opacity === "0";
 }
 
 function countObservers(): IntersectionObserver[] {
@@ -75,7 +80,7 @@ describe("reveal", () => {
     expect(first).toMatchObject({ opacity: "0", transform: "translate(0px, 24px)" });
   });
 
-  it("removes the hidden style and starts the animation in the same frame", async () => {
+  it("removes the hidden attribute and starts the animation in the same frame", async () => {
     controller = reveal(element, { ...options, delay: 1000 });
     let opacityAtReveal: string | undefined;
     new MutationObserver(() => {
@@ -84,7 +89,7 @@ describe("reveal", () => {
 
     scrollIntoView(element);
     await waitForReveal();
-    expect(element.getAttribute("style")).toBe("height: 100px;");
+    expect(element.getAttribute("style")).toBe("height: 100px");
     expect(element.dataset.reveal).toBeUndefined();
     expect(element.getAnimations()).toHaveLength(1);
     expect(opacityAtReveal).toBe("0");
@@ -271,70 +276,82 @@ describe("reveal", () => {
     expect(isHidden()).toBe(false);
   });
 
-  it("restores the inline opacity of the user at the reveal", async () => {
-    element.style.opacity = "0.5";
-    await revealInView();
-    expect(element.style.opacity).toBe("0.5");
-  });
-
-  it("keeps the priority of the inline opacity of the user", async () => {
-    element.style.setProperty("opacity", "0.5", "important");
-    await revealInView();
-    expect(element.style.getPropertyValue("opacity")).toBe("0.5");
-    expect(element.style.getPropertyPriority("opacity")).toBe("important");
-  });
-
-  it("takes the opacity of a style patch and hides the element again in setOptions", async () => {
+  it("hides an element with an inline opacity of the user, and keeps that opacity", async () => {
     element.style.opacity = "0.5";
     controller = reveal(element, options);
-    element.style.cssText = "color: red; opacity: 0.8";
-    controller.setOptions(options);
+    await settle();
     expect(isHidden()).toBe(true);
+
     scrollIntoView(element);
     await waitForReveal();
-    expect(element.style.opacity).toBe("0.8");
+    expect(element.style.opacity).toBe("0.5");
+    element.getAnimations()[0]!.finish();
+    expect(getComputedStyle(element).opacity).toBe("0.5");
   });
 
-  it("restores a hidden element when it is destroyed", () => {
-    element.style.opacity = "0.5";
+  it("does not let the animation show a hidden element", () => {
+    controller = reveal(element, { ...options, when: false });
+    element.animate([{ opacity: 1 }, { opacity: 1 }], { duration: 60_000 });
+    expect(isHidden()).toBe(true);
+  });
+
+  it("shows a hidden element when it is destroyed", () => {
     controller = reveal(element, options);
     expect(isHidden()).toBe(true);
     controller.destroy();
-    expect(element.style.opacity).toBe("0.5");
     expect(element).not.toHaveAttribute("data-reveal");
+    expect(getComputedStyle(element).opacity).toBe("1");
     controller.destroy();
-    expect(element.style.opacity).toBe("0.5");
-  });
-
-  it("takes the opacity of a style patch that comes with a change of when", () => {
-    element.style.opacity = "0.5";
-    controller = reveal(element, { ...options, when: false });
-    element.style.opacity = "0.8";
-    controller.setOptions({ ...options, when: true });
-    expect(element.style.opacity).toBe("0.8");
     expect(element).not.toHaveAttribute("data-reveal");
   });
 
   it("shows hidden server markup when it starts revealed", () => {
-    element.style.opacity = "0";
     element.setAttribute("data-reveal", "hidden");
     controller = reveal(element, { ...options, when: true });
-    expect(element.style.opacity).toBe("");
     expect(element).not.toHaveAttribute("data-reveal");
+    expect(element.getAnimations()).toHaveLength(1);
   });
 
-  it("keeps the opacity of the user and its priority when it starts revealed and is destroyed", () => {
-    element.style.setProperty("opacity", "0.5", "important");
-    controller = reveal(element, { ...options, when: true });
-    controller.destroy();
-    expect(element.style.getPropertyValue("opacity")).toBe("0.5");
-    expect(element.style.getPropertyPriority("opacity")).toBe("important");
+  it("marks the document as ready", () => {
+    controller = reveal(element, options);
+    expect(document.documentElement).toHaveAttribute("data-reveal-ready");
   });
 
-  it("takes hidden server markup as an element with no opacity of its own", async () => {
-    element.style.opacity = "0";
-    element.setAttribute("data-reveal", "hidden");
-    await revealInView();
-    expect(element.style.opacity).toBe("");
+  it("shows the hidden elements when the page marks the reveal as failed", () => {
+    controller = reveal(element, options);
+    document.documentElement.setAttribute("data-reveal-failed", "");
+    try {
+      expect(getComputedStyle(element).opacity).toBe("1");
+    } finally {
+      document.documentElement.removeAttribute("data-reveal-failed");
+    }
+  });
+});
+
+describe("reveal with a list", () => {
+  let group: RevealGroup | undefined;
+
+  afterEach(() => {
+    group?.destroy();
+    group = undefined;
+  });
+
+  it("reveals each element of a selector", async () => {
+    document.body.innerHTML = `<p class="item">a</p><p class="item">b</p>`;
+    const items = [...document.querySelectorAll<HTMLElement>(".item")];
+    group = reveal(".item", options);
+    for (const item of items) await expect.element(item).not.toHaveAttribute("data-reveal");
+  });
+
+  it("updates and destroys all the elements of a list", async () => {
+    document.body.innerHTML = `<p>a</p><p>b</p>`;
+    const items = [...document.querySelectorAll("p")];
+    group = reveal(items, { ...options, when: false });
+    expect(items.map((item) => item.getAttribute("data-reveal"))).toEqual(["hidden", "hidden"]);
+    group.setOptions({ ...options, when: true });
+    expect(items.map((item) => item.getAnimations().length)).toEqual([1, 1]);
+    group.setOptions({ ...options, when: false });
+    group.destroy();
+    expect(items.map((item) => item.hasAttribute("data-reveal"))).toEqual([false, false]);
   });
 });

@@ -52,6 +52,10 @@ describe("dist", () => {
     expect(imports.filter((id) => !allowed.includes(id))).toEqual([]);
   });
 
+  it("re-exports ./keyframes from the root entry", () => {
+    expect(source("index.js")).toContain('export * from "@awesome-reveal/core/keyframes";');
+  });
+
   it("exposes the public API of ./keyframes", async () => {
     expect(Object.keys(await load("./keyframes")).sort()).toEqual(
       [...factories, "defineKeyframes"].sort(),
@@ -84,17 +88,20 @@ describe("a static build of a page with the published component", () => {
     );
   }, 60_000);
 
-  it("renders the element hidden", () => {
+  it("renders the element hidden, with the reveal.css of core", () => {
     expect(site.html).toContain('<div data-reveal="hidden"><p>hello</p></div>');
+    expect([site.html, ...Object.values(site.assets)].join("\n")).toMatch(
+      /\[data-reveal=["]?hidden["]?\]\{opacity:0!important\}/,
+    );
   });
 
-  it("bundles a small client script with no keyframes factories", () => {
+  it("bundles a small client script with no presets", () => {
     const code = scripts(site);
 
     expect(code).toMatch(/customElements\.define\(["`]awesome-reveal["`]/);
-    // slide() runs in the frontmatter, so enter(), which it calls, stays on the server.
-    expect(code).not.toContain("rotate");
-    expect(code.length).toBeLessThan(2950);
+    // slide() runs in the frontmatter. play() keeps enter(), for the keyframes of `from`.
+    expect(code).not.toContain("1.56");
+    expect(code.length).toBeLessThan(5050);
   });
 });
 

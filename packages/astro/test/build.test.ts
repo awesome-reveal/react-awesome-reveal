@@ -12,6 +12,7 @@ const aliases = {
   "@awesome-reveal/astro/keyframes": source("../src/keyframes.ts"),
   "@awesome-reveal/core": source("../../core/src/index.ts"),
   "@awesome-reveal/core/keyframes": source("../../core/src/keyframes/index.ts"),
+  "@awesome-reveal/core/reveal.css": source("../../core/src/reveal.css"),
 };
 
 describe("a static build of a page with Reveal", () => {
@@ -27,10 +28,10 @@ describe("a static build of a page with Reveal", () => {
     expect(page).toMatch(/customElements\.define\(["`]awesome-reveal["`]/);
   });
 
-  it("hides the element with a stylesheet rule while scripting is enabled", () => {
-    expect(page).toMatch(
-      /@media ?\(scripting:enabled\)\{:where\(awesome-reveal\)>:where\(\[data-reveal=hidden\]\)\{opacity:0!important\}\}/,
-    );
+  it("bundles reveal.css, so the user does not import it", () => {
+    expect(page).toMatch(/\[data-reveal=["]?hidden["]?\]\{opacity:0!important\}/);
+    expect(page).toMatch(/@media ?\(scripting: ?none\)/);
+    expect(page).toMatch(/@media ?print/);
     expect(page).toMatch(/awesome-reveal\{display:contents\}/);
   });
 

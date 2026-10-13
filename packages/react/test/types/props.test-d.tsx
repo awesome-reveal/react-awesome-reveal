@@ -12,9 +12,9 @@ import {
   type SlideOptions,
 } from "../../src/keyframes";
 
-test("the root exports only the React layer", () => {
+test("the root exports the React layer and the keyframes", () => {
   expectTypeOf(api).not.toHaveProperty("default");
-  expectTypeOf(api).not.toHaveProperty("slide");
+  expectTypeOf(api.slide).toEqualTypeOf(slide);
 });
 
 test("every animation is a KeyframesFactory of its options", () => {
@@ -24,8 +24,8 @@ test("every animation is a KeyframesFactory of its options", () => {
 
   // @ts-expect-error slide has no scale option
   slide({ scale: 0.5 });
-  // @ts-expect-error up, down, left or right
-  slide({ direction: "top" });
+  // @ts-expect-error top, bottom, left or right
+  slide({ from: "up" });
 });
 
 test("defineKeyframes returns a factory of its options", () => {
@@ -63,6 +63,16 @@ test("keyframes are optional RevealKeyframe arrays", () => {
   void (<Reveal keyframes={[{ opactiy: 0 }, {}]} />);
 });
 
+test("the entrance options take a side, a start state and a spring", () => {
+  void (<Reveal from="left" distance="2rem" />);
+  void (<Reveal from={{ scale: 0.9, blur: 8 }} easing="spring" bounce={0.4} />);
+  void (<Reveal onReveal={(element) => expectTypeOf(element).toEqualTypeOf<Element>()} />);
+  // @ts-expect-error top, bottom, left or right
+  void (<Reveal from="up" />);
+  // @ts-expect-error the start state has no easing, use the easing prop
+  void (<Reveal from={{ y: 24, easing: "ease" }} />);
+});
+
 test("`as` selects the element props", () => {
   void (<Reveal as="a" keyframes={slide()} href="/" />);
   // @ts-expect-error div has no href
@@ -91,7 +101,7 @@ test("useReveal types the element props by element", () => {
   expectTypeOf(props.ref).toEqualTypeOf<RefCallback<HTMLImageElement>>();
   expectTypeOf(props.className).toEqualTypeOf<string>();
   expectTypeOf(props["data-reveal"]).toEqualTypeOf<"hidden" | undefined>();
-  expectTypeOf(getProps()).toHaveProperty("style");
+  expectTypeOf(getProps()).not.toHaveProperty("style");
   // @ts-expect-error an input ref on an image
   getProps({ ref: createRef<HTMLInputElement>() });
 });

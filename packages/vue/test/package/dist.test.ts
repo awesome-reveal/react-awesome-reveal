@@ -48,19 +48,30 @@ describe("dist", () => {
   });
 
   it.each([
-    [".", ["Reveal", "vReveal"]],
+    [".", [...factories, "Reveal", "defineKeyframes", "vReveal"].sort()],
     ["./keyframes", [...factories, "defineKeyframes"].sort()],
   ])("exposes the public API of %s", async (subpath, names) => {
     expect(Object.keys(await load(subpath)).sort()).toEqual(names);
   });
 
+  it("ships the reveal.css of core with types for a side-effect import", () => {
+    const css = new URL("../core/src/reveal.css", root);
+    expect(source("reveal.css")).toBe(readFileSync(css, "utf8"));
+    expect(source("reveal.css.d.ts")).toBe("export {};\n");
+    expect(resolve("@awesome-reveal/vue/reveal.css")).toBe(new URL("reveal.css", dist).pathname);
+  });
+
   it("exports only the subpaths above and package.json", () => {
-    expect(Object.keys(pkg.exports)).toEqual([".", "./keyframes", "./package.json"]);
+    expect(Object.keys(pkg.exports)).toEqual([
+      ".",
+      "./keyframes",
+      "./reveal.css",
+      "./package.json",
+    ]);
   });
 
   it("renders hidden content on the server", async () => {
-    const { Reveal, vReveal } = await load(".");
-    const { slide } = await load("./keyframes");
+    const { Reveal, slide, vReveal } = await load(".");
 
     const html = await renderToString(
       createSSRApp(() => [
@@ -70,8 +81,8 @@ describe("dist", () => {
     );
 
     expect(html).toBe(
-      '<!--[--><div style="opacity:0;" data-reveal="hidden"><p>hello</p></div>' +
-        '<p style="opacity:0;" data-reveal="hidden" data-allow-mismatch="style">hello</p><!--]-->',
+      '<!--[--><div data-reveal="hidden"><p>hello</p></div>' +
+        '<p data-reveal="hidden">hello</p><!--]-->',
     );
   });
 });

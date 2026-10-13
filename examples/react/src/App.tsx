@@ -1,15 +1,15 @@
 import { useRef, useState } from "react";
-import { Reveal, useReveal } from "@awesome-reveal/react";
 import {
   blur,
   defineKeyframes,
   enter,
   fade,
   pop,
+  Reveal,
   scale,
   slide,
-  spring,
-} from "@awesome-reveal/react/keyframes";
+  useReveal,
+} from "@awesome-reveal/react";
 
 import { Section } from "./components/Section";
 
@@ -28,13 +28,15 @@ function HookExample() {
 
 function ManualExample() {
   const [shown, setShown] = useState(false);
+  const [count, setCount] = useState(0);
 
   return (
     <>
       <button type="button" onClick={() => setShown((value) => !value)}>
         Toggle
       </button>
-      <Reveal keyframes={scale()} when={shown}>
+      <output>{count}</output> reveals
+      <Reveal keyframes={scale()} when={shown} onReveal={() => setCount((value) => value + 1)}>
         <p>Revealed manually with `when`</p>
       </Reveal>
     </>
@@ -59,7 +61,7 @@ export const App = () => {
     <>
       <Section>
         <Reveal>
-          <h1>The default keyframes</h1>
+          <h1>The default entrance</h1>
         </Reveal>
       </Section>
       <Section>
@@ -67,13 +69,18 @@ export const App = () => {
           <h1>fade</h1>
         </Reveal>
       </Section>
-      {(["up", "down", "left", "right"] as const).map((direction) => (
-        <Section key={direction}>
-          <Reveal as="h1" keyframes={slide({ direction, distance: 40 })} once={false}>
-            slide {direction}, every time it enters the viewport
+      {(["top", "bottom", "left", "right"] as const).map((side) => (
+        <Section key={side}>
+          <Reveal as="h1" from={side} distance={40} once={false}>
+            from the {side}, every time it enters the viewport
           </Reveal>
         </Section>
       ))}
+      <Section>
+        <Reveal as="h1" keyframes={slide({ from: "left", distance: "2rem" })}>
+          slide from the left, with a factory
+        </Reveal>
+      </Section>
       <Section>
         <Reveal as="h1" keyframes={pop()} once={false}>
           pop
@@ -81,12 +88,7 @@ export const App = () => {
       </Section>
       {[0, 0.3, 0.6].map((bounce) => (
         <Section key={bounce}>
-          <Reveal
-            as="h1"
-            keyframes={scale({ from: 0.5, easing: spring({ bounce }) })}
-            duration={1000}
-            once={false}
-          >
+          <Reveal as="h1" from={{ scale: 0.5 }} bounce={bounce} duration={1000} once={false}>
             scale with a spring, bounce {bounce}
           </Reveal>
         </Section>

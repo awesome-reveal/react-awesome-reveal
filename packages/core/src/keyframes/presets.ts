@@ -1,4 +1,5 @@
 import { enter, type EnterOptions } from "./enter.js";
+import { offsetFrom, type Side } from "./from.js";
 import type { KeyframesFactory } from "./types.js";
 
 export type FadeOptions = Pick<EnterOptions, "easing">;
@@ -7,10 +8,10 @@ export const fade: KeyframesFactory<FadeOptions> = ({ easing } = {}) => enter({ 
 
 export interface SlideOptions extends Pick<EnterOptions, "opacity" | "easing"> {
   /**
-   * Direction in which the element moves.
-   * @default "up"
+   * Side of its resting position where the element starts.
+   * @default "bottom"
    */
-  direction?: "up" | "down" | "left" | "right";
+  from?: Side;
   /**
    * Distance that the element moves. A number is in pixels.
    * @default 24
@@ -18,18 +19,9 @@ export interface SlideOptions extends Pick<EnterOptions, "opacity" | "easing"> {
   distance?: number | string;
 }
 
-function negate(distance: number | string): number | string {
-  return typeof distance === "number" ? -distance : `calc(-1 * ${distance})`;
-}
-
 export const slide: KeyframesFactory<SlideOptions> = (options = {}) => {
-  const { direction = "up", distance = 24, opacity, easing } = options;
-  // Moving up or left starts at a positive offset.
-  const offset = direction === "up" || direction === "left" ? distance : negate(distance);
-
-  return direction === "up" || direction === "down"
-    ? enter({ y: offset, opacity, easing })
-    : enter({ x: offset, opacity, easing });
+  const { from = "bottom", distance = 24, opacity, easing } = options;
+  return enter({ ...offsetFrom(from, distance), opacity, easing });
 };
 
 export interface ScaleOptions extends Pick<EnterOptions, "opacity" | "easing"> {

@@ -6,10 +6,11 @@
 
 React Awesome Reveal is now [`@awesome-reveal/react`](https://www.npmjs.com/package/@awesome-reveal/react). Version 5 of this package re-exports it, with the same entry points:
 
-| Import path                      | Same as                           |
-| -------------------------------- | --------------------------------- |
-| `react-awesome-reveal`           | `@awesome-reveal/react`           |
-| `react-awesome-reveal/keyframes` | `@awesome-reveal/react/keyframes` |
+| Import path                       | Same as                            |
+| --------------------------------- | ---------------------------------- |
+| `react-awesome-reveal`            | `@awesome-reveal/react`            |
+| `react-awesome-reveal/keyframes`  | `@awesome-reveal/react/keyframes`  |
+| `react-awesome-reveal/reveal.css` | `@awesome-reveal/react/reveal.css` |
 
 Install `@awesome-reveal/react` in new projects:
 

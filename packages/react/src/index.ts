@@ -5,3 +5,4 @@ export {
   type RevealTargetProps,
   useReveal,
 } from "./useReveal.js";
+export * from "./keyframes.js";

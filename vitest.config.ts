@@ -20,6 +20,7 @@ const sources = {
     ...aliases([
       ["@awesome-reveal/core", "packages/core/src/index.ts"],
       ["@awesome-reveal/core/keyframes", "packages/core/src/keyframes/index.ts"],
+      ["@awesome-reveal/core/reveal.css", "packages/core/src/reveal.css"],
     ]),
     ...testUtils,
   ],
@@ -60,6 +61,7 @@ export default defineConfig({
         test: {
           name: "core:browser",
           include: ["test/browser/**/*.test.ts"],
+          css: { include: [/reveal\.css$/] },
           retry: process.env.CI ? 2 : 0,
           browser: {
             enabled: true,

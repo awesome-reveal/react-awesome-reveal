@@ -45,7 +45,7 @@ describe(`useReveal (React ${version})`, () => {
     render(<Box />);
     intersect(box(), true);
 
-    expect(box().style.opacity).toBe("");
+    expect(box()).toHaveStyle({ opacity: "1" });
     expect(box()).toHaveAttribute("data-revealed", "true");
     expect(animations).toHaveLength(1);
     expect(animations[0]).toMatchObject({
@@ -85,7 +85,7 @@ describe(`useReveal (React ${version})`, () => {
     expect(box()).toHaveStyle({ opacity: "0" });
 
     intersect(box(), 0.6);
-    expect(box().style.opacity).toBe("");
+    expect(box()).toHaveStyle({ opacity: "1" });
   });
 
   it("stops observing after the first reveal by default", () => {
@@ -155,7 +155,7 @@ describe(`useReveal (React ${version})`, () => {
     expect(box()).toHaveStyle({ opacity: "0" });
 
     rerender(<Box when />);
-    expect(box().style.opacity).toBe("");
+    expect(box()).toHaveStyle({ opacity: "1" });
     expect(animations).toHaveLength(1);
   });
 
@@ -171,7 +171,7 @@ describe(`useReveal (React ${version})`, () => {
       render(<Box reducedMotion={reducedMotion} />);
       intersect(box(), true);
 
-      expect(box().style.opacity).toBe("");
+      expect(box()).toHaveStyle({ opacity: "1" });
       expect(animations).toHaveLength(count);
     },
   );
@@ -180,7 +180,7 @@ describe(`useReveal (React ${version})`, () => {
     vi.stubGlobal("IntersectionObserver", undefined);
     render(<Box />);
 
-    expect(box().style.opacity).toBe("");
+    expect(box()).toHaveStyle({ opacity: "1" });
   });
 
   it("shows the element without animation when Element.animate is not available", () => {
@@ -188,7 +188,7 @@ describe(`useReveal (React ${version})`, () => {
     render(<Box />);
     intersect(box(), true);
 
-    expect(box().style.opacity).toBe("");
+    expect(box()).toHaveStyle({ opacity: "1" });
   });
 
   it("leaves one running animation under StrictMode", () => {
@@ -200,6 +200,17 @@ describe(`useReveal (React ${version})`, () => {
     intersect(box(), true);
 
     expect(runningAnimations()).toHaveLength(1);
+  });
+
+  it("calls onReveal once for each reveal under StrictMode", () => {
+    const onReveal = vi.fn();
+    render(
+      <StrictMode>
+        <Box when onReveal={onReveal} />
+      </StrictMode>,
+    );
+
+    expect(onReveal.mock.calls).toEqual([[box()]]);
   });
 
   it("plays the entrance on a new element when `when` turns true as the old one unmounts", async () => {

@@ -1,7 +1,7 @@
 import type { Directive } from "vue";
 
 import {
-  hiddenStyle,
+  hiddenAttributes,
   type RevealController,
   reveal,
   type RevealOptions,
@@ -19,18 +19,12 @@ export const vReveal: Directive<HTMLElement, RevealOptions | undefined> = {
     controllers.set(element, reveal(element, value ?? {}));
   },
   updated(element, { value }) {
-    const controller = controllers.get(element)!;
-    // A patch of the style can replace the hidden opacity. setOptions hides the element again.
-    controller.setOptions(value ?? {});
+    controllers.get(element)!.setOptions(value ?? {});
   },
   beforeUnmount(element) {
     controllers.get(element)?.destroy();
     controllers.delete(element);
   },
-  getSSRProps({ value }) {
-    if (value?.when) return {};
-    // The client vnode has no hidden style, so a style binding on the element fails the
-    // hydration check. The attribute allows the mismatch on this element only.
-    return { style: hiddenStyle, "data-reveal": "hidden", "data-allow-mismatch": "style" };
-  },
+  // Also with `when: true`: the entrance plays after hydration.
+  getSSRProps: () => hiddenAttributes,
 };

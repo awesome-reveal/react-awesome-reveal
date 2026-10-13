@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  type CSSProperties,
   type Ref,
   type RefCallback,
   useEffect,
@@ -10,26 +9,24 @@ import {
   useSyncExternalStore,
 } from "react";
 
-import { createReveal, hiddenStyle, type RevealOptions } from "@awesome-reveal/core";
+import { createReveal, type RevealOptions } from "@awesome-reveal/core";
 
 export type { RevealOptions };
 
 export interface RevealTargetProps<T extends Element> {
   ref: RefCallback<T>;
-  style: CSSProperties | undefined;
   "data-reveal": "hidden" | undefined;
 }
 
 export interface RevealState<T extends Element> {
   revealed: boolean;
   /**
-   * Merges the reveal into the props of the element: its `ref`, and its `style` with the hidden
-   * opacity after yours. Spread the result on the element. Write your own `style` before the
-   * spread, or the hidden style is lost.
+   * Adds the reveal to the props of the element: its `ref`, merged with yours, and the
+   * `data-reveal` attribute that `reveal.css` hides. Spread the result on the element.
    */
   getProps<P extends object = object>(
-    props?: P & { ref?: Ref<T>; style?: CSSProperties },
-  ): Omit<P, "ref" | "style"> & RevealTargetProps<T>;
+    props?: P & { ref?: Ref<T> },
+  ): Omit<P, "ref"> & RevealTargetProps<T>;
 }
 
 // React 18 warns about useLayoutEffect during server rendering.
@@ -86,22 +83,18 @@ export function useReveal<T extends Element = HTMLElement>(
   const revealed = useSyncExternalStore(state.subscribe, getRevealed, getRevealed);
   useIsomorphicLayoutEffect(() => sync(options));
 
-  function getProps<P extends object = object>(
-    props?: P & { ref?: Ref<T>; style?: CSSProperties },
-  ) {
+  function getProps<P extends object = object>(props?: P & { ref?: Ref<T> }) {
     const user = props?.ref;
     let target = ref;
     if (user) {
       target = refs.get(user) ?? mergeRefs(ref, user);
       refs.set(user, target);
     }
-    const style = props?.style;
     return {
       ...props,
       ref: target,
-      style: revealed ? style : style ? { ...style, ...hiddenStyle } : hiddenStyle,
       "data-reveal": revealed ? undefined : "hidden",
-    } as Omit<P, "ref" | "style"> & RevealTargetProps<T>;
+    } as Omit<P, "ref"> & RevealTargetProps<T>;
   }
 
   return { revealed, getProps };

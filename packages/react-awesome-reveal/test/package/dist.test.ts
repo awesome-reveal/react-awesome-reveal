@@ -14,8 +14,21 @@ function load(specifier: string) {
 }
 
 describe("dist", () => {
-  it("contains only the two re-export modules and their declarations", () => {
-    expect(distFiles.sort()).toEqual(["index.d.ts", "index.js", "keyframes.d.ts", "keyframes.js"]);
+  it("contains only the two re-export modules, the stylesheet and their declarations", () => {
+    expect(distFiles.sort()).toEqual([
+      "index.d.ts",
+      "index.js",
+      "keyframes.d.ts",
+      "keyframes.js",
+      "reveal.css",
+      "reveal.css.d.ts",
+    ]);
+  });
+
+  it("ships the same stylesheet as @awesome-reveal/react", () => {
+    expect(readFileSync(resolve("react-awesome-reveal/reveal.css"), "utf8")).toBe(
+      readFileSync(resolve("@awesome-reveal/react/reveal.css"), "utf8"),
+    );
   });
 
   it.each([".", "./keyframes"])(
@@ -32,7 +45,9 @@ describe("dist", () => {
   );
 
   it("exports only the subpaths of @awesome-reveal/react", () => {
-    expect(Object.keys(pkg.exports)).toEqual([".", "./keyframes", "./package.json"]);
+    const react = JSON.parse(readFileSync(new URL("../react/package.json", root), "utf8"));
+
+    expect(Object.keys(pkg.exports)).toEqual(Object.keys(react.exports));
   });
 });
 

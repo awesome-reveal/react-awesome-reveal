@@ -1,7 +1,6 @@
 "use client";
 
-import { useReveal } from "@awesome-reveal/react";
-import { blur } from "@awesome-reveal/react/keyframes";
+import { blur, useReveal } from "@awesome-reveal/react";
 
 export function HookExample() {
   const { getProps } = useReveal<HTMLHeadingElement>({ keyframes: blur({ from: 16 }) });

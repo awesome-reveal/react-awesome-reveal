@@ -44,11 +44,13 @@ const cases = {
     typescript: true,
     files: {
       "src/main.ts": `
-import { createReveal, reveal } from "@awesome-reveal/core";
-import { enter } from "@awesome-reveal/core/keyframes";
+import "@awesome-reveal/core/reveal.css";
+import { createReveal, enter, reveal } from "@awesome-reveal/core";
+import { slide } from "@awesome-reveal/core/keyframes";
 
 const controller = reveal(document.body, { keyframes: enter({ y: 16 }) });
-controller.setOptions({ once: false });
+controller.setOptions({ once: false, keyframes: slide({ from: "left" }) });
+reveal(".card", { from: { scale: 0.9 }, bounce: 0.4 }).destroy();
 export const state = createReveal({ when: true });
 `,
       "src/ssr.ts": `
@@ -65,15 +67,21 @@ if (typeof reveal !== "function") throw new Error("reveal is not a function");
     typescript: true,
     files: {
       "src/main.tsx": `
-import { Reveal, useReveal } from "@awesome-reveal/react";
-import { fade } from "@awesome-reveal/react/keyframes";
+import "@awesome-reveal/react/reveal.css";
+import { fade, Reveal, useReveal } from "@awesome-reveal/react";
+import { slide } from "@awesome-reveal/react/keyframes";
 
 export function Card() {
   const { getProps } = useReveal<HTMLElement>({ keyframes: fade() });
   return <article {...getProps({ className: "card" })}>Card</article>;
 }
 
-export const App = () => <Reveal keyframes={fade()}><Card /></Reveal>;
+export const App = () => (
+  <Reveal from="left" onReveal={() => {}}>
+    <Card />
+    <Reveal keyframes={slide({ from: "top" })}>Slide</Reveal>
+  </Reveal>
+);
 `,
       "src/ssr.tsx": `
 import { renderToString } from "react-dom/server";
@@ -89,6 +97,7 @@ ${hiddenCheck("renderToString(<App />)")}
     typescript: true,
     files: {
       "src/main.tsx": `
+import "react-awesome-reveal/reveal.css";
 import { Reveal } from "react-awesome-reveal";
 import { fade } from "react-awesome-reveal/keyframes";
 
@@ -111,16 +120,18 @@ ${hiddenCheck("renderToString(<App />)")}
     files: {
       "src/App.vue": `
 <script setup lang="ts">
-import { Reveal, vReveal } from "@awesome-reveal/vue";
-import { fade } from "@awesome-reveal/vue/keyframes";
+import { fade, Reveal, vReveal } from "@awesome-reveal/vue";
+import { slide } from "@awesome-reveal/vue/keyframes";
 </script>
 
 <template>
-  <Reveal :keyframes="fade()">Component</Reveal>
-  <p v-reveal="{ keyframes: fade() }">Directive</p>
+  <Reveal from="left" @reveal="() => {}">Component</Reveal>
+  <Reveal :keyframes="slide({ from: 'top' })" v-slot="{ revealed }">{{ revealed }}</Reveal>
+  <p v-reveal="{ keyframes: fade(), onReveal: () => {} }">Directive</p>
 </template>
 `,
       "src/main.ts": `
+import "@awesome-reveal/vue/reveal.css";
 import { createApp } from "vue";
 import App from "./App.vue";
 
@@ -148,6 +159,8 @@ ${hiddenCheck("await renderToString(createSSRApp(App))")}
       "app/layout.tsx": `
 import type { ReactNode } from "react";
 
+import "@awesome-reveal/react/reveal.css";
+
 export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
@@ -156,18 +169,17 @@ export default function Layout({ children }: { children: ReactNode }) {
   );
 }
 `,
-      // A Server Component creates the keyframes, so they cross the server boundary as props.
+      // A Server Component creates the keyframes from the root entry, so they cross the server boundary as props.
       "app/page.tsx": `
 import Link from "next/link";
-import { Reveal } from "@awesome-reveal/react";
-import { slide, spring } from "@awesome-reveal/react/keyframes";
+import { Reveal, slide, spring } from "@awesome-reveal/react";
 
 import { Card } from "./card";
 
 export default function Page() {
   return (
     <main>
-      <Reveal id="top" keyframes={slide()}>
+      <Reveal id="top" from="left" bounce={0.3}>
         Top
       </Reveal>
       <div style={{ height: "200vh" }} />
@@ -219,11 +231,13 @@ export function Card() {
       "tsconfig.json": `{ "extends": "astro/tsconfigs/strict", "include": [".astro/types.d.ts", "**/*"], "exclude": ["dist"] }\n`,
       "src/pages/index.astro": `
 ---
-import { Reveal } from "@awesome-reveal/astro";
-import { fade } from "@awesome-reveal/astro/keyframes";
+import { fade, Reveal } from "@awesome-reveal/astro";
+import { slide } from "@awesome-reveal/astro/keyframes";
 ---
 
 <Reveal keyframes={fade()}>Hello</Reveal>
+<Reveal from="left" when={true}>From the left</Reveal>
+<Reveal keyframes={slide({ from: "top" })}>Slide</Reveal>
 `,
     },
   },

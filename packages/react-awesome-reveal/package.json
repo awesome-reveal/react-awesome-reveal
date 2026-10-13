@@ -47,7 +47,9 @@
     "skills"
   ],
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
@@ -57,6 +59,10 @@
     "./keyframes": {
       "types": "./dist/keyframes.d.ts",
       "default": "./dist/keyframes.js"
+    },
+    "./reveal.css": {
+      "types": "./dist/reveal.css.d.ts",
+      "default": "./dist/reveal.css"
     },
     "./package.json": "./package.json"
   },

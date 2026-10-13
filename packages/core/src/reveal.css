@@ -1,0 +1,22 @@
+/* `!important` wins over an inline opacity of the user, which the reveal then shows again. */
+[data-reveal="hidden"] {
+  opacity: 0 !important;
+}
+
+/* No media query matches only when scripts run in Chrome before 120, Firefox before 113 and
+   Safari before 17. So the content is hidden for all, and shown where it cannot be revealed. */
+@media (scripting: none) {
+  [data-reveal="hidden"] {
+    opacity: 1 !important;
+  }
+}
+
+@media print {
+  [data-reveal="hidden"] {
+    opacity: 1 !important;
+  }
+}
+
+html[data-reveal-failed] [data-reveal="hidden"] {
+  opacity: 1 !important;
+}

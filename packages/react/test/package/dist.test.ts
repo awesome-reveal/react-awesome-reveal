@@ -57,25 +57,36 @@ describe("dist", () => {
   });
 
   it.each([
-    [".", ["Reveal", "useReveal"]],
+    [".", [...factories, "Reveal", "defineKeyframes", "useReveal"].sort()],
     ["./keyframes", [...factories, "defineKeyframes"].sort()],
   ])("exposes the public API of %s", async (subpath, names) => {
     expect(Object.keys(await load(subpath)).sort()).toEqual(names);
   });
 
+  it("ships the reveal.css of core with types for a side-effect import", () => {
+    const css = new URL("../core/src/reveal.css", root);
+    expect(source("reveal.css")).toBe(readFileSync(css, "utf8"));
+    expect(source("reveal.css.d.ts")).toBe("export {};\n");
+    expect(resolve("@awesome-reveal/react/reveal.css")).toBe(new URL("reveal.css", dist).pathname);
+  });
+
   it("exports only the subpaths above and package.json", () => {
-    expect(Object.keys(pkg.exports)).toEqual([".", "./keyframes", "./package.json"]);
+    expect(Object.keys(pkg.exports)).toEqual([
+      ".",
+      "./keyframes",
+      "./reveal.css",
+      "./package.json",
+    ]);
   });
 
   it("renders hidden content on the server", async () => {
-    const { Reveal } = await load(".");
-    const { slide } = await load("./keyframes");
+    const { Reveal, slide } = await load(".");
 
     const html = renderToString(
       createElement(Reveal, { keyframes: slide() }, createElement("p", null, "hello")),
     );
 
-    expect(html).toBe('<div style="opacity:0" data-reveal="hidden"><p>hello</p></div>');
+    expect(html).toBe('<div data-reveal="hidden"><p>hello</p></div>');
   });
 });
 
