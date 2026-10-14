@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.0-next.6](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/astro@1.0.0-next.5...@awesome-reveal/astro@1.0.0-next.6) (2026-10-14)
+
+
+### Miscellaneous Chores
+
+* **@awesome-reveal/astro:** Synchronize awesome-reveal versions
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @awesome-reveal/core bumped to 1.0.0-next.6
+
 ## [1.0.0-next.5](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/astro@1.0.0-next.4...@awesome-reveal/astro@1.0.0-next.5) (2026-10-14)
 
 
