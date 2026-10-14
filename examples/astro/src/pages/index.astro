@@ -43,6 +43,13 @@ const sides = ["top", "right", "bottom", "left"] as const;
     </Reveal>
   </PageSection>
   <PageSection>
+    <ul id="cascade">
+      <li>One</li>
+      <li>Two</li>
+      <li>Three</li>
+    </ul>
+  </PageSection>
+  <PageSection>
     <Reveal
       as="h2"
       from={{ opacity: 0, blur: 8 }}
@@ -82,7 +89,15 @@ const sides = ["top", "right", "bottom", "left"] as const;
 </Layout>
 
 <script>
+  import { cascade } from "@awesome-reveal/core";
+
   document.addEventListener("astro:page-load", () => {
+    const list = document.querySelector("#cascade");
+    if (list) {
+      const handle = cascade(list, { from: { opacity: 0, y: 16 }, interval: 80 });
+      document.addEventListener("astro:before-swap", () => handle.dispose(), { once: true });
+    }
+
     const toggle = document.querySelector("#toggle");
     const count = document.querySelector("#reveal-count");
     const manual = document.querySelector("#manual")?.closest("awesome-reveal");

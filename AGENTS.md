@@ -20,6 +20,7 @@ Use the Node version in `.nvmrc`. jsdom needs Node `^22.22.2`, `^24.15.0` or `>=
 - `pnpm exec playwright install --with-deps --only-shell chromium firefox webkit`: run once before the browser tests.
 - `pnpm test`: the unit, SSR and browser tests. Add `--coverage` to check the CI thresholds.
 - `pnpm vitest run --project core:browser`: one project.
+- `REVEAL_BROWSERS=chromium,webkit pnpm test`: run the browser tests only in the listed browsers. The default is chromium, firefox and webkit.
 - `pnpm exec tsc -p packages/<package>/test`: type-check the tests. Vue uses `vue-tsc` instead of `tsc`. `pnpm build` type-checks only `src`.
 - `pnpm test:package`: build, then test the `dist` output with Vitest, publint and attw.
 - `pnpm build`, then `node scripts/smoke.mjs <core|react|compat|vue|astro|next> [dependency@version ...]`: install the packed tarballs into a clean project and build it. CI runs the matrix.

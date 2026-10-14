@@ -250,6 +250,9 @@ importers:
       '@awesome-reveal/astro':
         specifier: workspace:*
         version: link:../../packages/astro
+      '@awesome-reveal/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       astro:
         specifier: 'catalog:'
         version: 7.3.8(@types/node@24.19.1)(yaml@2.9.1)

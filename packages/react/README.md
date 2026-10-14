@@ -60,7 +60,7 @@ For a long list, render one `Reveal` for each item. To animate the direct childr
 
 The server markup has `data-reveal="hidden"`. The package stylesheet hides this markup until hydration. The stylesheet shows the content for reduced motion, for print, and when scripting is off (`scripting: none`). Reduced motion always has priority over the animation and over `when: false`.
 
-`Reveal` is a Client Component boundary, so a Next.js Server Component can render it with serializable options, also native keyframes. The hook and the callbacks need a Client Component. In native Node SSR, the internal stylesheet import resolves to an empty module. In a browser bundler, it resolves to the CSS.
+`Reveal` is a Client Component boundary, so a Next.js Server Component can render it with serializable options, also native keyframes. The hook and the callbacks need a Client Component. On the server, the `node` import condition resolves the internal stylesheet import to an empty module. The browser build resolves it to the CSS.
 
 If hydration fails while JavaScript is on, the content can stay hidden. See [Recover when the script fails](#recover-when-the-script-fails).
 

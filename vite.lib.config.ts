@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { defineConfig, type Plugin, type PluginOption } from "vite";
 import dts from "vite-plugin-dts";
 
-/** Emits reveal.css for browser bundlers, and an empty module for native Node SSR. */
+/** Emits reveal.css for the browser build, and an empty module for the `node` import condition. */
 export function revealCss(css: URL): Plugin {
   return {
     name: "reveal-css",

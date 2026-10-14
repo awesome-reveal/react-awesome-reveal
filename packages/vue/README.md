@@ -36,7 +36,7 @@ For a long list, use one reveal for each item. To animate the direct children of
 
 ## SSR and accessibility
 
-On the server, the component and the directive add `data-reveal="hidden"`. The package stylesheet hides this markup until hydration, so the content does not flash. The stylesheet shows the content for reduced motion, for print, and when scripting is off. In native Node SSR, the internal stylesheet import resolves to an empty module. In a browser bundler, it resolves to the CSS.
+On the server, the component and the directive add `data-reveal="hidden"`. The package stylesheet hides this markup until hydration, so the content does not flash. The stylesheet shows the content for reduced motion, for print, and when scripting is off. On the server, the `node` import condition resolves the internal stylesheet import to an empty module. The browser build resolves it to the CSS.
 
 Reduced motion shows the content immediately and cancels the active animation. The package does not change your styles. If hydration fails while JavaScript is on, the content can stay hidden. See [Recover when the script fails](#recover-when-the-script-fails).
 
