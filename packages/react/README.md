@@ -42,7 +42,7 @@ export function Card() {
 }
 ```
 
-Spread `getProps()` on one element. Give your own `ref` to `getProps()`, so that the hook can merge it with its ref. The hook does not change your styles. For a custom component, pass the ref and the `data-awesome-reveal` prop to a DOM element. The package reserves `data-awesome-reveal`.
+Spread `getProps()` on one element. Give your own `ref` to `getProps()`, so that the hook can merge it with its ref. The hook does not change your styles. For a custom component, pass the ref and the `data-awesome-reveal` prop to a DOM element. The package reserves `data-awesome-reveal` and `data-awesome-reveal-ready`.
 
 `when: true` reveals the element manually, and `when: false` resets it without an exit animation. To let the viewport control the reveal, omit `when` or set it to `null`. When the viewport controls the reveal, the entrance plays one time, and the observation stops when the entrance starts. A change of `when` from `false` to `true` plays the entrance again. `when: false` during the `delay` also resets the element, and the entrance does not play.
 
@@ -109,14 +109,15 @@ Reduced motion always has priority over the entrance and over `when: false`.
 
 `Reveal` and `Cascade` are Client Component boundaries, so a Next.js Server Component can render them with serializable options. Native keyframes are serializable too. The hook and the callbacks need a Client Component. On the server, the `node` import condition resolves the internal stylesheet import to an empty module. The browser build resolves it to the CSS.
 
-The stylesheet hides the server markup for at most 5 seconds before the script attaches the element. When it attaches the element, it adds `data-awesome-reveal-ready`, and the element stays hidden until it reveals. So if the script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again and plays its entrance. This happens with slow hydration, and each time with lazy hydration, such as an Astro `client:visible` island. Hydrate reveal content eagerly.
+The stylesheet hides the server markup for at most 5 seconds before the script attaches the element. At the attach, the package adds `data-awesome-reveal-ready` to the element, and the element stays hidden until it reveals. So if the script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again until it reveals. This happens with slow hydration, and often with lazy hydration, such as an Astro `client:visible` island, when the user scrolls to the content after 5 seconds. Hydrate reveal content eagerly.
 
 ### Limits
 
 - The stylesheet does not reach a shadow root, so it does not hide an element in a shadow root before the reveal.
 - Do not give a hidden element an inline `opacity` with `!important`. It has priority over the stylesheet, so the element shows before the reveal.
-- The stylesheet hides with the `awesome-reveal-hold` CSS animation, which replaces your own `animation` on a hidden element until it reveals. An `animation` with `!important` of your own stops the hold. The hold fires `animationstart` and `animationend` events, and shows in `getAnimations()`.
-- Focus in a hidden element reveals it, but not with `when: false`. Do not hide the only way to a control with `when: false`.
+- The stylesheet hides with the `awesome-reveal-hold` CSS animation, which replaces your own `animation` on a hidden element until it reveals. An `animation` of your own with `!important` can win over the hold. Then the element shows until the script attaches it. The hold fires `animationstart` and `animationend` events, and shows in `getAnimations()`.
+- Focus in a waiting element reveals it, but not with `when: false`. Do not hide the only way to a control with `when: false`.
+- In browsers without the `scripting` media feature, such as Safari 16, content shows after 5 seconds when JavaScript is off.
 
 ## Migrating from v4
 

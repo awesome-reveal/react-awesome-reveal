@@ -76,14 +76,15 @@ On the server, the `node` import condition resolves the internal stylesheet impo
 
 Reduced motion shows the content immediately and cancels the active animation. The package does not change your styles.
 
-The stylesheet hides the server markup for at most 5 seconds before the script attaches the element. When it attaches the element, it adds `data-awesome-reveal-ready`, and the element stays hidden until it reveals. So if the script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again and plays its entrance. This happens with slow hydration, and each time with lazy hydration, such as `hydrateOnVisible()` or a Nuxt `hydrate-on-visible` component. Hydrate reveal content eagerly.
+The stylesheet hides the server markup for at most 5 seconds before the script attaches the element. At the attach, the package adds `data-awesome-reveal-ready` to the element, and the element stays hidden until it reveals. So if the script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again until it reveals. This happens with slow hydration, and often with lazy hydration, such as `hydrateOnVisible()` or a Nuxt `hydrate-on-visible` component, when the user scrolls to the content after 5 seconds. Hydrate reveal content eagerly.
 
 ### Limits
 
 - The stylesheet does not reach a shadow root, so it does not hide an element in a shadow root before the reveal.
 - Do not give a hidden element an inline `opacity` with `!important`. It has priority over the stylesheet, so the element shows before the reveal.
-- The stylesheet hides with the `awesome-reveal-hold` CSS animation, which replaces your own `animation` on a hidden element until it reveals. An `animation` with `!important` of your own stops the hold. The hold fires `animationstart` and `animationend` events, and shows in `getAnimations()`.
-- Focus in a hidden element reveals it, but not with `when: false`. Do not hide the only way to a control with `when: false`.
+- The stylesheet hides with the `awesome-reveal-hold` CSS animation, which replaces your own `animation` on a hidden element until it reveals. An `animation` of your own with `!important` can win over the hold. Then the element shows until the script attaches it. The hold fires `animationstart` and `animationend` events, and shows in `getAnimations()`.
+- Focus in a waiting element reveals it, but not with `when: false`. Do not hide the only way to a control with `when: false`.
+- In browsers without the `scripting` media feature, such as Safari 16, content shows after 5 seconds when JavaScript is off.
 
 ## Agent skills and license
 

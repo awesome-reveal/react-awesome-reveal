@@ -53,7 +53,7 @@ export function observe(
       { threshold: [0, minimum] },
     );
     observer.observe(element);
-    // Focus in a waiting element must not stay invisible.
+    // A focused element must not stay invisible.
     element.addEventListener("focusin", enter);
   } catch (error) {
     disconnect();

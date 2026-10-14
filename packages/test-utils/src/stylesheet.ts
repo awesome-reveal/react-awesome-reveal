@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 // Vitest turns CSS imports into empty strings, also with ?raw. In jsdom, import.meta.url is not a file URL.
-// jsdom matches only the media type, so the sheet keeps the hiding rules for every jsdom page.
+// jsdom applies an @media block only when its query is exactly `screen`, so the first query becomes `screen`.
 const css = readFileSync(
   resolve(import.meta.dirname, "../../react/src/reveal.css"),
   "utf8",

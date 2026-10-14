@@ -40,7 +40,7 @@ if (host) host.when = true;
 
 ## SSR and accessibility
 
-The server markup has `data-awesome-reveal="hidden"`, or `data-awesome-reveal="cascade"` for a cascade. The package stylesheet hides this element, or the direct children of a cascade, until the client script runs. The stylesheet shows the content in these cases:
+The server markup has `data-awesome-reveal="hidden"`, or `data-awesome-reveal="cascade"` for a cascade. The package stylesheet hides this element, or the direct children of a cascade, until it reveals. The stylesheet shows the content in these cases:
 
 - The user prefers reduced motion.
 - The user prints the page.
@@ -56,14 +56,15 @@ Reveals work in these cases:
 
 A prerendered page does not animate until the browser activates it.
 
-The stylesheet hides the server markup for at most 5 seconds before the client script attaches the element. When it attaches the element, it adds `data-awesome-reveal-ready`, and the element stays hidden until it reveals. So if the client script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again and plays its entrance. This can happen when the client script loads slowly, for example on a slow network.
+The stylesheet hides the server markup for at most 5 seconds before the client script attaches the element. At the attach, the package adds `data-awesome-reveal-ready` to the element, and the element stays hidden until it reveals. So if the client script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again until it reveals. This can happen when the client script loads slowly, for example on a slow network.
 
 ### Limits
 
 - The stylesheet does not reach a shadow root, so it does not hide an element in a shadow root before the reveal.
 - Do not give a hidden element an inline `opacity` with `!important`. It has priority over the stylesheet, so the element shows before the reveal.
-- The stylesheet hides with the `awesome-reveal-hold` CSS animation, which replaces your own `animation` on a hidden element until it reveals. An `animation` with `!important` of your own stops the hold. The hold fires `animationstart` and `animationend` events, and shows in `getAnimations()`.
-- Focus in a hidden element reveals it, but not with `when: false`. Do not hide the only way to a control with `when: false`.
+- The stylesheet hides with the `awesome-reveal-hold` CSS animation, which replaces your own `animation` on a hidden element until it reveals. An `animation` of your own with `!important` can win over the hold. Then the element shows until the script attaches it. The hold fires `animationstart` and `animationend` events, and shows in `getAnimations()`.
+- Focus in a waiting element reveals it, but not with `when: false`. Do not hide the only way to a control with `when: false`.
+- In browsers without the `scripting` media feature, such as Safari 16, content shows after 5 seconds when JavaScript is off.
 
 ## Agent skills and license
 
