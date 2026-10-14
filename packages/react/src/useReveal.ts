@@ -9,7 +9,7 @@ import {
   useSyncExternalStore,
 } from "react";
 
-import "#reveal-style";
+import "#reveal-style.css";
 
 import {
   type CascadeOptions,

@@ -21,7 +21,7 @@ it("exposes only the framework primitives and package-owned CSS", () => {
 });
 it("automatically imports SSR visibility CSS through its bindings", () => {
   for (const file of ["Reveal.js", "vReveal.js"])
-    expect(readFileSync(new URL(file, dist), "utf8")).toContain('import "#reveal-style"');
+    expect(readFileSync(new URL(file, dist), "utf8")).toContain('import "#reveal-style.css"');
 });
 it("renders hidden server content without setup", async () => {
   const html = await renderToString(
