@@ -5,6 +5,8 @@ interface RecordedAnimation {
   keyframes: Keyframe[] | PropertyIndexedKeyframes | null;
   options: number | KeyframeAnimationOptions | undefined;
   cancel: Mock<() => void>;
+  pause: Mock<() => void>;
+  play: Mock<() => void>;
 }
 
 export const animations: RecordedAnimation[] = [];
@@ -17,8 +19,10 @@ export function runningAnimations(): RecordedAnimation[] {
 export function installAnimate() {
   Element.prototype.animate = function (this: Element, keyframes, options) {
     const cancel = vi.fn();
-    animations.push({ element: this, keyframes, options, cancel });
-    return { cancel } as unknown as Animation;
+    const pause = vi.fn();
+    const play = vi.fn();
+    animations.push({ element: this, keyframes, options, cancel, pause, play });
+    return { cancel, pause, play } as unknown as Animation;
   };
 }
 

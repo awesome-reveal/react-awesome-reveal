@@ -1,30 +1,35 @@
+import "#reveal-style";
+
 import type { Directive } from "vue";
-
 import {
+  createReveal,
   hiddenAttributes,
-  type RevealController,
-  reveal,
   type RevealOptions,
-} from "@awesome-reveal/core";
+  type RevealStore,
+} from "@awesome-reveal/core/adapter";
 
-const controllers = new WeakMap<HTMLElement, RevealController>();
+const stores = new WeakMap<HTMLElement, RevealStore>();
 
-/**
- * Animates the element when it enters the viewport: `<div v-reveal="{ keyframes: slide() }">`.
- */
+/** Reveals an existing element and follows reactive directive options. */
 export const vReveal: Directive<HTMLElement, RevealOptions | undefined> = {
-  // Runs `updated` when a reactive options object changes in place.
   deep: true,
   mounted(element, { value }) {
-    controllers.set(element, reveal(element, value ?? {}));
+    const state = createReveal(value);
+    state.subscribe((visible) => {
+      if (visible) element.removeAttribute("data-reveal");
+      else element.setAttribute("data-reveal", "hidden");
+    });
+    element.setAttribute("data-reveal", "hidden");
+    stores.set(element, state);
+    state.attach(element);
   },
   updated(element, { value }) {
-    controllers.get(element)!.setOptions(value ?? {});
+    stores.get(element)?.setOptions(value ?? {});
   },
   beforeUnmount(element) {
-    controllers.get(element)?.destroy();
-    controllers.delete(element);
+    stores.get(element)?.attach(null);
+    stores.delete(element);
+    element.removeAttribute("data-reveal");
   },
-  // Also with `when: true`: the entrance plays after hydration.
   getSSRProps: () => hiddenAttributes,
 };

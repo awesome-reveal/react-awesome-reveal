@@ -9,15 +9,19 @@ import {
   useSyncExternalStore,
 } from "react";
 
-import { createReveal, type RevealOptions } from "@awesome-reveal/core";
+import "#reveal-style";
+
+import { createReveal, type RevealOptions } from "@awesome-reveal/core/adapter";
 
 export type { RevealOptions };
 
+/** Binds an element ref and its initial visibility to a reveal. */
 export interface RevealTargetProps<T extends Element> {
   ref: RefCallback<T>;
   "data-reveal": "hidden" | undefined;
 }
 
+/** Provides reveal state and props for an existing element. */
 export interface RevealState<T extends Element> {
   revealed: boolean;
   /**
@@ -56,7 +60,7 @@ function mergeRefs<T>(own: RefCallback<T>, user: NonNullable<Ref<T>>): RefCallba
 // one microtask, so a callback ref that changes in one commit does not replay the animation.
 function createBinding<T extends Element>(options: RevealOptions) {
   const state = createReveal(options);
-  // Stops a stable user ref from being called with null and the node again on each render.
+  // One merged ref for each user ref, so that React does not call a stable user ref again on each render.
   const refs = new WeakMap<object, RefCallback<T>>();
   let element: T | null = null;
   let attached: T | null = null;
@@ -75,6 +79,7 @@ function createBinding<T extends Element>(options: RevealOptions) {
   return { state, refs, ref, sync, getRevealed };
 }
 
+/** Reveals an existing element through props that you spread on it. */
 export function useReveal<T extends Element = HTMLElement>(
   options: RevealOptions = {},
 ): RevealState<T> {

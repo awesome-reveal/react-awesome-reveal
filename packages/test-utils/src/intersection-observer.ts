@@ -1,7 +1,6 @@
 export class MockIntersectionObserver {
   static readonly instances = new Set<MockIntersectionObserver>();
 
-  readonly rootMargin: string;
   readonly thresholds: readonly number[];
   readonly elements = new Set<Element>();
 
@@ -9,7 +8,6 @@ export class MockIntersectionObserver {
     private readonly callback: IntersectionObserverCallback,
     options: IntersectionObserverInit = {},
   ) {
-    this.rootMargin = options.rootMargin ?? "0px";
     this.thresholds = [options.threshold ?? 0].flat();
     MockIntersectionObserver.instances.add(this);
   }

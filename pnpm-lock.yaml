@@ -291,6 +291,9 @@ importers:
 
   examples/react:
     dependencies:
+      '@awesome-reveal/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@awesome-reveal/react':
         specifier: workspace:*
         version: link:../../packages/react
@@ -316,6 +319,9 @@ importers:
 
   examples/vue:
     dependencies:
+      '@awesome-reveal/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@awesome-reveal/vue':
         specifier: workspace:*
         version: link:../../packages/vue

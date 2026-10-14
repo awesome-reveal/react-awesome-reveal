@@ -1,101 +1,32 @@
 import { createRef, type RefCallback } from "react";
 
-import * as api from "../../src";
 import { Reveal, useReveal } from "../../src";
-import {
-  defineKeyframes,
-  enter,
-  type EnterOptions,
-  type KeyframesFactory,
-  type RevealKeyframe,
-  slide,
-  type SlideOptions,
-} from "../../src/keyframes";
-
-test("the root exports the React layer and the keyframes", () => {
-  expectTypeOf(api).not.toHaveProperty("default");
-  expectTypeOf(api.slide).toEqualTypeOf(slide);
-});
-
-test("every animation is a KeyframesFactory of its options", () => {
-  expectTypeOf(enter).toEqualTypeOf<KeyframesFactory<EnterOptions>>();
-  expectTypeOf(slide).toEqualTypeOf<KeyframesFactory<SlideOptions>>();
-  expectTypeOf(slide()).toEqualTypeOf<RevealKeyframe[]>();
-
-  // @ts-expect-error slide has no scale option
-  slide({ scale: 0.5 });
-  // @ts-expect-error top, bottom, left or right
-  slide({ from: "up" });
-});
-
-test("defineKeyframes returns a factory of its options", () => {
-  const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
-    keyframe: (t) => ({ opacity: t, rotate: `${turns * t}turn` }),
-  }));
-  const plain = defineKeyframes(() => ({ keyframe: (t) => ({ opacity: t }) }));
-
-  expectTypeOf(spin).toEqualTypeOf<KeyframesFactory<{ turns?: number }>>();
-  expectTypeOf(plain).toEqualTypeOf<KeyframesFactory>();
-  // @ts-expect-error plain has no options
-  plain({ turns: 2 });
-});
-
 test("Reveal types its ref by the rendered element", () => {
-  void (<Reveal keyframes={slide()} ref={createRef<HTMLDivElement>()} />);
-  void (<Reveal as="input" keyframes={slide()} ref={createRef<HTMLInputElement>()} />);
-  void (<Reveal keyframes={slide()} ref={(node: HTMLDivElement | null) => void node} />);
+  void (<Reveal keyframes={[{ opacity: 0 }, {}]} ref={createRef<HTMLDivElement>()} />);
+  void (<Reveal as="input" keyframes={[{ opacity: 0 }, {}]} ref={createRef<HTMLInputElement>()} />);
+  void (
+    <Reveal keyframes={[{ opacity: 0 }, {}]} ref={(node: HTMLDivElement | null) => void node} />
+  );
   // @ts-expect-error a div ref on an input
-  void (<Reveal as="input" keyframes={slide()} ref={createRef<HTMLDivElement>()} />);
+  void (<Reveal as="input" keyframes={[{ opacity: 0 }, {}]} ref={createRef<HTMLDivElement>()} />);
 });
 
-test("keyframes are optional RevealKeyframe arrays", () => {
-  expectTypeOf<RevealKeyframe[]>().toExtend<Keyframe[]>();
-  expectTypeOf<Keyframe[]>().toExtend<RevealKeyframe[]>();
-
+test("native keyframes and from are mutually exclusive", () => {
   void (<Reveal keyframes={[{ opacity: 0, "--progress": 0 }, {}]} />);
-  void (<Reveal />);
+  void (<Reveal from={{ scale: 0.9, blur: "1rem" }} when />);
   useReveal();
-  // @ts-expect-error keyframes are not strings
-  void (<Reveal keyframes="fadeIn" />);
-  // @ts-expect-error call the factory to get its keyframes
-  void (<Reveal keyframes={slide} />);
-  // @ts-expect-error typo in a CSS property
-  void (<Reveal keyframes={[{ opactiy: 0 }, {}]} />);
-});
-
-test("the entrance options take a side, a start state and a spring", () => {
-  void (<Reveal from="left" distance="2rem" />);
-  void (<Reveal from={{ scale: 0.9, blur: 8 }} easing="spring" bounce={0.4} />);
-  void (<Reveal onReveal={(element) => expectTypeOf(element).toEqualTypeOf<Element>()} />);
-  // @ts-expect-error top, bottom, left or right
-  void (<Reveal from="up" />);
-  // @ts-expect-error the start state has no easing, use the easing prop
-  void (<Reveal from={{ y: 24, easing: "ease" }} />);
+  // @ts-expect-error exclusive animation choices
+  void (<Reveal from="left" keyframes={[{}]} />);
 });
 
 test("`as` selects the element props", () => {
-  void (<Reveal as="a" keyframes={slide()} href="/" />);
+  void (<Reveal as="a" keyframes={[{ opacity: 0 }, {}]} href="/" />);
   // @ts-expect-error div has no href
-  void (<Reveal keyframes={slide()} href="/" />);
-});
-
-test("v4 props are removed", () => {
-  // @ts-expect-error use stagger
-  void (<Reveal keyframes={slide()} cascade />);
-  // @ts-expect-error use stagger
-  void (<Reveal keyframes={slide()} damping={0.5} />);
-  // @ts-expect-error use threshold
-  void (<Reveal keyframes={slide()} fraction={0.5} />);
-  // @ts-expect-error use once
-  void (<Reveal keyframes={slide()} triggerOnce />);
-  // @ts-expect-error style the children directly
-  void (<Reveal keyframes={slide()} childClassName="child" />);
-  // @ts-expect-error use useReveal
-  void (<Reveal keyframes={slide()} onVisibilityChange={() => {}} />);
+  void (<Reveal keyframes={[{ opacity: 0 }, {}]} href="/" />);
 });
 
 test("useReveal types the element props by element", () => {
-  const { getProps } = useReveal<HTMLImageElement>({ keyframes: slide() });
+  const { getProps } = useReveal<HTMLImageElement>({ keyframes: [{ opacity: 0 }, {}] });
   const props = getProps({ className: "card", ref: createRef<HTMLImageElement>() });
 
   expectTypeOf(props.ref).toEqualTypeOf<RefCallback<HTMLImageElement>>();

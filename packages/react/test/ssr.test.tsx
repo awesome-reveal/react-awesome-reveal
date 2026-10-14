@@ -3,14 +3,14 @@ import type { CSSProperties } from "react";
 
 import { describeSSRContract } from "@awesome-reveal/test-utils/contract-ssr";
 
-import { slide } from "../src/keyframes";
+import { defaultKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
 import { Reveal } from "../src/Reveal";
 import { type RevealOptions, useReveal } from "../src/useReveal";
 
 // The setup fails the test if React warns, for example about useLayoutEffect on React 18.
 test("renders hidden content on the server without warnings", () => {
   const html = renderToString(
-    <Reveal keyframes={slide()}>
+    <Reveal keyframes={defaultKeyframes}>
       <p>hello</p>
     </Reveal>,
   );

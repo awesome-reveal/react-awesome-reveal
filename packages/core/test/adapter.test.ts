@@ -1,4 +1,4 @@
-import { createReveal, type RevealStore } from "../src/reveal";
+import { createReveal, type RevealStore } from "../src/adapter";
 
 class FakeObserver {
   static instances: FakeObserver[] = [];
@@ -35,7 +35,7 @@ const ownerDocument = {
 
 function fakeElement() {
   const cancel = vi.fn();
-  const animate = vi.fn(() => ({ cancel }));
+  const animate = vi.fn(() => ({ cancel, pause: vi.fn(), play: vi.fn() }));
   const element = { animate, children: [], isConnected: false, ownerDocument };
   return { element: element as unknown as Element, animate, cancel };
 }
@@ -53,7 +53,7 @@ afterEach(() => {
 });
 
 describe("createReveal", () => {
-  const options = { reducedMotion: "never" } as const;
+  const options = {};
 
   // The server renders the element hidden, so the entrance of `when: true` plays after hydration.
   it("is hidden before the first attach, also with when: true", () => {
@@ -110,7 +110,7 @@ describe("createReveal", () => {
     state.subscribe((revealed) => order.push(`listener ${revealed}`));
     animate.mockImplementation(() => {
       order.push("play");
-      return { cancel: vi.fn() };
+      return { cancel: vi.fn(), pause: vi.fn(), play: vi.fn() };
     });
     state.attach(element);
     live()[0]!.report(true);
@@ -216,7 +216,7 @@ describe("createReveal", () => {
     expect(animate).toHaveBeenCalledTimes(2);
   });
 
-  it("restarts the observer only for when, threshold, rootMargin and once", () => {
+  it("restarts the observer only for when, threshold and once", () => {
     const state = createReveal({ ...options, threshold: 0.5 });
     state.attach(fakeElement().element);
     const first = live()[0]!;
@@ -225,7 +225,6 @@ describe("createReveal", () => {
       ...options,
       threshold: 0.5,
       duration: 100,
-      rootMargin: null,
       when: null,
     } as never);
     expect(live()).toEqual([first]);
@@ -257,4 +256,23 @@ describe("createReveal", () => {
     state.setOptions(mutable);
     expect(live()[0]).not.toBe(first);
   });
+});
+
+it("reports a throwing adapter callback once without breaking the reveal", () => {
+  const callbacks: VoidFunction[] = [];
+  vi.stubGlobal("queueMicrotask", (callback: VoidFunction) => callbacks.push(callback));
+  const error = new Error("callback failure");
+  const state = createReveal({
+    once: false,
+    onReveal: () => {
+      throw error;
+    },
+  });
+  state.attach(fakeElement().element);
+  live()[0]!.report(true);
+  live()[0]!.report(false);
+  live()[0]!.report(true);
+  expect(state.revealed).toBe(true);
+  expect(callbacks).toHaveLength(1);
+  expect(callbacks[0]).toThrow(error);
 });

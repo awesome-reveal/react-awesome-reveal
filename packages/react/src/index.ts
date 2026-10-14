@@ -5,4 +5,4 @@ export {
   type RevealTargetProps,
   useReveal,
 } from "./useReveal.js";
-export * from "./keyframes.js";
+export type { Side, StartState } from "@awesome-reveal/core";

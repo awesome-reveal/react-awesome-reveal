@@ -1,82 +1,55 @@
 ---
-import {
-  blur,
-  defineKeyframes,
-  enter,
-  fade,
-  pop,
-  Reveal,
-  scale,
-  slide,
-} from "@awesome-reveal/astro";
-
+import { Reveal } from "@awesome-reveal/astro";
 import PageSection from "../components/PageSection.astro";
 import ServerTime from "../components/ServerTime.astro";
 import Layout from "../layouts/Layout.astro";
-
-const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
-  keyframe: (progress) => {
-    const t = 1 - (1 - progress) ** 3;
-    return { opacity: t, transform: `rotate(${(1 - t) * turns * 360}deg) scale(${t})` };
-  },
-}));
-
-const sides = ["top", "bottom", "left", "right"] as const;
-const bounces = [0, 0.3, 0.6];
+const sides = ["top", "right", "bottom", "left"] as const;
 ---
 
 <Layout title="awesome-reveal Astro example">
   <PageSection>
     <Reveal id="default">
-      <h1>The default keyframes</h1>
+      <h1>The default entrance</h1>
     </Reveal>
   </PageSection>
   <PageSection>
-    <Reveal keyframes={fade()}>
-      <h1>fade</h1>
-    </Reveal>
+    <Reveal from={{ opacity: 0 }}>Pure fade</Reveal>
   </PageSection>
-  {
-    sides.map((side) => (
-      <PageSection>
-        <Reveal as="h1" from={side} distance={40} once={false}>
-          from the {side}, every time it enters the viewport
-        </Reveal>
-      </PageSection>
-    ))
-  }
+  {sides.map((from) => (
+    <PageSection>
+      <Reveal from={from} once={false}>
+        From the {from}
+      </Reveal>
+    </PageSection>
+  ))}
   <PageSection>
-    <Reveal as="h1" keyframes={slide({ from: "left", distance: "2rem" })}>
-      slide from the left, with a factory
-    </Reveal>
+    <Reveal from={{ scale: 0.9 }}>Scale only</Reveal>
   </PageSection>
   <PageSection>
-    <Reveal as="h1" keyframes={pop()} once={false}>pop</Reveal>
-  </PageSection>
-  {
-    bounces.map((bounce) => (
-      <PageSection>
-        <Reveal as="h1" from={{ scale: 0.5 }} bounce={bounce} duration={1000} once={false}>
-          scale with a spring, bounce {bounce}
-        </Reveal>
-      </PageSection>
-    ))
-  }
-  <PageSection>
-    <Reveal as="ul" keyframes={enter({ x: -24 })} stagger={100} id="stagger">
-      <li>I enter first...</li>
-      <li>...then comes my turn...</li>
-      <li>...and finally you see me!</li>
+    <Reveal
+      keyframes={[
+        { opacity: 0, transform: "scale(.8)", easing: "ease-out" },
+        {},
+      ]}
+    >
+      Native keyframes
     </Reveal>
   </PageSection>
   <PageSection>
-    <Reveal as="h1" keyframes={spin({ turns: 2 })} duration={1000}>
-      A custom defineKeyframes animation
+    <Reveal as="ul" id="list">
+      <li>Fast</li>
+      <li>Small</li>
+      <li>Accessible</li>
     </Reveal>
   </PageSection>
   <PageSection>
-    <Reveal as="h2" keyframes={blur({ from: 16 })} class="title" title="A title attribute">
-      Your own attributes stay on the element
+    <Reveal
+      as="h2"
+      from={{ opacity: 0, blur: 8 }}
+      class="title"
+      title="A title attribute"
+    >
+      Your attributes stay on the element
     </Reveal>
   </PageSection>
   <PageSection>
@@ -85,23 +58,25 @@ const bounces = [0, 0.3, 0.6];
     </ServerTime>
   </PageSection>
   <PageSection>
-    <button type="button" id="toggle">Toggle</button>
+    <button type="button" id="toggle">
+      Toggle
+    </button>
     <output id="reveal-count">0</output> reveals
-    <Reveal keyframes={scale()} when={false} id="manual">
-      <p>Revealed manually with `when`</p>
+    <Reveal from={{ opacity: 0, scale: 0.9 }} when={false} id="manual">
+      Manual entrance
     </Reveal>
   </PageSection>
   <PageSection>
     <div transition:persist="persisted">
-      <Reveal as="h2" keyframes={slide()} id="persisted">
-        This element persists across navigations, and does not play again
+      <Reveal as="h2" id="persisted">
+        Persists across navigations
       </Reveal>
     </div>
     <a href="/other">Go to the other page</a>
   </PageSection>
   <PageSection>
-    <Reveal as="h2" keyframes={slide()} id="persisted-reveal" transition:persist="persisted-reveal">
-      This element has transition:persist, and reveals after a navigation
+    <Reveal as="h2" id="persisted-reveal" transition:persist="persisted-reveal">
+      Reveals after navigation
     </Reveal>
   </PageSection>
 </Layout>

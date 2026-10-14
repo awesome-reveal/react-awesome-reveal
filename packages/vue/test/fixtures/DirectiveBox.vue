@@ -6,7 +6,10 @@ defineProps<{ options?: RevealOptions; color?: string }>();
 </script>
 
 <template>
-  <div v-reveal="options" :style="color ? `color: ${color}` : undefined">
+  <div
+    v-reveal="options"
+    :style="color ? `color: ${color}` : undefined"
+  >
     <span>a</span>
     <span>b</span>
   </div>

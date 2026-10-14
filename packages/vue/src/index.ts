@@ -1,4 +1,4 @@
-export type { RevealOptions } from "@awesome-reveal/core";
+export type { RevealOptions } from "@awesome-reveal/core/adapter";
 export { Reveal, type RevealProps } from "./Reveal.js";
 export { vReveal } from "./vReveal.js";
-export * from "./keyframes.js";
+export type { Side, StartState } from "@awesome-reveal/core";

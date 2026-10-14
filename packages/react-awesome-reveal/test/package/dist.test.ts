@@ -1,53 +1,15 @@
 import { readdirSync, readFileSync } from "node:fs";
-import { createRequire } from "node:module";
-import { pathToFileURL } from "node:url";
 
 const root = new URL("../../", import.meta.url);
 const dist = new URL("dist/", root);
 const pkg = JSON.parse(readFileSync(new URL("package.json", root), "utf8"));
 const distFiles = readdirSync(dist, { recursive: true, encoding: "utf8" });
-const { resolve } = createRequire(import.meta.url);
-
-// Resolves through the package "exports" map, as consumers do.
-function load(specifier: string) {
-  return import(pathToFileURL(resolve(specifier)).href);
-}
 
 describe("dist", () => {
-  it("contains only the two re-export modules, the stylesheet and their declarations", () => {
-    expect(distFiles.sort()).toEqual([
-      "index.d.ts",
-      "index.js",
-      "keyframes.d.ts",
-      "keyframes.js",
-      "reveal.css",
-      "reveal.css.d.ts",
-    ]);
-  });
-
-  it("ships the same stylesheet as @awesome-reveal/react", () => {
-    expect(readFileSync(resolve("react-awesome-reveal/reveal.css"), "utf8")).toBe(
-      readFileSync(resolve("@awesome-reveal/react/reveal.css"), "utf8"),
-    );
-  });
-
-  it.each([".", "./keyframes"])(
-    "re-exports the same values as @awesome-reveal/react%s",
-    async (subpath) => {
-      const compat = await load(`react-awesome-reveal${subpath.slice(1)}`);
-      const target = await load(`@awesome-reveal/react${subpath.slice(1)}`);
-
-      expect(Object.keys(compat).sort()).toEqual(Object.keys(target).sort());
-      for (const name of Object.keys(target)) {
-        expect(compat[name]).toBe(target[name]);
-      }
-    },
-  );
-
-  it("exports only the subpaths of @awesome-reveal/react", () => {
-    const react = JSON.parse(readFileSync(new URL("../react/package.json", root), "utf8"));
-
-    expect(Object.keys(pkg.exports)).toEqual(Object.keys(react.exports));
+  it("ships only the React re-export and its declarations", () => {
+    expect(distFiles.sort()).toEqual(["index.d.ts", "index.js"]);
+    expect(Object.keys(pkg.exports)).toEqual([".", "./package.json"]);
+    expect(readFileSync(new URL("index.js", dist), "utf8")).toContain("@awesome-reveal/react");
   });
 });
 

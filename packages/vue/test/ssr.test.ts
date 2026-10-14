@@ -3,7 +3,7 @@ import { renderToString } from "vue/server-renderer";
 
 import { describeSSRContract } from "@awesome-reveal/test-utils/contract-ssr";
 
-import { slide } from "../src/keyframes";
+import { defaultKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
 import { Reveal } from "../src/Reveal";
 import { vReveal } from "../src/vReveal";
 
@@ -29,7 +29,7 @@ describe("server render", () => {
   });
 
   it("renders a compiled v-reveal element hidden", async () => {
-    expect(await render(DirectiveBox, { options: { keyframes: slide() } })).toBe(
+    expect(await render(DirectiveBox, { options: { keyframes: defaultKeyframes } })).toBe(
       '<div style="" data-reveal="hidden"><span>a</span><span>b</span></div>',
     );
   });
@@ -54,7 +54,6 @@ describeSSRContract("Vue Reveal", {
 });
 
 describeSSRContract("Vue v-reveal", {
-  drift: [],
   async render(options, style) {
     return render(() =>
       withDirectives(h("div", { style, "data-contract": "" }, "x"), [[vReveal, options]]),

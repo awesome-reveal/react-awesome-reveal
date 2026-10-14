@@ -1,30 +1,46 @@
-import { defineComponent, h, onMounted, type PropType, ref, type SlotsType, watch } from "vue";
+import "#reveal-style";
 
-import { createReveal, type RevealOptions } from "@awesome-reveal/core";
+import {
+  defineComponent,
+  h,
+  onMounted,
+  type PropType,
+  type DefineComponent,
+  ref,
+  type SlotsType,
+  watch,
+} from "vue";
 
-export interface RevealProps extends Omit<RevealOptions, "onReveal"> {
+import { createReveal, type RevealOptions } from "@awesome-reveal/core/adapter";
+
+type WithoutCallback<T> = T extends unknown ? Omit<T, "onReveal"> : never;
+
+/** Configures the reveal and the element rendered around its slot. */
+export type RevealProps = WithoutCallback<RevealOptions> & {
   /**
-   * Tag of the rendered element.
+   * The tag of the rendered element.
    * @default "div"
    */
   as?: string;
-}
+};
 
-/**
- * Renders one element that animates when it enters the viewport. It emits `reveal` with the
- * element each time it is revealed, and gives `revealed` to its default slot.
- * To animate an element of your own without a wrapper, use `v-reveal`.
- */
-export const Reveal = /* @__PURE__ */ defineComponent(
-  (props: RevealProps, { emit, slots }) => {
-    const options = (): RevealOptions => ({
-      ...props,
-      onReveal: (element) => emit("reveal", element),
-    });
+const RuntimeReveal = /* @__PURE__ */ defineComponent(
+  (
+    props: Omit<RevealProps, "from" | "keyframes"> & {
+      from?: RevealOptions["from"];
+      keyframes?: Keyframe[];
+    },
+    { emit, slots },
+  ) => {
+    const options = (): RevealOptions =>
+      ({
+        ...props,
+        onReveal: (element) => emit("reveal", element),
+      }) as RevealOptions;
     const state = createReveal(options());
     const revealed = ref(state.revealed);
     state.subscribe((value) => (revealed.value = value));
-    // After the patch, so that a new element of the same tick plays with the new options.
+    // The watcher runs after the patch, so a new element of the same tick plays with the new options.
     watch(options, state.setOptions, { flush: "post" });
     // Attaches in onMounted, which a pending Suspense defers while the element is outside the document.
     let element: Element | null = null;
@@ -53,20 +69,25 @@ export const Reveal = /* @__PURE__ */ defineComponent(
       as: String,
       keyframes: Array as PropType<RevealOptions["keyframes"]>,
       from: [String, Object] as PropType<RevealOptions["from"]>,
-      distance: [Number, String],
-      easing: String,
-      bounce: Number,
       duration: Number,
-      delay: Number,
-      stagger: Number,
       threshold: Number,
-      rootMargin: String,
       // Vue casts an absent Boolean prop to false, which would turn off the core defaults.
       once: { type: Boolean, default: undefined },
       when: { type: Boolean, default: undefined },
-      reducedMotion: String as PropType<RevealOptions["reducedMotion"]>,
     },
     emits: { reveal: (element: Element) => element != null },
     slots: Object as SlotsType<{ default: { revealed: boolean } }>,
   },
 );
+
+/** Renders an element with a declarative entrance and reveal notifications. */
+export const Reveal = RuntimeReveal as unknown as DefineComponent<
+  RevealProps,
+  {},
+  {},
+  {},
+  {},
+  {},
+  {},
+  { reveal: (element: Element) => void }
+>;

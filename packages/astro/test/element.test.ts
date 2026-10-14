@@ -22,10 +22,10 @@ function connect(options: object, when?: string) {
 
 describe("<awesome-reveal>", () => {
   it("hides its first element child, and reveals it with the options of the attribute", () => {
-    const { element } = connect({ duration: 100, threshold: 0.5, rootMargin: "10px" });
+    const { element } = connect({ duration: 100, threshold: 0.5 });
 
     expect(element).toHaveStyle({ opacity: "0" });
-    expect(observerOf(element)).toMatchObject({ thresholds: [0.5], rootMargin: "10px" });
+    expect(observerOf(element)).toMatchObject({ thresholds: [0.5] });
 
     intersect(element, true);
 

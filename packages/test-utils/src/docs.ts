@@ -5,23 +5,16 @@ import { fileURLToPath } from "node:url";
 import ts from "typescript";
 
 interface DocsOptions {
-  /** The package keyframes entry point, such as `@awesome-reveal/react/keyframes`. */
-  keyframes: string;
-  /** The keyframes factories that inline calls such as `` `slide()` `` can use. */
-  factories: string[];
   /** The JSX options of the framework, if it uses JSX. */
   jsx?: Pick<ts.CompilerOptions, "jsx" | "jsxImportSource">;
   /** Ambient declarations for the examples, such as `declare module "*.vue"` for a component import. */
   ambient?: string;
-  /** Fences that match are not type-checked, for example examples of another package or of a component file. */
+  /** The check skips the fences that match, such as examples of another package or of a component file. */
   skipFences?: RegExp;
 }
 
 /** Checks the consumer skills in `<root>/skills` and the README against the built package types. */
-export function describeDocs(
-  root: URL,
-  { keyframes, factories, jsx, ambient, skipFences }: DocsOptions,
-) {
+export function describeDocs(root: URL, { jsx, ambient, skipFences }: DocsOptions = {}) {
   describe("docs", () => {
     const pkg = JSON.parse(readFileSync(new URL("package.json", root), "utf8"));
     const skillsDir = new URL("skills/", root);
@@ -58,8 +51,7 @@ export function describeDocs(
       },
     );
 
-    it("type-checks the TypeScript examples and inline factory calls against the package types", () => {
-      const inlineCall = new RegExp(`\`((?:${factories.join("|")})\\([^\`]*\\))\``, "g");
+    it("type-checks the TypeScript examples against the package types", () => {
       const files = new Map<string, string>();
       const documents = [
         ...skills.map((skill) => ({ directory: `docs-check/${skill}`, text: skillText(skill) })),
@@ -73,14 +65,8 @@ export function describeDocs(
         const fences = [...text.matchAll(/^```tsx?\r?\n([\s\S]*?)^```$/gm)]
           .map(([, code]) => code!)
           .filter((code) => !skipFences?.test(code));
-        const calls = [...text.matchAll(inlineCall)].map(([, call]) => call!);
         fences.forEach((code, index) =>
           files.set(fileURLToPath(new URL(`${directory}/example-${index + 1}.tsx`, root)), code),
-        );
-        files.set(
-          fileURLToPath(new URL(`${directory}/factory-calls.ts`, root)),
-          `import { ${factories.join(", ")} } from "${keyframes}";\n` +
-            `export const calls = [${[...factories, ...calls].join(", ")}];\n`,
         );
       }
 
@@ -110,7 +96,7 @@ export function describeDocs(
         return `${file}: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")}`;
       });
 
-      expect(files.size).toBeGreaterThan(documents.length);
+      expect(files.size).toBeGreaterThan(0);
       expect(errors).toEqual([]);
     }, 30_000);
   });

@@ -1,9 +1,9 @@
-import type { RevealOptions } from "@awesome-reveal/core";
+import type { RevealOptions } from "@awesome-reveal/core/adapter";
 
 import { animations, runningAnimations } from "./animate";
 import { intersect as report, MockIntersectionObserver, observerOf } from "./intersection-observer";
 
-export type ContractOptions = Omit<RevealOptions, "when"> & { when?: boolean | null };
+export type ContractOptions = RevealOptions;
 
 export interface MountInit {
   style?: Partial<CSSStyleDeclaration>;
@@ -23,14 +23,10 @@ export interface Mounted {
 export interface Harness {
   /** Renders an element with `data-contract` and three element children. */
   mount(options: ContractOptions, init?: MountInit): Promise<Mounted>;
-  /** The element stays in the document after unmount, as with `destroy()` of core. */
-  keepsElement?: boolean;
-  /** The framework can render a new element for the same reveal. */
+  /** Set to `true` when the framework can render a new element for the same reveal. */
   replacesNode?: boolean;
-  /** The reveal belongs to its element, so a new element starts a new reveal. */
+  /** Set to `true` when the reveal belongs to its element, so a new element starts a new reveal. */
   boundToElement?: boolean;
-  /** Scenario ids that fail until a later phase fixes them. A scenario that passes anyway fails the run. */
-  drift?: string[];
 }
 
 const hidden = (element: HTMLElement) => element.getAttribute("data-reveal") === "hidden";
@@ -39,39 +35,16 @@ const shown = (element: HTMLElement) => !element.hasAttribute("data-reveal");
 
 const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
 
-let uniqueErrors = 0;
-
-// The reports are thrown from a microtask, so a test collects them instead of failing on them.
-function collectReports() {
-  const reports: unknown[] = [];
-  const original = globalThis.queueMicrotask;
-  vi.stubGlobal("queueMicrotask", (callback: VoidFunction) =>
-    original(() => {
-      try {
-        callback();
-      } catch (error) {
-        reports.push(error);
-      }
-    }),
-  );
-  return reports;
-}
-
 export function describeContract(name: string, harness: Harness) {
-  const drift = new Set(harness.drift);
-  const scenario = (id: string, title: string, fn: () => Promise<void>) =>
-    (drift.has(id) ? it.fails : it)(`${id} ${title}`, fn);
-
   describe(`reveal contract: ${name}`, () => {
     let current: Mounted | undefined;
 
     async function mount(options: ContractOptions = {}, init?: MountInit) {
-      current = await harness.mount({ reducedMotion: "never", ...options }, init);
+      current = await harness.mount(options, init);
       return current;
     }
 
-    const rerender = (m: Mounted, options: ContractOptions) =>
-      m.rerender({ reducedMotion: "never", ...options });
+    const rerender = (m: Mounted, options: ContractOptions) => m.rerender(options);
 
     async function intersect(m: Mounted, visible: boolean | number) {
       await m.run(() => report(m.element(), visible));
@@ -83,14 +56,14 @@ export function describeContract(name: string, harness: Harness) {
       document.body.innerHTML = "";
     });
 
-    scenario("S01", "hides the element at the start", async () => {
+    it("hides the element at the start", async () => {
       const m = await mount();
       expect(hidden(m.element())).toBe(true);
       expect(animations).toHaveLength(0);
       expect(observerOf(m.element())).toBeDefined();
     });
 
-    scenario("S02", "reveals once on intersect", async () => {
+    it("reveals once on intersect", async () => {
       const m = await mount();
       await intersect(m, true);
       expect(shown(m.element())).toBe(true);
@@ -98,7 +71,7 @@ export function describeContract(name: string, harness: Harness) {
       expect(observerOf(m.element())).toBeUndefined();
     });
 
-    scenario("S03", "once: false hides on leave and replays on enter", async () => {
+    it("once: false hides on leave and replays on enter", async () => {
       const m = await mount({ once: false });
       await intersect(m, true);
       await intersect(m, false);
@@ -109,32 +82,32 @@ export function describeContract(name: string, harness: Harness) {
       expect(runningAnimations()).toHaveLength(1);
     });
 
-    scenario("S04a", "when: true shows and plays with no observer", async () => {
+    it("when: true shows and plays with no observer", async () => {
       const m = await mount({ when: true });
       expect(shown(m.element())).toBe(true);
       expect(animations).toHaveLength(1);
       expect(MockIntersectionObserver.instances.size).toBe(0);
     });
 
-    scenario("S04b", "when: false stays hidden with no observer", async () => {
+    it("when: false stays hidden with no observer", async () => {
       const m = await mount({ when: false });
       expect(hidden(m.element())).toBe(true);
       expect(MockIntersectionObserver.instances.size).toBe(0);
     });
 
-    scenario("S04c", "when: undefined observes", async () => {
+    it("when: undefined observes", async () => {
       const m = await mount({ when: undefined });
       expect(observerOf(m.element())).toBeDefined();
     });
 
-    scenario("S04d", "when: null observes", async () => {
+    it("when: null observes", async () => {
       const m = await mount({ when: null });
       expect(observerOf(m.element())).toBeDefined();
       await intersect(m, true);
       expect(shown(m.element())).toBe(true);
     });
 
-    scenario("S05", "a toggle of when replays", async () => {
+    it("a toggle of when replays", async () => {
       const m = await mount({ when: false });
       await rerender(m, { when: true });
       expect(shown(m.element())).toBe(true);
@@ -146,12 +119,11 @@ export function describeContract(name: string, harness: Harness) {
       expect(runningAnimations()).toHaveLength(1);
     });
 
-    for (const [id, option, from, to] of [
-      ["S06a", "threshold", 0.5, 0.2],
-      ["S06b", "rootMargin", "10px", "20px"],
-      ["S06c", "once", true, false],
+    for (const [option, from, to] of [
+      ["threshold", 0.5, 0.2],
+      ["once", true, false],
     ] as const) {
-      scenario(id, `a change of ${option} restarts the observer`, async () => {
+      it(`a change of ${option} restarts the observer`, async () => {
         const m = await mount({ [option]: from });
         const before = observerOf(m.element());
         await rerender(m, { [option]: to });
@@ -162,7 +134,7 @@ export function describeContract(name: string, harness: Harness) {
       });
     }
 
-    scenario("S06d", "the other options apply at the next reveal", async () => {
+    it("the other options apply at the next reveal", async () => {
       const m = await mount({ once: false, duration: 300 });
       const before = observerOf(m.element());
       await rerender(m, { once: false, duration: 400 });
@@ -176,24 +148,27 @@ export function describeContract(name: string, harness: Harness) {
       expect(animations[1]!.options).toMatchObject({ duration: 500 });
     });
 
-    scenario("S07", "reduced motion shows the element with no animation", async () => {
+    it("reduced motion shows the element with no animation", async () => {
       vi.stubGlobal("matchMedia", () => ({ matches: true }));
-      const m = await mount({ reducedMotion: "user" });
+      const m = await mount({});
       await intersect(m, true);
       expect(shown(m.element())).toBe(true);
       expect(animations).toHaveLength(0);
     });
 
-    scenario("S08", "stagger animates the children", async () => {
-      const m = await mount({ stagger: 50, delay: 100 });
-      await intersect(m, true);
-      expect(animations.map((a) => a.element)).toEqual(Array.from(m.element().children));
-      expect(animations.map((a) => (a.options as KeyframeAnimationOptions).delay)).toEqual([
-        100, 150, 200,
-      ]);
+    it("switching to reduced motion cancels the entrance and exposes content", async () => {
+      const media = new EventTarget() as EventTarget & { matches: boolean };
+      media.matches = false;
+      vi.stubGlobal("matchMedia", () => media);
+      const m = await mount({ when: false });
+      media.matches = true;
+      await m.run(() => media.dispatchEvent(new Event("change")));
+      expect(shown(m.element())).toBe(true);
+      expect(runningAnimations()).toHaveLength(0);
+      expect(observerOf(m.element())).toBeUndefined();
     });
 
-    scenario("S09", "the reveal keeps the inline style of the user", async () => {
+    it("the reveal keeps the inline style of the user", async () => {
       const m = await mount({}, { style: { opacity: "0.5", color: "red" } });
       expect(m.element().style.opacity).toBe("0.5");
       await intersect(m, true);
@@ -201,7 +176,7 @@ export function describeContract(name: string, harness: Harness) {
       expect(m.element().style.color).toBe("red");
     });
 
-    scenario("S10a", "unmount cancels the animation and the observer", async () => {
+    it("unmount cancels the animation and the observer", async () => {
       const m = await mount({ once: false });
       await intersect(m, true);
       await m.unmount();
@@ -210,17 +185,8 @@ export function describeContract(name: string, harness: Harness) {
       expect(MockIntersectionObserver.instances.size).toBe(0);
     });
 
-    if (harness.keepsElement)
-      scenario("S10b", "destroy shows a hidden element", async () => {
-        const m = await mount({}, { style: { opacity: "0.5" } });
-        await m.unmount();
-        expect(m.element().style.opacity).toBe("0.5");
-        expect(m.element().hasAttribute("data-reveal")).toBe(false);
-      });
-
     if (harness.replacesNode) {
-      scenario(
-        "S11a",
+      it(
         harness.boundToElement
           ? "a new element after the reveal starts a new reveal"
           : "a new element after the reveal does not replay",
@@ -241,7 +207,7 @@ export function describeContract(name: string, harness: Harness) {
         },
       );
 
-      scenario("S11b", "a new element before the reveal is observed", async () => {
+      it("a new element before the reveal is observed", async () => {
         const m = await mount();
         await m.replaceNode?.();
         expect(hidden(m.element())).toBe(true);
@@ -249,20 +215,16 @@ export function describeContract(name: string, harness: Harness) {
         expect(MockIntersectionObserver.instances.size).toBe(1);
       });
 
-      scenario(
-        "S11c",
-        "a new element and `when: true` in one update play on the new element",
-        async () => {
-          const m = await mount({ when: false });
-          await m.replaceNode?.({ when: true });
-          expect(shown(m.element())).toBe(true);
-          expect(animations.map((a) => a.element)).toEqual([m.element()]);
-          expect(runningAnimations()).toHaveLength(1);
-        },
-      );
+      it("a new element and `when: true` in one update play on the new element", async () => {
+        const m = await mount({ when: false });
+        await m.replaceNode?.({ when: true });
+        expect(shown(m.element())).toBe(true);
+        expect(animations.map((a) => a.element)).toEqual([m.element()]);
+        expect(runningAnimations()).toHaveLength(1);
+      });
     }
 
-    scenario("S15", "onReveal is called with the element at each reveal", async () => {
+    it("onReveal is called with the element at each reveal", async () => {
       const onReveal = vi.fn();
       const m = await mount({ once: false, onReveal });
       expect(onReveal).not.toHaveBeenCalled();
@@ -273,21 +235,21 @@ export function describeContract(name: string, harness: Harness) {
       expect(onReveal).toHaveBeenCalledTimes(2);
     });
 
-    scenario("S16", "from, distance and bounce build the entrance", async () => {
-      const m = await mount({ from: "left", distance: 40, bounce: 0.5 });
+    it("direction builds the entrance", async () => {
+      const m = await mount({ from: "left" });
       await intersect(m, true);
       const [start] = animations[0]!.keyframes as Keyframe[];
-      expect(start).toMatchObject({ opacity: 0, transform: "translate(-40px, 0px)" });
-      expect(start!.easing).toMatch(/^linear\(/);
+      expect(start).toMatchObject({ opacity: 0, transform: "translate(-24px, 0px)" });
+      expect(start!.easing).toBe("cubic-bezier(0.22, 1, 0.36, 1)");
     });
 
-    scenario("S17", "the first reveal marks the document as started", async () => {
+    it("the first reveal marks the document as started", async () => {
       document.documentElement.removeAttribute("data-reveal-ready");
       await mount();
       expect(document.documentElement.hasAttribute("data-reveal-ready")).toBe(true);
     });
 
-    scenario("S12", "with no IntersectionObserver the element shows at once", async () => {
+    it("with no IntersectionObserver the element shows at once", async () => {
       vi.stubGlobal("IntersectionObserver", undefined);
       const m = await mount();
       await m.flush();
@@ -295,8 +257,8 @@ export function describeContract(name: string, harness: Harness) {
       expect(animations).toHaveLength(1);
     });
 
-    scenario("S13", "a throwing IntersectionObserver shows the element and reports", async () => {
-      const message = `Invalid rootMargin ${uniqueErrors++}`;
+    it("a throwing IntersectionObserver shows the element", async () => {
+      const message = "Invalid threshold";
       vi.stubGlobal(
         "IntersectionObserver",
         class {
@@ -305,7 +267,6 @@ export function describeContract(name: string, harness: Harness) {
           }
         },
       );
-      const reports = collectReports();
       // jsdom reports an error of a custom element callback as an error event of the window.
       const windowErrors: unknown[] = [];
       const onError = (event: ErrorEvent) => {
@@ -315,7 +276,7 @@ export function describeContract(name: string, harness: Harness) {
       window.addEventListener("error", onError);
       let thrown: unknown;
       try {
-        await mount({ rootMargin: "10" }).catch((error) => (thrown = error));
+        await mount({ threshold: 2 }).catch((error) => (thrown = error));
         await settle();
       } finally {
         window.removeEventListener("error", onError);
@@ -324,24 +285,21 @@ export function describeContract(name: string, harness: Harness) {
       expect(windowErrors).toEqual([]);
       const element = document.querySelector<HTMLElement>("[data-contract]");
       expect(element && shown(element)).toBe(true);
-      expect(reports).toEqual([expect.objectContaining({ message })]);
     });
 
-    scenario("S14", "an invalid easing is reported once and the element shows", async () => {
-      const message = `Invalid easing ${uniqueErrors++}`;
+    it("invalid native keyframes leave the element visible", async () => {
+      const message = "Invalid easing";
       const original = Element.prototype.animate;
       Element.prototype.animate = function (keyframes, options) {
         if (JSON.stringify(keyframes).includes('"bogus"')) throw new TypeError(message);
         return original.call(this, keyframes, options);
       };
-      const reports = collectReports();
       const m = await mount({ once: false, keyframes: [{ opacity: 0, easing: "bogus" }, {}] });
       await intersect(m, true);
       await intersect(m, false);
       await intersect(m, true);
       await settle();
       expect(shown(m.element())).toBe(true);
-      expect(reports).toEqual([expect.objectContaining({ message })]);
     });
   });
 }

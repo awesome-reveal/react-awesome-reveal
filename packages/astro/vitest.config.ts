@@ -11,15 +11,7 @@ export default getViteConfig(
   {
     resolve: {
       alias: [
-        { find: /^@awesome-reveal\/core$/, replacement: source("../core/src/index.ts") },
-        {
-          find: /^@awesome-reveal\/core\/keyframes$/,
-          replacement: source("../core/src/keyframes/index.ts"),
-        },
-        {
-          find: /^@awesome-reveal\/core\/reveal\.css$/,
-          replacement: source("../core/src/reveal.css"),
-        },
+        { find: /^@awesome-reveal\/core\/adapter$/, replacement: source("../core/src/adapter.ts") },
         {
           find: /^@awesome-reveal\/test-utils\/(.+)$/,
           replacement: source("../test-utils/src/$1.ts"),

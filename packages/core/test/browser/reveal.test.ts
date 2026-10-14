@@ -1,366 +1,173 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { reveal, cascade, type RevealHandle } from "../../src/index";
+import { mountBelowTheFold, scrollIntoView, scrollToTop, settle, showTopHalf } from "./helpers";
 
-import { fade } from "../../src/keyframes/presets";
-import {
-  type RevealController,
-  type RevealGroup,
-  type RevealOptions,
-  reveal,
-} from "../../src/reveal";
-import {
-  captureReports,
-  mountBelowTheFold,
-  scrollIntoView,
-  scrollToTop,
-  settle,
-  showTopHalf,
-} from "./helpers";
-
-let element: HTMLElement;
-let controller: RevealController | undefined;
-// Long enough that no animation finishes while a test inspects it.
-const options: RevealOptions = { keyframes: fade(), duration: 60_000, reducedMotion: "never" };
+let target: HTMLElement;
+let handles: RevealHandle[];
+const track = (handle: RevealHandle) => {
+  handles.push(handle);
+  return handle;
+};
+const opacity = (element = target) => getComputedStyle(element).opacity;
+const animation = (element = target) => element.getAnimations()[0]!;
+const native = { keyframes: [{ opacity: 0 }, {}], duration: 60_000 };
 
 beforeEach(() => {
-  element = mountBelowTheFold();
+  target = mountBelowTheFold();
+  handles = [];
+  vi.spyOn(window, "matchMedia").mockReturnValue({ matches: false } as MediaQueryList);
 });
-
 afterEach(() => {
-  controller?.destroy();
-  controller = undefined;
+  for (const handle of handles) handle.dispose();
   vi.unstubAllGlobals();
   vi.restoreAllMocks();
+  document.body.innerHTML = "";
 });
-
-function isHidden() {
-  return element.dataset.reveal === "hidden" && getComputedStyle(element).opacity === "0";
+async function enter(element = target) {
+  scrollIntoView(element);
+  await expect.poll(() => animation(element)?.playState).toBe("running");
 }
 
-function countObservers(): IntersectionObserver[] {
-  const observers: IntersectionObserver[] = [];
-  vi.stubGlobal(
-    "IntersectionObserver",
-    class extends IntersectionObserver {
-      constructor(...args: ConstructorParameters<typeof IntersectionObserver>) {
-        super(...args);
-        observers.push(this);
-      }
+describe("zero-CSS reveal", () => {
+  it("applies the first frame immediately and reveals the resting author style", async () => {
+    const styles = document.querySelectorAll("style").length;
+    track(reveal(target));
+    expect(opacity()).toBe("0");
+    expect(target.style.cssText).toBe("height: 100px;");
+    expect(document.querySelectorAll("style").length).toBe(styles);
+    expect(animation().effect!.getTiming().duration).toBe(600);
+    expect((animation().effect as KeyframeEffect).getKeyframes()[0]).toMatchObject({
+      opacity: "0",
+      transform: "translate(0px, 24px)",
+    });
+    await enter();
+    animation().finish();
+    expect(opacity()).toBe("1");
+    scrollToTop();
+    await settle();
+    expect(opacity()).toBe("1");
+  });
+  it.each(["left", "right", "top", "bottom"] as const)("reveals from %s", async (from) => {
+    track(reveal(target, { from, duration: 60_000 }));
+    expect(opacity()).toBe("0");
+    await enter();
+    animation().finish();
+    expect(opacity()).toBe("1");
+  });
+  it("a custom object does not add defaults and preserves resting transforms", () => {
+    target.style.transform = "rotate(10deg)";
+    track(reveal(target, { from: { opacity: 0 } }));
+    expect(getComputedStyle(target).transform).toBe(
+      "matrix(0.984808, 0.173648, -0.173648, 0.984808, 0, 0)",
+    );
+    expect((animation().effect as KeyframeEffect).getKeyframes()[0]).not.toHaveProperty(
+      "transform",
+    );
+  });
+  it("applies transform-only custom state without a fade", () => {
+    track(reveal(target, { from: { scale: 0.9, rotate: "-5deg", blur: "0.5rem" } }));
+    expect(opacity()).toBe("1");
+    expect((animation().effect as KeyframeEffect).getKeyframes()[0]).toMatchObject({
+      transform: "scale(0.9) rotate(-5deg)",
+      filter: "blur(0.5rem)",
+    });
+  });
+  it("resets to the start and re-enters after an animation finishes", async () => {
+    track(reveal(target, { ...native, once: false }));
+    await enter();
+    const effect = animation();
+    effect.finish();
+    expect(opacity()).toBe("1");
+    scrollToTop();
+    await expect.poll(() => opacity()).toBe("0");
+    expect(effect.playState).toBe("paused");
+    await enter();
+    expect(animation()).toBe(effect);
+  });
+  it("waits for the threshold", async () => {
+    track(reveal(target, { ...native, threshold: 0.8 }));
+    showTopHalf(target);
+    await settle();
+    expect(animation().playState).toBe("paused");
+    await enter();
+  });
+  it.each([false, true])(
+    "disposes to resting style before/during animation: %s",
+    async (during) => {
+      target.style.opacity = "0.5";
+      const handle = track(reveal(target, native));
+      expect(opacity()).toBe("0");
+      if (during) await enter();
+      const effect = animation();
+      handle.dispose();
+      handle.dispose();
+      expect(opacity()).toBe("0.5");
+      expect(effect.playState).toBe("idle");
+      expect(target.getAnimations()).toEqual([]);
+      scrollIntoView(target);
+      await settle();
+      expect(target.getAnimations()).toEqual([]);
     },
   );
-  return observers;
-}
-
-async function waitForReveal() {
-  await expect.element(element).not.toHaveAttribute("data-reveal");
-  expect(controller!.revealed).toBe(true);
-}
-
-async function revealInView(revealOptions: RevealOptions = options) {
-  controller = reveal(element, revealOptions);
-  scrollIntoView(element);
-  await waitForReveal();
-}
-
-describe("reveal", () => {
-  it("hides the element until it enters the viewport", async () => {
-    controller = reveal(element, options);
-    await settle();
-    expect(isHidden()).toBe(true);
-    expect(controller.revealed).toBe(false);
-    expect(element.getAnimations()).toEqual([]);
+  it("invalid native values fail visible", () => {
+    track(reveal(target, { keyframes: [{ opacity: 0, easing: "invalid" }, {}] }));
+    expect(opacity()).toBe("1");
+    expect(target.getAnimations()).toEqual([]);
   });
-
-  it("plays the default keyframes with no options", async () => {
-    vi.spyOn(window, "matchMedia").mockReturnValue({ matches: false } as MediaQueryList);
-    controller = reveal(element);
-    scrollIntoView(element);
-    await waitForReveal();
-
-    const [first] = (element.getAnimations()[0]!.effect as KeyframeEffect).getKeyframes();
-    expect(first).toMatchObject({ opacity: "0", transform: "translate(0px, 24px)" });
+  it("reduced motion immediately exposes generated and native entrances", () => {
+    vi.mocked(window.matchMedia).mockReturnValue({ matches: true } as MediaQueryList);
+    track(reveal(target, native));
+    track(reveal(target.firstElementChild!));
+    expect(opacity()).toBe("1");
+    expect(target.getAnimations({ subtree: true })).toEqual([]);
   });
-
-  it("removes the hidden attribute and starts the animation in the same frame", async () => {
-    controller = reveal(element, { ...options, delay: 1000 });
-    let opacityAtReveal: string | undefined;
-    new MutationObserver(() => {
-      opacityAtReveal ??= getComputedStyle(element).opacity;
-    }).observe(element, { attributes: true });
-
-    scrollIntoView(element);
-    await waitForReveal();
-    expect(element.getAttribute("style")).toBe("height: 100px");
-    expect(element.dataset.reveal).toBeUndefined();
-    expect(element.getAnimations()).toHaveLength(1);
-    expect(opacityAtReveal).toBe("0");
-  });
-
-  it("stays revealed after it leaves the viewport with once", async () => {
-    await revealInView();
-    scrollToTop();
-    await settle();
-    expect(controller!.revealed).toBe(true);
-    expect(isHidden()).toBe(false);
-  });
-
-  it("hides the element again and cancels the animation when it leaves, without once", async () => {
-    await revealInView({ ...options, once: false });
-    const [animation] = element.getAnimations();
-
-    scrollToTop();
-    await expect.element(element).toHaveAttribute("data-reveal", "hidden");
-    expect(controller!.revealed).toBe(false);
-    expect(isHidden()).toBe(true);
-    expect(animation!.playState).toBe("idle");
-  });
-
-  it("restarts the observer when the threshold changes", async () => {
-    controller = reveal(element, { ...options, threshold: 1 });
-    showTopHalf(element);
-    await settle();
-    expect(controller.revealed).toBe(false);
-
-    controller.setOptions({ ...options, threshold: 0.4 });
-    await waitForReveal();
-  });
-
-  it("keeps the observer when only the animation options change", async () => {
-    const observers = countObservers();
-    controller = reveal(element, options);
-    controller.setOptions({ ...options, duration: 30_000 });
-    expect(observers).toHaveLength(1);
-  });
-
-  it("replaces the options, so a removed option returns to its default", async () => {
-    controller = reveal(element, { ...options, stagger: 100 });
-    controller.setOptions(options);
-    scrollIntoView(element);
-    await waitForReveal();
-    expect(element.getAnimations()).toHaveLength(1);
-  });
-
-  it("plays the updated keyframes at the next reveal", async () => {
-    controller = reveal(element, options);
-    controller.setOptions({ ...options, duration: 50_000 });
-    scrollIntoView(element);
-    await waitForReveal();
-    expect(element.getAnimations()[0]!.effect!.getTiming().duration).toBe(50_000);
-  });
-
-  it("does not observe a revealed element again with once", async () => {
-    const observers = countObservers();
-    await revealInView();
-    controller!.setOptions({ ...options, threshold: 0.5 });
-    expect(observers).toHaveLength(1);
-  });
-
-  it("observes a revealed element again, with no new animation, when once becomes false", async () => {
-    await revealInView();
-    const [animation] = element.getAnimations();
-
-    controller!.setOptions({ ...options, once: false });
-    await settle();
-    expect(element.getAnimations()).toEqual([animation]);
-    scrollToTop();
-    await expect.element(element).toHaveAttribute("data-reveal", "hidden");
-  });
-
-  it("follows `when` and does not observe the viewport", async () => {
-    const observers = countObservers();
-    controller = reveal(element, { ...options, when: false });
-    scrollIntoView(element);
-    await settle();
-    expect(isHidden()).toBe(true);
-    expect(observers).toEqual([]);
-
-    controller.setOptions({ ...options, when: true });
-    expect(controller.revealed).toBe(true);
-    expect(isHidden()).toBe(false);
-    const [animation] = element.getAnimations();
-    expect(animation).toBeDefined();
-
-    controller.setOptions({ ...options, when: false });
-    expect(isHidden()).toBe(true);
-    expect(animation!.playState).toBe("idle");
-    expect(observers).toEqual([]);
-  });
-
-  it("observes the viewport when `when` is removed", async () => {
-    controller = reveal(element, { ...options, when: false });
-    controller.setOptions(options);
-    scrollIntoView(element);
-    await waitForReveal();
-  });
-
-  it("hides the element and observes the viewport when `when: true` is removed", async () => {
-    controller = reveal(element, { ...options, when: true });
-    controller.setOptions(options);
-    expect(isHidden()).toBe(true);
-
-    scrollIntoView(element);
-    await waitForReveal();
-  });
-
-  it("restarts the observer when the caller mutates the options object", async () => {
-    const mutable: RevealOptions = { ...options, threshold: 1 };
-    controller = reveal(element, mutable);
-    showTopHalf(element);
-    await settle();
-
-    mutable.threshold = 0.4;
-    controller.setOptions(mutable);
-    await waitForReveal();
-  });
-
-  it("stops the observation and the animation when destroyed", async () => {
-    await revealInView({ ...options, once: false });
-    const [animation] = element.getAnimations();
-
-    controller!.destroy();
-    expect(animation!.playState).toBe("idle");
-    scrollToTop();
-    await settle();
-    expect(controller!.revealed).toBe(true);
-  });
-
-  it("ignores updates after destroy", async () => {
-    const observers = countObservers();
-    controller = reveal(element, options);
-    controller.destroy();
-    controller.setOptions({ ...options, threshold: 0.5 });
-    scrollIntoView(element);
-    await settle();
-    expect(observers).toHaveLength(1);
-    expect(controller.revealed).toBe(false);
-  });
-
-  it("reveals the element at once without IntersectionObserver", () => {
-    vi.stubGlobal("IntersectionObserver", undefined);
-    controller = reveal(element, options);
-    expect(controller.revealed).toBe(true);
-    expect(isHidden()).toBe(false);
-    expect(element.getAnimations()).toHaveLength(1);
-  });
-
-  it("shows the element when the browser rejects the observer options", () => {
-    captureReports();
-    controller = reveal(element, { ...options, threshold: 2 });
-    expect(controller.revealed).toBe(true);
-    expect(isHidden()).toBe(false);
-    expect(element.getAnimations()).toHaveLength(1);
-  });
-
-  it("shows a hidden element when an update has options the browser rejects", () => {
-    captureReports();
-    controller = reveal(element, options);
-    expect(isHidden()).toBe(true);
-    controller.setOptions({ ...options, rootMargin: "foo" });
-    expect(controller.revealed).toBe(true);
-    expect(isHidden()).toBe(false);
-  });
-
-  it("treats null options as the defaults", async () => {
-    const nulls = Object.fromEntries(
-      ["keyframes", "duration", "delay", "stagger", "threshold", "rootMargin", "once", "when"].map(
-        (key) => [key, null],
-      ),
-    );
-    controller = reveal(element, { ...nulls, reducedMotion: "never" } as RevealOptions);
-    expect(isHidden()).toBe(true);
-    scrollIntoView(element);
-    await waitForReveal();
-    const [animation] = element.getAnimations();
-    expect(animation!.effect!.getTiming()).toMatchObject({ duration: 600, delay: 0 });
-    scrollToTop();
-    await settle();
-    expect(isHidden()).toBe(false);
-  });
-
-  it("hides an element with an inline opacity of the user, and keeps that opacity", async () => {
-    element.style.opacity = "0.5";
-    controller = reveal(element, options);
-    await settle();
-    expect(isHidden()).toBe(true);
-
-    scrollIntoView(element);
-    await waitForReveal();
-    expect(element.style.opacity).toBe("0.5");
-    element.getAnimations()[0]!.finish();
-    expect(getComputedStyle(element).opacity).toBe("0.5");
-  });
-
-  it("does not let the animation show a hidden element", () => {
-    controller = reveal(element, { ...options, when: false });
-    element.animate([{ opacity: 1 }, { opacity: 1 }], { duration: 60_000 });
-    expect(isHidden()).toBe(true);
-  });
-
-  it("shows a hidden element when it is destroyed", () => {
-    controller = reveal(element, options);
-    expect(isHidden()).toBe(true);
-    controller.destroy();
-    expect(element).not.toHaveAttribute("data-reveal");
-    expect(getComputedStyle(element).opacity).toBe("1");
-    controller.destroy();
-    expect(element).not.toHaveAttribute("data-reveal");
-  });
-
-  it("shows hidden server markup when it starts revealed", () => {
-    element.setAttribute("data-reveal", "hidden");
-    controller = reveal(element, { ...options, when: true });
-    expect(element).not.toHaveAttribute("data-reveal");
-    expect(element.getAnimations()).toHaveLength(1);
-  });
-
-  it("marks the document as ready", () => {
-    controller = reveal(element, options);
-    expect(document.documentElement).toHaveAttribute("data-reveal-ready");
-  });
-
-  it("shows the hidden elements when the page marks the reveal as failed", () => {
-    controller = reveal(element, options);
-    document.documentElement.setAttribute("data-reveal-failed", "");
-    try {
-      expect(getComputedStyle(element).opacity).toBe("1");
-    } finally {
-      document.documentElement.removeAttribute("data-reveal-failed");
-    }
+  it("unsupported observation and invalid thresholds reveal immediately", () => {
+    track(reveal(target, { ...native, threshold: 2 }));
+    expect(animation().playState).toBe("running");
   });
 });
 
-describe("reveal with a list", () => {
-  let group: RevealGroup | undefined;
-
-  afterEach(() => {
-    group?.destroy();
-    group = undefined;
+describe("cascade", () => {
+  it("applies only direct children and starts the first without initial delay", async () => {
+    target.children[0]!.innerHTML = "<b>nested</b>";
+    track(cascade(target, { ...native, interval: 10_000 }));
+    const children = Array.from(target.children) as HTMLElement[];
+    expect(target.getAnimations()).toEqual([]);
+    expect(children.map(opacity)).toEqual(["0", "0", "0"]);
+    expect(children.map((c) => animation(c).effect!.getTiming().delay)).toEqual([
+      0, 10_000, 20_000,
+    ]);
+    expect(target.querySelector("b")!.getAnimations()).toEqual([]);
+    scrollIntoView(target);
+    await expect.poll(() => animation(children[0]).playState).toBe("running");
+    expect(animation(children[0]).effect!.getComputedTiming().progress).not.toBeNull();
+    expect(animation(children[1]).effect!.getComputedTiming().progress).toBe(0);
   });
-
-  it("reveals each element of a selector", async () => {
-    document.body.innerHTML = `<p class="item">a</p><p class="item">b</p>`;
-    const items = [...document.querySelectorAll<HTMLElement>(".item")];
-    group = reveal(".item", options);
-    for (const item of items) await expect.element(item).not.toHaveAttribute("data-reveal");
+  it("multiple containers remain independent and disposal cancels pending children", async () => {
+    const other = document.createElement("ul");
+    other.innerHTML = "<li>a</li><li>b</li>";
+    document.body.append(other);
+    const handle = track(cascade([target, other], { ...native, interval: 10_000 }));
+    scrollIntoView(target);
+    await expect.poll(() => animation(target.children[0] as HTMLElement).playState).toBe("running");
+    expect(animation(other.children[0] as HTMLElement).playState).toBe("paused");
+    handle.dispose();
+    expect(target.getAnimations({ subtree: true })).toEqual([]);
+    expect(other.getAnimations({ subtree: true })).toEqual([]);
+    expect(Array.from(target.children).map((c) => getComputedStyle(c).opacity)).toEqual([
+      "1",
+      "1",
+      "1",
+    ]);
   });
-
-  it("updates and destroys all the elements of a list", async () => {
-    document.body.innerHTML = `<p>a</p><p>b</p>`;
-    const items = [...document.querySelectorAll("p")];
-    group = reveal(items, { ...options, when: false });
-    expect(items.map((item) => item.getAttribute("data-reveal"))).toEqual(["hidden", "hidden"]);
-    group.setOptions({ ...options, when: true });
-    expect(items.map((item) => item.getAnimations().length)).toEqual([1, 1]);
-    group.setOptions({ ...options, when: false });
-    group.destroy();
-    expect(items.map((item) => item.hasAttribute("data-reveal"))).toEqual([false, false]);
-  });
-
-  it("reveals each element of a live collection that onReveal changes", () => {
-    document.body.innerHTML = `<div><p>a</p><p>b</p><p>c</p></div>`;
-    const parent = document.querySelector("div")!;
-    const items = [...parent.children];
-    const onReveal = vi.fn((item: Element) => item.remove());
-    group = reveal(parent.children, { ...options, when: true, onReveal });
-    expect(onReveal.mock.calls.map(([item]) => item)).toEqual(items);
+  it("reduced motion bypasses every child delay", () => {
+    vi.mocked(window.matchMedia).mockReturnValue({ matches: true } as MediaQueryList);
+    track(cascade(target, { ...native, interval: 10_000 }));
+    expect(target.getAnimations({ subtree: true })).toEqual([]);
+    expect(Array.from(target.children).map((c) => getComputedStyle(c).opacity)).toEqual([
+      "1",
+      "1",
+      "1",
+    ]);
   });
 });

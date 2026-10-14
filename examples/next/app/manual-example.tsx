@@ -1,6 +1,6 @@
 "use client";
 
-import { Reveal, scale } from "@awesome-reveal/react";
+import { Reveal } from "@awesome-reveal/react";
 import { useState } from "react";
 
 export function ManualExample() {
@@ -13,7 +13,11 @@ export function ManualExample() {
         Toggle
       </button>
       <output>{count}</output> reveals
-      <Reveal keyframes={scale()} when={shown} onReveal={() => setCount((value) => value + 1)}>
+      <Reveal
+        from={{ opacity: 0, scale: 0.9 }}
+        when={shown}
+        onReveal={() => setCount((value) => value + 1)}
+      >
         <p>Revealed manually with `when`</p>
       </Reveal>
     </>

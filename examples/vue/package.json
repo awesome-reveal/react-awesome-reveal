@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@awesome-reveal/core": "workspace:*",
     "@awesome-reveal/vue": "workspace:*",
     "vue": "catalog:"
   },

@@ -4,8 +4,8 @@ Reveal-on-scroll animations for many frameworks, built on IntersectionObserver a
 
 ## Map
 
-- `packages/core`: the framework-independent controller and the `/keyframes` entry point.
-- `packages/react`, `packages/vue`, `packages/astro`: the framework adapters. Each depends on core and re-exports `/keyframes`.
+- `packages/core`: the `reveal` and `cascade` functions, which need no CSS, and the `/adapter` entry for the official adapters.
+- `packages/react`, `packages/vue`, `packages/astro`: the framework adapters. Each depends on core and ships the CSS that hides its server markup.
 - `packages/react-awesome-reveal`: the compat package for v4 users. It re-exports `@awesome-reveal/react`.
 - `packages/test-utils`: private test mocks, setup files and checks for the adapters.
 - `packages/*/skills`: agent skills for the users of each package. pnpm links them into consumer projects.
@@ -34,5 +34,5 @@ The pre-commit hook runs oxlint, oxfmt and the unit and SSR tests related to the
 - All packages share one version, through `linked-versions` in `release-please-config.json`. Each adapter depends on `@awesome-reveal/core` with `workspace:^`.
 - `react-awesome-reveal` is the exception. It continues the v4 version line, from 5.0.0. Do not add it to `linked-versions`: release-please gives all linked packages the highest version.
 - Core imports no framework. The reveal options and all the behavior live in core, and an adapter only binds them to its framework, so that all adapters behave the same. The contract suite in `packages/test-utils` checks it.
-- The packages are ESM-only. `"sideEffects"` lists only `*.css`, for the `reveal.css` export, or is `false` when a package has no CSS. The build keeps one file per module, so bundlers drop the modules that a consumer does not import.
+- The packages are ESM-only. `"sideEffects"` lists only `*.css` when a JS module imports the package `reveal.css`, or is `false`. Astro is `false`, because its CSS import is in `Reveal.astro`, which Astro compiles. The build keeps one file per module, so bundlers drop the modules that a consumer does not import.
 - Tests and type checks use the sources of other workspace packages, through the `tsconfig.base.json` paths and the `vitest.config.ts` alias. No build is necessary first.

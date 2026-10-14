@@ -3,15 +3,18 @@ import { readFile } from "node:fs/promises";
 import { defineConfig, type Plugin, type PluginOption } from "vite";
 import dts from "vite-plugin-dts";
 
-/** Ships the stylesheet of core, with a declaration that TypeScript needs for a side-effect import. */
-export const revealCss: Plugin = {
-  name: "reveal-css",
-  async generateBundle() {
-    const css = new URL("packages/core/src/reveal.css", import.meta.url);
-    this.emitFile({ type: "asset", fileName: "reveal.css", source: await readFile(css, "utf8") });
-    this.emitFile({ type: "asset", fileName: "reveal.css.d.ts", source: "export {};\n" });
-  },
-};
+/** Emits reveal.css for browser bundlers, and an empty module for native Node SSR. */
+export function revealCss(css: URL): Plugin {
+  return {
+    name: "reveal-css",
+    async generateBundle() {
+      this.emitFile({ type: "asset", fileName: "reveal.css", source: await readFile(css, "utf8") });
+      this.emitFile({ type: "asset", fileName: "reveal.css.d.ts", source: "export {};\n" });
+      this.emitFile({ type: "asset", fileName: "no-style.js", source: "export {};\n" });
+      this.emitFile({ type: "asset", fileName: "no-style.d.ts", source: "export {};\n" });
+    },
+  };
+}
 
 /** `plugins` takes the compiler plugin of the framework, if it has one. */
 export function defineLibConfig(entry: string[], plugins: PluginOption[] = []) {

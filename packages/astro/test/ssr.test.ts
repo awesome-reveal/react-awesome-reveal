@@ -1,6 +1,6 @@
 import { experimental_AstroContainer as AstroContainer } from "astro/container";
 
-import { fade } from "@awesome-reveal/core/keyframes";
+import { fadeKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
 import { describeSSRContract } from "@awesome-reveal/test-utils/contract-ssr";
 
 import { Reveal } from "../src";
@@ -37,14 +37,10 @@ describe("Reveal on the server", () => {
 
   it("serializes the options into the options attribute, with escaped JSON", async () => {
     const options = {
-      keyframes: fade(),
+      keyframes: fadeKeyframes,
       duration: 1000,
-      delay: 100,
-      stagger: 50,
       threshold: 0.5,
-      rootMargin: "-10%",
       once: false,
-      reducedMotion: "never",
     };
 
     const html = await render(options);
@@ -65,23 +61,16 @@ describe("Reveal on the server", () => {
   it("serializes the entrance options", async () => {
     const html = await render({
       from: { scale: 0.9 },
-      distance: "2rem",
-      easing: "spring",
-      bounce: 0.4,
     });
     const attribute = /options="([^"]*)"/.exec(html)![1]!.replaceAll("&quot;", '"');
 
     expect(JSON.parse(attribute)).toEqual({
       from: { scale: 0.9 },
-      distance: "2rem",
-      easing: "spring",
-      bounce: 0.4,
     });
   });
 });
 
 describeSSRContract("Astro Reveal", {
-  drift: [],
   async render(options, style) {
     const css =
       style &&

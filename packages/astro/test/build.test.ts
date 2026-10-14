@@ -9,10 +9,7 @@ function source(path: string) {
 // The package has "sideEffects": false, which must not drop the script and the style of the component.
 const aliases = {
   "@awesome-reveal/astro": source("../src/index.ts"),
-  "@awesome-reveal/astro/keyframes": source("../src/keyframes.ts"),
-  "@awesome-reveal/core": source("../../core/src/index.ts"),
-  "@awesome-reveal/core/keyframes": source("../../core/src/keyframes/index.ts"),
-  "@awesome-reveal/core/reveal.css": source("../../core/src/reveal.css"),
+  "@awesome-reveal/core/adapter": source("../../core/src/adapter.ts"),
 };
 
 describe("a static build of a page with Reveal", () => {
@@ -30,8 +27,8 @@ describe("a static build of a page with Reveal", () => {
 
   it("bundles reveal.css, so the user does not import it", () => {
     expect(page).toMatch(/\[data-reveal=["]?hidden["]?\]\{opacity:0!important\}/);
-    expect(page).toMatch(/@media ?\(scripting: ?none\)/);
-    expect(page).toMatch(/@media ?print/);
+    expect(page).toMatch(/\(scripting: ?none\)/);
+    expect(page).toMatch(/[, ]print/);
     expect(page).toMatch(/awesome-reveal\{display:contents\}/);
   });
 

@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import { Reveal } from "../../src";
-import { slide } from "../../src/keyframes";
+import { defaultKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
 </script>
 
 <template>
-  <Reveal as="section" :keyframes="slide()" style="color: red">
+  <Reveal
+    as="section"
+    :keyframes="defaultKeyframes"
+    style="color: red"
+  >
     <p>hello</p>
   </Reveal>
 </template>

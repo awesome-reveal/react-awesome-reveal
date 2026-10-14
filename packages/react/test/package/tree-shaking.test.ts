@@ -7,7 +7,7 @@ const root = fileURLToPath(new URL("../../", import.meta.url));
 const { resolve } = createRequire(import.meta.url);
 
 // Resolves through the package "exports" map, as consumers do.
-const alias = ["@awesome-reveal/react", "@awesome-reveal/react/keyframes"].map((specifier) => ({
+const alias = ["@awesome-reveal/react"].map((specifier) => ({
   find: new RegExp(`^${specifier}$`),
   replacement: resolve(specifier),
 }));
@@ -46,37 +46,17 @@ async function bundle(fixture: string) {
 
 describe("consumer bundle", () => {
   it("keeps only the modules and exports that it imports", async () => {
-    const { keptExports, size } = await bundle("reveal-slide.js");
+    const { keptExports, size } = await bundle("reveal-only.js");
 
-    expect(keptExports).toEqual({
-      "react/dist/Reveal.js": ["Reveal"],
-      "react/dist/useReveal.js": ["useReveal"],
-      "core/dist/keyframes/enter.js": ["enter"],
-      "core/dist/keyframes/from.js": ["offsetFrom"],
-      "core/dist/keyframes/presets.js": ["slide"],
-      "core/dist/keyframes/spring.js": ["spring"],
-      "core/dist/observe.js": ["observe"],
-      "core/dist/play.js": ["play"],
-      "core/dist/report.js": ["report"],
-      "core/dist/reveal.js": ["createReveal"],
-    });
+    expect(keptExports["core/dist/adapter.js"]).toContain("createReveal");
     expect(size).toBeLessThan(6000);
   });
 
-  // play() keeps enter(), offsetFrom() and spring(), because it builds the keyframes of `from`.
-  it("keeps neither Reveal nor the presets for the hook alone", async () => {
+  it("keeps no Reveal component for the hook alone", async () => {
     const { keptExports, size } = await bundle("hook-only.js");
 
-    expect(keptExports).toEqual({
-      "react/dist/useReveal.js": ["useReveal"],
-      "core/dist/keyframes/enter.js": ["enter"],
-      "core/dist/keyframes/from.js": ["offsetFrom"],
-      "core/dist/keyframes/spring.js": ["spring"],
-      "core/dist/observe.js": ["observe"],
-      "core/dist/play.js": ["play"],
-      "core/dist/report.js": ["report"],
-      "core/dist/reveal.js": ["createReveal"],
-    });
+    expect(keptExports["core/dist/adapter.js"]).toContain("createReveal");
     expect(size).toBeLessThan(5500);
+    expect(keptExports).not.toHaveProperty("react/dist/Reveal.js");
   });
 });

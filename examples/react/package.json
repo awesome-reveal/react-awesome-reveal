@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@awesome-reveal/core": "workspace:*",
     "@awesome-reveal/react": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:"

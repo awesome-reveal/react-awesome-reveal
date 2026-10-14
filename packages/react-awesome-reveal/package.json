@@ -47,22 +47,12 @@
     "skills"
   ],
   "type": "module",
-  "sideEffects": [
-    "*.css"
-  ],
+  "sideEffects": false,
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    },
-    "./keyframes": {
-      "types": "./dist/keyframes.d.ts",
-      "default": "./dist/keyframes.js"
-    },
-    "./reveal.css": {
-      "types": "./dist/reveal.css.d.ts",
-      "default": "./dist/reveal.css"
     },
     "./package.json": "./package.json"
   },
@@ -71,7 +61,7 @@
   },
   "scripts": {
     "build": "tsc --noEmit && vite build",
-    "check:package": "publint --strict && attw --pack . --profile esm-only"
+    "check:package": "tsc -p test/package && publint --strict && attw --pack . --profile esm-only"
   },
   "dependencies": {
     "@awesome-reveal/react": "workspace:^"

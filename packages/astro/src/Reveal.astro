@@ -1,7 +1,7 @@
 ---
 import type { HTMLTag } from "astro/types";
 
-import "@awesome-reveal/core/reveal.css";
+import "./reveal.css";
 
 import type { RevealProps } from "./index.js";
 
@@ -11,17 +11,10 @@ const {
   as: Tag = "div",
   keyframes,
   from,
-  distance,
-  easing,
-  bounce,
   duration,
-  delay,
-  stagger,
   threshold,
-  rootMargin,
   once,
   when,
-  reducedMotion,
   ...rest
 } = Astro.props;
 
@@ -30,21 +23,15 @@ const {
   "data-astro-transition-persist": persist,
   "data-astro-transition-persist-props": persistProps,
   ...attributes
-} = rest as typeof rest & Record<`data-astro-transition-persist${string}`, string | undefined>;
+} = rest as typeof rest &
+  Record<`data-astro-transition-persist${string}`, string | undefined>;
 
 const options = JSON.stringify({
   keyframes,
   from,
-  distance,
-  easing,
-  bounce,
   duration,
-  delay,
-  stagger,
   threshold,
-  rootMargin,
   once,
-  reducedMotion,
 });
 ---
 
@@ -54,7 +41,9 @@ const options = JSON.stringify({
   data-astro-transition-persist={persist}
   data-astro-transition-persist-props={persistProps}
 >
-  <Tag {...attributes} data-reveal="hidden"><slot /></Tag>
+  <Tag {...attributes} data-reveal="hidden">
+    <slot />
+  </Tag>
 </awesome-reveal>
 
 <style is:global>
@@ -66,5 +55,6 @@ const options = JSON.stringify({
 <script>
   import { RevealElement } from "./element.js";
 
-  if (!customElements.get("awesome-reveal")) customElements.define("awesome-reveal", RevealElement);
+  if (!customElements.get("awesome-reveal"))
+    customElements.define("awesome-reveal", RevealElement);
 </script>

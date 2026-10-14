@@ -22,13 +22,12 @@ console.log(html);
 const nextPage = (id, module, next, extra = "") => `
 import Link from "next/link";
 import { Reveal } from "${module}";
-import { fade } from "${module}/keyframes";
 
 ${extra}
 export default function Page() {
   return (
     <main>
-      <Reveal id="${id}" keyframes={fade()}>
+      <Reveal id="${id}" from={{ opacity: 0 }}>
         ${id}
       </Reveal>
       <Link href="${next}">Next</Link>
@@ -44,18 +43,19 @@ const cases = {
     typescript: true,
     files: {
       "src/main.ts": `
-import "@awesome-reveal/core/reveal.css";
-import { createReveal, enter, reveal } from "@awesome-reveal/core";
-import { slide } from "@awesome-reveal/core/keyframes";
+import { reveal, cascade, type RevealHandle } from "@awesome-reveal/core";
 
-const controller = reveal(document.body, { keyframes: enter({ y: 16 }) });
-controller.setOptions({ once: false, keyframes: slide({ from: "left" }) });
-reveal(".card", { from: { scale: 0.9 }, bounce: 0.4 }).destroy();
-export const state = createReveal({ when: true });
+const hero: RevealHandle = reveal(".hero");
+reveal(".card", { from: "left" });
+reveal(".logo", { keyframes: [{ opacity: 0, transform: "scale(.8)" }, { opacity: 1, transform: "scale(1)" }] });
+cascade(".features", { from: { opacity: 0, y: 16 }, interval: 80 });
+hero.dispose();
+// @ts-expect-error mutually exclusive animation options
+reveal(document.body, { from: "left", keyframes: [{}] });
+
 `,
       "src/ssr.ts": `
 import { reveal } from "@awesome-reveal/core";
-import "@awesome-reveal/core/keyframes";
 
 if (typeof reveal !== "function") throw new Error("reveal is not a function");
 `,
@@ -67,19 +67,17 @@ if (typeof reveal !== "function") throw new Error("reveal is not a function");
     typescript: true,
     files: {
       "src/main.tsx": `
-import "@awesome-reveal/react/reveal.css";
-import { fade, Reveal, useReveal } from "@awesome-reveal/react";
-import { slide } from "@awesome-reveal/react/keyframes";
+import { Reveal, useReveal } from "@awesome-reveal/react";
 
 export function Card() {
-  const { getProps } = useReveal<HTMLElement>({ keyframes: fade() });
+  const { getProps } = useReveal<HTMLElement>({ from: { opacity: 0 } });
   return <article {...getProps({ className: "card" })}>Card</article>;
 }
 
 export const App = () => (
   <Reveal from="left" onReveal={() => {}}>
     <Card />
-    <Reveal keyframes={slide({ from: "top" })}>Slide</Reveal>
+    <Reveal from="top">Slide</Reveal>
   </Reveal>
 );
 `,
@@ -97,11 +95,9 @@ ${hiddenCheck("renderToString(<App />)")}
     typescript: true,
     files: {
       "src/main.tsx": `
-import "react-awesome-reveal/reveal.css";
 import { Reveal } from "react-awesome-reveal";
-import { fade } from "react-awesome-reveal/keyframes";
 
-export const App = () => <Reveal keyframes={fade()}>Hello</Reveal>;
+export const App = () => <Reveal from={{ opacity: 0 }}>Hello</Reveal>;
 `,
       "src/ssr.tsx": `
 import { renderToString } from "react-dom/server";
@@ -120,18 +116,16 @@ ${hiddenCheck("renderToString(<App />)")}
     files: {
       "src/App.vue": `
 <script setup lang="ts">
-import { fade, Reveal, vReveal } from "@awesome-reveal/vue";
-import { slide } from "@awesome-reveal/vue/keyframes";
+import { Reveal, vReveal } from "@awesome-reveal/vue";
 </script>
 
 <template>
   <Reveal from="left" @reveal="() => {}">Component</Reveal>
-  <Reveal :keyframes="slide({ from: 'top' })" v-slot="{ revealed }">{{ revealed }}</Reveal>
-  <p v-reveal="{ keyframes: fade(), onReveal: () => {} }">Directive</p>
+  <Reveal from="top" v-slot="{ revealed }">{{ revealed }}</Reveal>
+  <p v-reveal="{ from: { opacity: 0 }, onReveal: () => {} }">Directive</p>
 </template>
 `,
       "src/main.ts": `
-import "@awesome-reveal/vue/reveal.css";
 import { createApp } from "vue";
 import App from "./App.vue";
 
@@ -159,7 +153,6 @@ ${hiddenCheck("await renderToString(createSSRApp(App))")}
       "app/layout.tsx": `
 import type { ReactNode } from "react";
 
-import "@awesome-reveal/react/reveal.css";
 
 export default function Layout({ children }: { children: ReactNode }) {
   return (
@@ -169,21 +162,21 @@ export default function Layout({ children }: { children: ReactNode }) {
   );
 }
 `,
-      // A Server Component creates the keyframes from the root entry, so they cross the server boundary as props.
+      // A Server Component passes native serializable reveal options to the client boundary.
       "app/page.tsx": `
 import Link from "next/link";
-import { Reveal, slide, spring } from "@awesome-reveal/react";
+import { Reveal } from "@awesome-reveal/react";
 
 import { Card } from "./card";
 
 export default function Page() {
   return (
     <main>
-      <Reveal id="top" from="left" bounce={0.3}>
+      <Reveal id="top" from="left">
         Top
       </Reveal>
       <div style={{ height: "200vh" }} />
-      <Reveal id="below" keyframes={slide({ easing: spring() })} stagger={50}>
+      <Reveal id="below" from="bottom">
         <p>One</p>
         <p>Two</p>
       </Reveal>
@@ -197,10 +190,9 @@ export default function Page() {
 "use client";
 
 import { useReveal } from "@awesome-reveal/react";
-import { fade } from "@awesome-reveal/react/keyframes";
 
 export function Card() {
-  const { getProps } = useReveal<HTMLElement>({ keyframes: fade() });
+  const { getProps } = useReveal<HTMLElement>({ from: { opacity: 0 } });
   return <article {...getProps({ id: "card" })}>Card</article>;
 }
 `,
@@ -231,13 +223,12 @@ export function Card() {
       "tsconfig.json": `{ "extends": "astro/tsconfigs/strict", "include": [".astro/types.d.ts", "**/*"], "exclude": ["dist"] }\n`,
       "src/pages/index.astro": `
 ---
-import { fade, Reveal } from "@awesome-reveal/astro";
-import { slide } from "@awesome-reveal/astro/keyframes";
+import { Reveal } from "@awesome-reveal/astro";
 ---
 
-<Reveal keyframes={fade()}>Hello</Reveal>
+<Reveal from={{ opacity: 0 }}>Hello</Reveal>
 <Reveal from="left" when={true}>From the left</Reveal>
-<Reveal keyframes={slide({ from: "top" })}>Slide</Reveal>
+<Reveal from="top">Slide</Reveal>
 `,
     },
   },

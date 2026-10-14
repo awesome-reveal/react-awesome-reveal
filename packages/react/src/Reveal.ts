@@ -15,9 +15,10 @@ import { type RevealOptions, useReveal } from "./useReveal.js";
 
 type RevealElement = keyof JSX.IntrinsicElements;
 
+/** Configures the reveal and the element rendered around its children. */
 export type RevealProps<T extends RevealElement = "div"> = RevealOptions & {
   /**
-   * Tag of the rendered element.
+   * The tag of the rendered element.
    * @default "div"
    */
   as?: T;
@@ -25,38 +26,20 @@ export type RevealProps<T extends RevealElement = "div"> = RevealOptions & {
 } & Omit<ComponentPropsWithoutRef<T>, keyof RevealOptions | "as">;
 
 // React 18 only passes a ref to function components wrapped in forwardRef.
+type WithoutRef<T> = T extends unknown ? Omit<T, "as" | "ref"> : never;
+
 const RevealWithRef = /* @__PURE__ */ forwardRef(function Reveal(
-  props: Omit<RevealProps, "as" | "ref"> & { as?: RevealElement },
+  props: WithoutRef<RevealProps> & { as?: RevealElement },
   ref: ForwardedRef<Element>,
 ) {
-  const {
-    as,
-    keyframes,
-    from,
-    distance,
-    easing,
-    bounce,
-    duration,
-    delay,
-    stagger,
-    threshold,
-    rootMargin,
-    once,
-    when,
-    reducedMotion,
-    onReveal,
-    ...rest
-  } = props;
+  const { as, keyframes, from, duration, threshold, once, when, onReveal, ...rest } = props;
   const { getProps } = useReveal<Element>(props);
 
   // oxlint-disable-next-line react/refs -- getProps passes the ref on to the element and does not read it.
   return createElement(as ?? "div", getProps({ ...rest, ref }));
 });
 
-/**
- * Renders one element that animates when it enters the viewport.
- * To animate your own element or component without a wrapper, use `useReveal`.
- */
+/** Renders an element around its children and reveals it when it enters the viewport. */
 export const Reveal = RevealWithRef as <T extends RevealElement = "div">(
   props: RevealProps<T>,
 ) => ReactElement;

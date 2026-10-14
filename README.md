@@ -1,4 +1,4 @@
-# awesome-reveal: reveal on scroll animations for React, Vue, Astro and JavaScript
+# awesome-reveal: reveal-on-scroll animations for React, Vue, Astro and JavaScript
 
 [![CI](https://github.com/awesome-reveal/awesome-reveal/actions/workflows/ci.yml/badge.svg?branch=next)](https://github.com/awesome-reveal/awesome-reveal/actions/workflows/ci.yml)
 [![npm version](https://badgen.net/npm/v/@awesome-reveal/core)](https://www.npmjs.com/package/@awesome-reveal/core)
@@ -12,82 +12,43 @@ awesome-reveal adds reveal-on-scroll animations (fade-in, slide-in and more) to 
 
 Read the documentation at [awesome-reveal.dev](https://awesome-reveal.dev).
 
-## Features
-
-- 🪶 **Tiny** – No third-party dependencies. Your bundle includes only the keyframes factories that you import.
-- 🧩 **One behavior, many frameworks** – All the adapters share one core, so they have the same options and the same behavior.
-- ⚙️ **Native APIs** – No animation loop in JavaScript. Web Animations run on the compositor where possible.
-- ♿ **Accessible** – It respects `prefers-reduced-motion` by default. Hidden content stays in the accessibility tree.
-- 💻 **SSR** – The React, Vue and Astro adapters render content hidden on the server, so it does not flash before the script runs.
-- 🏷 **TypeScript** – Strict types for the options and the keyframes.
-
 ## Quick start
 
-Install the package for your framework. The examples use `npm install`. You can also use `pnpm add`, `yarn add` or `bun add`.
-
-### React
-
-```sh
-npm install @awesome-reveal/react
-```
+Install the package for your framework. You do not need to import a stylesheet.
 
 ```tsx
 import { Reveal } from "@awesome-reveal/react";
-import { slide } from "@awesome-reveal/react/keyframes";
 
-<Reveal keyframes={slide({ direction: "left" })}>
-  <p>I gently appear as I enter the viewport</p>
-</Reveal>;
-```
-
-### Vue
-
-```sh
-npm install @awesome-reveal/vue
+<Reveal from="left">Hello</Reveal>;
 ```
 
 ```vue
 <script setup>
-import { vReveal } from "@awesome-reveal/vue";
-import { slide } from "@awesome-reveal/vue/keyframes";
-
-const fromLeft = slide({ direction: "left" });
+import { Reveal, vReveal } from "@awesome-reveal/vue";
 </script>
-
 <template>
-  <p v-reveal="{ keyframes: fromLeft }">I gently appear as I enter the viewport</p>
+  <Reveal from="left">Hello</Reveal>
+  <p v-reveal="{ from: { opacity: 0 } }">Pure fade</p>
 </template>
-```
-
-### Astro
-
-```sh
-npm install @awesome-reveal/astro
 ```
 
 ```astro
 ---
 import { Reveal } from "@awesome-reveal/astro";
-import { slide } from "@awesome-reveal/astro/keyframes";
 ---
-
-<Reveal keyframes={slide({ direction: "left" })}>
-  <p>I gently appear as I enter the viewport</p>
-</Reveal>
-```
-
-### Plain DOM
-
-```sh
-npm install @awesome-reveal/core
+<Reveal from="left">Hello</Reveal>
 ```
 
 ```ts
-import { reveal } from "@awesome-reveal/core";
-import { slide } from "@awesome-reveal/core/keyframes";
+import { reveal, cascade } from "@awesome-reveal/core";
 
-reveal(document.querySelector(".hero")!, { keyframes: slide({ direction: "left" }) });
+const hero = reveal(".hero");
+reveal(".card", { from: "left" });
+cascade(".features", { interval: 80 });
+hero.dispose();
 ```
+
+`@awesome-reveal/core` has no dependencies and needs no CSS. The framework packages hide server-rendered content until hydration. All the packages obey the reduced-motion preference automatically. For a custom animation, use native `Keyframe[]`.
 
 ## Packages
 
@@ -99,15 +60,15 @@ reveal(document.querySelector(".hero")!, { keyframes: slide({ direction: "left" 
 | React     | [`react-awesome-reveal`](packages/react-awesome-reveal) | [![npm](https://badgen.net/npm/v/react-awesome-reveal)](https://www.npmjs.com/package/react-awesome-reveal)   |
 | Vue       | [`@awesome-reveal/vue`](packages/vue)                   | [![npm](https://badgen.net/npm/v/@awesome-reveal/vue)](https://www.npmjs.com/package/@awesome-reveal/vue)     |
 
-Each package README documents its API. The [`@awesome-reveal/core` README](packages/core) also documents the keyframes and the options that all the packages share.
+Each package README documents its API. The [`@awesome-reveal/core` README](packages/core) documents the entrance and viewport options that the packages share.
 
-`react-awesome-reveal` 5 re-exports `@awesome-reveal/react`, for v4 users. To migrate from v4, read [Migrating from v4](packages/react#migrating-from-v4).
+Version 5 of `react-awesome-reveal` re-exports `@awesome-reveal/react` for v4 users. To migrate from v4, read [Migrating from v4](packages/react#migrating-from-v4).
 
-The packages ship agent skills that help a coding agent use the library. Each package README describes them. The [`examples`](examples) folder has a small app for React, Vue and Astro.
+The packages include agent skills that help a coding agent use the library. Each package README gives the names of its skills. The [`examples`](examples) folder has a small app for React, Vue, Astro and Next.js.
 
 ## Browser support
 
-Chrome 84, Firefox 75 (79 on Android) and Safari 13.1, or later. Read [Browser support](packages/core#browser-support) for the fallbacks.
+The packages use the native IntersectionObserver and Web Animations API. If one of these APIs is not available, the content reveals immediately and does not stay hidden. Read [Core browser support](packages/core#exports-and-browser-support).
 
 ## Contributing
 
@@ -117,7 +78,7 @@ Open pull requests against the `next` branch. Read [`CONTRIBUTING.md`](CONTRIBUT
 
 - Report a bug in the [issue tracker](https://github.com/awesome-reveal/awesome-reveal/issues).
 - Ask a question or suggest a feature in [Discussions](https://github.com/awesome-reveal/awesome-reveal/discussions).
-- If awesome-reveal helps you, [star the repository](https://github.com/awesome-reveal/awesome-reveal) or [consider supporting its creator](https://github.com/sponsors/morellodev).
+- If awesome-reveal helps you, [star the repository](https://github.com/awesome-reveal/awesome-reveal) or [support its creator](https://github.com/sponsors/morellodev).
 
 ## License
 

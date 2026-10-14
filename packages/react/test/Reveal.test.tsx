@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { createRef, version } from "react";
 
-import { fade, slide } from "../src/keyframes";
+import { fadeKeyframes, defaultKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
 import { Reveal } from "../src/Reveal";
 import { animations } from "@awesome-reveal/test-utils/animate";
 import { intersect } from "./intersect";
@@ -9,7 +9,7 @@ import { intersect } from "./intersect";
 describe(`Reveal (React ${version})`, () => {
   it("renders one hidden div around its children", () => {
     const { container } = render(
-      <Reveal keyframes={fade()}>
+      <Reveal keyframes={fadeKeyframes}>
         <p>one</p>
         text
         <p>two</p>
@@ -26,7 +26,7 @@ describe(`Reveal (React ${version})`, () => {
   });
 
   it("reveals and animates when it enters the viewport", () => {
-    const { container } = render(<Reveal keyframes={fade()}>child</Reveal>);
+    const { container } = render(<Reveal keyframes={fadeKeyframes}>child</Reveal>);
     const element = container.firstElementChild as HTMLElement;
     intersect(element, true);
 
@@ -39,12 +39,12 @@ describe(`Reveal (React ${version})`, () => {
     const { container } = render(<Reveal>child</Reveal>);
     intersect(container.firstElementChild!, true);
 
-    expect(animations[0]?.keyframes).toEqual(slide());
+    expect(animations[0]?.keyframes).toEqual(defaultKeyframes);
   });
 
   it("renders the tag given by `as`", () => {
     render(
-      <Reveal as="ul" keyframes={fade()} stagger={80}>
+      <Reveal as="ul" keyframes={fadeKeyframes}>
         <li>one</li>
         <li>two</li>
       </Reveal>,
@@ -52,11 +52,13 @@ describe(`Reveal (React ${version})`, () => {
     const list = screen.getByRole("list");
     intersect(list, true);
 
-    expect(animations.map(({ element }) => element.tagName)).toEqual(["LI", "LI"]);
+    expect(animations.map(({ element }) => element.tagName)).toEqual(["UL"]);
   });
 
   it("passes HTML attributes through", () => {
-    render(<Reveal as="a" keyframes={fade()} href="/docs" className="link" aria-label="Docs" />);
+    render(
+      <Reveal as="a" keyframes={fadeKeyframes} href="/docs" className="link" aria-label="Docs" />,
+    );
 
     expect(screen.getByRole("link", { name: "Docs" })).toHaveAttribute("href", "/docs");
     expect(screen.getByRole("link")).toHaveClass("link", { exact: true });
@@ -64,7 +66,7 @@ describe(`Reveal (React ${version})`, () => {
 
   it("hides an element with its own style, and keeps that style when revealed", () => {
     const { container } = render(
-      <Reveal keyframes={fade()} style={{ color: "red", opacity: 0.5 }}>
+      <Reveal keyframes={fadeKeyframes} style={{ color: "red", opacity: 0.5 }}>
         child
       </Reveal>,
     );
@@ -79,7 +81,7 @@ describe(`Reveal (React ${version})`, () => {
   it("leaves children and their refs untouched", () => {
     const ref = createRef<HTMLSpanElement>();
     render(
-      <Reveal keyframes={fade()}>
+      <Reveal keyframes={fadeKeyframes}>
         <span ref={ref} className="child">
           child
         </span>
@@ -91,27 +93,15 @@ describe(`Reveal (React ${version})`, () => {
   });
 
   it("renders no text for boolean children", () => {
-    const { container } = render(<Reveal keyframes={fade()}>{false}</Reveal>);
+    const { container } = render(<Reveal keyframes={fadeKeyframes}>{false}</Reveal>);
 
     expect(container).toHaveTextContent("");
-  });
-
-  it("keeps staggered children hidden before it is in view", () => {
-    const { container } = render(
-      <Reveal keyframes={fade()} stagger={50}>
-        <span>a</span>
-        <span>b</span>
-      </Reveal>,
-    );
-
-    expect(container.firstElementChild).toHaveStyle({ opacity: "0" });
-    expect(animations).toHaveLength(0);
   });
 
   describe("ref", () => {
     it("sets an object ref and still reveals the element", () => {
       const ref = createRef<HTMLDivElement>();
-      const { unmount } = render(<Reveal keyframes={fade()} ref={ref} />);
+      const { unmount } = render(<Reveal keyframes={fadeKeyframes} ref={ref} />);
       const element = ref.current!;
 
       expect(element.tagName).toBe("DIV");
@@ -124,7 +114,9 @@ describe(`Reveal (React ${version})`, () => {
 
     it("calls a callback ref with the element, then with null", () => {
       const ref = vi.fn();
-      const { container, unmount } = render(<Reveal as="section" keyframes={fade()} ref={ref} />);
+      const { container, unmount } = render(
+        <Reveal as="section" keyframes={fadeKeyframes} ref={ref} />,
+      );
       const element = container.firstElementChild;
 
       intersect(element!, true);
@@ -136,17 +128,17 @@ describe(`Reveal (React ${version})`, () => {
 
     it("keeps the same ref callback across renders with the same ref", () => {
       const ref = vi.fn();
-      const { rerender } = render(<Reveal keyframes={fade()} ref={ref} className="a" />);
-      rerender(<Reveal keyframes={fade()} ref={ref} className="b" />);
+      const { rerender } = render(<Reveal keyframes={fadeKeyframes} ref={ref} className="a" />);
+      rerender(<Reveal keyframes={fadeKeyframes} ref={ref} className="b" />);
 
       expect(ref).toHaveBeenCalledTimes(1);
     });
 
     it("does not replay the animation when the callback ref changes on each render", () => {
-      const { container, rerender } = render(<Reveal keyframes={fade()} ref={() => {}} />);
+      const { container, rerender } = render(<Reveal keyframes={fadeKeyframes} ref={() => {}} />);
       intersect(container.firstElementChild!, true);
-      rerender(<Reveal keyframes={fade()} ref={() => {}} />);
-      rerender(<Reveal keyframes={fade()} ref={() => {}} />);
+      rerender(<Reveal keyframes={fadeKeyframes} ref={() => {}} />);
+      rerender(<Reveal keyframes={fadeKeyframes} ref={() => {}} />);
 
       expect(animations).toHaveLength(1);
     });
@@ -155,7 +147,7 @@ describe(`Reveal (React ${version})`, () => {
     it.runIf(version.startsWith("19."))("runs the cleanup that a callback ref returns", () => {
       const cleanup = vi.fn();
       const ref = vi.fn(() => cleanup);
-      const { container, unmount } = render(<Reveal keyframes={fade()} ref={ref} />);
+      const { container, unmount } = render(<Reveal keyframes={fadeKeyframes} ref={ref} />);
       const element = container.firstElementChild!;
 
       unmount();

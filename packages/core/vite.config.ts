@@ -1,3 +1,3 @@
-import { defineLibConfig, revealCss } from "../../vite.lib.config.ts";
+import { defineLibConfig } from "../../vite.lib.config.ts";
 
-export default defineLibConfig(["src/index.ts", "src/keyframes/index.ts"], [revealCss]);
+export default defineLibConfig(["src/index.ts", "src/adapter.ts"]);

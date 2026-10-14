@@ -1,3 +1,11 @@
 {
-  "ignorePatterns": ["CHANGELOG.md"]
+  "ignorePatterns": ["CHANGELOG.md"],
+  "overrides": [
+    {
+      "files": ["**/*.vue"],
+      "options": {
+        "singleAttributePerLine": true
+      }
+    }
+  ]
 }

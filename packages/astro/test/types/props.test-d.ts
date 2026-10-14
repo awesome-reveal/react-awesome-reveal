@@ -1,4 +1,4 @@
-import type { RevealOptions } from "@awesome-reveal/core";
+import type { RevealOptions } from "@awesome-reveal/core/adapter";
 
 import type { Reveal, RevealProps } from "../../src";
 
@@ -18,7 +18,6 @@ test("Reveal takes the props of its as tag", () => {
 
 test("Reveal takes the entrance options, and no callback, which cannot cross to the client", () => {
   expectTypeOf<RevealProps>().toHaveProperty("from");
-  expectTypeOf<RevealProps>().toHaveProperty("bounce");
   expectTypeOf<RevealProps>().not.toHaveProperty("onReveal");
 });
 

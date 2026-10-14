@@ -54,10 +54,6 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./keyframes": {
-      "types": "./dist/keyframes.d.ts",
-      "default": "./dist/keyframes.js"
-    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -65,7 +61,7 @@
   },
   "scripts": {
     "build": "tsc --noEmit && vite build",
-    "check:package": "publint --strict && attw --pack . --profile esm-only"
+    "check:package": "tsc -p test/package && publint --strict && attw --pack . --profile esm-only"
   },
   "dependencies": {
     "@awesome-reveal/core": "workspace:^"

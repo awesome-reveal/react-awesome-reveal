@@ -32,11 +32,17 @@ function isHidden(page: Page, selector: string) {
   );
 }
 
-describe.each([
+const browsers = [
   ["chromium", chromium],
   ["firefox", firefox],
   ["webkit", webkit],
-])("example in %s", (_, browserType) => {
+] as const;
+describe.each(
+  browsers.filter(
+    ([name]) =>
+      !process.env.REVEAL_BROWSERS || process.env.REVEAL_BROWSERS.split(",").includes(name),
+  ),
+)("example in %s", (_, browserType) => {
   let browser: Browser;
   let page: Page;
 
@@ -70,11 +76,11 @@ describe.each([
   });
 
   it("shows the hidden elements in print, with the rule of reveal.css", async () => {
-    expect(await isHidden(page, "#stagger")).toBe(true);
+    expect(await isHidden(page, "#list")).toBe(true);
 
     await page.emulateMedia({ media: "print" });
 
-    expect(await page.$eval("#stagger", (element) => getComputedStyle(element).opacity)).toBe("1");
+    expect(await page.$eval("#list", (element) => getComputedStyle(element).opacity)).toBe("1");
   });
 
   it("shows the hidden elements when the page marks the reveal as failed", async () => {
@@ -84,27 +90,23 @@ describe.each([
 
     await page.evaluate(() => document.documentElement.setAttribute("data-reveal-failed", ""));
 
-    expect(await page.$eval("#stagger", (element) => getComputedStyle(element).opacity)).toBe("1");
+    expect(await page.$eval("#list", (element) => getComputedStyle(element).opacity)).toBe("1");
   });
 
   it("reveals the element in the viewport, and keeps the others hidden", async () => {
     await revealed(page, "#default");
 
-    expect(await isHidden(page, "#stagger")).toBe(true);
+    expect(await isHidden(page, "#list")).toBe(true);
   });
 
-  it("reveals an element when it scrolls into the viewport, and staggers its children", async () => {
-    await page.locator("#stagger").scrollIntoViewIfNeeded();
-    await page.waitForFunction(
-      () => !document.querySelector("#stagger")!.hasAttribute("data-reveal"),
-    );
+  it("reveals an element when it scrolls into the viewport, as one composition", async () => {
+    await page.locator("#list").scrollIntoViewIfNeeded();
+    await page.waitForFunction(() => !document.querySelector("#list")!.hasAttribute("data-reveal"));
 
     expect(
-      await page.$$eval("#stagger > li", (items) =>
-        items.map((item) => item.getAnimations().length),
-      ),
-    ).toEqual([1, 1, 1]);
-    await revealed(page, "#stagger");
+      await page.$$eval("#list", (items) => items.map((item) => item.getAnimations().length)),
+    ).toEqual([1]);
+    await revealed(page, "#list");
   });
 
   it("keeps the attributes of the element", async () => {
@@ -204,7 +206,7 @@ describe("example server markup", () => {
     await page.goto("/");
 
     expect(
-      await page.$eval("#stagger", (element) => [
+      await page.$eval("#list", (element) => [
         element.getAttribute("data-reveal"),
         getComputedStyle(element).opacity,
       ]),
