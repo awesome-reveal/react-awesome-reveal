@@ -29,7 +29,7 @@ describe("a static build of a page with Reveal", () => {
     expect(page).toMatch(
       /\[data-awesome-reveal=["]?hidden["]?\]\[data-awesome-reveal-ready\],\[data-awesome-reveal=["]?cascade["]?\]\[data-awesome-reveal-ready\]>\*\{opacity:0!important\}/,
     );
-    expect(page).toMatch(/\(scripting: ?enabled\)/);
+    expect(page).toMatch(/\(scripting: ?none\)/);
     expect(page).toMatch(/@keyframes awesome-reveal-hold/);
     expect(page).toMatch(/awesome-reveal\{display:contents\}/);
   });
