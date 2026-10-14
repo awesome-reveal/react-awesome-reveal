@@ -141,6 +141,16 @@ describe("reveal", () => {
     expect(animations[0]?.play).toHaveBeenCalledOnce();
     expect(observerOf(target)).toBeUndefined();
   });
+  it.each([
+    [0.3, 0],
+    [0.6, 0],
+  ])("reads each entry of one report: %d, then %d", (...ratios) => {
+    const target = element();
+    track(reveal(target, { threshold: 0.5 }));
+    observerOf(target)!.trigger(target, ...ratios);
+    expect(animations[0]?.play).toHaveBeenCalledOnce();
+    expect(observerOf(target)).toBeUndefined();
+  });
   it.each(["selector", "iterable", "array-like", "live collection"])(
     "resolves multiple %s targets independently",
     (kind) => {
@@ -184,7 +194,7 @@ describe("reveal", () => {
     "reduced motion skips all animations including native frames: %s",
     (native) => {
       vi.stubGlobal("matchMedia", () => ({ matches: true }));
-      track(reveal(element(), native ? { keyframes: [{ opacity: 0 }, {}] } : {}));
+      track(reveal(element(), native ? { keyframes: [{ opacity: 0 }, { opacity: 1 }] } : {}));
       expect(animations).toHaveLength(0);
       expect(MockIntersectionObserver.instances.size).toBe(0);
     },
@@ -207,7 +217,7 @@ describe("reveal", () => {
     const reports = collectReports();
     const target = element();
     expect(() =>
-      track(reveal(target, { keyframes: [{ opacity: 0, easing: "bogus" }, {}] })),
+      track(reveal(target, { keyframes: [{ opacity: 0, easing: "bogus" }, { opacity: 1 }] })),
     ).not.toThrow();
     expect(target.hasAttribute("data-reveal")).toBe(false);
     expect(target.style.opacity).toBe("");

@@ -14,25 +14,25 @@ export function observe(
     observer?.disconnect();
     observer = undefined;
   };
+  if (typeof IntersectionObserver === "undefined") {
+    onEnter();
+    return disconnect;
+  }
+  const minimum = options.threshold ?? 0;
+  let seen = false;
   try {
-    if (typeof IntersectionObserver === "undefined") {
-      onEnter();
-      return disconnect;
-    }
-    const minimum = options.threshold ?? 0;
-    let seen = false;
     observer = new IntersectionObserver(
       (entries) => {
-        const entry = entries[entries.length - 1];
-        if (!active || !entry) return;
-        // An element that leaves before it reaches the threshold, such as one taller than the viewport, must not stay hidden.
-        if (entry.isIntersecting && entry.intersectionRatio < minimum) {
-          seen = true;
-          return;
+        // A fast scroll can deliver the entry below the threshold and the exit in one report.
+        for (const entry of entries) {
+          if (!active) return;
+          // An element that leaves before it reaches the threshold, such as one taller than the viewport, must not stay hidden.
+          if (entry.isIntersecting && entry.intersectionRatio < minimum) seen = true;
+          else if (entry.isIntersecting || seen) {
+            disconnect();
+            onEnter();
+          }
         }
-        if (!entry.isIntersecting && !seen) return;
-        disconnect();
-        onEnter();
       },
       { threshold: [0, minimum] },
     );

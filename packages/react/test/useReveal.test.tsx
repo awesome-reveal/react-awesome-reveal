@@ -82,7 +82,7 @@ describe(`useReveal (React ${version})`, () => {
   });
 
   it("applies option changes to the next reveal without replaying", () => {
-    const keyframes = [{ opacity: 0 }, {}];
+    const keyframes = [{ opacity: 0 }, { opacity: 1 }];
     const { rerender } = render(<Box duration={300} />);
     intersect(box(), true);
     rerender(<Box duration={400} keyframes={keyframes} />);
@@ -92,7 +92,7 @@ describe(`useReveal (React ${version})`, () => {
     rerender(<Box when={false} duration={400} keyframes={keyframes} />);
     rerender(<Box when duration={400} keyframes={keyframes} />);
     expect(animations[1]).toMatchObject({
-      keyframes: [{ opacity: 0 }, {}],
+      keyframes: [{ opacity: 0 }, { opacity: 1 }],
       options: { duration: 400 },
     });
   });

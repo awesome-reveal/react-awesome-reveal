@@ -306,7 +306,7 @@ export function describeContract(name: string, harness: Harness) {
         if (JSON.stringify(keyframes).includes('"bogus"')) throw new TypeError(message);
         return original.call(this, keyframes, options);
       };
-      const keyframes = [{ opacity: 0, easing: "bogus" }, {}];
+      const keyframes = [{ opacity: 0, easing: "bogus" }, { opacity: 1 }];
       const reports = collectReports();
       const m = await mount({ keyframes });
       await intersect(m, true);

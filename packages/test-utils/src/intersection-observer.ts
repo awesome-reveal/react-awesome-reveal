@@ -21,9 +21,14 @@ export class MockIntersectionObserver {
     MockIntersectionObserver.instances.delete(this);
   }
 
-  trigger(target: Element, intersectionRatio: number) {
-    const entry = { target, intersectionRatio, isIntersecting: intersectionRatio > 0 };
-    this.callback([entry as IntersectionObserverEntry], this as unknown as IntersectionObserver);
+  /** Sends one report with an entry for each ratio, in order. */
+  trigger(target: Element, ...ratios: number[]) {
+    const entries = ratios.map((intersectionRatio) => ({
+      target,
+      intersectionRatio,
+      isIntersecting: intersectionRatio > 0,
+    }));
+    this.callback(entries as IntersectionObserverEntry[], this as unknown as IntersectionObserver);
   }
 }
 

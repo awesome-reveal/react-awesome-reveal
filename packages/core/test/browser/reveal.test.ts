@@ -11,7 +11,7 @@ const track = (handle: RevealHandle) => {
 };
 const opacity = (element = target) => getComputedStyle(element).opacity;
 const animation = (element = target) => element.getAnimations()[0]!;
-const native = { keyframes: [{ opacity: 0 }, {}], duration: 60_000 };
+const native = { keyframes: [{ opacity: 0 }, { opacity: 1 }], duration: 60_000 };
 
 beforeEach(() => {
   target = mountBelowTheFold();
@@ -180,7 +180,7 @@ describe("zero-CSS reveal", () => {
   );
   it("invalid native values fail visible and report the browser error", () => {
     const reports = collectReports();
-    track(reveal(target, { keyframes: [{ opacity: 0, easing: "invalid" }, {}] }));
+    track(reveal(target, { keyframes: [{ opacity: 0, easing: "invalid" }, { opacity: 1 }] }));
     expect(opacity()).toBe("1");
     expect(target.getAnimations()).toEqual([]);
     expect(reports()).toEqual([expect.any(TypeError)]);
