@@ -49,14 +49,14 @@ describe("consumer bundle", () => {
     const { keptExports, size } = await bundle("reveal-only.js");
 
     expect(keptExports["core/dist/adapter.js"]).toContain("createReveal");
-    expect(size).toBeLessThan(5650);
+    expect(size).toBeLessThan(5300);
   });
 
   it("keeps no Reveal component for the directive alone", async () => {
     const { keptExports, size } = await bundle("directive-only.js");
 
     expect(keptExports["core/dist/adapter.js"]).toContain("createReveal");
-    expect(size).toBeLessThan(5450);
+    expect(size).toBeLessThan(4950);
     expect(keptExports).not.toHaveProperty("vue/dist/Reveal.js");
   });
 });
