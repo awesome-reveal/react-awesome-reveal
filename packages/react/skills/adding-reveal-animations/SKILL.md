@@ -1,6 +1,8 @@
 ---
 name: adding-reveal-animations
 description: Adds reveal-on-scroll animations with the Reveal and Cascade components and the useReveal and useCascade hooks of @awesome-reveal/react, and native Web Animations keyframes. Use when you animate React elements that enter the viewport.
+license: MIT
+compatibility: Requires @awesome-reveal/react and React 18 or 19.
 ---
 
 # Add reveal animations
