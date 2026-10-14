@@ -32,22 +32,23 @@ export function describeDocs(root: URL, { jsx, skipFences }: DocsOptions = {}) {
       expect(pkg.files).toContain("skills");
     });
 
-    it.each(skills)(
-      "names the %s skill after its folder, as the Agent Skills spec requires",
-      (skill) => {
-        const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/.exec(skillText(skill))?.[1] ?? "";
-        const fields: Record<string, string> = Object.fromEntries(
-          frontmatter.split(/\r?\n/).flatMap((line) => {
-            const field = /^([\w-]+):\s*(.*)$/.exec(line);
-            return field ? [[field[1], field[2]]] : [];
-          }),
-        );
+    it.each(skills)("gives the %s skill the frontmatter of the Agent Skills spec", (skill) => {
+      const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/.exec(skillText(skill))?.[1] ?? "";
+      const fields: Record<string, string> = Object.fromEntries(
+        frontmatter.split(/\r?\n/).flatMap((line) => {
+          const field = /^([\w-]+):\s*(.*)$/.exec(line);
+          return field ? [[field[1], field[2]]] : [];
+        }),
+      );
 
-        expect(fields.name).toBe(skill);
-        expect(fields.description).toBeTruthy();
-        expect(fields.description!.length).toBeLessThanOrEqual(1024);
-      },
-    );
+      expect(fields.name).toBe(skill);
+      expect(fields.description).toBeTruthy();
+      expect(fields.description!.length).toBeLessThanOrEqual(1024);
+      // npmx.dev warns on a skill without `license` or `compatibility`.
+      expect(fields.license).toBe(pkg.license);
+      expect(fields.compatibility).toBeTruthy();
+      expect(fields.compatibility!.length).toBeLessThanOrEqual(500);
+    });
 
     it("type-checks the TypeScript examples against the package types", () => {
       const files = new Map<string, string>();

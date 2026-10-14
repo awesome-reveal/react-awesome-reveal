@@ -1,6 +1,8 @@
 ---
 name: adding-reveal-animations
 description: Adds reveal-on-scroll animations with the Reveal and Cascade components of @awesome-reveal/astro and native Web Animations keyframes. Use when you animate elements of an Astro page that enter the viewport.
+license: MIT
+compatibility: Requires @awesome-reveal/astro and Astro 6 or 7.
 ---
 
 # Add reveal animations

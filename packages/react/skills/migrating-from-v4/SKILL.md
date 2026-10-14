@@ -1,6 +1,8 @@
 ---
 name: migrating-from-v4
 description: Migrates a React application from react-awesome-reveal v4 to the v5 API of @awesome-reveal/react, with native keyframes. Use when a project uses the v4 effect components or Emotion keyframes of react-awesome-reveal.
+license: MIT
+compatibility: Requires @awesome-reveal/react and React 18 or 19.
 ---
 
 # Migrate to v5

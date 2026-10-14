@@ -1,6 +1,8 @@
 ---
 name: adding-reveal-animations
 description: Adds reveal-on-scroll animations with reveal() and cascade() from @awesome-reveal/core and native Web Animations keyframes. Use when you animate elements that enter the viewport in plain JavaScript or TypeScript.
+license: MIT
+compatibility: Requires @awesome-reveal/core in a project that runs in the browser.
 ---
 
 # Add reveal animations

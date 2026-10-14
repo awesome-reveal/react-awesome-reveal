@@ -1,6 +1,8 @@
 ---
 name: adding-reveal-animations
 description: Adds reveal-on-scroll animations with the Reveal and Cascade components and the vReveal and vCascade directives of @awesome-reveal/vue, and native Web Animations keyframes. Use when you animate Vue elements that enter the viewport.
+license: MIT
+compatibility: Requires @awesome-reveal/vue and Vue 3.5 or later.
 ---
 
 # Add reveal animations
