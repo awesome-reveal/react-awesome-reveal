@@ -17,12 +17,9 @@ type PrerenderingDocument = Document & { prerendering?: boolean };
 
 /** Controls the entrance and reveal events of an Astro-rendered element. */
 export class RevealElement extends HTMLElement {
-  // Do not use class fields. Safari 13.1 does not support them.
-  static get observedAttributes() {
-    return ["options", "when"];
-  }
+  static observedAttributes = ["options", "when"];
 
-  declare private controller?: RevealStore;
+  private controller?: RevealStore;
 
   /** Tells if the element is revealed. */
   get revealed(): boolean {
