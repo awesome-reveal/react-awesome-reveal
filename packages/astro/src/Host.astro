@@ -1,0 +1,63 @@
+---
+import type { HTMLTag } from "astro/types";
+
+import "./reveal.css";
+
+import type { CascadeProps } from "./index.js";
+
+// Reveal.astro and Cascade.astro render this host. `cascade` reveals the direct children.
+type Props<Tag extends HTMLTag = "div"> = CascadeProps<Tag> & { cascade?: boolean };
+
+const {
+  as: Tag = "div",
+  keyframes,
+  from,
+  duration,
+  threshold,
+  interval,
+  when,
+  cascade,
+  ...rest
+} = Astro.props;
+
+// `transition:persist` on the component must move the host, which holds the reveal state.
+const {
+  "data-astro-transition-persist": persist,
+  "data-astro-transition-persist-props": persistProps,
+  ...attributes
+} = rest as typeof rest &
+  Record<`data-astro-transition-persist${string}`, string | undefined>;
+
+const options = JSON.stringify({
+  keyframes,
+  from,
+  duration,
+  threshold,
+  interval,
+});
+---
+
+<awesome-reveal
+  cascade={cascade ? "" : undefined}
+  options={options}
+  when={when == null ? undefined : String(when)}
+  data-astro-transition-persist={persist}
+  data-astro-transition-persist-props={persistProps}
+>
+  <Tag {...attributes} data-reveal={cascade ? "cascade" : "hidden"}>
+    <slot />
+  </Tag>
+</awesome-reveal>
+
+<style is:global>
+  awesome-reveal {
+    display: contents;
+  }
+</style>
+
+<script>
+  import { RevealElement } from "./element.js";
+
+  if (!customElements.get("awesome-reveal"))
+    customElements.define("awesome-reveal", RevealElement);
+</script>

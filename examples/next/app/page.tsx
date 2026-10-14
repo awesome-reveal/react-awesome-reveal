@@ -1,4 +1,4 @@
-import { Reveal } from "@awesome-reveal/react";
+import { Cascade, Reveal } from "@awesome-reveal/react";
 import { HookExample } from "./hook-example";
 import { ManualExample } from "./manual-example";
 import { Section } from "./section";
@@ -28,6 +28,13 @@ export default function Page() {
         >
           Native frames created on the server
         </Reveal>
+      </Section>
+      <Section>
+        <Cascade as="ul" from={{ opacity: 0, y: 16 }}>
+          <li>Cascade</li>
+          <li>from a</li>
+          <li>Server Component</li>
+        </Cascade>
       </Section>
       <Section>
         <HookExample />

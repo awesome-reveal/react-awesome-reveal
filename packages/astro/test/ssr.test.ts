@@ -3,12 +3,12 @@ import { experimental_AstroContainer as AstroContainer } from "astro/container";
 import { fadeKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
 import { describeSSRContract } from "@awesome-reveal/test-utils/contract-ssr";
 
-import { Reveal } from "../src";
+import { Cascade, Reveal } from "../src";
 
 const container = await AstroContainer.create();
 
-async function render(props: Record<string, unknown> = {}) {
-  const html = await container.renderToString(Reveal, {
+async function render(props: Record<string, unknown> = {}, component: unknown = Reveal) {
+  const html = await container.renderToString(component as typeof Reveal, {
     props,
     slots: { default: "<p>hello</p>" },
   });
@@ -69,13 +69,25 @@ describe("Reveal on the server", () => {
   });
 });
 
-describeSSRContract("Astro Reveal", {
-  async render(options, style) {
+describe("Cascade on the server", () => {
+  it("renders a cascade host and hides the children with the container attribute", async () => {
+    expect(await render({ interval: 120 }, Cascade)).toBe(
+      '<awesome-reveal cascade options="{&quot;interval&quot;:120}"><div data-reveal="cascade"><p>hello</p></div></awesome-reveal>',
+    );
+  });
+});
+
+const ssrHarness = (component: unknown) => ({
+  async render(options: Record<string, unknown>, style?: Record<string, string>) {
     const css =
       style &&
       Object.entries(style)
         .map(([name, value]) => `${name}: ${value}`)
         .join("; ");
-    return render({ ...options, style: css, "data-contract": "" });
+    return render({ ...options, style: css, "data-contract": "" }, component);
   },
 });
+
+describeSSRContract("Astro Reveal", ssrHarness(Reveal));
+
+describeSSRContract("Astro Cascade", ssrHarness(Cascade), "cascade");

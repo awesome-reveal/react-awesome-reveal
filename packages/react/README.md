@@ -61,11 +61,41 @@ export function Details() {
 }
 ```
 
-For a long list, render one `Reveal` for each item. To animate the direct children of a container in sequence, call `cascade()` from `@awesome-reveal/core` with a ref. Install `@awesome-reveal/core` for it, because this package does not re-export it. Call `dispose()` in the effect cleanup.
+## Cascade
+
+`Cascade` works like `Reveal`, but it animates each direct child element in turn when the element enters the viewport. `interval` sets the milliseconds between two children, and the default is 80. The first child starts immediately. `useCascade` does the same for your own element. The cascade observes the container, and `onReveal` gets the container.
+
+```tsx
+import { Cascade, useCascade } from "@awesome-reveal/react";
+
+export const Features = () => (
+  <Cascade as="ul" from="left" interval={120}>
+    <li>Fast</li>
+    <li>Small</li>
+    <li>Accessible</li>
+  </Cascade>
+);
+
+export function Steps() {
+  const { getProps } = useCascade<HTMLOListElement>();
+  return (
+    <ol {...getProps()}>
+      <li>Install</li>
+      <li>Import</li>
+    </ol>
+  );
+}
+```
+
+- It reads the children when the container reveals. A child that you add after the reveal shows with no animation.
+- Only the direct element children animate. Text and children with `display: contents` show immediately.
+- Do not put a reveal directly inside a cascade. The two entrances add up on the same element.
+- For a long or a virtualized list, reveal each item separately. A cascade has one observer, so the children below the viewport animate before you scroll to them.
+- A component that returns a fragment gives one child for each element of the fragment.
 
 ## SSR and accessibility
 
-The server markup has `data-reveal="hidden"`. The package stylesheet hides this markup until hydration. The stylesheet shows the content for reduced motion, for print, and when scripting is off (`scripting: none`). Reduced motion always has priority over the animation and over `when: false`.
+The server markup has `data-reveal="hidden"`, or `data-reveal="cascade"` for a cascade. The package stylesheet hides this element, or the direct children of a cascade, until hydration. The stylesheet shows the content for reduced motion, for print, and when scripting is off (`scripting: none`). Reduced motion always has priority over the animation and over `when: false`.
 
 `Reveal` is a Client Component boundary, so a Next.js Server Component can render it with serializable options, also native keyframes. The hook and the callbacks need a Client Component. On the server, the `node` import condition resolves the internal stylesheet import to an empty module. The browser build resolves it to the CSS.
 
@@ -107,7 +137,8 @@ The package sets `data-reveal-ready` on `<html>` when it attaches the first elem
    - For a more complex effect, use native keyframes.
 4. Replace the viewport fractions with `threshold`.
 5. Remove `triggerOnce`. In v4 the entrance played each time by default, but now it plays one time. To play it again, set `when` to `false`, then to `true`.
-6. Write the text children yourself. The library does not split text.
+6. Replace `cascade` with the `Cascade` component, and set `interval` to the v4 `duration * damping` in milliseconds.
+7. Write the text children yourself. The library does not split text.
 
 The default duration is 600 ms, and the default direction is `bottom`.
 

@@ -1,9 +1,9 @@
-import type { RevealOptions } from "@awesome-reveal/core/adapter";
+import type { CascadeOptions } from "@awesome-reveal/core/adapter";
 
 import { animations, runningAnimations } from "./animate";
 import { intersect as report, MockIntersectionObserver, observerOf } from "./intersection-observer";
 
-export type ContractOptions = RevealOptions;
+export type ContractOptions = CascadeOptions;
 
 export interface MountInit {
   style?: Partial<CSSStyleDeclaration>;
@@ -315,6 +315,78 @@ export function describeContract(name: string, harness: Harness) {
       await settle();
       expect(shown(m.element())).toBe(true);
       expect(reports).toEqual([new TypeError(message)]);
+    });
+  });
+}
+
+/** Runs the cascade scenarios. The harness renders the cascade container with three element children. */
+export function describeCascadeContract(name: string, harness: Harness) {
+  describe(`cascade contract: ${name}`, () => {
+    let current: Mounted | undefined;
+
+    async function mount(options: ContractOptions = {}) {
+      current = await harness.mount(options);
+      return current;
+    }
+
+    const children = (m: Mounted) => Array.from(m.element().children);
+    const delays = () =>
+      animations.map((animation) => (animation.options as KeyframeAnimationOptions).delay);
+
+    afterEach(async () => {
+      await current?.unmount();
+      current = undefined;
+      document.body.innerHTML = "";
+    });
+
+    it("hides the children with the container attribute and observes the container", async () => {
+      const m = await mount();
+      expect(m.element().getAttribute("data-reveal")).toBe("cascade");
+      expect(animations).toHaveLength(0);
+      expect(observerOf(m.element())).toBeDefined();
+    });
+
+    it("reveals the direct children in sequence on intersect", async () => {
+      const m = await mount();
+      await m.run(() => report(m.element(), true));
+      expect(shown(m.element())).toBe(true);
+      expect(animations.map((a) => a.element)).toEqual(children(m));
+      expect(delays()).toEqual([0, 80, 160]);
+      expect(observerOf(m.element())).toBeUndefined();
+    });
+
+    it("interval sets the delay between the children", async () => {
+      await mount({ interval: 120, when: true });
+      expect(delays()).toEqual([0, 120, 240]);
+    });
+
+    it("a toggle of when replays all the children", async () => {
+      const m = await mount({ when: true });
+      await m.rerender({ when: false });
+      expect(m.element().getAttribute("data-reveal")).toBe("cascade");
+      expect(runningAnimations()).toHaveLength(0);
+      await m.rerender({ when: true });
+      expect(runningAnimations()).toHaveLength(3);
+    });
+
+    it("onReveal is called with the container", async () => {
+      const onReveal = vi.fn();
+      const m = await mount({ onReveal, when: true });
+      expect(onReveal.mock.calls).toEqual([[m.element()]]);
+    });
+
+    it("reduced motion shows the children with no animation", async () => {
+      vi.stubGlobal("matchMedia", () => ({ matches: true }));
+      const m = await mount();
+      expect(shown(m.element())).toBe(true);
+      expect(animations).toHaveLength(0);
+    });
+
+    it("unmount cancels the animations of all the children", async () => {
+      const m = await mount({ when: true });
+      await m.unmount();
+      await m.flush();
+      expect(runningAnimations()).toHaveLength(0);
     });
   });
 }

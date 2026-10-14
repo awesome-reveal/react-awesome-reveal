@@ -1,4 +1,4 @@
-import { createReveal, type RevealStore } from "../src/adapter";
+import { createCascade, createReveal, type RevealStore } from "../src/adapter";
 
 class FakeObserver {
   static instances: FakeObserver[] = [];
@@ -252,4 +252,58 @@ it("reports a throwing adapter callback once without breaking the reveal", () =>
   expect(state.revealed).toBe(true);
   expect(callbacks).toHaveLength(1);
   expect(callbacks[0]).toThrow(error);
+});
+
+describe("createCascade", () => {
+  const delays = (animate: ReturnType<typeof fakeElement>["animate"]) =>
+    animate.mock.calls.map((call) => (call as unknown[])[1] as KeyframeAnimationOptions);
+
+  function container(count: number) {
+    const children = Array.from({ length: count }, () => fakeElement());
+    const parent = fakeElement();
+    Object.assign(parent.element, { children: children.map((child) => child.element) });
+    return { ...parent, children };
+  }
+
+  it("animates the direct children at the reveal, interval milliseconds apart", () => {
+    const { element, animate, children } = container(3);
+    const state = createCascade();
+    state.attach(element);
+    expect(children[0]!.animate).not.toHaveBeenCalled();
+    live()[0]!.report(true);
+    expect(animate).not.toHaveBeenCalled();
+    expect(children.flatMap((child) => delays(child.animate).map((call) => call.delay))).toEqual([
+      0, 80, 160,
+    ]);
+  });
+
+  it("reads the children at the reveal, so children rendered after the attach play", () => {
+    const { element, children } = container(0);
+    const state = createCascade({ interval: 50 });
+    state.attach(element);
+    const late = container(2);
+    Object.assign(element, { children: late.children.map((child) => child.element) });
+    live()[0]!.report(true);
+    expect(children).toEqual([]);
+    expect(late.children.map((child) => delays(child.animate)[0]!.delay)).toEqual([0, 50]);
+  });
+
+  it("applies a new interval at the next reveal, and cancels every child when it hides", () => {
+    const { element, children } = container(2);
+    const state = createCascade({ when: true });
+    state.attach(element);
+    state.setOptions({ when: false, interval: 200 });
+    expect(children.map((child) => child.cancel.mock.calls.length)).toEqual([1, 1]);
+    state.setOptions({ when: true, interval: 200 });
+    expect(delays(children[1]!.animate).map((call) => call.delay)).toEqual([80, 200]);
+  });
+
+  it("reveals a container with no children and calls onReveal with the container", () => {
+    const { element } = container(0);
+    const onReveal = vi.fn();
+    const state = createCascade({ when: true, onReveal });
+    state.attach(element);
+    expect(state.revealed).toBe(true);
+    expect(onReveal.mock.calls).toEqual([[element]]);
+  });
 });

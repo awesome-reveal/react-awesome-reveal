@@ -27,10 +27,16 @@ async function bundle(entry: string) {
     gzip: gzipSync(code).length,
   };
 }
-it.each(["reveal.js", "both.js"])("keeps only the imperative modules for %s", async (entry) => {
+it.each([
+  { entry: "reveal.js", animationExports: ["motion", "motionPreference", "motions"] },
+  {
+    entry: "both.js",
+    animationExports: ["cascadeInterval", "motion", "motionPreference", "motions"],
+  },
+])("keeps only the imperative modules for $entry", async ({ entry, animationExports }) => {
   const result = await bundle(entry);
   expect(result.modules).toEqual(["animation.js", "observe.js", "report.js", "reveal.js"]);
-  expect(result.animationExports).toEqual(["motion", "motionPreference"]);
+  expect(result.animationExports).toEqual(animationExports);
   expect(result.bytes).toBeLessThan(5044);
   expect(result.gzip).toBeLessThan(2089);
 });

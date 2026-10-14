@@ -1,9 +1,16 @@
-import { createReveal, type RevealStore, type RevealOptions } from "@awesome-reveal/core/adapter";
+import {
+  type CascadeOptions,
+  cascadeHiddenAttributes,
+  createCascade,
+  createReveal,
+  hiddenAttributes,
+  type RevealStore,
+} from "@awesome-reveal/core/adapter";
 
 const onReveal = (element: Element) =>
   element.dispatchEvent(new Event("reveal", { bubbles: true }));
 
-function readOptions(host: HTMLElement): RevealOptions {
+function readOptions(host: HTMLElement): CascadeOptions {
   const when = host.getAttribute("when");
   return {
     ...JSON.parse(host.getAttribute("options") || "{}"),
@@ -19,7 +26,7 @@ type PrerenderingDocument = Document & { prerendering?: boolean };
 export class RevealElement extends HTMLElement {
   static observedAttributes = ["options", "when"];
 
-  private controller?: RevealStore;
+  private controller?: RevealStore<CascadeOptions>;
 
   /** Tells if the element is revealed. */
   get revealed(): boolean {
@@ -48,12 +55,14 @@ export class RevealElement extends HTMLElement {
     }
     const target = this.firstElementChild as HTMLElement | null;
     if (!target) return;
+    const cascade = this.hasAttribute("cascade");
+    const hidden = (cascade ? cascadeHiddenAttributes : hiddenAttributes)["data-reveal"];
     // Invalid JSON throws after the reveal exists, so the element does not stay hidden.
-    target.setAttribute("data-reveal", "hidden");
-    this.controller = createReveal({ onReveal });
+    target.setAttribute("data-reveal", hidden);
+    this.controller = cascade ? createCascade({ onReveal }) : createReveal({ onReveal });
     this.controller.subscribe((visible) => {
       if (visible) target.removeAttribute("data-reveal");
-      else target.setAttribute("data-reveal", "hidden");
+      else target.setAttribute("data-reveal", hidden);
     });
     this.controller.attach(target);
     this.controller.setOptions(readOptions(this));

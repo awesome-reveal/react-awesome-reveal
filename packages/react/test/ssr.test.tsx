@@ -4,7 +4,8 @@ import type { CSSProperties } from "react";
 import { describeSSRContract } from "@awesome-reveal/test-utils/contract-ssr";
 
 import { defaultKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
-import { Reveal } from "../src/Reveal";
+import { Cascade, Reveal } from "../src/Reveal";
+import { useCascade } from "../src/useCascade";
 import { type RevealOptions, useReveal } from "../src/useReveal";
 
 // The setup fails the test if React warns, for example about useLayoutEffect on React 18.
@@ -38,3 +39,32 @@ describeSSRContract("React useReveal", {
     return renderToString(<HookBox options={options as RevealOptions} style={style} />);
   },
 });
+
+describeSSRContract(
+  "React Cascade",
+  {
+    async render(options, style) {
+      return renderToString(
+        <Cascade {...(options as RevealOptions)} style={style} data-contract="">
+          <p>x</p>
+        </Cascade>,
+      );
+    },
+  },
+  "cascade",
+);
+
+function CascadeHookBox({ options, style }: { options: RevealOptions; style?: CSSProperties }) {
+  const { getProps } = useCascade<HTMLElement>(options);
+  return <ul {...getProps({ style, "data-contract": "" })}>x</ul>;
+}
+
+describeSSRContract(
+  "React useCascade",
+  {
+    async render(options, style) {
+      return renderToString(<CascadeHookBox options={options as RevealOptions} style={style} />);
+    },
+  },
+  "cascade",
+);

@@ -1,5 +1,5 @@
 ---
-import { Reveal } from "@awesome-reveal/astro";
+import { Cascade, Reveal } from "@awesome-reveal/astro";
 import PageSection from "../components/PageSection.astro";
 import ServerTime from "../components/ServerTime.astro";
 import Layout from "../layouts/Layout.astro";
@@ -48,11 +48,11 @@ const sides = ["top", "right", "bottom", "left"] as const;
     </Reveal>
   </PageSection>
   <PageSection>
-    <ul id="cascade">
+    <Cascade as="ul" id="cascade" from={{ opacity: 0, y: 16 }}>
       <li>One</li>
       <li>Two</li>
       <li>Three</li>
-    </ul>
+    </Cascade>
   </PageSection>
   <PageSection>
     <Reveal
@@ -94,15 +94,7 @@ const sides = ["top", "right", "bottom", "left"] as const;
 </Layout>
 
 <script>
-  import { cascade } from "@awesome-reveal/core";
-
   document.addEventListener("astro:page-load", () => {
-    const list = document.querySelector("#cascade");
-    if (list) {
-      const handle = cascade(list, { from: { opacity: 0, y: 16 }, interval: 80 });
-      document.addEventListener("astro:before-swap", () => handle.dispose(), { once: true });
-    }
-
     const toggle = document.querySelector("#toggle");
     const count = document.querySelector("#reveal-count");
     const manual = document.querySelector("#manual")?.closest("awesome-reveal");

@@ -12,7 +12,7 @@ const pkg = JSON.parse(readFileSync(new URL("package.json", root), "utf8"));
 const { resolve } = createRequire(import.meta.url);
 it("exposes only the framework primitives and package-owned CSS", () => {
   expect(resolve("@awesome-reveal/vue")).toBe(new URL("index.js", dist).pathname);
-  expect(Object.keys(api).sort()).toEqual(["Reveal", "vReveal"]);
+  expect(Object.keys(api).sort()).toEqual(["Cascade", "Reveal", "vCascade", "vReveal"]);
   expect(Object.keys(pkg.exports)).toEqual([".", "./package.json"]);
   expect(files.some((f) => f.includes("keyframes") || f.includes("test"))).toBe(false);
   expect(readFileSync(new URL("reveal.css", dist), "utf8")).toBe(

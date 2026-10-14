@@ -1,7 +1,10 @@
-import { motion, motionPreference } from "./animation.js";
+import { cascadeInterval, motionPreference, motions } from "./animation.js";
 import { observe } from "./observe.js";
 import { report } from "./report.js";
-import type { RevealOptions as CoreRevealOptions } from "./types.js";
+import type {
+  CascadeOptions as CoreCascadeOptions,
+  RevealOptions as CoreRevealOptions,
+} from "./types.js";
 
 /** Configures a declarative entrance and optional manual control. */
 export type RevealOptions = CoreRevealOptions & {
@@ -11,8 +14,11 @@ export type RevealOptions = CoreRevealOptions & {
   onReveal?: (element: Element) => void;
 };
 
+/** Configures a declarative cascade of the direct element children and optional manual control. */
+export type CascadeOptions = RevealOptions & Pick<CoreCascadeOptions, "interval">;
+
 /** Binds a declarative reveal to a framework rendering lifecycle. */
-export interface RevealStore {
+export interface RevealStore<Options extends RevealOptions = RevealOptions> {
   /**
    * Tells if the element is revealed. It is `false` at creation, also with `when: true`, so that a
    * server renderer can read it.
@@ -34,28 +40,36 @@ export interface RevealStore {
    * The other options apply at the next reveal. A reveal plays on the attached element, so when the
    * element and `when` change together, attach the new element first.
    */
-  setOptions(options: RevealOptions): void;
+  setOptions(options: Options): void;
 }
 
 /** Gives the attributes that hide framework content before hydration. */
 export const hiddenAttributes = { "data-reveal": "hidden" } as const;
 
+/** Gives the attributes that hide the direct children of a cascade before hydration. */
+export const cascadeHiddenAttributes = { "data-reveal": "cascade" } as const;
+
 const restarts = ["when", "threshold"] as const;
 
 // The animation starts before the next paint, so no flash shows when the adapter removes the SSR hiding.
-function play(element: Element, options: CoreRevealOptions): () => void {
+// A cascade reads the children here, so that children rendered after the attach also play.
+function play(element: Element, options: CoreRevealOptions, interval?: number): () => void {
   if (motionPreference()?.matches) return () => {};
-  const effect = motion(element, options);
-  effect.play();
-  return effect.dispose;
+  const effects = motions(element, options, interval);
+  for (const effect of effects) effect.play();
+  return () => {
+    for (const effect of effects) effect.dispose();
+  };
 }
 
 function start(element: Element) {
   element.ownerDocument.documentElement.setAttribute("data-reveal-ready", "");
 }
 
-/** Creates a reveal binding for an official framework adapter. */
-export function createReveal(options: RevealOptions = {}): RevealStore {
+function createStore<Options extends CascadeOptions>(
+  options: Options,
+  cascade: boolean,
+): RevealStore<Options> {
   // A copy, so that a caller who mutates and passes the same options object again still restarts the observer.
   let current = { ...options };
   let element: Element | null = null;
@@ -87,7 +101,7 @@ export function createReveal(options: RevealOptions = {}): RevealStore {
     }
     if (revealed && element && !played) {
       played = true;
-      cancel = play(element, current);
+      cancel = play(element, current, cascade ? cascadeInterval(current) : undefined);
       if (!notified) {
         notified = true;
         // A throwing callback must not break the render or the effect that attached the element.
@@ -143,4 +157,14 @@ export function createReveal(options: RevealOptions = {}): RevealStore {
       if (restarts.some((key) => (next[key] ?? null) !== (previous[key] ?? null))) connect();
     },
   };
+}
+
+/** Creates a reveal binding for an official framework adapter. */
+export function createReveal(options: RevealOptions = {}): RevealStore {
+  return createStore(options, false);
+}
+
+/** Creates a binding that reveals the direct element children of the element in sequence. */
+export function createCascade(options: CascadeOptions = {}): RevealStore<CascadeOptions> {
+  return createStore(options, true);
 }

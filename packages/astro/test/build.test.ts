@@ -26,7 +26,9 @@ describe("a static build of a page with Reveal", () => {
   });
 
   it("bundles reveal.css, so the user does not import it", () => {
-    expect(page).toMatch(/\[data-reveal=["]?hidden["]?\]\{opacity:0!important\}/);
+    expect(page).toMatch(
+      /\[data-reveal=["]?hidden["]?\],\[data-reveal=["]?cascade["]?\]>\*\{opacity:0!important\}/,
+    );
     expect(page).toMatch(/\(scripting: ?none\)/);
     expect(page).toMatch(/[, ]print/);
     expect(page).toMatch(/awesome-reveal\{display:contents\}/);

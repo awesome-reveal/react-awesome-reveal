@@ -10,7 +10,6 @@
   "dependencies": {
     "@astrojs/node": "^11.1.7",
     "@awesome-reveal/astro": "workspace:*",
-    "@awesome-reveal/core": "workspace:*",
     "astro": "catalog:"
   },
   "devDependencies": {

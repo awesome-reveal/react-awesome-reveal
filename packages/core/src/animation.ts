@@ -1,5 +1,5 @@
 import { report } from "./report.js";
-import type { RevealOptions, StartState } from "./types.js";
+import type { CascadeOptions, RevealOptions, StartState } from "./types.js";
 
 const unit = (value: number | string, suffix: string) =>
   typeof value === "number" ? `${value}${suffix}` : value;
@@ -77,4 +77,12 @@ export function motion(element: Element, options: RevealOptions, delay = 0) {
       animation = undefined;
     },
   };
+}
+
+export const cascadeInterval = (options: CascadeOptions) => options.interval ?? 80;
+
+// Without an interval, the element itself animates.
+export function motions(element: Element, options: RevealOptions, interval?: number) {
+  const targets = interval === undefined ? [element] : Array.from(element.children);
+  return targets.map((target, index) => motion(target, options, index * (interval ?? 0)));
 }

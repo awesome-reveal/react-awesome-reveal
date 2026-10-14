@@ -250,9 +250,6 @@ importers:
       '@awesome-reveal/astro':
         specifier: workspace:*
         version: link:../../packages/astro
-      '@awesome-reveal/core':
-        specifier: workspace:*
-        version: link:../../packages/core
       astro:
         specifier: 'catalog:'
         version: 7.3.8(@types/node@24.19.1)(yaml@2.9.1)
@@ -294,9 +291,6 @@ importers:
 
   examples/react:
     dependencies:
-      '@awesome-reveal/core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@awesome-reveal/react':
         specifier: workspace:*
         version: link:../../packages/react
@@ -322,9 +316,6 @@ importers:
 
   examples/vue:
     dependencies:
-      '@awesome-reveal/core':
-        specifier: workspace:*
-        version: link:../../packages/core
       '@awesome-reveal/vue':
         specifier: workspace:*
         version: link:../../packages/vue

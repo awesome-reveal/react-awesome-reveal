@@ -12,7 +12,12 @@ const { resolve } = createRequire(import.meta.url);
 
 it("exports exactly the frozen runtime and adapter boundary", () => {
   expect(Object.keys(api).sort()).toEqual(["cascade", "reveal"]);
-  expect(Object.keys(adapter).sort()).toEqual(["createReveal", "hiddenAttributes"]);
+  expect(Object.keys(adapter).sort()).toEqual([
+    "cascadeHiddenAttributes",
+    "createCascade",
+    "createReveal",
+    "hiddenAttributes",
+  ]);
   expect(Object.keys(pkg.exports).sort()).toEqual([".", "./adapter", "./package.json"]);
   expect(pkg.sideEffects).toBe(false);
   expect(resolve("@awesome-reveal/core")).toBe(new URL("index.js", dist).pathname);

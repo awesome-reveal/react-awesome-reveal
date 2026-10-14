@@ -4,8 +4,8 @@ import { renderToString } from "vue/server-renderer";
 import { describeSSRContract } from "@awesome-reveal/test-utils/contract-ssr";
 
 import { defaultKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
-import { Reveal } from "../src/Reveal";
-import { vReveal } from "../src/vReveal";
+import { Cascade, Reveal } from "../src/Reveal";
+import { vCascade, vReveal } from "../src/vReveal";
 
 import DirectiveBox from "./fixtures/DirectiveBox.vue";
 import RevealCard from "./fixtures/RevealCard.vue";
@@ -60,3 +60,27 @@ describeSSRContract("Vue v-reveal", {
     );
   },
 });
+
+describeSSRContract(
+  "Vue Cascade",
+  {
+    async render(options, style) {
+      return render(() =>
+        h(Cascade, { ...options, style, "data-contract": "" } as never, () => h("p", "x")),
+      );
+    },
+  },
+  "cascade",
+);
+
+describeSSRContract(
+  "Vue v-cascade",
+  {
+    async render(options, style) {
+      return render(() =>
+        withDirectives(h("ul", { style, "data-contract": "" }, "x"), [[vCascade, options]]),
+      );
+    },
+  },
+  "cascade",
+);

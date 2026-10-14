@@ -8,7 +8,7 @@ npm install @awesome-reveal/vue
 
 ```vue
 <script setup lang="ts">
-import { Reveal, vReveal } from "@awesome-reveal/vue";
+import { Cascade, Reveal, vReveal } from "@awesome-reveal/vue";
 </script>
 <template>
   <Reveal from="left">Hello</Reveal>
@@ -20,6 +20,10 @@ import { Reveal, vReveal } from "@awesome-reveal/vue";
     ]"
     >Native animation</Reveal
   >
+  <Cascade as="ul" :interval="120">
+    <li>Fast</li>
+    <li>Small</li>
+  </Cascade>
 </template>
 ```
 
@@ -38,11 +42,29 @@ import { Reveal } from "@awesome-reveal/vue";
 export const card = h(Reveal, { from: "left", when: true }, () => "Hello");
 ```
 
-For a long list, use one reveal for each item. To animate the direct children of a container in sequence, call `cascade()` from `@awesome-reveal/core` in `onMounted`. Install `@awesome-reveal/core` for it, because this package does not re-export it. Call `dispose()` in `onBeforeUnmount`.
+## Cascade
+
+`Cascade` works like `Reveal`, but it animates each direct child element in turn when the element enters the viewport. `interval` sets the milliseconds between two children, and the default is 80. The first child starts immediately. `vCascade` does the same for an element that you already render, for example `<ul v-cascade="{ interval: 120 }">`. The cascade observes the container, and the `reveal` event and `onReveal` get the container.
+
+```ts
+import { h } from "vue";
+import { Cascade } from "@awesome-reveal/vue";
+
+export const list = h(Cascade, { as: "ul", from: "left" }, () => [
+  h("li", "Fast"),
+  h("li", "Small"),
+]);
+```
+
+- It reads the children when the container reveals. A child that you add after the reveal shows with no animation.
+- Only the direct element children animate. Text and children with `display: contents` show immediately.
+- Do not put a reveal directly inside a cascade. The two entrances add up on the same element.
+- For a long or a virtualized list, reveal each item separately. A cascade has one observer, so the children below the viewport animate before you scroll to them.
+- A `<TransitionGroup>` as a direct child adds its own animations to the children.
 
 ## SSR and accessibility
 
-On the server, the component and the directive add `data-reveal="hidden"`. The package stylesheet hides this markup until hydration, so the content does not flash. The stylesheet shows the content for reduced motion, for print, and when scripting is off. On the server, the `node` import condition resolves the internal stylesheet import to an empty module. The browser build resolves it to the CSS.
+On the server, the components and the directives add `data-reveal="hidden"`, or `data-reveal="cascade"` for a cascade. The package stylesheet hides this element, or the direct children of a cascade, until hydration, so the content does not flash. The stylesheet shows the content for reduced motion, for print, and when scripting is off. On the server, the `node` import condition resolves the internal stylesheet import to an empty module. The browser build resolves it to the CSS.
 
 Reduced motion shows the content immediately and cancels the active animation. The package does not change your styles. If hydration fails while JavaScript is on, the content can stay hidden. See [Recover when the script fails](#recover-when-the-script-fails).
 

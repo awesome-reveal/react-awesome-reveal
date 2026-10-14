@@ -11,6 +11,7 @@ const pkg = JSON.parse(readFileSync(new URL("package.json", root), "utf8"));
 const distFiles = readdirSync(dist, { recursive: true, encoding: "utf8" });
 const jsFiles = distFiles.filter((file) => /\.(c|m)?js$/.test(file)).sort();
 const { resolve } = createRequire(import.meta.url);
+const components = ["Reveal.astro", "Cascade.astro", "Host.astro"];
 
 function packageName(specifier: string): string {
   return specifier.split("/", specifier.startsWith("@") ? 2 : 1).join("/");
@@ -21,20 +22,23 @@ function source(file: string): string {
 }
 
 describe("dist", () => {
-  it("contains one JavaScript file per source module, the component, and declarations only for src", () => {
+  it("contains one JavaScript file per source module, the components, and declarations only for src", () => {
     expect(jsFiles).toEqual(["element.js", "index.js"]);
-    expect(distFiles).toContain("Reveal.astro");
+    expect(distFiles).toEqual(expect.arrayContaining(components));
     expect(distFiles).toContain("index.d.ts");
     expect(distFiles.filter((file) => /(^|\/)test/.test(file))).toEqual([]);
   });
 
-  it("ships the component uncompiled, as Astro compiles the components of dependencies", () => {
-    expect(source("Reveal.astro")).toBe(readFileSync(new URL("src/Reveal.astro", root), "utf8"));
-  });
+  it.each(components)(
+    "ships %s uncompiled, as Astro compiles the components of dependencies",
+    (component) => {
+      expect(source(component)).toBe(readFileSync(new URL(`src/${component}`, root), "utf8"));
+    },
+  );
 
   it("imports only its dependencies and peer dependencies", () => {
     const allowed = Object.keys({ ...pkg.dependencies, ...pkg.peerDependencies });
-    const imports = [...jsFiles, "Reveal.astro"].flatMap((file) =>
+    const imports = [...jsFiles, ...components].flatMap((file) =>
       [...source(file).matchAll(/^\s*(?:import|export) (?:.* from )?"([^"]+)";$/gm)]
         .map(([, id]) => id!)
         .filter((id) => !id.startsWith("."))
@@ -46,8 +50,10 @@ describe("dist", () => {
 
   // Node cannot import a .astro file, so only a build with Astro loads the root entry.
   it("exports the component from the root entry, with declarations that plain TypeScript reads", () => {
-    expect(source("index.js")).toContain('import Component from "./Reveal.astro";');
+    expect(source("index.js")).toContain('from "./Reveal.astro";');
+    expect(source("index.js")).toContain('from "./Cascade.astro";');
     expect(source("index.d.ts")).toContain("export declare const Reveal:");
+    expect(source("index.d.ts")).toContain("export declare const Cascade:");
     expect(source("index.d.ts")).not.toContain(".astro");
   });
 
@@ -70,7 +76,7 @@ describe("a static build of a page with the published component", () => {
   it("renders hidden content with package-owned CSS", () => {
     expect(site.html).toContain('<div data-reveal="hidden"><p>hello</p></div>');
     expect([site.html, ...Object.values(site.assets)].join("\n")).toMatch(
-      /\[data-reveal=["]?hidden["]?\]\{opacity:0!important\}/,
+      /\[data-reveal=["]?hidden["]?\],\[data-reveal=["]?cascade["]?\]>\*\{opacity:0!important\}/,
     );
   });
 

@@ -1,16 +1,9 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref } from "vue";
-import { Reveal, vReveal } from "@awesome-reveal/vue";
-import { cascade, type RevealHandle } from "@awesome-reveal/core";
+import { ref } from "vue";
+import { Cascade, Reveal, vCascade, vReveal } from "@awesome-reveal/vue";
 import PageSection from "./components/PageSection.vue";
 const sides = ["top", "right", "bottom", "left"] as const;
 const open = ref(false);
-const list = ref<HTMLUListElement>();
-let handle: RevealHandle | undefined;
-onMounted(() => {
-  if (list.value) handle = cascade(list.value, { interval: 80 });
-});
-onBeforeUnmount(() => handle?.dispose());
 </script>
 
 <template>
@@ -48,10 +41,20 @@ onBeforeUnmount(() => handle?.dispose());
     </Reveal>
   </PageSection>
   <PageSection>
-    <ul ref="list">
+    <Cascade
+      as="ul"
+      :from="{ opacity: 0, y: 16 }"
+    >
       <li>Fast</li>
       <li>Small</li>
       <li>Accessible</li>
+    </Cascade>
+  </PageSection>
+  <PageSection>
+    <ul v-cascade="{ from: 'left', interval: 120 }">
+      <li>A directive</li>
+      <li>on your own</li>
+      <li>list</li>
     </ul>
   </PageSection>
   <PageSection>

@@ -95,7 +95,7 @@ The browser validates the options. If it rejects one, such as an invalid easing,
 
 Reduced motion is automatic. With `prefers-reduced-motion: reduce`, all the content shows immediately, with no animation and no delay. This includes each cascade child. If the preference changes to reduced motion, core cancels the pending and the active animations.
 
-Core applies the start state with paused native animations when you call it. The browser can paint the content before your script runs, because core does not hide server-rendered content. The framework packages hide it with their own stylesheet, which they load automatically. For declarative rendering, use the React, Vue or Astro package.
+Core applies the start state with paused native animations when you call it. The browser can paint the content before your script runs, because core does not hide server-rendered content. The framework packages hide it with their own stylesheet, which they load automatically. For declarative rendering, use the React, Vue or Astro package. Each one has a `Reveal` and a `Cascade` component.
 
 Hidden content stays in the accessibility tree. Keep important controls usable. Do not make large parts of a page depend on decorative motion.
 

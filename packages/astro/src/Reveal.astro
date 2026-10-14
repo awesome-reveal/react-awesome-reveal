@@ -1,58 +1,10 @@
 ---
 import type { HTMLTag } from "astro/types";
 
-import "./reveal.css";
-
+import Host from "./Host.astro";
 import type { RevealProps } from "./index.js";
 
 type Props<Tag extends HTMLTag = "div"> = RevealProps<Tag>;
-
-const {
-  as: Tag = "div",
-  keyframes,
-  from,
-  duration,
-  threshold,
-  when,
-  ...rest
-} = Astro.props;
-
-// `transition:persist` on the component must move the host, which holds the reveal state.
-const {
-  "data-astro-transition-persist": persist,
-  "data-astro-transition-persist-props": persistProps,
-  ...attributes
-} = rest as typeof rest &
-  Record<`data-astro-transition-persist${string}`, string | undefined>;
-
-const options = JSON.stringify({
-  keyframes,
-  from,
-  duration,
-  threshold,
-});
 ---
 
-<awesome-reveal
-  options={options}
-  when={when == null ? undefined : String(when)}
-  data-astro-transition-persist={persist}
-  data-astro-transition-persist-props={persistProps}
->
-  <Tag {...attributes} data-reveal="hidden">
-    <slot />
-  </Tag>
-</awesome-reveal>
-
-<style is:global>
-  awesome-reveal {
-    display: contents;
-  }
-</style>
-
-<script>
-  import { RevealElement } from "./element.js";
-
-  if (!customElements.get("awesome-reveal"))
-    customElements.define("awesome-reveal", RevealElement);
-</script>
+<Host {...Astro.props}><slot /></Host>

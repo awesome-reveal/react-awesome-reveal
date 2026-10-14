@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Reveal, vReveal } from "../../src";
+import { Cascade, Reveal, vCascade, vReveal } from "../../src";
 </script>
 
 <template>
@@ -14,4 +14,13 @@ import { Reveal, vReveal } from "../../src";
   </Reveal>
   <Reveal from="left" />
   <Reveal :from="{ x: '-100%', rotate: -5, blur: '0.5rem' }" />
+  <Cascade
+    as="ul"
+    :interval="120"
+    from="left"
+  >
+    <li>one</li>
+    <li>two</li>
+  </Cascade>
+  <ul v-cascade="{ interval: 120, when: true }" />
 </template>

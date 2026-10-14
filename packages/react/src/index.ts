@@ -1,4 +1,5 @@
-export { Reveal, type RevealProps } from "./Reveal.js";
+export { Cascade, type CascadeProps, Reveal, type RevealProps } from "./Reveal.js";
+export { type CascadeOptions, useCascade } from "./useCascade.js";
 export {
   type RevealOptions,
   type RevealState,

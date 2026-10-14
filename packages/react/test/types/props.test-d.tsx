@@ -1,6 +1,6 @@
 import { createRef, type RefCallback } from "react";
 
-import { Reveal, useReveal } from "../../src";
+import { Cascade, Reveal, useCascade, useReveal } from "../../src";
 test("Reveal types its ref by the rendered element", () => {
   void (<Reveal keyframes={[{ opacity: 0 }, {}]} ref={createRef<HTMLDivElement>()} />);
   void (<Reveal as="input" keyframes={[{ opacity: 0 }, {}]} ref={createRef<HTMLInputElement>()} />);
@@ -35,4 +35,18 @@ test("useReveal types the element props by element", () => {
   expectTypeOf(getProps()).not.toHaveProperty("style");
   // @ts-expect-error an input ref on an image
   getProps({ ref: createRef<HTMLInputElement>() });
+});
+
+test("only Cascade and useCascade take interval", () => {
+  void (<Cascade as="ul" interval={120} from="left" />);
+  useCascade({ interval: -40 });
+  // @ts-expect-error Reveal animates one element
+  void (<Reveal interval={120} />);
+  // @ts-expect-error useReveal animates one element
+  useReveal({ interval: 120 });
+});
+
+test("useCascade hides the children with its own attribute value", () => {
+  const { getProps } = useCascade<HTMLUListElement>();
+  expectTypeOf(getProps()["data-reveal"]).toEqualTypeOf<"cascade" | undefined>();
 });

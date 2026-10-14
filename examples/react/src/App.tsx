@@ -1,20 +1,14 @@
-import { useEffect, useRef, useState } from "react";
-import { Reveal, useReveal } from "@awesome-reveal/react";
-import { cascade } from "@awesome-reveal/core";
+import { useState } from "react";
+import { Cascade, Reveal, useCascade, useReveal } from "@awesome-reveal/react";
 import { Section } from "./components/Section";
 
-function Composition() {
-  const ref = useRef<HTMLUListElement>(null);
-  useEffect(() => {
-    if (!ref.current) return;
-    const handle = cascade(ref.current, { from: { opacity: 0, y: 16 }, interval: 80 });
-    return () => handle.dispose();
-  }, []);
+function CascadeHookExample() {
+  const { getProps } = useCascade<HTMLUListElement>({ from: "left", interval: 120 });
   return (
-    <ul ref={ref}>
-      <li>Fast</li>
-      <li>Small</li>
-      <li>Accessible</li>
+    <ul {...getProps()}>
+      <li>A hook</li>
+      <li>on your own</li>
+      <li>list</li>
     </ul>
   );
 }
@@ -71,7 +65,14 @@ export const App = () => (
       </Reveal>
     </Section>
     <Section>
-      <Composition />
+      <Cascade as="ul" from={{ opacity: 0, y: 16 }}>
+        <li>Fast</li>
+        <li>Small</li>
+        <li>Accessible</li>
+      </Cascade>
+    </Section>
+    <Section>
+      <CascadeHookExample />
     </Section>
     <Section>
       <HookExample />

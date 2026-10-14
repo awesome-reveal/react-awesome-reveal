@@ -1,4 +1,4 @@
-import { motion, motionPreference } from "./animation.js";
+import { cascadeInterval, motionPreference, motions } from "./animation.js";
 import { observe } from "./observe.js";
 import type { CascadeOptions, RevealHandle, RevealOptions, RevealTarget } from "./types.js";
 
@@ -22,14 +22,13 @@ function start(target: RevealTarget, options: RevealOptions, interval?: number):
   };
   if (preference?.matches) return { dispose };
   for (const element of new Set(resolveTargets(target))) {
-    const animated = interval === undefined ? [element] : Array.from(element.children);
-    const motions = animated.map((child, index) => motion(child, options, index * (interval ?? 0)));
+    const effects = motions(element, options, interval);
     const disconnect = observe(element, options, () => {
-      for (const effect of motions) effect.play();
+      for (const effect of effects) effect.play();
     });
     cleanups.push(() => {
       disconnect();
-      for (const effect of motions) effect.dispose();
+      for (const effect of effects) effect.dispose();
     });
   }
   preference?.addEventListener?.("change", onPreference);
@@ -43,5 +42,5 @@ export function reveal(target: RevealTarget, options: RevealOptions = {}): Revea
 
 /** Animates the direct element children of each container in sequence when it enters the viewport. */
 export function cascade(target: RevealTarget, options: CascadeOptions = {}): RevealHandle {
-  return start(target, options, options.interval ?? 80);
+  return start(target, options, cascadeInterval(options));
 }

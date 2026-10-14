@@ -24,6 +24,12 @@ async function revealed(page: Page, selector: string) {
   }, selector);
 }
 
+function opacities(page: Page, selector: string) {
+  return page.$$eval(selector, (elements) =>
+    elements.map((element) => getComputedStyle(element).opacity),
+  );
+}
+
 function isHidden(page: Page, selector: string) {
   return page.$eval(
     selector,
@@ -81,6 +87,7 @@ describe.each(
     await page.emulateMedia({ media: "print" });
 
     expect(await page.$eval("#list", (element) => getComputedStyle(element).opacity)).toBe("1");
+    expect(await opacities(page, "#cascade > li")).toEqual(["1", "1", "1"]);
   });
 
   it("shows the hidden elements when the page marks the reveal as failed", async () => {
@@ -91,6 +98,7 @@ describe.each(
     await page.evaluate(() => document.documentElement.setAttribute("data-reveal-failed", ""));
 
     expect(await page.$eval("#list", (element) => getComputedStyle(element).opacity)).toBe("1");
+    expect(await opacities(page, "#cascade > li")).toEqual(["1", "1", "1"]);
   });
 
   it("reveals the element in the viewport, and keeps the others hidden", async () => {
@@ -107,6 +115,26 @@ describe.each(
       await page.$$eval("#list", (items) => items.map((item) => item.getAnimations().length)),
     ).toEqual([1]);
     await revealed(page, "#list");
+  });
+
+  it("hides the children of a cascade, then reveals them in sequence", async () => {
+    expect(await page.$eval("#cascade", (element) => element.getAttribute("data-reveal"))).toBe(
+      "cascade",
+    );
+    expect(await opacities(page, "#cascade > li")).toEqual(["0", "0", "0"]);
+
+    await page.locator("#cascade").scrollIntoViewIfNeeded();
+    await page.waitForFunction(
+      () => !document.querySelector("#cascade")!.hasAttribute("data-reveal"),
+    );
+
+    expect(
+      await page.$$eval("#cascade > li", (items) =>
+        items.map((item) => item.getAnimations()[0]?.effect?.getTiming().delay),
+      ),
+    ).toEqual([0, 80, 160]);
+    await revealed(page, "#cascade");
+    expect(await opacities(page, "#cascade > li")).toEqual(["1", "1", "1"]);
   });
 
   it("keeps the attributes of the element", async () => {
@@ -188,8 +216,8 @@ describe("example server markup", () => {
     await browser.close();
   });
 
-  it("hides the elements before the custom element starts", async () => {
-    const page = await browser.newPage({ baseURL });
+  async function openWithoutElement(options: Parameters<Browser["newPage"]>[0] = {}) {
+    const page = await browser.newPage({ baseURL, ...options });
     await page.addInitScript(() => {
       const define = customElements.define.bind(customElements);
       customElements.define = (name, ...rest) => {
@@ -197,8 +225,21 @@ describe("example server markup", () => {
       };
     });
     await page.goto("/");
+    return page;
+  }
+
+  it("hides the elements before the custom element starts", async () => {
+    const page = await openWithoutElement();
 
     expect(await isHidden(page, "#default")).toBe(true);
+    expect(await opacities(page, "#cascade > li")).toEqual(["0", "0", "0"]);
+  });
+
+  it("shows the hidden elements for reduced motion before the custom element starts", async () => {
+    const page = await openWithoutElement({ reducedMotion: "reduce" });
+
+    expect(await page.$eval("#default", (element) => getComputedStyle(element).opacity)).toBe("1");
+    expect(await opacities(page, "#cascade > li")).toEqual(["1", "1", "1"]);
   });
 
   it("shows the content without JavaScript", async () => {
@@ -211,5 +252,6 @@ describe("example server markup", () => {
         getComputedStyle(element).opacity,
       ]),
     ).toEqual(["hidden", "1"]);
+    expect(await opacities(page, "#cascade > li")).toEqual(["1", "1", "1"]);
   });
 });

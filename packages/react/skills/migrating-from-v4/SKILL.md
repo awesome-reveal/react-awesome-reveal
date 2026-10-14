@@ -26,6 +26,6 @@ import { Reveal } from "@awesome-reveal/react";
 
 The default entrance starts transparent and 24px below the resting position. It takes 600 ms and plays one time. A custom start state does not get these defaults. The package loads its CSS automatically. `Reveal` renders one element around its children, and `as` sets its tag.
 
-For a long list, use one reveal for each item. To animate the direct element children of a container in sequence, install `@awesome-reveal/core` and use its `cascade()`. Call `dispose()` in the effect cleanup. If you need text spans, write them yourself. Do not make screen readers read the same text two times.
+For a long list, use one reveal for each item. Replace the v4 `cascade` prop with the `Cascade` component, which animates its direct element children in sequence. Set `interval` to the v4 `duration * damping`, in milliseconds. `Cascade` does not split text. If you need text spans, write them yourself. Do not make screen readers read the same text two times.
 
 Use `threshold` for the visible fraction and `when` for manual control. Remove `triggerOnce`. In v4 the entrance played each time by default, but now it plays one time. To play it again, set `when` to `false`, then to `true`. Use `useReveal` for an element that you render. After the migration, check the refs, hydration, reduced motion and the teardown.
