@@ -48,7 +48,7 @@ cascade(".features", { interval: 80 });
 hero.dispose();
 ```
 
-`@awesome-reveal/core` has no dependencies and needs no CSS. The framework packages hide server-rendered content until hydration. All the packages obey the reduced-motion preference automatically. For a custom animation, use native `Keyframe[]`.
+`@awesome-reveal/core` has no dependencies and needs no CSS. The framework packages hide server-rendered content until hydration. If the script fails, the content shows after 5 seconds. All the packages obey the reduced-motion preference automatically. For a custom animation, use native `Keyframe[]`.
 
 ## Packages
 

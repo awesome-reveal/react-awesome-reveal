@@ -51,8 +51,8 @@ Keep the item of the adapter on the plan board, https://github.com/orgs/awesome-
     - If the peer range covers an older major version of the framework, add it to the `framework` matrix in `.github/workflows/ci.yml`.
     - Add a `<framework>` case to `cases` in `scripts/smoke.mjs`, as the `vue` case does: it installs the tarballs, builds a page, and checks the server markup. Add entries to the `smoke` matrix in `ci.yml` for the lowest and the highest version of the peer range. Add the case to the usage comment of `smoke.mjs` and to the `smoke.mjs` command in `AGENTS.md`. The "Require CI" ruleset lists each `smoke` matrix name, and only an admin can change it, so list the new names in your final report.
     - Add a group with the framework packages to the `npm` entry of `.github/dependabot.yml`.
-    - If oxlint has a plugin for the framework, such as `vue`, enable it in an `overrides` entry of `.oxlintrc.json`. Limit the entry to the package and its example, as the React entry does.
-13. Add the package to the package table in the root `README.md`. In `.github/ISSUE_TEMPLATE/bug_report.yml`, add it to the `package` dropdown, and add the `vite.new` template of the framework, such as `vite.new/vue-ts`, to the reproduction field.
+    - If oxlint has a plugin for the framework, such as `vue`, enable it in an `overrides` entry of `.oxlintrc.json`. Limit the entry to the package and its example, as the Vue entry does.
+13. Add the package to the package table in the root `README.md`. In `.github/ISSUE_TEMPLATE/bug_report.yml`, add it to the `package` dropdown, and add a StackBlitz template of the framework, such as `vite.new/vue-ts` or `astro.new/minimal`, to the reproduction field.
 14. Add `.claude/rules/<framework>/adapter.md` for the gotchas of the framework, with `paths: ["packages/<framework>/**", "examples/<framework>/**"]`.
 15. The docs site is the separate repo `awesome-reveal/website`. List the adapter page in your final report as work for that repo.
 16. Run the checks:

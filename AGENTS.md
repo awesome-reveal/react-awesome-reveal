@@ -9,7 +9,7 @@ Reveal-on-scroll animations for many frameworks, built on IntersectionObserver a
 - `packages/react-awesome-reveal`: the compat package for v4 users. It re-exports `@awesome-reveal/react`.
 - `packages/test-utils`: private test mocks, setup files and checks for the adapters.
 - `packages/*/skills`: agent skills for the users of each package. pnpm links them into consumer projects.
-- `examples/react`, `examples/vue`, `examples/astro`, `examples/next`: apps for manual checks (`pnpm --filter example-react dev`). Build the packages first for `examples/next`.
+- `examples/react`, `examples/vue`, `examples/astro`, `examples/next`: apps for manual checks (`pnpm --filter example-react dev`). The examples import the `dist` output of the packages, so run `pnpm build` first.
 - `vite.lib.config.ts`: the library build that all packages share.
 - `vitest.config.ts`: one Vitest project for each package and test kind, named `<package>:<kind>`.
 
@@ -19,12 +19,12 @@ Use the Node version in `.nvmrc`. jsdom needs Node `^22.22.2`, `^24.15.0` or `>=
 
 - `pnpm exec playwright install --with-deps --only-shell chromium firefox webkit`: run once before the browser tests.
 - `pnpm test`: the unit, SSR and browser tests. Add `--coverage` to check the CI thresholds.
-- `pnpm vitest run --project core:browser`: one project.
+- `pnpm vitest run --project core:browser`: run one project.
 - `REVEAL_BROWSERS=chromium,webkit pnpm test`: run the browser tests only in the listed browsers. The default is chromium, firefox and webkit.
-- `pnpm exec tsc -p packages/<package>/test`: type-check the tests. Vue uses `vue-tsc` instead of `tsc`. `pnpm build` type-checks only `src`.
+- `pnpm exec tsc -p packages/<package>/test`: type-check the tests. For Vue, run `pnpm --filter @awesome-reveal/vue exec vue-tsc -p test`. `pnpm build` type-checks only `src`.
 - `pnpm test:package`: build, then test the `dist` output with Vitest, publint and attw.
 - `pnpm build`, then `node scripts/smoke.mjs <core|react|compat|vue|astro|next> [dependency@version ...]`: install the packed tarballs into a clean project and build it. CI runs the matrix.
-- `pnpm lint` and `pnpm format`.
+- `pnpm lint` and `pnpm format`: lint and format the files. CI runs `pnpm format:check`.
 
 The pre-commit hook runs oxlint, oxfmt and the unit and SSR tests related to the staged files.
 

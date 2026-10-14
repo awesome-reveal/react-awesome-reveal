@@ -33,7 +33,9 @@ import { Cascade, Reveal, vReveal } from "@awesome-reveal/vue";
 
 `delay` sets the time between the reveal and the entrance, in milliseconds. The default is 0. Keep `delay` below about 300 ms. A long delay makes content appear late when the user scrolls quickly.
 
-`when: true` reveals the element manually, and `when: false` resets it. With `null` or `undefined`, the viewport controls the reveal. When the viewport controls the reveal, the entrance plays one time, and the observation stops when the entrance starts. A change of `when` from `false` to `true` plays the entrance again. `when: false` during the `delay` also resets the element, and the entrance does not play. A change to `when` or `threshold` restarts the observation. A change to the other options applies at the next entrance.
+`when: true` reveals the element manually, and `when: false` resets it. With `null` or `undefined`, the viewport controls the reveal. When the viewport controls the reveal, the entrance plays one time, and the observation stops at the reveal. A change of `when` from `false` to `true` plays the entrance again. `when: false` during the `delay` also resets the element, and the entrance does not play.
+
+A change to `when` or `threshold` applies immediately. A change to the other options applies at the next reveal.
 
 The component emits `reveal` with the element, and gives `revealed` to its default slot. The directive accepts `onReveal` in its options.
 
@@ -60,7 +62,7 @@ export const list = h(Cascade, { as: "ul", from: "left" }, () => [
 
 - It reads the children when the container reveals. A child that you add after the reveal shows with no animation.
 - Only the direct element children animate. Text and children with `display: contents` show immediately.
-- Do not put a reveal directly inside a cascade. The two entrances add up on the same element.
+- Do not put a reveal directly inside a cascade. The two entrances combine on the same element.
 - For a long or a virtualized list, reveal each item separately. A cascade has one observer, so the children below the viewport animate before you scroll to them.
 - A `<TransitionGroup>` as a direct child adds its own animations to the children.
 
@@ -82,7 +84,8 @@ The stylesheet hides the server markup for at most 5 seconds before the script a
 
 - The stylesheet does not reach a shadow root, so it does not hide an element in a shadow root before the reveal.
 - Do not give a hidden element an inline `opacity` with `!important`. It has priority over the stylesheet, so the element shows before the reveal.
-- The stylesheet hides with the `awesome-reveal-hold` CSS animation, which replaces your own `animation` on a hidden element or cascade child until it reveals. If no script reveals the element, such as when the script fails or JavaScript is off, your animation does not run. Put your own animation on an inner element. An `animation` of your own with `!important` can win over the hold. Then the element shows until the script attaches it. The hold fires `animationstart` and `animationend` events, and shows in `getAnimations()`.
+- The stylesheet hides with the `awesome-reveal-hold` CSS animation, which replaces your own `animation` on a hidden element or cascade child until it reveals. If no script reveals the element, such as when the script fails or JavaScript is off, your animation does not run. Put your own animation on an inner element.
+- An `animation` of your own with `!important` can have priority over the hold. Then the element shows until the script attaches it. The hold fires `animationstart` and `animationend` events, and shows in `getAnimations()`.
 - Focus in a waiting element shows it at once, with no entrance, but not with `when: false`. Focus during a running entrance or its delay does not shorten it, so keep `delay` and `interval` short. Do not hide the only way to a control with `when: false`.
 - In browsers without the `scripting` media feature, such as Safari 16, content shows after 5 seconds when JavaScript is off.
 

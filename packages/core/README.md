@@ -34,7 +34,9 @@ The child at position `index` waits `delay + index * interval` milliseconds afte
 
 `dispose()` disconnects the observers and cancels the pending, the active and the delayed animations. It removes the start state of the call, and the elements return to their own styles. You can call it more than one time.
 
-When you call the function, core calls `element.animate(keyframes, { duration, delay, fill: "backwards" })` for each element. It pauses the animation at its start, and plays it when the element enters the viewport. If your code finishes or cancels it before the element enters the viewport, the element shows at rest and the entrance does not play. A paused animation does not finish. If your code waits for all of `document.getAnimations()` to finish, skip the paused animations, for example with `animation.playState !== "paused"`.
+When you call the function, core calls `element.animate(keyframes, { duration, delay, fill: "backwards" })` for each element that it animates. It pauses the animation at its start. It plays the animation when the observed element enters the viewport. If your code finishes or cancels it before the element enters the viewport, the element shows at rest and the entrance does not play.
+
+A paused animation does not finish. If your code waits for all of `document.getAnimations()` to finish, skip the paused animations, for example with `animation.playState !== "paused"`.
 
 ## Entrance
 
@@ -91,7 +93,7 @@ You can use the native keyframe properties `easing`, `offset` and `composite`. T
 | `threshold`                 | 0          | The visible fraction that reveals the element, from 0 to 1      |
 | `interval` (`cascade` only) | 80         | The time between the entrances of two children, in milliseconds |
 
-The entrance plays one time. When it starts, the observation stops. There is no exit animation.
+The entrance plays one time. The observation stops at the reveal. There is no exit animation.
 
 During the `delay`, the element stays in its start state. Use it to start separate elements at different times, for example a header and its content. Keep `delay` below about 300 ms. A long delay makes content appear late when the user scrolls quickly.
 
@@ -120,7 +122,7 @@ The content that waits for its entrance also shows in print. After the print, it
 
 Core creates the paused native animations when you call it. The browser can paint the content before your script runs, because core does not hide server-rendered content. The framework packages hide it with their own stylesheet, which they load automatically. To render reveals declaratively, use the React, Vue or Astro package. Each one has a `Reveal` and a `Cascade` component.
 
-Focus in a waiting element shows it at once, with no entrance, so a keyboard user does not focus invisible content. Focus during a running entrance or its delay does not shorten it, so keep `delay` and `interval` short. Hidden content stays in the accessibility tree. Keep important controls usable. Do not make large parts of a page depend on decorative motion.
+Focus in a waiting element shows it at once, with no entrance, so a keyboard user does not focus invisible content. Focus in a waiting cascade container shows all its children. Focus during a running entrance or its delay does not shorten it, so keep `delay` and `interval` short. Hidden content stays in the accessibility tree. Keep important controls usable. Do not make large parts of a page depend on decorative motion.
 
 ## Exports and browser support
 
