@@ -15,7 +15,7 @@ Do not run `npm publish`, `npm trust` or `npm dist-tag` yourself. The agent shel
 2. Make sure that each public package exists on npm and has a trusted publisher: `npm view <package> version` and `npm trust list <package>`. List the public packages with `pnpm -r ls --json --depth -1 | jq -r '.[] | select(.private | not) | .name'`. One missing publisher fails the job. Do "Publish a new package" first if necessary.
 3. Wait for the CI checks of the PR: `gh pr checks <number> --watch --fail-fast`. Squash-merge it only when all checks pass: `gh pr merge <number> --squash`. CI runs on it when the secret `RELEASE_PLEASE_TOKEN` is set. With `GITHUB_TOKEN` alone, the PR has no CI runs.
 4. Watch the run: `gh run watch <run-id> --exit-status`. Find the ID with `gh run list --workflow release.yml --branch <branch> --limit 1`.
-5. Check the result: `npm view <package> dist-tags`.
+5. Check the result: `npm view <package> dist-tags --prefer-online`. npm stages a new version for some minutes before `npm view` shows it, so wait before you count a version as missing.
 
 If the `publish` job fails because of an external cause, such as the trusted publisher, the environment or an npm outage:
 

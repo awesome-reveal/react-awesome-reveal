@@ -86,14 +86,15 @@ jobs:
 
       # The release commit is checked out as a detached HEAD, so pnpm's branch check would fail.
       # pnpm skips the versions that are already on npm, so a re-run publishes only the missing packages.
+      # One pnpm call for each package, because a recursive publish stops at the first error.
       - name: Publish
         env:
           PATHS_RELEASED: ${{ needs.release-please.outputs.paths_released }}
         # A prerelease goes to latest while the package has no stable version, so that a plain install gets it.
         run: |
-          latest=()
-          next=()
-          for path in $(jq -r '.[]' <<<"$PATHS_RELEASED"); do
+          set -o pipefail
+          # The adapters depend on core, so core goes first.
+          for path in $(jq -r 'sort_by(. != "packages/core") | .[]' <<<"$PATHS_RELEASED"); do
             name=$(jq -r .name "$path/package.json")
             version=$(jq -r .version "$path/package.json")
             # Only a missing package counts as "no stable version". Other errors stop the job,
@@ -102,11 +103,12 @@ jobs:
               grep -q E404 "$RUNNER_TEMP/npm-view.log" || { cat "$RUNNER_TEMP/npm-view.log"; exit 1; }
               current=
             fi
-            if [[ $version == *-* && -n $current && $current != *-* ]]; then
-              next+=(--filter "./$path")
-            else
-              latest+=(--filter "./$path")
+            tag=latest
+            if [[ $version == *-* && -n $current && $current != *-* ]]; then tag=next; fi
+            # npm stages an accepted version for some minutes, and npm view cannot see it. A re-run in that
+            # window gets a 409 "previously staged version", so that error counts as published.
+            if ! pnpm --filter "./$path" publish --no-git-checks --tag "$tag" 2>&1 | tee "$RUNNER_TEMP/publish.log"; then
+              grep -q 'previously staged version' "$RUNNER_TEMP/publish.log"
+              echo "::warning::npm already staged $name@$version. It shows on the registry after some minutes."
             fi
           done
-          if ((${#latest[@]})); then pnpm "${latest[@]}" publish --no-git-checks --tag latest; fi
-          if ((${#next[@]})); then pnpm "${next[@]}" publish --no-git-checks --tag next; fi
