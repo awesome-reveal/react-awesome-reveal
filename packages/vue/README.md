@@ -21,7 +21,7 @@ import { Reveal, vReveal } from "@awesome-reveal/vue";
 
 `Reveal` renders one element. `as` sets the tag, and the default is `div`. The component passes the other attributes to the element. `vReveal` animates an element that you already render. Both accept the [core reveal options](https://www.npmjs.com/package/@awesome-reveal/core) and a reactive `when`.
 
-`when: true` reveals the element manually, and `when: false` resets it. With `null` or `undefined`, the viewport controls the reveal. With `once: false`, the element resets when it leaves the viewport and plays again when it enters. A change to `when`, `threshold` or `once` restarts the observation. A change to the other options applies at the next entrance.
+`when: true` reveals the element manually, and `when: false` resets it. With `null` or `undefined`, the viewport controls the reveal. The entrance plays one time, and the observation stops when it starts. A change to `when` or `threshold` restarts the observation. A change to the other options applies at the next entrance.
 
 The component emits `reveal` with the element, and gives `revealed` to its default slot. The directive accepts `onReveal` in its options.
 

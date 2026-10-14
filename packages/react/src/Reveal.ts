@@ -32,7 +32,7 @@ const RevealWithRef = /* @__PURE__ */ forwardRef(function Reveal(
   props: WithoutRef<RevealProps> & { as?: RevealElement },
   ref: ForwardedRef<Element>,
 ) {
-  const { as, keyframes, from, duration, threshold, once, when, onReveal, ...rest } = props;
+  const { as, keyframes, from, duration, threshold, when, onReveal, ...rest } = props;
   const { getProps } = useReveal<Element>(props);
 
   // oxlint-disable-next-line react/refs -- getProps passes the ref on to the element and does not read it.

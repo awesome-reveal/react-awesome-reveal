@@ -45,9 +45,7 @@ export const App = () => (
     </Section>
     {(["top", "right", "bottom", "left"] as const).map((from) => (
       <Section key={from}>
-        <Reveal from={from} once={false}>
-          From the {from}
-        </Reveal>
+        <Reveal from={from}>From the {from}</Reveal>
       </Section>
     ))}
     <Section>

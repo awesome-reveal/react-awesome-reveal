@@ -71,8 +71,7 @@ const RuntimeReveal = /* @__PURE__ */ defineComponent(
       from: [String, Object] as PropType<RevealOptions["from"]>,
       duration: Number,
       threshold: Number,
-      // Vue casts an absent Boolean prop to false, which would turn off the core defaults.
-      once: { type: Boolean, default: undefined },
+      // Vue casts an absent Boolean prop to false, which would make `when` control the reveal.
       when: { type: Boolean, default: undefined },
     },
     emits: { reveal: (element: Element) => element != null },

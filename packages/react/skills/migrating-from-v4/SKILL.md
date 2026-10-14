@@ -13,9 +13,7 @@ Replace each effect component with `Reveal`, and set `from` to a side or a compl
 import { Reveal } from "@awesome-reveal/react";
 
 <Reveal from={{ opacity: 0 }}>Pure fade</Reveal>;
-<Reveal from="left" once={false}>
-  Repeated entrance
-</Reveal>;
+<Reveal from="left">Directional entrance</Reveal>;
 <Reveal keyframes={[{ opacity: 0, transform: "scale(.8)" }, {}]}>Native animation</Reveal>;
 ```
 
@@ -23,4 +21,4 @@ The default entrance starts transparent and 24px below the resting position. It 
 
 For a long list, use one reveal for each item. To animate the direct element children of a container in sequence, install `@awesome-reveal/core` and use its `cascade()`. Call `dispose()` in the effect cleanup. If you need text spans, write them yourself. Do not make screen readers read the same text two times.
 
-Use `threshold` for the visible fraction, `once: false` for an entrance that plays again, and `when` for manual control. Use `useReveal` for an element that you render. After the migration, check the refs, hydration, reduced motion and the teardown.
+Use `threshold` for the visible fraction and `when` for manual control. Remove `triggerOnce`. In v4 the entrance played each time by default, but now it plays one time. To play it again, set `when` to `false`, then to `true`. Use `useReveal` for an element that you render. After the migration, check the refs, hydration, reduced motion and the teardown.

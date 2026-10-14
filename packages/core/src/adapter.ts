@@ -29,7 +29,7 @@ export interface RevealStore {
    */
   attach(element: Element | null): void;
   /**
-   * Replaces the options. A change of `when`, `threshold` or `once` applies at once.
+   * Replaces the options. A change of `when` or `threshold` applies at once.
    * The other options apply at the next reveal. A reveal plays on the attached element, so when the
    * element and `when` change together, attach the new element first.
    */
@@ -39,7 +39,7 @@ export interface RevealStore {
 /** Gives the attributes that hide framework content before hydration. */
 export const hiddenAttributes = { "data-reveal": "hidden" } as const;
 
-const restarts = ["when", "threshold", "once"] as const;
+const restarts = ["when", "threshold"] as const;
 
 // The animation starts before the next paint, so no flash shows when the adapter removes the SSR hiding.
 function play(element: Element, options: CoreRevealOptions): () => void {
@@ -110,8 +110,7 @@ export function createReveal(options: RevealOptions = {}): RevealStore {
       return set(current.when);
     }
     set(inView);
-    if (element && !(inView && current.once !== false))
-      disconnect = observe(element, current, (value) => set((inView = value)));
+    if (element && !inView) disconnect = observe(element, current, () => set((inView = true)));
   }
 
   return {

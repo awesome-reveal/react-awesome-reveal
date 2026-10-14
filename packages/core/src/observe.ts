@@ -3,8 +3,8 @@ import type { RevealOptions } from "./types.js";
 // The browser validates the threshold. Without a working IntersectionObserver, the element reveals at once.
 export function observe(
   element: Element,
-  options: Pick<RevealOptions, "threshold" | "once">,
-  onChange: (inView: boolean) => void,
+  options: Pick<RevealOptions, "threshold">,
+  onEnter: () => void,
 ): () => void {
   let observer: IntersectionObserver | undefined;
   let active = true;
@@ -15,7 +15,7 @@ export function observe(
   };
   try {
     if (typeof IntersectionObserver === "undefined") {
-      onChange(true);
+      onEnter();
       return disconnect;
     }
     const minimum = options.threshold ?? 0;
@@ -23,17 +23,16 @@ export function observe(
       (entries) => {
         if (!active) return;
         const entry = entries[entries.length - 1];
-        if (!entry) return;
-        const inView = entry.isIntersecting && entry.intersectionRatio >= minimum;
-        if (inView && options.once !== false) disconnect();
-        if (inView || options.once === false) onChange(inView);
+        if (!entry?.isIntersecting || entry.intersectionRatio < minimum) return;
+        disconnect();
+        onEnter();
       },
       { threshold: minimum },
     );
     observer.observe(element);
   } catch {
     disconnect();
-    onChange(true);
+    onEnter();
   }
   return disconnect;
 }

@@ -54,12 +54,6 @@ export function motion(element: Element, options: RevealOptions, delay = 0) {
         animation.play();
       }
     },
-    reset() {
-      if (animation) {
-        animation.pause();
-        animation.currentTime = 0;
-      }
-    },
     dispose() {
       animation?.cancel();
       animation = undefined;

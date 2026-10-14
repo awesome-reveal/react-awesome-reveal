@@ -6,7 +6,7 @@ paths:
 # Core
 
 - The root entry has only `reveal`, `cascade` and their types. Adapter machinery (`createReveal`, `hiddenAttributes`, the adapter `RevealOptions` with `when` and `onReveal`) stays in `src/adapter.ts`, behind `@awesome-reveal/core/adapter`. Do not re-export it from `src/index.ts`. The package `dist.test.ts` and `tree-shaking.test.ts` check this boundary.
-- Do not add options, aliases or helpers to the imperative API. The API is frozen: `from` or native `keyframes`, `duration`, `threshold`, `once`, and `interval` for `cascade`. Advanced motion uses native `Keyframe[]`. Generated keyframes stay internal in `src/animation.ts`.
+- Do not add options, aliases or helpers to the imperative API. The API is frozen: `from` or native `keyframes`, `duration`, `threshold`, and `interval` for `cascade`. Each entrance plays once: there is no `once` option, because a reset on exit made the observer see the start state and loop at the viewport edge. Advanced motion uses native `Keyframe[]`. Generated keyframes stay internal in `src/animation.ts`.
 - Imperative core needs no CSS. `motion()` creates a paused animation with `fill: "backwards"` at `currentTime = 0`, so the first keyframe hides the element before it enters the viewport. Do not inject a `<style>` and do not import CSS from a core module. SSR pre-hiding belongs to the adapters.
 - Every failure leaves content visible. A throw from `animate()`, from the observer constructor or from `observe()` reveals at once. `dispose()` cancels the animations, so the elements go to their resting style. Do not add runtime validation for values that the browser validates.
 - Reduced motion is automatic and has no option. When `prefers-reduced-motion: reduce` matches, `reveal` and `cascade` create no animation, and a later change to `reduce` disposes them.
@@ -18,10 +18,10 @@ paths:
 
 ## Adapter store
 
-- `createReveal` owns the state: the observer, `when ?? inView`, `once` and the play. It changes no DOM, except `data-reveal-ready` on `<html>`. The adapter renders `data-reveal` from `revealed`.
+- `createReveal` owns the state: the observer, `when ?? inView` and the play. It changes no DOM, except `data-reveal-ready` on `<html>`. The adapter renders `data-reveal` from `revealed`.
 - Start `play` in the same task that removes `data-reveal`. Between the two, the element shows at full opacity, because `fill: "backwards"` applies the first keyframe only after `play` creates the animation.
 - Hide in this order: cancel the animation, then tell the listener. Reveal in this order: tell the listener, then `play`, in the same task.
-- `setOptions` replaces the options and does not merge them. Only a change of `when`, `threshold` or `once` restarts the observer. `createReveal` copies the options, because a directive can pass the same mutated object again.
+- `setOptions` replaces the options and does not merge them. Only a change of `when` or `threshold` restarts the observer. `createReveal` copies the options, because a directive can pass the same mutated object again.
 - `when == null` means that the viewport decides. Use `??` and `== null`, not default values, because defaults do not apply to `null`.
 - A revealed state plays once. `revealed` starts `false`, also with `when: true`, so that the server renders the element hidden. The first `attach` reveals and plays the entrance. A new element keeps the state and does not play again.
 - A throwing `onReveal` goes to `report()`, which throws from a microtask, once for each message. Do not throw from `observe`, `play` or `createReveal`, because a render or an effect can call them. Tests that touch a report stub `queueMicrotask`.

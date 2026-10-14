@@ -35,7 +35,7 @@ export function Card() {
 
 Spread `getProps()` on one element. Give your own `ref` to `getProps()`, so that the hook can merge it with its ref. The hook does not change your styles. For a custom component, forward the ref to a DOM element.
 
-`when: true` reveals the element manually, and `when: false` resets it without an exit animation. To let the viewport control the reveal, omit `when` or set it to `null`. `onReveal` gets the element one time for each entrance, also in React StrictMode. A change to `when`, `threshold` or `once` applies immediately. A change to the animation options applies at the next entrance.
+`when: true` reveals the element manually, and `when: false` resets it without an exit animation. To let the viewport control the reveal, omit `when` or set it to `null`. The entrance plays one time, and the observation stops when it starts. `onReveal` gets the element one time for each entrance, also in React StrictMode. A change to `when` or `threshold` applies immediately. A change to the animation options applies at the next entrance.
 
 ```tsx
 import { useState } from "react";
@@ -99,7 +99,7 @@ The package sets `data-reveal-ready` on `<html>` when it attaches the first elem
    - For directional motion, set `from` to a side.
    - For a more complex effect, use native keyframes.
 4. Replace the viewport fractions with `threshold`.
-5. For an entrance that plays each time the element enters the viewport, use `once={false}`.
+5. Remove `triggerOnce`. In v4 the entrance played each time by default, but now it plays one time. To play it again, set `when` to `false`, then to `true`.
 6. Write the text children yourself. The library does not split text.
 
 The default duration is 600 ms, and the default direction is `bottom`.

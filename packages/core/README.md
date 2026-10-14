@@ -67,16 +67,15 @@ You can use the native keyframe properties `easing`, `offset` and `composite`. T
 
 ## Options
 
-| Option                      | Default    | Meaning                                                                                     |
-| --------------------------- | ---------- | ------------------------------------------------------------------------------------------- |
-| `from`                      | `"bottom"` | A side, or a complete `StartState`                                                          |
-| `keyframes`                 | —          | Native `Keyframe[]`, instead of `from`                                                      |
-| `duration`                  | 600        | Duration in milliseconds                                                                    |
-| `threshold`                 | 0          | The visible fraction that reveals the element, from 0 to 1                                  |
-| `once`                      | true       | With `false`, the element resets when it leaves the viewport and plays again when it enters |
-| `interval` (`cascade` only) | 80         | The delay between children, in milliseconds                                                 |
+| Option                      | Default    | Meaning                                                    |
+| --------------------------- | ---------- | ---------------------------------------------------------- |
+| `from`                      | `"bottom"` | A side, or a complete `StartState`                         |
+| `keyframes`                 | —          | Native `Keyframe[]`, instead of `from`                     |
+| `duration`                  | 600        | Duration in milliseconds                                   |
+| `threshold`                 | 0          | The visible fraction that reveals the element, from 0 to 1 |
+| `interval` (`cascade` only) | 80         | The delay between children, in milliseconds                |
 
-There is no exit animation. With `once: false`, the element goes back to its start state immediately when it leaves the viewport.
+The entrance plays one time. When it starts, the observation stops. There is no exit animation.
 
 ## Accessibility and SSR
 

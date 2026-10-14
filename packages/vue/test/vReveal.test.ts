@@ -53,15 +53,6 @@ describe(`v-reveal (Vue ${version})`, () => {
     expect(animations[0]?.options).toMatchObject({ duration: 300 });
   });
 
-  it("hides the element again when it leaves the viewport and once is false", async () => {
-    const { element } = mountBox({ once: false });
-    await intersect(element, true);
-    await intersect(element, false);
-
-    expect(element).toHaveStyle({ opacity: "0" });
-    expect(runningAnimations()).toHaveLength(0);
-  });
-
   it("follows `when` and does not observe the viewport", async () => {
     const { wrapper, element } = mountBox({ when: false });
 
@@ -112,7 +103,7 @@ describe(`v-reveal (Vue ${version})`, () => {
   });
 
   it("stops the observation and the animation on unmount", async () => {
-    const { wrapper, element } = mountBox({ once: false });
+    const { wrapper, element } = mountBox();
     await intersect(element, true);
     wrapper.unmount();
 

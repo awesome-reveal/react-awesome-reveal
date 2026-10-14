@@ -91,15 +91,14 @@ describe("createReveal", () => {
   it("calls onReveal once for each reveal, also when the same element plays again", () => {
     const { element } = fakeElement();
     const onReveal = vi.fn();
-    const state = createReveal({ ...options, once: false, onReveal });
+    const state = createReveal({ ...options, onReveal });
     state.attach(element);
-    const observer = live()[0]!;
-    observer.report(true);
+    live()[0]!.report(true);
     state.attach(null);
     state.attach(element);
     expect(onReveal.mock.calls).toEqual([[element]]);
-    live()[0]!.report(false);
-    live()[0]!.report(true);
+    state.setOptions({ ...options, onReveal, when: false });
+    state.setOptions({ ...options, onReveal, when: true });
     expect(onReveal).toHaveBeenCalledTimes(2);
   });
 
@@ -120,13 +119,13 @@ describe("createReveal", () => {
 
   it("cancels the animation before it tells the listener to hide the element", () => {
     const { element, cancel } = fakeElement();
-    const state = createReveal({ ...options, once: false });
+    const state = createReveal(options);
     const order: string[] = [];
     cancel.mockImplementation(() => order.push("cancel"));
     state.attach(element);
     live()[0]!.report(true);
     state.subscribe((revealed) => order.push(`listener ${revealed}`));
-    live()[0]!.report(false);
+    state.setOptions({ ...options, when: false });
     expect(order).toEqual(["cancel", "listener false"]);
   });
 
@@ -151,12 +150,12 @@ describe("createReveal", () => {
 
   it("does not reveal a stale in-view report when `when` is removed", () => {
     const { element } = fakeElement();
-    const state = createReveal({ ...options, once: false });
+    const state = createReveal(options);
     state.attach(element);
     live()[0]!.report(true);
-    state.setOptions({ ...options, once: false, when: false });
+    state.setOptions({ ...options, when: false });
     expect(state.revealed).toBe(false);
-    state.setOptions({ ...options, once: false });
+    state.setOptions(options);
     expect(state.revealed).toBe(false);
   });
 
@@ -174,7 +173,7 @@ describe("createReveal", () => {
   it("keeps a revealed state on a new element, and observes a hidden one", () => {
     const first = fakeElement();
     const second = fakeElement();
-    const state = createReveal({ ...options, once: false });
+    const state = createReveal(options);
     state.attach(first.element);
     state.attach(second.element);
     expect(live().map((observer) => observer.elements)).toEqual([[second.element]]);
@@ -183,20 +182,12 @@ describe("createReveal", () => {
     state.attach(third.element);
     expect(third.animate).not.toHaveBeenCalled();
     expect(state.revealed).toBe(true);
-    expect(live().map((observer) => observer.elements)).toEqual([[third.element]]);
-  });
-
-  it("does not observe a new element after the reveal with once", () => {
-    const state = createReveal(options);
-    state.attach(fakeElement().element);
-    live()[0]!.report(true);
-    state.attach(fakeElement().element);
     expect(live()).toEqual([]);
   });
 
   it("cancels the animation and stops observing when it gets null", () => {
     const { element, cancel } = fakeElement();
-    const state = createReveal({ ...options, once: false });
+    const state = createReveal(options);
     state.attach(element);
     live()[0]!.report(true);
     state.attach(null);
@@ -204,19 +195,7 @@ describe("createReveal", () => {
     expect(live()).toEqual([]);
   });
 
-  it("hides and plays again when the element leaves and enters with once: false", () => {
-    const { element, animate, cancel } = fakeElement();
-    const state = createReveal({ ...options, once: false });
-    state.attach(element);
-    const observer = live()[0]!;
-    observer.report(true);
-    observer.report(false);
-    expect(cancel).toHaveBeenCalledTimes(1);
-    observer.report(true);
-    expect(animate).toHaveBeenCalledTimes(2);
-  });
-
-  it("restarts the observer only for when, threshold and once", () => {
+  it("restarts the observer only for when and threshold", () => {
     const state = createReveal({ ...options, threshold: 0.5 });
     state.attach(fakeElement().element);
     const first = live()[0]!;
@@ -262,16 +241,14 @@ it("reports a throwing adapter callback once without breaking the reveal", () =>
   const callbacks: VoidFunction[] = [];
   vi.stubGlobal("queueMicrotask", (callback: VoidFunction) => callbacks.push(callback));
   const error = new Error("callback failure");
-  const state = createReveal({
-    once: false,
-    onReveal: () => {
-      throw error;
-    },
-  });
+  const onReveal = () => {
+    throw error;
+  };
+  const state = createReveal({ onReveal });
   state.attach(fakeElement().element);
   live()[0]!.report(true);
-  live()[0]!.report(false);
-  live()[0]!.report(true);
+  state.setOptions({ onReveal, when: false });
+  state.setOptions({ onReveal, when: true });
   expect(state.revealed).toBe(true);
   expect(callbacks).toHaveLength(1);
   expect(callbacks[0]).toThrow(error);

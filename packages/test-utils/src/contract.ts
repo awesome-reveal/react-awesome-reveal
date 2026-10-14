@@ -71,17 +71,6 @@ export function describeContract(name: string, harness: Harness) {
       expect(observerOf(m.element())).toBeUndefined();
     });
 
-    it("once: false hides on leave and replays on enter", async () => {
-      const m = await mount({ once: false });
-      await intersect(m, true);
-      await intersect(m, false);
-      expect(hidden(m.element())).toBe(true);
-      expect(runningAnimations()).toHaveLength(0);
-      await intersect(m, true);
-      expect(animations).toHaveLength(2);
-      expect(runningAnimations()).toHaveLength(1);
-    });
-
     it("when: true shows and plays with no observer", async () => {
       const m = await mount({ when: true });
       expect(shown(m.element())).toBe(true);
@@ -119,32 +108,27 @@ export function describeContract(name: string, harness: Harness) {
       expect(runningAnimations()).toHaveLength(1);
     });
 
-    for (const [option, from, to] of [
-      ["threshold", 0.5, 0.2],
-      ["once", true, false],
-    ] as const) {
-      it(`a change of ${option} restarts the observer`, async () => {
-        const m = await mount({ [option]: from });
-        const before = observerOf(m.element());
-        await rerender(m, { [option]: to });
-        const after = observerOf(m.element());
-        expect(after).toBeDefined();
-        expect(after).not.toBe(before);
-        expect(MockIntersectionObserver.instances.size).toBe(1);
-      });
-    }
+    it("a change of threshold restarts the observer", async () => {
+      const m = await mount({ threshold: 0.5 });
+      const before = observerOf(m.element());
+      await rerender(m, { threshold: 0.2 });
+      const after = observerOf(m.element());
+      expect(after).toBeDefined();
+      expect(after).not.toBe(before);
+      expect(MockIntersectionObserver.instances.size).toBe(1);
+    });
 
     it("the other options apply at the next reveal", async () => {
-      const m = await mount({ once: false, duration: 300 });
+      const m = await mount({ duration: 300 });
       const before = observerOf(m.element());
-      await rerender(m, { once: false, duration: 400 });
+      await rerender(m, { duration: 400 });
       expect(observerOf(m.element())).toBe(before);
       await intersect(m, true);
-      await rerender(m, { once: false, duration: 500 });
+      await rerender(m, { duration: 500 });
       expect(animations).toHaveLength(1);
       expect(animations[0]!.options).toMatchObject({ duration: 400 });
-      await intersect(m, false);
-      await intersect(m, true);
+      await rerender(m, { when: false, duration: 500 });
+      await rerender(m, { when: true, duration: 500 });
       expect(animations[1]!.options).toMatchObject({ duration: 500 });
     });
 
@@ -177,7 +161,7 @@ export function describeContract(name: string, harness: Harness) {
     });
 
     it("unmount cancels the animation and the observer", async () => {
-      const m = await mount({ once: false });
+      const m = await mount();
       await intersect(m, true);
       await m.unmount();
       await m.flush();
@@ -226,12 +210,12 @@ export function describeContract(name: string, harness: Harness) {
 
     it("onReveal is called with the element at each reveal", async () => {
       const onReveal = vi.fn();
-      const m = await mount({ once: false, onReveal });
+      const m = await mount({ onReveal });
       expect(onReveal).not.toHaveBeenCalled();
       await intersect(m, true);
       expect(onReveal.mock.calls).toEqual([[m.element()]]);
-      await intersect(m, false);
-      await intersect(m, true);
+      await rerender(m, { when: false, onReveal });
+      await rerender(m, { when: true, onReveal });
       expect(onReveal).toHaveBeenCalledTimes(2);
     });
 
@@ -294,10 +278,11 @@ export function describeContract(name: string, harness: Harness) {
         if (JSON.stringify(keyframes).includes('"bogus"')) throw new TypeError(message);
         return original.call(this, keyframes, options);
       };
-      const m = await mount({ once: false, keyframes: [{ opacity: 0, easing: "bogus" }, {}] });
+      const keyframes = [{ opacity: 0, easing: "bogus" }, {}];
+      const m = await mount({ keyframes });
       await intersect(m, true);
-      await intersect(m, false);
-      await intersect(m, true);
+      await rerender(m, { when: false, keyframes });
+      await rerender(m, { when: true, keyframes });
       await settle();
       expect(shown(m.element())).toBe(true);
     });

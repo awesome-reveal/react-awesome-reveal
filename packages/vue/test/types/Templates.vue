@@ -3,11 +3,10 @@ import { Reveal, vReveal } from "../../src";
 </script>
 
 <template>
-  <div v-reveal="{ duration: 300, once: false, when: true }" />
+  <div v-reveal="{ duration: 300, when: true }" />
   <Reveal
     as="ul"
     :keyframes="[{ opacity: 0 }, {}]"
-    once
     when
   >
     <li>one</li>

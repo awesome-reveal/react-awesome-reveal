@@ -24,14 +24,8 @@ function start(target: RevealTarget, options: RevealOptions, interval?: number):
   for (const element of new Set(resolveTargets(target))) {
     const animated = interval === undefined ? [element] : Array.from(element.children);
     const motions = animated.map((child, index) => motion(child, options, index * (interval ?? 0)));
-    let visible = false;
-    const disconnect = observe(element, options, (next) => {
-      if (next === visible) return;
-      visible = next;
-      for (const effect of motions) {
-        if (next) effect.play();
-        else effect.reset();
-      }
+    const disconnect = observe(element, options, () => {
+      for (const effect of motions) effect.play();
     });
     cleanups.push(() => {
       disconnect();

@@ -23,6 +23,6 @@ test("the public surface has exactly the frozen primitives and options", () => {
   expectTypeOf<keyof typeof api>().toEqualTypeOf<"reveal" | "cascade">();
   expectTypeOf<keyof RevealHandle>().toEqualTypeOf<"dispose">();
   expectTypeOf<keyof RevealOptions>().toEqualTypeOf<
-    "from" | "keyframes" | "duration" | "threshold" | "once"
+    "from" | "keyframes" | "duration" | "threshold"
   >();
 });

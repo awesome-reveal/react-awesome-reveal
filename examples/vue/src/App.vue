@@ -22,12 +22,7 @@ onBeforeUnmount(() => handle?.dispose());
     v-for="side in sides"
     :key="side"
   >
-    <Reveal
-      :from="side"
-      :once="false"
-    >
-      From the {{ side }}
-    </Reveal>
+    <Reveal :from="side"> From the {{ side }} </Reveal>
   </PageSection>
   <PageSection><Reveal :from="{ scale: 0.9 }">Scale only</Reveal></PageSection>
   <PageSection>

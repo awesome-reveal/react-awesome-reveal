@@ -40,7 +40,6 @@ describe("Reveal on the server", () => {
       keyframes: fadeKeyframes,
       duration: 1000,
       threshold: 0.5,
-      once: false,
     };
 
     const html = await render(options);

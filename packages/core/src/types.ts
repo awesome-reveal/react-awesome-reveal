@@ -23,14 +23,12 @@ type AnimationOptions =
       keyframes: Keyframe[];
     };
 
-/** Configures the entrance and viewport behavior of a reveal. */
+/** Configures the entrance and viewport behavior of a reveal. The entrance plays once. */
 export type RevealOptions = AnimationOptions & {
   /** The duration of the animation, in milliseconds. @default 600 */
   duration?: number;
   /** The visible fraction of the element, from 0 to 1, that reveals it. @default 0 */
   threshold?: number;
-  /** With `false`, the element resets when it leaves the viewport and plays again when it enters. @default true */
-  once?: boolean;
 };
 
 /** Configures the entrance and the delay between direct children. */

@@ -95,19 +95,20 @@ describe("reveal", () => {
     expect(animations[0]?.keyframes).toBe(keyframes);
     expect(animations[0]?.options).toMatchObject({ duration: 500 });
   });
-  it("waits for the threshold and resets without an exit animation", () => {
+  it("waits for the threshold and plays once", () => {
     const target = element();
-    track(reveal(target, { threshold: 0.5, once: false }));
-    expect(observerOf(target)?.thresholds).toEqual([0.5]);
+    track(reveal(target, { threshold: 0.5 }));
+    const observer = observerOf(target)!;
+    expect(observer.thresholds).toEqual([0.5]);
     intersect(target, 0.2);
     expect(animations[0]?.play).not.toHaveBeenCalled();
     intersect(target, 0.5);
-    intersect(target, 0.8);
     expect(animations[0]?.play).toHaveBeenCalledOnce();
-    intersect(target, false);
-    expect(animations[0]?.pause).toHaveBeenCalledTimes(2);
-    intersect(target, true);
-    expect(animations[0]?.play).toHaveBeenCalledTimes(2);
+    expect(observerOf(target)).toBeUndefined();
+    observer.trigger(target, 0);
+    observer.trigger(target, 1);
+    expect(animations[0]?.play).toHaveBeenCalledOnce();
+    expect(animations[0]?.pause).toHaveBeenCalledOnce();
     expect(animations).toHaveLength(1);
   });
   it.each(["selector", "iterable", "array-like", "live collection"])(
@@ -133,7 +134,7 @@ describe("reveal", () => {
   );
   it("ignores queued reports after disposal and permits repeated disposal", () => {
     const target = element();
-    const handle = track(reveal(target, { once: false }));
+    const handle = track(reveal(target));
     const observer = observerOf(target)!;
     handle.dispose();
     handle.dispose();
@@ -238,13 +239,11 @@ describe("cascade", () => {
     intersect(b, true);
     expect(animations.slice(3).every((a) => a.play.mock.calls.length === 1)).toBe(true);
   });
-  it("cancels pending cascade effects on disposal and resets on leave", () => {
+  it("cancels pending cascade effects on disposal", () => {
     const target = container();
-    const handle = track(cascade(target, { once: false, interval: 1000 }));
+    const handle = track(cascade(target, { interval: 1000 }));
     intersect(target, true);
-    intersect(target, false);
-    expect(animations.every((a) => a.pause.mock.calls.length === 2)).toBe(true);
-    intersect(target, true);
+    expect(observerOf(target)).toBeUndefined();
     handle.dispose();
     handle.dispose();
     expect(animations.every((a) => a.cancel.mock.calls.length === 1)).toBe(true);

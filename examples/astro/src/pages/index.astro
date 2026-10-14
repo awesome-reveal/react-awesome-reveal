@@ -17,7 +17,7 @@ const sides = ["top", "right", "bottom", "left"] as const;
   </PageSection>
   {sides.map((from) => (
     <PageSection>
-      <Reveal from={from} once={false}>
+      <Reveal from={from}>
         From the {from}
       </Reveal>
     </PageSection>

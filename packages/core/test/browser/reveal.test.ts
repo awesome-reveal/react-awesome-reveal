@@ -72,17 +72,16 @@ describe("zero-CSS reveal", () => {
       filter: "blur(0.5rem)",
     });
   });
-  it("resets to the start and re-enters after an animation finishes", async () => {
-    track(reveal(target, { ...native, once: false }));
+  it("plays once and stays revealed when the element leaves and enters again", async () => {
+    track(reveal(target, native));
     await enter();
-    const effect = animation();
-    effect.finish();
-    expect(opacity()).toBe("1");
+    animation().finish();
     scrollToTop();
-    await expect.poll(() => opacity()).toBe("0");
-    expect(effect.playState).toBe("paused");
-    await enter();
-    expect(animation()).toBe(effect);
+    await settle();
+    scrollIntoView(target);
+    await settle();
+    expect(opacity()).toBe("1");
+    expect(target.getAnimations()).toEqual([]);
   });
   it("waits for the threshold", async () => {
     track(reveal(target, { ...native, threshold: 0.8 }));

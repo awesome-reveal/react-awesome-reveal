@@ -72,19 +72,6 @@ describe(`useReveal (React ${version})`, () => {
     expect(observerOf(box())).toBeUndefined();
   });
 
-  it("hides the element again and cancels the animation when it leaves the viewport and once is false", () => {
-    render(<Box once={false} />);
-    intersect(box(), true);
-    intersect(box(), false);
-
-    expect(box()).toHaveStyle({ opacity: "0" });
-    expect(runningAnimations()).toHaveLength(0);
-
-    intersect(box(), true);
-    expect(animations).toHaveLength(2);
-    expect(runningAnimations()).toHaveLength(1);
-  });
-
   it("cancels the animation on unmount", async () => {
     const { unmount } = render(<Box />);
     intersect(box(), true);
@@ -95,14 +82,15 @@ describe(`useReveal (React ${version})`, () => {
   });
 
   it("applies option changes to the next reveal without replaying", () => {
-    const { rerender } = render(<Box once={false} duration={300} />);
+    const keyframes = [{ opacity: 0 }, {}];
+    const { rerender } = render(<Box duration={300} />);
     intersect(box(), true);
-    rerender(<Box once={false} duration={400} keyframes={[{ opacity: 0 }, {}]} />);
+    rerender(<Box duration={400} keyframes={keyframes} />);
 
     expect(animations).toHaveLength(1);
 
-    intersect(box(), false);
-    intersect(box(), true);
+    rerender(<Box when={false} duration={400} keyframes={keyframes} />);
+    rerender(<Box when duration={400} keyframes={keyframes} />);
     expect(animations[1]).toMatchObject({
       keyframes: [{ opacity: 0 }, {}],
       options: { duration: 400 },
