@@ -1,5 +1,19 @@
 # react-awesome-reveal
 
+## [5.0.0-next.8](https://github.com/awesome-reveal/awesome-reveal/compare/react-awesome-reveal@5.0.0-next.7...react-awesome-reveal@5.0.0-next.8) (2026-10-14)
+
+
+### Bug Fixes
+
+* add license and compatibility to the consumer skills ([#301](https://github.com/awesome-reveal/awesome-reveal/issues/301)) ([b603abd](https://github.com/awesome-reveal/awesome-reveal/commit/b603abdcbd041a6eac168e384eacd5946efb15e0))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @awesome-reveal/react bumped to 1.0.0-next.8
+
 ## [5.0.0-next.7](https://github.com/awesome-reveal/awesome-reveal/compare/react-awesome-reveal@5.0.0-next.6...react-awesome-reveal@5.0.0-next.7) (2026-10-14)
 
 

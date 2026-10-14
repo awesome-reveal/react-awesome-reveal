@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.0.0-next.8](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/astro@1.0.0-next.7...@awesome-reveal/astro@1.0.0-next.8) (2026-10-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* the data-reveal attributes are now data-awesome-reveal, and the html ready and failed markers and the recovery script are removed. reveal.css now shows unattached server markup after 5 seconds.
+
+### Features
+
+* harden server markup, focus and threshold handling ([#298](https://github.com/awesome-reveal/awesome-reveal/issues/298)) ([7cb5443](https://github.com/awesome-reveal/awesome-reveal/commit/7cb5443432d404215c02e6ffb218e1c63dacd970))
+
+
+### Bug Fixes
+
+* add license and compatibility to the consumer skills ([#301](https://github.com/awesome-reveal/awesome-reveal/issues/301)) ([b603abd](https://github.com/awesome-reveal/awesome-reveal/commit/b603abdcbd041a6eac168e384eacd5946efb15e0))
+* rename the attach marker to data-awesome-reveal-attached ([#300](https://github.com/awesome-reveal/awesome-reveal/issues/300)) ([6f8eabe](https://github.com/awesome-reveal/awesome-reveal/commit/6f8eabed10a1b73eb7cfc583377851a2fa10917f))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @awesome-reveal/core bumped to 1.0.0-next.8
+
 ## [1.0.0-next.7](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/astro@1.0.0-next.6...@awesome-reveal/astro@1.0.0-next.7) (2026-10-14)
 
 
