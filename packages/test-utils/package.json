@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@testing-library/jest-dom": "^7.0.1"
+    "@testing-library/jest-dom": "^7.0.1",
+    "yaml": "^2.9.1"
   }
 }
