@@ -28,10 +28,13 @@ async function bundle(entry: string) {
   };
 }
 it.each([
-  { entry: "reveal.js", animationExports: ["motion", "motionPreference", "motions"] },
+  {
+    entry: "reveal.js",
+    animationExports: ["followPrint", "motion", "motionPreference", "motions"],
+  },
   {
     entry: "both.js",
-    animationExports: ["cascadeInterval", "motion", "motionPreference", "motions"],
+    animationExports: ["cascadeInterval", "followPrint", "motion", "motionPreference", "motions"],
   },
 ])("keeps only the imperative modules for $entry", async ({ entry, animationExports }) => {
   const result = await bundle(entry);

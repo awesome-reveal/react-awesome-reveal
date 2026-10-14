@@ -382,6 +382,20 @@ export function describeCascadeContract(name: string, harness: Harness) {
       expect(animations).toHaveLength(0);
     });
 
+    it("print shows the children in their delay until the print ends", async () => {
+      const m = await mount({ when: true });
+      const fills = () =>
+        animations.map((animation) => animation.effect.updateTiming.mock.lastCall?.[0].fill);
+      dispatchEvent(new Event("beforeprint"));
+      expect(fills()).toEqual(["none", "none", "none"]);
+      dispatchEvent(new Event("afterprint"));
+      expect(fills()).toEqual(["backwards", "backwards", "backwards"]);
+      await m.unmount();
+      await m.flush();
+      dispatchEvent(new Event("beforeprint"));
+      expect(fills()).toEqual(["backwards", "backwards", "backwards"]);
+    });
+
     it("unmount cancels the animations of all the children", async () => {
       const m = await mount({ when: true });
       await m.unmount();

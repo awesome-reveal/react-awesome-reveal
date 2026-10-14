@@ -80,14 +80,29 @@ export function motion(element: Element, options: RevealOptions, delay = 0) {
       if (animation?.playState === "paused") animation.play();
     },
     // At its end time, a waiting effect is past its backwards fill, so the element prints at rest.
+    // A running child in its delay has no fill without "backwards", and keeps its time.
     print(printing: boolean) {
       if (animation?.playState === "paused")
         animation.currentTime = printing ? (animation.effect?.getComputedTiming().endTime ?? 0) : 0;
+      animation?.effect?.updateTiming({ fill: printing ? "none" : "backwards" });
     },
     dispose() {
       animation?.cancel();
       animation = undefined;
     },
+  };
+}
+
+// Core has no print stylesheet, and the print rule of an adapter stops at the reveal, so print moves each effect past its fill.
+export function followPrint(effects: ReturnType<typeof motion>[]): () => void {
+  const onPrint = (event: Event) => {
+    for (const effect of effects) effect.print(event.type === "beforeprint");
+  };
+  globalThis.addEventListener?.("beforeprint", onPrint);
+  globalThis.addEventListener?.("afterprint", onPrint);
+  return () => {
+    globalThis.removeEventListener?.("beforeprint", onPrint);
+    globalThis.removeEventListener?.("afterprint", onPrint);
   };
 }
 

@@ -1,4 +1,4 @@
-import { cascadeInterval, motionPreference, motions } from "./animation.js";
+import { cascadeInterval, followPrint, motionPreference, motions } from "./animation.js";
 import { observe } from "./observe.js";
 import { report } from "./report.js";
 import type {
@@ -57,7 +57,9 @@ function play(element: Element, options: CoreRevealOptions, interval?: number): 
   if (motionPreference()?.matches) return () => {};
   const effects = motions(element, options, interval);
   for (const effect of effects) effect.play();
+  const unfollow = followPrint(effects);
   return () => {
+    unfollow();
     for (const effect of effects) effect.dispose();
   };
 }

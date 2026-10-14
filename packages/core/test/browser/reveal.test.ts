@@ -278,6 +278,23 @@ describe("cascade", () => {
       "0",
     ]);
   });
+  it("print shows the children in their delay, and they keep the delay after the print", async () => {
+    track(cascade(target, { ...native, interval: 60_000 }));
+    const child = target.children[1] as HTMLElement;
+    scrollIntoView(target);
+    await expect.poll(() => animation(child).playState).toBe("running");
+    const time = animation(child).currentTime as number;
+    dispatchEvent(new Event("beforeprint"));
+    expect(opacity(child)).toBe("1");
+    dispatchEvent(new Event("afterprint"));
+    expect(opacity(child)).toBe("0");
+    expect(animation(child).playState).toBe("running");
+    expect(animation(child).currentTime as number).toBeGreaterThanOrEqual(time);
+    expect(animation(child).currentTime as number).toBeLessThan(60_000);
+    animation(child).currentTime = 90_000;
+    expect(Number(opacity(child))).toBeGreaterThan(0);
+    expect(Number(opacity(child))).toBeLessThan(1);
+  });
   it("reduced motion bypasses every child delay", () => {
     vi.mocked(window.matchMedia).mockReturnValue({ matches: true } as MediaQueryList);
     track(cascade(target, { ...native, interval: 10_000 }));

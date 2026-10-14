@@ -8,6 +8,7 @@ interface RecordedAnimation {
   pause: Mock<() => void>;
   play: Mock<() => void>;
   finish: Mock<() => void>;
+  effect: { updateTiming: Mock<(timing: OptionalEffectTiming) => void> };
   playState: AnimationPlayState;
 }
 
@@ -29,6 +30,7 @@ export function installAnimate() {
       pause: vi.fn(() => void (animation.playState = "paused")),
       play: vi.fn(() => void (animation.playState = "running")),
       finish: vi.fn(() => void (animation.playState = "finished")),
+      effect: { updateTiming: vi.fn() },
     };
     animations.push(animation);
     return animation as unknown as Animation;
