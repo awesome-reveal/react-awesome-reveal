@@ -96,14 +96,14 @@ jobs:
           # npm stages an accepted version for some minutes, and npm view cannot see it. The malware scan of
           # npm can also hold or block a staged version, so a successful publish does not prove the release.
           wait_for_npm() {
-            for _ in {1..40}; do
+            for attempt in {0..40}; do
+              if ((attempt)); then sleep 30; fi
               local missing=()
               for spec in "$@"; do
                 [[ -n $(npm view "$spec" version --prefer-online 2>/dev/null) ]] || missing+=("$spec")
               done
               ((${#missing[@]})) || return 0
               set -- "${missing[@]}"
-              sleep 30
             done
             echo "::error::$* did not show on npm in 20 minutes. Check it with npm stage list."
             return 1
