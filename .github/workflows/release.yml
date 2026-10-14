@@ -86,7 +86,7 @@ jobs:
 
       # The release commit is checked out as a detached HEAD, so pnpm's branch check would fail.
       # pnpm skips the versions that are already on npm, so a re-run publishes only the missing packages.
-      # One pnpm call for each package, because a recursive publish stops at the first error.
+      # One pnpm call for each package, because a recursive publish stops at the first error, also at a staged 409.
       - name: Publish
         env:
           PATHS_RELEASED: ${{ needs.release-please.outputs.paths_released }}
