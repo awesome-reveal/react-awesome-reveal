@@ -1,5 +1,14 @@
 # react-awesome-reveal
 
+## [5.0.0-next.6](https://github.com/awesome-reveal/awesome-reveal/compare/react-awesome-reveal@5.0.0-next.5...react-awesome-reveal@5.0.0-next.6) (2026-10-14)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @awesome-reveal/react bumped to 1.0.0-next.6
+
 ## [5.0.0-next.5](https://github.com/awesome-reveal/awesome-reveal/compare/react-awesome-reveal@5.0.0-next.4...react-awesome-reveal@5.0.0-next.5) (2026-10-14)
 
 

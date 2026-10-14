@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.0.0-next.6](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/vue@1.0.0-next.5...@awesome-reveal/vue@1.0.0-next.6) (2026-10-14)
+
+
+### Bug Fixes
+
+* load the shipped reveal.css in the Vite dev server ([#294](https://github.com/awesome-reveal/awesome-reveal/issues/294)) ([4b4b870](https://github.com/awesome-reveal/awesome-reveal/commit/4b4b870531f840cec8cdba4e69a336bb60586b56))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @awesome-reveal/core bumped to 1.0.0-next.6
+
 ## [1.0.0-next.5](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/vue@1.0.0-next.4...@awesome-reveal/vue@1.0.0-next.5) (2026-10-14)
 
 
