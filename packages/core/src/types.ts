@@ -19,7 +19,7 @@ type AnimationOptions =
     }
   | {
       from?: never;
-      /** Replaces the generated entrance with native keyframes. Give explicit values to the first keyframe. */
+      /** Replaces the generated entrance with native keyframes, and wins over `from`. Give explicit values to the first keyframe. */
       keyframes: Keyframe[];
     };
 
@@ -36,7 +36,7 @@ export type RevealOptions = AnimationOptions & {
 
 /** Configures the entrance and the delay between direct children. */
 export type CascadeOptions = RevealOptions & {
-  /** The delay between direct element children, in milliseconds. @default 80 */
+  /** The delay between direct element children, in milliseconds. The child at `index` waits `index * interval`, and a negative value starts later children further into their entrance. @default 80 */
   interval?: number;
 };
 

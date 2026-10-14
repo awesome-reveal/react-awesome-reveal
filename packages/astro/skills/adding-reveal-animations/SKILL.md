@@ -19,7 +19,7 @@ Set `from` to `"top"`, `"right"`, `"bottom"` or `"left"` for an entrance that st
 
 For a custom animation, give native `Keyframe[]` in `keyframes`. Do not use `from` and `keyframes` together. Put the easing of each segment in its keyframe. End at the resting style of the element, because the animation does not keep its last keyframe. Animate `transform` and `opacity` when possible. Do not try to override the automatic reduced-motion behavior.
 
-For a long list, reveal each item separately. Install `@awesome-reveal/core` to use `cascade()`. It animates only the direct element children of a container, with `interval` milliseconds between them and no delay for the first child. Do not split text into elements, and do not collect deeper descendants to animate them.
+For a long list, reveal each item separately. Install `@awesome-reveal/core` to use `cascade()`. It animates only the direct element children of a container, with `interval` milliseconds between them and no delay for the first child. It reads the children when you call it. To cascade words or sentences, wrap each one in an element in the markup, and give inline children `display: inline-block`, because a transform does not apply to an inline box. Do not collect deeper descendants to animate them.
 
 Use `when` for manual control: `true` reveals the element and `false` resets it. The rendered tag dispatches a `reveal` event that bubbles.
 
