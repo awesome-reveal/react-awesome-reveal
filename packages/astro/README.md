@@ -20,7 +20,9 @@ import { Cascade, Reveal } from "@awesome-reveal/astro";
 
 `Reveal` renders the tag that `as` sets (the default is `div`) inside an `awesome-reveal` host element with `display: contents`. The component passes the attributes and the children to this tag. It accepts the serializable [core reveal options](https://www.npmjs.com/package/@awesome-reveal/core) and `when`. You do not need a hydration directive or a stylesheet import.
 
-`when: true` reveals the element manually, and `when: false` resets it. With `null` or `undefined`, the viewport controls the reveal. After the page loads, you can change it with the `when` property of the host element. The host has a `revealed` property. When the rendered tag reveals, it dispatches a `reveal` event that bubbles.
+`delay` sets the time between the reveal and the entrance, in milliseconds. The default is 0. Keep `delay` below about 300 ms. A long delay makes content appear late when the user scrolls quickly.
+
+`when: true` reveals the element manually, and `when: false` resets it, also during the `delay`. With `null` or `undefined`, the viewport controls the reveal. After the page loads, you can change it with the `when` property of the host element. The host has a `revealed` property. When the rendered tag reveals, it dispatches a `reveal` event that bubbles.
 
 ```ts
 const host = document.querySelector("awesome-reveal");
@@ -29,7 +31,7 @@ if (host) host.when = true;
 
 ## Cascade
 
-`Cascade` works like `Reveal`, but it animates each direct child element in sequence when the element enters the viewport. `interval` sets the delay between two children, in milliseconds, and the default is 80. The first child starts immediately. The host element has a `cascade` attribute, and the `reveal` event comes from the rendered tag.
+`Cascade` works like `Reveal`, but it animates each direct child element in sequence when the element enters the viewport. `interval` sets the time between the entrances of two children, in milliseconds, and the default is 80. `delay` moves the start of the whole sequence: the first child starts after `delay`, and `interval` spaces the other children. The host element has a `cascade` attribute, and the `reveal` event comes from the rendered tag.
 
 - It reads the children when the container reveals. A child that you add after the reveal shows with no animation.
 - Only the direct element children animate. Text and children with `display: contents` show immediately.

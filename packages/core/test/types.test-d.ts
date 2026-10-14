@@ -9,6 +9,8 @@ const arrayLike: RevealHandle = reveal({ 0: el, length: 1 });
 const group: RevealHandle = cascade(".features", { from: { opacity: 0, y: 16 }, interval: 80 });
 reveal(el, { keyframes: frames });
 reveal(el, { from: "left" });
+reveal(el, { delay: 200 });
+cascade(el, { delay: 200, interval: 80 });
 const options: RevealOptions = { from: { x: "-100%", rotate: "-5deg", blur: "0.5rem" } };
 reveal(el, options);
 for (const handle of [single, selector, iterable, arrayLike, group]) handle.dispose();
@@ -23,6 +25,6 @@ test("the public surface has exactly the frozen primitives and options", () => {
   expectTypeOf<keyof typeof api>().toEqualTypeOf<"reveal" | "cascade">();
   expectTypeOf<keyof RevealHandle>().toEqualTypeOf<"dispose">();
   expectTypeOf<keyof RevealOptions>().toEqualTypeOf<
-    "from" | "keyframes" | "duration" | "threshold"
+    "from" | "keyframes" | "duration" | "delay" | "threshold"
   >();
 });

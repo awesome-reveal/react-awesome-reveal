@@ -33,7 +33,7 @@ Keep the item of the adapter on the plan board, https://github.com/orgs/awesome-
      - Do not replay the animation on a new element, such as a changed `as` tag. `attach` keeps the state. A directive that is bound to its element is the only exception.
      - Treat `data-reveal` as reserved, and leave the `style` of the user as it is.
      - Pass `onReveal` to core. If the framework has events, emit an event from it, as the Vue `<Reveal>` and the Astro custom element do.
-     - Do not delay the start of the animation: core starts it in the task of the report.
+     - Do not defer the entrance, for example with a timer or a frame callback: core starts it in the task of the report, before the next paint.
      - Do not catch the errors of core. It reports the errors of `onReveal`.
 5. Render the hidden state in the server markup, so that the element does not show before hydration. Add a hydration test that renders on the server, hydrates in jsdom, and fails on a mismatch warning, as `packages/react/test/hydration.test.tsx` and `packages/vue/test/hydration.test.ts` do. An attribute that only the server renders can cause a mismatch.
 6. Add the Vitest projects to `vitest.config.ts`: `<framework>:unit`, `<framework>:package`, and `<framework>:ssr` when the framework renders on a server.

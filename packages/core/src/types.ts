@@ -28,6 +28,11 @@ export type RevealOptions = AnimationOptions & {
   /** The duration of the entrance, in milliseconds. @default 600 */
   duration?: number;
   /**
+   * The time between the reveal and the start of the entrance, in milliseconds. The element keeps
+   * its start state during the delay. @default 0
+   */
+  delay?: number;
+  /**
    * The visible fraction of the element, from 0 to 1, that reveals it. An element that leaves the
    * visible area before it reaches the threshold reveals then. @default 0
    */
@@ -36,7 +41,7 @@ export type RevealOptions = AnimationOptions & {
 
 /** Configures the entrance and the delay between direct children. */
 export type CascadeOptions = RevealOptions & {
-  /** The delay between direct element children, in milliseconds. The child at `index` waits `index * interval`. A negative value starts each later child further into its entrance. @default 80 */
+  /** The time between the entrances of two direct element children, in milliseconds. The child at `index` waits `delay + index * interval`. A negative value starts each later child further into its entrance. @default 80 */
   interval?: number;
 };
 

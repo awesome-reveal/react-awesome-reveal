@@ -51,6 +51,20 @@ const open = ref(false);
     </Cascade>
   </PageSection>
   <PageSection>
+    <Reveal
+      as="h2"
+      from="left"
+    >
+      A header
+    </Reveal>
+    <Reveal
+      :from="{ opacity: 0 }"
+      :delay="250"
+    >
+      Its content starts 250 ms later
+    </Reveal>
+  </PageSection>
+  <PageSection>
     <ul v-cascade="{ from: 'left', interval: 120 }">
       <li>A directive</li>
       <li>on your own</li>

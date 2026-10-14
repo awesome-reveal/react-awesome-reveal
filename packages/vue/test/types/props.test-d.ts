@@ -1,13 +1,18 @@
 import type { RevealOptions } from "@awesome-reveal/core/adapter";
 import type { Directive } from "vue";
 
-import type { RevealProps } from "../../src";
+import type { CascadeProps, RevealProps } from "../../src";
 import { vReveal } from "../../src";
 
 // Templates.vue holds the template checks. vue-tsc checks it with this file.
 test("Reveal takes the core options and as", () => {
   expectTypeOf<RevealProps>().toExtend<RevealOptions>();
   expectTypeOf<RevealProps["as"]>().toEqualTypeOf<string | undefined>();
+});
+
+test("Reveal and Cascade take delay", () => {
+  expectTypeOf<RevealProps>().toHaveProperty("delay");
+  expectTypeOf<CascadeProps>().toHaveProperty("delay");
 });
 
 test("v-reveal takes the core options or nothing", () => {

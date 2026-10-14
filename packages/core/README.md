@@ -30,7 +30,7 @@ The function finds the targets one time, when you call it. Each call returns a `
 
 `reveal()` observes each target separately. `cascade()` observes each container separately and reveals only its direct element children. It reads the children one time, when you call it, so a child that you add later does not animate. Text nodes and deeper descendants do not animate. For a long list, use `reveal()` on the items.
 
-The child at position `index` gets a delay of `index * interval` milliseconds, so the first child starts immediately. The default interval is 80 ms. A negative interval gives negative delays, so each later child starts further into its entrance. To cascade the words or sentences of a text, wrap each one in an element before you call `cascade()`. A transform needs a transformable element, so give inline children `display: inline-block`.
+The child at position `index` waits `delay + index * interval` milliseconds after the reveal. So with no `delay`, the first child starts immediately. The default interval is 80 ms. A negative interval gives negative delays, so each later child starts further into its entrance. To cascade the words or sentences of a text, wrap each one in an element before you call `cascade()`. A transform needs a transformable element, so give inline children `display: inline-block`.
 
 `dispose()` disconnects the observers and cancels the pending, the active and the delayed animations. It removes the start state of the call, and the elements return to their own styles. You can call it more than one time.
 
@@ -82,15 +82,25 @@ You can use the native keyframe properties `easing`, `offset` and `composite`. T
 
 ## Options
 
-| Option                      | Default    | Meaning                                                    |
-| --------------------------- | ---------- | ---------------------------------------------------------- |
-| `from`                      | `"bottom"` | A side, or a complete `StartState`                         |
-| `keyframes`                 | —          | Native `Keyframe[]`, instead of `from`                     |
-| `duration`                  | 600        | The duration of the entrance, in milliseconds              |
-| `threshold`                 | 0          | The visible fraction that reveals the element, from 0 to 1 |
-| `interval` (`cascade` only) | 80         | The delay between children, in milliseconds                |
+| Option                      | Default    | Meaning                                                         |
+| --------------------------- | ---------- | --------------------------------------------------------------- |
+| `from`                      | `"bottom"` | A side, or a complete `StartState`                              |
+| `keyframes`                 | —          | Native `Keyframe[]`, instead of `from`                          |
+| `duration`                  | 600        | The duration of the entrance, in milliseconds                   |
+| `delay`                     | 0          | The time between the reveal and the entrance, in milliseconds   |
+| `threshold`                 | 0          | The visible fraction that reveals the element, from 0 to 1      |
+| `interval` (`cascade` only) | 80         | The time between the entrances of two children, in milliseconds |
 
 The entrance plays one time. When it starts, the observation stops. There is no exit animation.
+
+During the `delay`, the element stays in its start state. Use it to start separate elements at different times, for example a header and its content. Keep `delay` below about 300 ms. A long delay makes content appear late when the user scrolls quickly.
+
+```ts
+import { reveal } from "@awesome-reveal/core";
+
+reveal(".hero h1", { from: "left" });
+reveal(".hero p", { from: { opacity: 0 }, delay: 200 });
+```
 
 An element reveals when `threshold` of it is visible, or when it leaves the visible area before that. An element that is larger than the viewport or its scroll container cannot reach a high threshold. Keep the default 0 for tall elements and long cascades.
 

@@ -29,6 +29,8 @@ import { Reveal } from "@awesome-reveal/react";
 
 `Reveal` renders one element around its children. `as` sets the tag, and the component passes the other attributes and `ref` to the element. It accepts the [core reveal options](https://www.npmjs.com/package/@awesome-reveal/core), and also `when` and `onReveal`.
 
+`delay` sets the time between the reveal and the entrance, in milliseconds. The default is 0. Keep `delay` below about 300 ms. A long delay makes content appear late when the user scrolls quickly.
+
 To animate your own element without a wrapper, use `useReveal`:
 
 ```tsx
@@ -42,7 +44,7 @@ export function Card() {
 
 Spread `getProps()` on one element. Give your own `ref` to `getProps()`, so that the hook can merge it with its ref. The hook does not change your styles. For a custom component, pass the ref and the `data-reveal` prop to a DOM element. The package reserves `data-reveal`.
 
-`when: true` reveals the element manually, and `when: false` resets it without an exit animation. To let the viewport control the reveal, omit `when` or set it to `null`. When the viewport controls the reveal, the entrance plays one time, and the observation stops when the entrance starts. A change of `when` from `false` to `true` plays the entrance again.
+`when: true` reveals the element manually, and `when: false` resets it without an exit animation. To let the viewport control the reveal, omit `when` or set it to `null`. When the viewport controls the reveal, the entrance plays one time, and the observation stops when the entrance starts. A change of `when` from `false` to `true` plays the entrance again. `when: false` during the `delay` also resets the element, and the entrance does not play.
 
 `onReveal` gets the element one time for each reveal, also in React StrictMode. A change to `when` or `threshold` applies immediately. A change to the other options applies at the next entrance.
 
@@ -65,7 +67,7 @@ export function Details() {
 
 ## Cascade
 
-`Cascade` works like `Reveal`, but it animates each direct child element in sequence when the element enters the viewport. `interval` sets the delay between two children, in milliseconds, and the default is 80. The first child starts immediately. `useCascade` does the same for your own element. The cascade observes the container, and `onReveal` gets the container.
+`Cascade` works like `Reveal`, but it animates each direct child element in sequence when the element enters the viewport. `interval` sets the time between the entrances of two children, in milliseconds, and the default is 80. `delay` moves the start of the whole sequence: the first child starts after `delay`, and `interval` spaces the other children. `useCascade` does the same for your own element. The cascade observes the container, and `onReveal` gets the container.
 
 ```tsx
 import { Cascade, useCascade } from "@awesome-reveal/react";

@@ -27,6 +27,11 @@ test("the custom element has typed when and revealed properties", () => {
   expectTypeOf(host.revealed).toEqualTypeOf<boolean>();
 });
 
+test("Reveal and Cascade take delay", () => {
+  expectTypeOf<RevealProps>().toHaveProperty("delay");
+  expectTypeOf<CascadeProps>().toHaveProperty("delay");
+});
+
 test("only Cascade takes interval", () => {
   expectTypeOf<CascadeProps>().toHaveProperty("interval");
   expectTypeOf<RevealProps>().not.toHaveProperty("interval");

@@ -42,7 +42,8 @@ function component(
     props: WithoutRef<CascadeProps> & { as?: RevealElement },
     ref: ForwardedRef<Element>,
   ) {
-    const { as, keyframes, from, duration, threshold, interval, when, onReveal, ...rest } = props;
+    const { as, keyframes, from, duration, delay, threshold, interval, when, onReveal, ...rest } =
+      props;
     const { getProps } = useTarget(props);
 
     // oxlint-disable-next-line react/refs -- getProps passes the ref to the element and does not read it.
