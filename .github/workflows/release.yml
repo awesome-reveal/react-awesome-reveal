@@ -57,7 +57,7 @@ jobs:
     if: needs.release-please.outputs.releases_created == 'true'
     runs-on: ubuntu-latest
     environment: npm
-    timeout-minutes: 10
+    timeout-minutes: 30
     permissions:
       contents: read
       id-token: write
@@ -106,9 +106,16 @@ jobs:
             tag=latest
             if [[ $version == *-* && -n $current && $current != *-* ]]; then tag=next; fi
             # npm stages an accepted version for some minutes, and npm view cannot see it. A re-run in that
-            # window gets a 409 "previously staged version", so that error counts as published.
+            # window gets a 409 "previously staged version". The malware scan of npm can also hold or block
+            # a staged version, so the job waits until the version shows.
             if ! pnpm --filter "./$path" publish --no-git-checks --tag "$tag" 2>&1 | tee "$RUNNER_TEMP/publish.log"; then
               grep -q 'previously staged version' "$RUNNER_TEMP/publish.log"
-              echo "::warning::npm already staged $name@$version. It shows on the registry after some minutes."
+              echo "::warning::npm already staged $name@$version. The job waits until it shows on the registry."
+              for _ in {1..40}; do
+                [[ -n $(npm view "$name@$version" version --prefer-online 2>/dev/null) ]] && continue 2
+                sleep 30
+              done
+              echo "::error::$name@$version did not show on npm in 20 minutes. Check it with npm stage list."
+              exit 1
             fi
           done
