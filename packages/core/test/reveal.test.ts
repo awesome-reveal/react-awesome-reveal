@@ -55,7 +55,8 @@ describe("reveal", () => {
     track(reveal(element(), { from }));
     expect(animations[0]?.keyframes).toMatchObject([
       { offset: 0, opacity: 0 },
-      { offset: 0, composite: "add", translate },
+      { offset: 0, composite: "add", translate: "0px 0px" },
+      { offset: 1e-6, composite: "add", translate },
       { offset: 1, composite: "add", opacity: 0, translate: "0px 0px" },
     ]);
   });

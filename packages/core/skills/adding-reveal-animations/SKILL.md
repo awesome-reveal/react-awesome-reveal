@@ -7,7 +7,7 @@ description: Adds reveal-on-scroll animations with reveal() and cascade() from @
 
 Use `reveal(target, options?)` to animate each target element when it enters the viewport. Use `cascade(container, options?)` to animate the direct element children of a container in sequence. Both functions return only `{ dispose() }`. Call `dispose()` in your teardown code.
 
-Core needs no stylesheet. It applies the start state when you call it, with a paused native animation. Code that waits for all page animations to finish must skip the paused ones. It does not hide server-rendered content. Only the framework packages do that.
+Core needs no stylesheet. It creates a paused native animation for each element when you call it. Code that waits for all page animations to finish must skip the paused ones. It does not hide server-rendered content. Only the framework packages do that.
 
 ```ts
 import { reveal, cascade } from "@awesome-reveal/core";
@@ -17,6 +17,8 @@ handle.dispose();
 ```
 
 Set `from` to `"top"`, `"right"`, `"bottom"` or `"left"` for an entrance that starts transparent and 24px away on that side. The defaults are `from: "bottom"`, `duration: 600` (milliseconds) and `threshold: 0`. The entrance plays one time. An element that leaves the viewport before it reaches `threshold` reveals then, so keep `threshold` low for tall elements. A `from` object is the complete start state: `{ opacity: 0 }` is a pure fade, and `{ scale: 0.9 }` adds no fade and no movement. A number is in pixels for `x`, `y` and `blur`, and in degrees for `rotate`. A string can contain a CSS value with its unit. The entrance adds its offset, scale, rotation and blur to the element's own transforms and filter, and fades to the element's own opacity, so do not override them for the entrance.
+
+Inside an ancestor that clips its overflow, such as a carousel or a box with `overflow: hidden`, use a start state with `opacity: 0`, such as a side. Other start states and native keyframes wait at their first keyframe, and the observer sees that box. If the clip hides that box fully, the element never reveals.
 
 For a custom animation, give native `Keyframe[]` in `keyframes`. Do not use `from` and `keyframes` together. Put the easing of each segment in its keyframe. End at the resting style of the element, because the animation does not keep its last keyframe. Animate `transform` and `opacity` when possible. Do not try to override the automatic reduced-motion behavior.
 

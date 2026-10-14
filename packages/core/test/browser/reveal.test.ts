@@ -37,7 +37,10 @@ describe("zero-CSS reveal", () => {
     expect(target.style.cssText).toBe("height: 100px;");
     expect(document.querySelectorAll("style").length).toBe(styles);
     expect(animation().effect!.getTiming().duration).toBe(600);
-    expect(getComputedStyle(target).translate).toBe("0px 24px");
+    expect(getComputedStyle(target).translate).toBe("0px");
+    expect((animation().effect as KeyframeEffect).getKeyframes()).toContainEqual(
+      expect.objectContaining({ translate: "0px 24px" }),
+    );
     await enter();
     animation().finish();
     expect(opacity()).toBe("1");
@@ -77,17 +80,17 @@ describe("zero-CSS reveal", () => {
       filter: "brightness(0.5)",
       opacity: "0.5",
     });
-    track(reveal(target, { from: { opacity: 0, x: 24, rotate: 5, blur: 8 }, duration: 1000 }));
+    track(reveal(target, { from: { opacity: 0.2, x: 24, rotate: 5, blur: 8 }, duration: 1000 }));
     const style = getComputedStyle(target);
     expect(style).toMatchObject({
-      opacity: "0",
+      opacity: "0.2",
       translate: "34px",
       rotate: "15deg",
       filter: "brightness(0.5) blur(8px)",
     });
     animation().currentTime = 500;
     // The easing is at about 96% of the change at the midpoint, so the fade goes to the element's 0.5.
-    expect(Number(style.opacity)).toBeCloseTo(0.48, 2);
+    expect(Number(style.opacity)).toBeCloseTo(0.49, 2);
     animation().currentTime = 1000;
     expect(style).toMatchObject({
       opacity: "0.5",
@@ -139,6 +142,14 @@ describe("zero-CSS reveal", () => {
     await settle();
     expect(animation().playState).toBe("paused");
     await enter();
+  });
+  it("reveals a hidden start state whose offset an ancestor clips", async () => {
+    document.body.innerHTML = `<div style="height: 150vh"></div><div id="clip" style="height: 10px; overflow: hidden"><div id="small" style="height: 10px">a</div></div><div style="height: 150vh"></div>`;
+    const small = document.getElementById("small")!;
+    track(reveal(small));
+    expect(opacity(small)).toBe("0");
+    scrollIntoView(document.getElementById("clip")!);
+    await expect.poll(() => animation(small).playState).toBe("running");
   });
   it("reveals an element taller than the viewport when it leaves before the threshold", async () => {
     target.style.height = "300vh";

@@ -85,7 +85,7 @@ The entrance plays one time. When it starts, the observation stops. There is no 
 
 An element reveals when `threshold` of it is visible, or when it leaves the visible area before that. An element larger than the viewport or its scroll container cannot reach a high threshold, so keep the default 0 for tall elements and long cascades.
 
-`reveal()` observes the element at its start state. The start offset and scale change the box that the observer sees. For example, with `from: "bottom"` the element starts 24 px lower, so it enters the viewport 24 px later when you scroll down. `cascade()` observes the container, which does not move.
+`reveal()` observes the element while it waits. A start state with `opacity: 0`, such as each side, waits at the resting position and moves only when the entrance plays. Other start states and native keyframes wait at their first keyframe, so their offset and scale change the box that the observer sees. If an ancestor with `overflow` clips that box fully, the element does not reveal. `cascade()` observes the container, which does not move.
 
 ## Errors
 
@@ -97,7 +97,7 @@ Reduced motion is automatic. With `prefers-reduced-motion: reduce`, all the cont
 
 The content that waits for its entrance also shows in print. After the print, it waits for its entrance again. Core uses the `beforeprint` and `afterprint` events, so it does not cover print styles that the browser applies with no print, such as a print emulation in developer tools.
 
-Core applies the start state with paused native animations when you call it. The browser can paint the content before your script runs, because core does not hide server-rendered content. The framework packages hide it with their own stylesheet, which they load automatically. For declarative rendering, use the React, Vue or Astro package. Each one has a `Reveal` and a `Cascade` component.
+Core creates the paused native animations when you call it. The browser can paint the content before your script runs, because core does not hide server-rendered content. The framework packages hide it with their own stylesheet, which they load automatically. For declarative rendering, use the React, Vue or Astro package. Each one has a `Reveal` and a `Cascade` component.
 
 Hidden content stays in the accessibility tree. Keep important controls usable. Do not make large parts of a page depend on decorative motion.
 

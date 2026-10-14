@@ -20,30 +20,37 @@ function entrance(options: RevealOptions): Keyframe[] {
   const easing = "cubic-bezier(0.22, 1, 0.36, 1)";
   const frames: Keyframe[] = [];
   const move: Keyframe = {};
+  const rest: Keyframe = {};
+  if (x !== undefined || y !== undefined) {
+    move.translate = `${unit(x ?? 0, "px")} ${unit(y ?? 0, "px")}`;
+    rest.translate = "0px 0px";
+  }
+  if (scale !== undefined) {
+    move.scale = scale;
+    rest.scale = 1;
+  }
+  if (rotate !== undefined) {
+    move.rotate = unit(rotate, "deg");
+    rest.rotate = "0deg";
+  }
+  if (blur !== undefined) {
+    move.filter = `blur(${unit(blur, "px")})`;
+    rest.filter = "blur(0px)";
+  }
   // "add" with neutral values ends at the element's own styles, with no implicit keyframe.
-  const end: Keyframe = { offset: 1, composite: "add" };
+  const end: Keyframe = { offset: 1, composite: "add", ...rest };
   if (opacity !== undefined) {
     // Additive opacity cannot hide: Firefox and WebKit clamp a negative start before the addition.
     frames.push({ offset: 0, easing, opacity });
     end.opacity = 0;
   }
-  if (x !== undefined || y !== undefined) {
-    move.translate = `${unit(x ?? 0, "px")} ${unit(y ?? 0, "px")}`;
-    end.translate = "0px 0px";
+  if (Object.keys(move).length) {
+    // The observer measures the transformed box, and an offset can put it outside a clipping ancestor for good.
+    // A hidden start waits at rest and moves only when it plays, while it is still transparent.
+    const hidden = opacity === 0;
+    if (hidden) frames.push({ offset: 0, composite: "add", ...rest });
+    frames.push({ offset: hidden ? 1e-6 : 0, easing, composite: "add", ...move });
   }
-  if (scale !== undefined) {
-    move.scale = scale;
-    end.scale = 1;
-  }
-  if (rotate !== undefined) {
-    move.rotate = unit(rotate, "deg");
-    end.rotate = "0deg";
-  }
-  if (blur !== undefined) {
-    move.filter = `blur(${unit(blur, "px")})`;
-    end.filter = "blur(0px)";
-  }
-  if (Object.keys(move).length) frames.push({ offset: 0, easing, composite: "add", ...move });
   return [...frames, end];
 }
 
