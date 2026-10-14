@@ -20,6 +20,17 @@ it("exposes only the framework primitives and package-owned CSS", () => {
     readFileSync(new URL("src/reveal.css", root), "utf8"),
   );
 });
+const directive = /^"use client";\n/;
+const modules = readdirSync(new URL("src/", root)).filter(
+  (file) => file.endsWith(".ts") && !file.endsWith(".d.ts"),
+);
+// The build config silences the Rolldown directive check, so the build does not report a lost directive.
+it.each(modules)("keeps the 'use client' directive of src/%s", (file) => {
+  const source = readFileSync(new URL(`src/${file}`, root), "utf8");
+  const output = readFileSync(new URL(file.replace(/\.ts$/, ".js"), dist), "utf8");
+
+  expect(directive.test(output)).toBe(directive.test(source));
+});
 it("automatically imports SSR visibility CSS through its bindings", () => {
   expect(readFileSync(new URL("useReveal.js", dist), "utf8")).toContain('import "#reveal-style"');
 });
