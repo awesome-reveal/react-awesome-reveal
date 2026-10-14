@@ -1,4 +1,4 @@
-import { cascadeInterval, followPrint, motionPreference, motions } from "./animation.js";
+import { cascadeInterval, motionPreference, motions } from "./animation.js";
 import { observe } from "./observe.js";
 import { report } from "./report.js";
 import type {
@@ -54,18 +54,14 @@ const restarts = ["when", "threshold"] as const;
 // The animation starts before the next paint, so no flash shows when the adapter removes the SSR hiding.
 // A cascade reads the children here, so that children rendered after the attach also play.
 function play(element: Element, options: CoreRevealOptions, interval?: number): () => void {
-  if (motionPreference()?.matches) return () => {};
-  const effects = motions(element, options, interval);
-  for (const effect of effects) effect.play();
-  const unfollow = followPrint(effects);
-  return () => {
-    unfollow();
-    for (const effect of effects) effect.dispose();
-  };
+  const group = motions(element, options, interval);
+  group.play();
+  return group.dispose;
 }
 
 function start(element: Element) {
-  element.ownerDocument.documentElement.setAttribute("data-reveal-ready", "");
+  const root = element.ownerDocument.documentElement;
+  if (!root.hasAttribute("data-reveal-ready")) root.setAttribute("data-reveal-ready", "");
 }
 
 function createStore<Options extends CascadeOptions>(
@@ -103,7 +99,9 @@ function createStore<Options extends CascadeOptions>(
     }
     if (revealed && element && !played) {
       played = true;
-      cancel = play(element, current, cascade ? cascadeInterval(current) : undefined);
+      cancel = preference?.matches
+        ? () => {}
+        : play(element, current, cascade ? cascadeInterval(current) : undefined);
       if (!notified) {
         notified = true;
         // A throwing callback must not break the render or the effect that attached the element.

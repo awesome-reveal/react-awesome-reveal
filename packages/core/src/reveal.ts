@@ -1,4 +1,4 @@
-import { cascadeInterval, followPrint, motionPreference, motions } from "./animation.js";
+import { cascadeInterval, motionPreference, motions } from "./animation.js";
 import { observe } from "./observe.js";
 import type { CascadeOptions, RevealHandle, RevealOptions, RevealTarget } from "./types.js";
 
@@ -9,7 +9,6 @@ function resolveTargets(target: RevealTarget): Element[] {
 }
 
 function start(target: RevealTarget, options: RevealOptions, interval?: number): RevealHandle {
-  options = { ...options };
   let cleanups: (() => void)[] = [];
   const preference = motionPreference();
   const dispose = () => {
@@ -22,15 +21,11 @@ function start(target: RevealTarget, options: RevealOptions, interval?: number):
   };
   if (preference?.matches) return { dispose };
   for (const element of new Set(resolveTargets(target))) {
-    const effects = motions(element, options, interval);
-    const unfollow = followPrint(effects);
-    const disconnect = observe(element, options, () => {
-      for (const effect of effects) effect.play();
-    });
+    const group = motions(element, options, interval);
+    const disconnect = observe(element, options, group.play);
     cleanups.push(() => {
-      unfollow();
       disconnect();
-      for (const effect of effects) effect.dispose();
+      group.dispose();
     });
   }
   preference?.addEventListener?.("change", onPreference);

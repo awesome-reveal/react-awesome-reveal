@@ -15,12 +15,7 @@ export default defineLibConfig(
         return components.some((file) => id === `./${file}`) ? { id, external: true } : null;
       },
       async generateBundle() {
-        this.emitFile({
-          type: "asset",
-          fileName: "reveal.css",
-          source: await readFile(new URL("src/reveal.css", import.meta.url), "utf8"),
-        });
-        for (const fileName of components)
+        for (const fileName of [...components, "reveal.css"])
           this.emitFile({
             type: "asset",
             fileName,

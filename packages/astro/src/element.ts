@@ -10,11 +10,10 @@ import {
 const onReveal = (element: Element) =>
   element.dispatchEvent(new Event("reveal", { bubbles: true }));
 
-function readOptions(host: HTMLElement): CascadeOptions {
-  const when = host.getAttribute("when");
+function readOptions(host: RevealElement): CascadeOptions {
   return {
     ...JSON.parse(host.getAttribute("options") || "{}"),
-    when: when == null ? undefined : when !== "false",
+    when: host.when ?? undefined,
     onReveal,
   };
 }

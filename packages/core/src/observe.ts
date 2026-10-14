@@ -8,9 +8,7 @@ export function observe(
   onEnter: () => void,
 ): () => void {
   let observer: IntersectionObserver | undefined;
-  let active = true;
   const disconnect = () => {
-    active = false;
     observer?.disconnect();
     observer = undefined;
   };
@@ -25,7 +23,7 @@ export function observe(
       (entries) => {
         // A fast scroll can deliver the entry below the threshold and the exit in one report.
         for (const entry of entries) {
-          if (!active) return;
+          if (!observer) return;
           // An element that leaves before it reaches the threshold, such as one taller than the viewport, must not stay hidden.
           if (entry.isIntersecting && entry.intersectionRatio < minimum) seen = true;
           else if (entry.isIntersecting || seen) {

@@ -1,4 +1,5 @@
 ---
+import { cascadeHiddenAttributes, hiddenAttributes } from "@awesome-reveal/core/adapter";
 import type { HTMLTag } from "astro/types";
 
 import "./reveal.css";
@@ -44,7 +45,7 @@ const options = JSON.stringify({
   data-astro-transition-persist={persist}
   data-astro-transition-persist-props={persistProps}
 >
-  <Tag {...attributes} data-reveal={cascade ? "cascade" : "hidden"}>
+  <Tag {...attributes} {...(cascade ? cascadeHiddenAttributes : hiddenAttributes)}>
     <slot />
   </Tag>
 </awesome-reveal>

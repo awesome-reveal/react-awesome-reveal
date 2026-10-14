@@ -58,7 +58,7 @@ export const motionPreference = () =>
   typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : undefined;
 
 // A paused native effect holds any start keyframes, so the code does not copy CSS properties to the element.
-export function motion(element: Element, options: RevealOptions, delay = 0) {
+function motion(element: Element, options: RevealOptions, delay: number) {
   let animation: Animation | undefined;
   try {
     animation = element.animate?.(entrance(options), {
@@ -74,42 +74,56 @@ export function motion(element: Element, options: RevealOptions, delay = 0) {
     animation?.cancel();
     animation = undefined;
   }
-  return {
-    play() {
-      // A waiting animation that page code finished or cancelled leaves the element at rest, so it does not play.
-      if (animation?.playState === "paused") animation.play();
-    },
-    // At its end time, a waiting effect is past its backwards fill, so the element prints at rest.
-    // A running child in its delay has no fill without "backwards", and keeps its time.
-    print(printing: boolean) {
-      if (animation?.playState === "paused")
-        animation.currentTime = printing ? (animation.effect?.getComputedTiming().endTime ?? 0) : 0;
-      animation?.effect?.updateTiming({ fill: printing ? "none" : "backwards" });
-    },
-    dispose() {
-      animation?.cancel();
-      animation = undefined;
-    },
-  };
+  return animation;
+}
+
+interface Motions {
+  play(): void;
+  print(printing: boolean): void;
+  dispose(): void;
 }
 
 // Core has no print stylesheet, and the print rule of an adapter stops at the reveal, so print moves each effect past its fill.
-export function followPrint(effects: ReturnType<typeof motion>[]): () => void {
-  const onPrint = (event: Event) => {
-    for (const effect of effects) effect.print(event.type === "beforeprint");
-  };
-  globalThis.addEventListener?.("beforeprint", onPrint);
-  globalThis.addEventListener?.("afterprint", onPrint);
-  return () => {
-    globalThis.removeEventListener?.("beforeprint", onPrint);
-    globalThis.removeEventListener?.("afterprint", onPrint);
-  };
+const following = new Set<Motions>();
+const onPrint = (event: Event) => {
+  for (const group of following) group.print(event.type === "beforeprint");
+};
+function listenPrint(method: "addEventListener" | "removeEventListener") {
+  globalThis[method]?.("beforeprint", onPrint);
+  globalThis[method]?.("afterprint", onPrint);
 }
 
 export const cascadeInterval = (options: CascadeOptions) => options.interval ?? 80;
 
 // Without an interval, the element itself animates.
-export function motions(element: Element, options: RevealOptions, interval?: number) {
+export function motions(element: Element, options: RevealOptions, interval?: number): Motions {
   const targets = interval === undefined ? [element] : Array.from(element.children);
-  return targets.map((target, index) => motion(target, options, index * (interval ?? 0)));
+  let animations = targets.map((target, index) => motion(target, options, index * (interval ?? 0)));
+  const group: Motions = {
+    play() {
+      for (const animation of animations)
+        // A waiting animation that page code finished or cancelled leaves the element at rest, so it does not play.
+        if (animation?.playState === "paused") animation.play();
+    },
+    // At its end time, a waiting effect is past its backwards fill, so the element prints at rest.
+    // A running child in its delay has no fill without "backwards", and keeps its time.
+    print(printing) {
+      for (const animation of animations) {
+        if (animation?.playState === "paused")
+          animation.currentTime = printing
+            ? (animation.effect?.getComputedTiming().endTime ?? 0)
+            : 0;
+        animation?.effect?.updateTiming({ fill: printing ? "none" : "backwards" });
+      }
+    },
+    dispose() {
+      for (const animation of animations) animation?.cancel();
+      animations = [];
+      following.delete(group);
+      if (!following.size) listenPrint("removeEventListener");
+    },
+  };
+  following.add(group);
+  listenPrint("addEventListener");
+  return group;
 }
