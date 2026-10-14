@@ -1,6 +1,6 @@
 # @awesome-reveal/react
 
-`@awesome-reveal/react` adds reveal-on-scroll animations to React 18 and 19. The package loads its stylesheet automatically, so you do not import CSS.
+`@awesome-reveal/react` adds reveal-on-scroll animations to React 18 and 19. The package loads its stylesheet automatically, so you do not need to import CSS.
 
 ```sh
 npm install @awesome-reveal/react
@@ -40,9 +40,11 @@ export function Card() {
 }
 ```
 
-Spread `getProps()` on one element. Give your own `ref` to `getProps()`, so that the hook can merge it with its ref. The hook does not change your styles. For a custom component, forward the ref to a DOM element.
+Spread `getProps()` on one element. Give your own `ref` to `getProps()`, so that the hook can merge it with its ref. The hook does not change your styles. For a custom component, pass the ref and the `data-reveal` prop to a DOM element. The package reserves `data-reveal`.
 
-`when: true` reveals the element manually, and `when: false` resets it without an exit animation. To let the viewport control the reveal, omit `when` or set it to `null`. The entrance plays one time, and the observation stops when it starts. `onReveal` gets the element one time for each entrance, also in React StrictMode. A change to `when` or `threshold` applies immediately. A change to the animation options applies at the next entrance.
+`when: true` reveals the element manually, and `when: false` resets it without an exit animation. To let the viewport control the reveal, omit `when` or set it to `null`. When the viewport controls the reveal, the entrance plays one time, and the observation stops when the entrance starts. A change of `when` from `false` to `true` plays the entrance again.
+
+`onReveal` gets the element one time for each reveal, also in React StrictMode. A change to `when` or `threshold` applies immediately. A change to the other options applies at the next entrance.
 
 ```tsx
 import { useState } from "react";
@@ -63,7 +65,7 @@ export function Details() {
 
 ## Cascade
 
-`Cascade` works like `Reveal`, but it animates each direct child element in turn when the element enters the viewport. `interval` sets the milliseconds between two children, and the default is 80. The first child starts immediately. `useCascade` does the same for your own element. The cascade observes the container, and `onReveal` gets the container.
+`Cascade` works like `Reveal`, but it animates each direct child element in sequence when the element enters the viewport. `interval` sets the delay between two children, in milliseconds, and the default is 80. The first child starts immediately. `useCascade` does the same for your own element. The cascade observes the container, and `onReveal` gets the container.
 
 ```tsx
 import { Cascade, useCascade } from "@awesome-reveal/react";
@@ -95,9 +97,15 @@ export function Steps() {
 
 ## SSR and accessibility
 
-The server markup has `data-reveal="hidden"`, or `data-reveal="cascade"` for a cascade. The package stylesheet hides this element, or the direct children of a cascade, until hydration. The stylesheet shows the content for reduced motion, for print, and when scripting is off (`scripting: none`). Reduced motion always has priority over the animation and over `when: false`.
+The server markup has `data-reveal="hidden"`, or `data-reveal="cascade"` for a cascade. The package stylesheet hides this element, or the direct children of a cascade, until it reveals. The stylesheet shows the content in these cases:
 
-`Reveal` is a Client Component boundary, so a Next.js Server Component can render it with serializable options, also native keyframes. The hook and the callbacks need a Client Component. On the server, the `node` import condition resolves the internal stylesheet import to an empty module. The browser build resolves it to the CSS.
+- The user prefers reduced motion.
+- The user prints the page.
+- Scripting is off (`scripting: none`).
+
+Reduced motion always has priority over the entrance and over `when: false`.
+
+`Reveal` and `Cascade` are Client Component boundaries, so a Next.js Server Component can render them with serializable options. Native keyframes are serializable too. The hook and the callbacks need a Client Component. On the server, the `node` import condition resolves the internal stylesheet import to an empty module. The browser build resolves it to the CSS.
 
 If hydration fails while JavaScript is on, the content can stay hidden. See [Recover when the script fails](#recover-when-the-script-fails).
 
@@ -124,23 +132,24 @@ The package sets `data-reveal-ready` on `<html>` when it attaches the first elem
 
 - The `scripting: none` rule needs Chrome 120, Firefox 113 or Safari 17. In older browsers, the content stays hidden when JavaScript is off.
 - The stylesheet does not reach a shadow root, so it does not hide an element in a shadow root before the reveal.
-- Do not give a hidden element an inline `opacity` with `!important`. It wins over the stylesheet, so the element shows before the reveal.
+- Do not give a hidden element an inline `opacity` with `!important`. It has priority over the stylesheet, so the element shows before the reveal.
 - Hidden content stays focusable. A focused control can stay hidden when `when` is `false` or `threshold` is high. Do not hide the only way to a control.
 
 ## Migrating from v4
 
 1. Upgrade `react-awesome-reveal` to version 5, or install this package.
 2. If no other code uses Emotion, remove it.
-3. Replace each effect component with `Reveal`:
+3. Import `Reveal` as a named export. v4 also had a default export.
+4. Replace each effect component with `Reveal`:
    - For a fade, use `from={{ opacity: 0 }}`.
-   - For directional motion, set `from` to a side.
+   - For directional motion, set `from` to the side where the element starts. The v4 `up` becomes `from="bottom"`, and `down` becomes `from="top"`.
    - For a more complex effect, use native keyframes.
-4. Replace the viewport fractions with `threshold`.
-5. Remove `triggerOnce`. In v4 the entrance played each time by default, but now it plays one time. To play it again, set `when` to `false`, then to `true`.
-6. Replace `cascade` with the `Cascade` component, and set `interval` to the v4 `duration * damping` in milliseconds.
-7. Write the text children yourself. The library does not split text.
+5. Replace `fraction` with `threshold`.
+6. Remove `triggerOnce`. In v4 the entrance played each time by default, but now it plays one time. To play it again, set `when` to `false`, then to `true`.
+7. Replace `cascade` with the `Cascade` component. Set `interval` to the v4 `duration * damping`, in milliseconds.
+8. Write the text children yourself. The library does not split text.
 
-The default duration is 600 ms, and the default direction is `bottom`.
+The default duration is 600 ms, and v4 used 1000 ms. The default side is `bottom`. A v4 `<Reveal>` with no `keyframes` entered from the left. To keep that motion, give it `from={{ opacity: 0, x: "-100%" }}`. `Reveal` renders one element around all its children, and v4 wrapped each element child in a `div`. The `migrating-from-v4` skill lists all the changes.
 
 ## Agent skills and license
 

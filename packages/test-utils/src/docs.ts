@@ -7,14 +7,12 @@ import ts from "typescript";
 interface DocsOptions {
   /** The JSX options of the framework, if it uses JSX. */
   jsx?: Pick<ts.CompilerOptions, "jsx" | "jsxImportSource">;
-  /** Ambient declarations for the examples, such as `declare module "*.vue"` for a component import. */
-  ambient?: string;
   /** The check skips the fences that match, such as examples of another package or of a component file. */
   skipFences?: RegExp;
 }
 
 /** Checks the consumer skills in `<root>/skills` and the README against the built package types. */
-export function describeDocs(root: URL, { jsx, ambient, skipFences }: DocsOptions = {}) {
+export function describeDocs(root: URL, { jsx, skipFences }: DocsOptions = {}) {
   describe("docs", () => {
     const pkg = JSON.parse(readFileSync(new URL("package.json", root), "utf8"));
     const skillsDir = new URL("skills/", root);
@@ -60,7 +58,6 @@ export function describeDocs(root: URL, { jsx, ambient, skipFences }: DocsOption
           text: readFileSync(new URL("README.md", root), "utf8"),
         },
       ];
-      if (ambient) files.set(fileURLToPath(new URL("docs-check/ambient.d.ts", root)), ambient);
       for (const { directory, text } of documents) {
         const fences = [...text.matchAll(/^```tsx?\r?\n([\s\S]*?)^```$/gm)]
           .map(([, code]) => code!)

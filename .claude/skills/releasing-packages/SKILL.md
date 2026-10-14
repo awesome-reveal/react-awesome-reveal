@@ -74,7 +74,10 @@ npm can add a trusted publisher only to a package that exists.
    ```
 
 4. Merge the release PR within 48 hours. A new trusted publisher expires 48 hours after you create it, unless a publish uses it first. To replace an expired one, revoke it with `npm trust revoke --id <id> <package>`, then create it again.
-5. After the first release, ask the user to remove the placeholder: `npm dist-tag rm <package> placeholder --otp=<code>`, then `npm unpublish <package>@0.0.0-placeholder --otp=<code>`. After 72 hours, npm permits the unpublish only when no other package depends on the package, it had fewer than 300 downloads in the last week, and it has one maintainer.
+5. After the first release, ask the user to remove the placeholder: `npm dist-tag rm <package> placeholder --otp=<code>`, then `npm unpublish <package>@0.0.0-placeholder --otp=<code>`. After 72 hours, npm permits the unpublish only when all of these conditions are true:
+   - No other package depends on the package.
+   - The package had fewer than 300 downloads in the last week.
+   - The package has one maintainer.
 
 The GitHub environment `npm` allows only the `main` and `next` branches. Add a branch there before you release from it.
 

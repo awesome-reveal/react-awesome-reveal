@@ -29,7 +29,7 @@ if (host) host.when = true;
 
 ## Cascade
 
-`Cascade` works like `Reveal`, but it animates each direct child element in turn when the element enters the viewport. `interval` sets the milliseconds between two children, and the default is 80. The first child starts immediately. The host element has a `cascade` attribute, and the `reveal` event comes from the rendered tag.
+`Cascade` works like `Reveal`, but it animates each direct child element in sequence when the element enters the viewport. `interval` sets the delay between two children, in milliseconds, and the default is 80. The first child starts immediately. The host element has a `cascade` attribute, and the `reveal` event comes from the rendered tag.
 
 - It reads the children when the container reveals. A child that you add after the reveal shows with no animation.
 - Only the direct element children animate. Text and children with `display: contents` show immediately.
@@ -38,9 +38,21 @@ if (host) host.when = true;
 
 ## SSR and accessibility
 
-The server markup has `data-reveal="hidden"`, or `data-reveal="cascade"` for a cascade. The package stylesheet hides this element, or the direct children of a cascade, until the client script runs. The stylesheet shows the content for reduced motion, for print, and when scripting is off. Reduced motion cancels the pending and the active animations. The component does not use an inline `style` attribute.
+The server markup has `data-reveal="hidden"`, or `data-reveal="cascade"` for a cascade. The package stylesheet hides this element, or the direct children of a cascade, until the client script runs. The stylesheet shows the content in these cases:
 
-Reveals work after a ClientRouter navigation, in server islands and with `transition:persist`. A prerendered page does not animate until the browser activates it. If the client script fails while JavaScript is on, the content can stay hidden. See [Recover when the script fails](#recover-when-the-script-fails).
+- The user prefers reduced motion.
+- The user prints the page.
+- Scripting is off (`scripting: none`).
+
+Reduced motion cancels the pending and the active animations. The component does not use an inline `style` attribute.
+
+Reveals work in these cases:
+
+- after a ClientRouter navigation
+- in server islands
+- with `transition:persist`
+
+A prerendered page does not animate until the browser activates it. If the client script fails while JavaScript is on, the content can stay hidden. See [Recover when the script fails](#recover-when-the-script-fails).
 
 ### Recover when the script fails
 
@@ -65,7 +77,7 @@ The package sets `data-reveal-ready` on `<html>` when it attaches the first elem
 
 - The `scripting: none` rule needs Chrome 120, Firefox 113 or Safari 17. In older browsers, the content stays hidden when JavaScript is off.
 - The stylesheet does not reach a shadow root, so it does not hide an element in a shadow root before the reveal.
-- Do not give a hidden element an inline `opacity` with `!important`. It wins over the stylesheet, so the element shows before the reveal.
+- Do not give a hidden element an inline `opacity` with `!important`. It has priority over the stylesheet, so the element shows before the reveal.
 - Hidden content stays focusable. A focused control can stay hidden when `when` is `false` or `threshold` is high. Do not hide the only way to a control.
 
 ## Agent skills and license

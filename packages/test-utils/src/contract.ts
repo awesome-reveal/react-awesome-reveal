@@ -268,7 +268,7 @@ export function describeContract(name: string, harness: Harness) {
     });
 
     it("a throwing IntersectionObserver shows the element", async () => {
-      // A test file can run more than one harness, and each message reports once per module.
+      // A test file can run more than one harness, and core reports each message only one time per module.
       const message = `Invalid threshold: ${name}`;
       vi.stubGlobal(
         "IntersectionObserver",

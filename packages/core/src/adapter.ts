@@ -8,9 +8,9 @@ import type {
 
 /** Configures a declarative entrance and optional manual control. */
 export type RevealOptions = CoreRevealOptions & {
-  /** Controls the reveal manually. `true` reveals, `false` hides, and no value or `null` lets the viewport decide. */
+  /** Controls the reveal manually. `true` reveals, `false` hides, and no value or `null` lets the viewport decide. Reduced motion reveals the element also when `when` is `false`. */
   when?: boolean | null;
-  /** Runs once for each reveal, when the entrance starts. */
+  /** Runs one time for each reveal, also when no entrance plays, such as with reduced motion. */
   onReveal?: (element: Element) => void;
 };
 
@@ -32,13 +32,14 @@ export interface RevealStore<Options extends RevealOptions = RevealOptions> {
   subscribe(listener: (revealed: boolean) => void): () => void;
   /**
    * Observes and animates the element. A new element keeps the state and does not play the
-   * animation again. `null` stops the observation and cancels the animation.
+   * entrance again. `null` stops the observation and cancels the entrance. If you attach the same
+   * element again right after `null`, its entrance plays again.
    */
   attach(element: Element | null): void;
   /**
-   * Replaces the options. A change of `when` or `threshold` applies at once.
-   * The other options apply at the next reveal. A reveal plays on the attached element, so when the
-   * element and `when` change together, attach the new element first.
+   * Replaces the options. A change of `when` or `threshold` applies immediately. The other options
+   * apply at the next reveal. The entrance plays on the attached element, so when the element and
+   * `when` change together, attach the new element first.
    */
   setOptions(options: Options): void;
 }
@@ -51,8 +52,8 @@ export const cascadeHiddenAttributes = { "data-reveal": "cascade" } as const;
 
 const restarts = ["when", "threshold"] as const;
 
-// The animation starts before the next paint, so no flash shows when the adapter removes the SSR hiding.
-// A cascade reads the children here, so that children rendered after the attach also play.
+// The entrance starts before the next paint, so no flash shows when the adapter removes the `data-reveal` attribute.
+// A cascade reads the children here, so that children that render after `attach()` also play.
 function play(element: Element, options: CoreRevealOptions, interval?: number): () => void {
   const group = motions(element, options, interval);
   group.play();
@@ -68,7 +69,7 @@ function createStore<Options extends CascadeOptions>(
   options: Options,
   cascade: boolean,
 ): RevealStore<Options> {
-  // A copy, so that a caller who mutates and passes the same options object again still restarts the observer.
+  // The store keeps a copy, so a caller that mutates the options object and passes it again still restarts the observer.
   let current = { ...options };
   let element: Element | null = null;
   let detached: Element | null = null;
@@ -120,7 +121,7 @@ function createStore<Options extends CascadeOptions>(
     if (preference?.matches && element) return set(true);
     if (element && typeof element.animate !== "function") return set(true);
     if (current.when != null) {
-      // Nobody observes the element while `when` decides, so the last report is stale.
+      // No observer watches the element while `when` controls the reveal, so the last report is stale.
       inView = false;
       return set(current.when);
     }
@@ -144,8 +145,8 @@ function createStore<Options extends CascadeOptions>(
       cancel();
       preference?.removeEventListener?.("change", onPreference);
       if (next) preference?.addEventListener?.("change", onPreference);
-      // The same element that comes back right after null plays again, because `attach(null)`
-      // cancelled its animation before it could finish.
+      // The same element that returns immediately after null plays again, because `attach(null)`
+      // cancelled its entrance before it could finish.
       if (next && next === detached) played = false;
       detached = next ? null : element;
       element = next;
@@ -164,7 +165,7 @@ export function createReveal(options: RevealOptions = {}): RevealStore {
   return createStore(options, false);
 }
 
-/** Creates a binding that reveals the direct element children of the element in sequence. */
+/** Creates a cascade binding for an official framework adapter. It reveals the direct element children in sequence. */
 export function createCascade(options: CascadeOptions = {}): RevealStore<CascadeOptions> {
   return createStore(options, true);
 }

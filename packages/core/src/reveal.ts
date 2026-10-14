@@ -37,7 +37,7 @@ export function reveal(target: RevealTarget, options: RevealOptions = {}): Revea
   return start(target, options);
 }
 
-/** Animates the direct element children of each container in sequence when it enters the viewport. */
+/** Animates the direct element children of each container in sequence when the container enters the viewport. */
 export function cascade(target: RevealTarget, options: CascadeOptions = {}): RevealHandle {
   return start(target, options, cascadeInterval(options));
 }

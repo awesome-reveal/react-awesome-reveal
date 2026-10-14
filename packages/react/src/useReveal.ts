@@ -32,14 +32,14 @@ export interface RevealState<T extends Element, Hidden extends string = "hidden"
   revealed: boolean;
   /**
    * Adds the reveal to the props of the element: its `ref`, merged with yours, and the
-   * `data-reveal` attribute that `reveal.css` hides. Spread the result on the element.
+   * `data-reveal` attribute that the package stylesheet hides. Spread the result on the element.
    */
   getProps<P extends object = object>(
     props?: P & { ref?: Ref<T> },
   ): Omit<P, "ref"> & RevealTargetProps<T, Hidden>;
 }
 
-// React 18 warns about useLayoutEffect during server rendering.
+// React 18 warns about useLayoutEffect on the server.
 const useIsomorphicLayoutEffect = typeof document === "undefined" ? useEffect : useLayoutEffect;
 
 function mergeRefs<T>(own: RefCallback<T>, user: NonNullable<Ref<T>>): RefCallback<T> {
@@ -63,16 +63,16 @@ function mergeRefs<T>(own: RefCallback<T>, user: NonNullable<Ref<T>>): RefCallba
 }
 
 // Core gets the element in the layout effect, after the options of the same commit. A detach waits
-// one microtask, so a callback ref that changes in one commit does not replay the animation.
+// one microtask, so a callback ref that changes in one commit does not replay the entrance.
 function createBinding<T extends Element, Options extends CascadeOptions>(
   state: RevealStore<Options>,
 ) {
-  // One merged ref for each user ref, so that React does not call a stable user ref again on each render.
+  // The map keeps one merged ref for each user ref, so React does not call a stable user ref again on each render.
   const refs = new WeakMap<object, RefCallback<T>>();
   let element: T | null = null;
   let attached: T | null = null;
   function sync(next?: Options) {
-    // Drops an old element before the options apply, so that a reveal does not play on it.
+    // Detaches an old element before the options apply, so that the entrance does not play on it.
     if (element !== attached) state.attach(null);
     if (next) state.setOptions(next);
     state.attach((attached = element));
@@ -98,7 +98,7 @@ export function useBinding<
   const [{ state, refs, ref, sync, getRevealed }] = useState(() =>
     createBinding<T, Options>(create(options)),
   );
-  // A store update renders in a microtask, before the frame of the animation start.
+  // A store update renders in a microtask, before the frame in which the entrance starts.
   const revealed = useSyncExternalStore(state.subscribe, getRevealed, getRevealed);
   useIsomorphicLayoutEffect(() => sync(options));
 

@@ -32,7 +32,7 @@ export function describeSSRContract(
       {},
       { when: false },
       { when: null },
-      // The entrance plays after hydration, so a shown element does not flash.
+      // The entrance plays after hydration, so an element with `when: true` does not flash.
       { when: true },
     ] as const) {
       it(`renders the element hidden for ${JSON.stringify(options)}`, async () => {

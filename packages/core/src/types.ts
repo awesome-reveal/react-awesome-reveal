@@ -19,13 +19,13 @@ type AnimationOptions =
     }
   | {
       from?: never;
-      /** Replaces the generated entrance with native keyframes, and wins over `from`. Give explicit values to the first keyframe. */
+      /** Replaces the generated entrance with native keyframes. Core ignores `from` when you give `keyframes`. Give explicit values to the first keyframe. */
       keyframes: Keyframe[];
     };
 
-/** Configures the entrance and viewport behavior of a reveal. The entrance plays once. */
+/** Configures the entrance and viewport behavior of a reveal. The entrance plays one time. */
 export type RevealOptions = AnimationOptions & {
-  /** The duration of the animation, in milliseconds. @default 600 */
+  /** The duration of the entrance, in milliseconds. @default 600 */
   duration?: number;
   /**
    * The visible fraction of the element, from 0 to 1, that reveals it. An element that leaves the
@@ -36,15 +36,15 @@ export type RevealOptions = AnimationOptions & {
 
 /** Configures the entrance and the delay between direct children. */
 export type CascadeOptions = RevealOptions & {
-  /** The delay between direct element children, in milliseconds. The child at `index` waits `index * interval`, and a negative value starts later children further into their entrance. @default 80 */
+  /** The delay between direct element children, in milliseconds. The child at `index` waits `index * interval`. A negative value starts each later child further into its entrance. @default 80 */
   interval?: number;
 };
 
-/** Selects the elements affected by one reveal or cascade call. */
+/** Selects the elements that one `reveal` or `cascade` call animates. */
 export type RevealTarget = Element | string | Iterable<Element> | ArrayLike<Element>;
 
 /** Controls the animations and the observers of one call. */
 export interface RevealHandle {
-  /** Stops the observation and the animations. Each element goes back to its resting style. */
+  /** Stops the observation and the animations. Each element returns to its resting style. */
   dispose(): void;
 }

@@ -1,4 +1,4 @@
-/* Keep author opacity intact until hydration reveals the element. */
+/* Keep author opacity intact until the element reveals. */
 [data-reveal="hidden"],
 [data-reveal="cascade"] > * {
   opacity: 0 !important;

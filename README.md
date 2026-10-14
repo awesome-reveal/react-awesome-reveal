@@ -77,7 +77,7 @@ Open pull requests against the `next` branch. Read [`CONTRIBUTING.md`](CONTRIBUT
 ## Support
 
 - Report a bug in the [issue tracker](https://github.com/awesome-reveal/awesome-reveal/issues).
-- Ask a question or suggest a feature in [Discussions](https://github.com/awesome-reveal/awesome-reveal/discussions).
+- Use [Discussions](https://github.com/awesome-reveal/awesome-reveal/discussions) to ask a question or to suggest a feature.
 - If awesome-reveal helps you, [star the repository](https://github.com/awesome-reveal/awesome-reveal) or [support its creator](https://github.com/sponsors/morellodev).
 
 ## License

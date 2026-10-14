@@ -1,7 +1,7 @@
 import { report } from "./report.js";
 import type { RevealOptions } from "./types.js";
 
-// The browser validates the threshold. Without a working IntersectionObserver, the element reveals at once.
+// The browser validates the threshold. Without a working IntersectionObserver, the element reveals immediately.
 export function observe(
   element: Element,
   options: Pick<RevealOptions, "threshold">,

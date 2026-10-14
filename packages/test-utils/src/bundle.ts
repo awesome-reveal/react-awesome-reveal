@@ -10,7 +10,7 @@ interface BundleOptions {
   external?: string[];
 }
 
-/** Bundles a fixture of `test/package/fixtures` for production, and gives the kept exports by `<package>/dist/<file>`. */
+/** Bundles a fixture of `test/package/fixtures` for production, and gives the exports that the bundle keeps for each `<package>/dist/<file>`. */
 export async function bundleFixture(
   fixture: URL,
   { resolvePackage, external }: BundleOptions = {},

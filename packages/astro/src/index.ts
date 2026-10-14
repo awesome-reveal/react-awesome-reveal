@@ -24,7 +24,7 @@ export type CascadeProps<Tag extends HTMLTag = "div"> = RevealProps<Tag> &
   Pick<CascadeOptions, "interval">;
 
 // Only the Astro language tools resolve a .astro import, so the declarations must not contain one.
-/** Renders one element and animates it when it enters the viewport. */
+/** Renders one element and reveals it when it enters the viewport. */
 export const Reveal = RevealComponent as unknown as <Tag extends HTMLTag = "div">(
   props: RevealProps<Tag>,
 ) => any;

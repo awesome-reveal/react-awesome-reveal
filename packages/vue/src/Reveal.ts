@@ -103,7 +103,7 @@ function defineReveal(
   );
 }
 
-/** Renders an element with a declarative entrance and reveal notifications. */
+/** Renders an element around its slot and reveals it when it enters the viewport. It emits `reveal` with the element. */
 export const Reveal = /* @__PURE__ */ defineReveal(
   "Reveal",
   createReveal,

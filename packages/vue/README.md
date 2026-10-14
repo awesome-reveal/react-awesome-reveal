@@ -1,6 +1,6 @@
 # @awesome-reveal/vue
 
-`@awesome-reveal/vue` adds reveal-on-scroll animations to Vue 3 (3.5 or later). The package loads its stylesheet automatically, so you do not import CSS.
+`@awesome-reveal/vue` adds reveal-on-scroll animations to Vue 3 (3.5 or later). The package loads its stylesheet automatically, so you do not need to import CSS.
 
 ```sh
 npm install @awesome-reveal/vue
@@ -31,7 +31,7 @@ import { Cascade, Reveal, vReveal } from "@awesome-reveal/vue";
 
 `Reveal` renders one element. `as` sets the tag, and the default is `div`. The component passes the other attributes to the element. `vReveal` animates an element that you already render. Both accept the [core reveal options](https://www.npmjs.com/package/@awesome-reveal/core) and a reactive `when`.
 
-`when: true` reveals the element manually, and `when: false` resets it. With `null` or `undefined`, the viewport controls the reveal. The entrance plays one time, and the observation stops when it starts. A change to `when` or `threshold` restarts the observation. A change to the other options applies at the next entrance.
+`when: true` reveals the element manually, and `when: false` resets it. With `null` or `undefined`, the viewport controls the reveal. When the viewport controls the reveal, the entrance plays one time, and the observation stops when the entrance starts. A change of `when` from `false` to `true` plays the entrance again. A change to `when` or `threshold` restarts the observation. A change to the other options applies at the next entrance.
 
 The component emits `reveal` with the element, and gives `revealed` to its default slot. The directive accepts `onReveal` in its options.
 
@@ -44,7 +44,7 @@ export const card = h(Reveal, { from: "left", when: true }, () => "Hello");
 
 ## Cascade
 
-`Cascade` works like `Reveal`, but it animates each direct child element in turn when the element enters the viewport. `interval` sets the milliseconds between two children, and the default is 80. The first child starts immediately. `vCascade` does the same for an element that you already render, for example `<ul v-cascade="{ interval: 120 }">`. The cascade observes the container, and the `reveal` event and `onReveal` get the container.
+`Cascade` works like `Reveal`, but it animates each direct child element in sequence when the element enters the viewport. `interval` sets the delay between two children, in milliseconds, and the default is 80. The first child starts immediately. `vCascade` does the same for an element that you already render, for example `<ul v-cascade="{ interval: 120 }">`. The cascade observes the container, and the `reveal` event and `onReveal` get the container.
 
 ```ts
 import { h } from "vue";
@@ -64,7 +64,13 @@ export const list = h(Cascade, { as: "ul", from: "left" }, () => [
 
 ## SSR and accessibility
 
-On the server, the components and the directives add `data-reveal="hidden"`, or `data-reveal="cascade"` for a cascade. The package stylesheet hides this element, or the direct children of a cascade, until hydration, so the content does not flash. The stylesheet shows the content for reduced motion, for print, and when scripting is off. On the server, the `node` import condition resolves the internal stylesheet import to an empty module. The browser build resolves it to the CSS.
+On the server, the components and the directives add `data-reveal="hidden"`, or `data-reveal="cascade"` for a cascade. The package stylesheet hides this element, or the direct children of a cascade, until it reveals, so the content does not flash. The stylesheet shows the content in these cases:
+
+- The user prefers reduced motion.
+- The user prints the page.
+- Scripting is off (`scripting: none`).
+
+On the server, the `node` import condition resolves the internal stylesheet import to an empty module. The browser build resolves it to the CSS.
 
 Reduced motion shows the content immediately and cancels the active animation. The package does not change your styles. If hydration fails while JavaScript is on, the content can stay hidden. See [Recover when the script fails](#recover-when-the-script-fails).
 
@@ -91,7 +97,7 @@ The package sets `data-reveal-ready` on `<html>` when it attaches the first elem
 
 - The `scripting: none` rule needs Chrome 120, Firefox 113 or Safari 17. In older browsers, the content stays hidden when JavaScript is off.
 - The stylesheet does not reach a shadow root, so it does not hide an element in a shadow root before the reveal.
-- Do not give a hidden element an inline `opacity` with `!important`. It wins over the stylesheet, so the element shows before the reveal.
+- Do not give a hidden element an inline `opacity` with `!important`. It has priority over the stylesheet, so the element shows before the reveal.
 - Hidden content stays focusable. A focused control can stay hidden when `when` is `false` or `threshold` is high. Do not hide the only way to a control.
 
 ## Agent skills and license

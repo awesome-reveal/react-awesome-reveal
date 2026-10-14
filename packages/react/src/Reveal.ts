@@ -45,7 +45,7 @@ function component(
     const { as, keyframes, from, duration, threshold, interval, when, onReveal, ...rest } = props;
     const { getProps } = useTarget(props);
 
-    // oxlint-disable-next-line react/refs -- getProps passes the ref on to the element and does not read it.
+    // oxlint-disable-next-line react/refs -- getProps passes the ref to the element and does not read it.
     return createElement(as ?? "div", getProps({ ...rest, ref }));
   });
   Component.displayName = displayName;

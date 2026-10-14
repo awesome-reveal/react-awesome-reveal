@@ -11,7 +11,7 @@ Obey the [Vue Style Guide](https://vuejs.org/style-guide/) in each `.vue` file. 
 - Use PascalCase component names in templates, and self-close a component that has no content.
 - Put each attribute value in quotes. Use the `:`, `@` and `#` shorthands.
 - Order the attributes as the "Element attribute order" rule tells: `v-for`, conditionals, `ref` and `key`, `v-model`, other attributes, events, then content. Put a custom directive, such as `v-reveal`, before the other attributes, as the default order of the eslint-plugin-vue `attributes-order` rule does.
-- Give new components multi-word names. `Reveal` is the exception, because it is the public name of the package component.
+- Give new components multi-word names. `Reveal` and `Cascade` are the exceptions, because they are the public names of the package components.
 
 Do not set `htmlWhitespaceSensitivity: "ignore"` for Vue files. It can trim the spaces in inline elements and change the rendered text.
 

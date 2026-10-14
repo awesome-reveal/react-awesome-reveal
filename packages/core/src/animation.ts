@@ -45,7 +45,7 @@ function entrance(options: RevealOptions): Keyframe[] {
     end.opacity = 0;
   }
   if (Object.keys(move).length) {
-    // The observer measures the transformed box, and an offset can put it outside a clipping ancestor for good.
+    // The observer measures the transformed box, and an offset can put it outside a clipping ancestor permanently.
     // A hidden start waits at rest and moves only when it plays, while it is still transparent.
     const hidden = opacity === 0;
     if (hidden) frames.push({ offset: 0, composite: "add", ...rest });

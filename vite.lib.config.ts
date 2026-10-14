@@ -26,12 +26,12 @@ export function defineLibConfig(entry: string[], plugins: PluginOption[] = []) {
       minify: false,
       lib: { entry, formats: ["es"] },
       rolldownOptions: {
-        // Every bare import is a dependency or peer dependency, so none gets bundled.
+        // Every bare import is a dependency or peer dependency, so the build bundles none of them.
         external: /^[^./](?!:[/\\])/,
         // Rolldown keeps the "use client" directive of each preserved module, but still warns about it.
         checks: { moduleLevelDirective: false },
         output: {
-          // One file per module lets bundlers drop unused modules, because "sideEffects" lists only the CSS.
+          // One file per module lets bundlers drop unused modules, because "sideEffects" is false or lists only the CSS.
           preserveModules: true,
           preserveModulesRoot: "src",
           entryFileNames: "[name].js",

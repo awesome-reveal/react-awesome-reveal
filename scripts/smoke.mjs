@@ -1,6 +1,6 @@
 // Installs the packed tarballs into a clean project outside the workspace, then builds and type-checks it.
 // Usage: node scripts/smoke.mjs <core|react|compat|vue|astro|next> [dependency@version ...]
-// The packages must be built first (pnpm build). Extra arguments replace the default framework dependencies.
+// Build the packages first (pnpm build). Extra arguments replace the default framework dependencies.
 import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -50,7 +50,7 @@ reveal(".card", { from: "left" });
 reveal(".logo", { keyframes: [{ opacity: 0, transform: "scale(.8)" }, { opacity: 1, transform: "scale(1)" }] });
 cascade(".features", { from: { opacity: 0, y: 16 }, interval: 80 });
 hero.dispose();
-// @ts-expect-error mutually exclusive animation options
+// @ts-expect-error you cannot use from and keyframes together
 reveal(document.body, { from: "left", keyframes: [{}] });
 
 `,
@@ -161,7 +161,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   );
 }
 `,
-      // A Server Component passes native serializable reveal options to the client boundary.
+      // A Server Component passes serializable reveal options, also native keyframes, to the client boundary.
       "app/page.tsx": `
 import Link from "next/link";
 import { Reveal } from "@awesome-reveal/react";

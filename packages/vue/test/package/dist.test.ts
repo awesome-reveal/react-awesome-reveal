@@ -33,7 +33,4 @@ it("renders hidden server content without setup", async () => {
   expect(html).toContain('<div data-reveal="hidden">hello</div>');
   expect(html).toContain('<p data-reveal="hidden">hello</p>');
 });
-describeDocs(root, {
-  ambient:
-    'declare module "*.vue" { const component: import("vue").Component; export default component; }',
-});
+describeDocs(root);
