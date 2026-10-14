@@ -92,17 +92,17 @@ describe("createReveal", () => {
     expect(animate).toHaveBeenCalledTimes(1);
   });
 
-  it("marks the attached element as ready, and unmarks it at the detach", () => {
+  it("marks the attached element, and unmarks it at the detach", () => {
     const first = fakeElement();
     const second = fakeElement();
     const state = createReveal(options);
     state.attach(first.element);
-    expect(first.attributes.get("data-awesome-reveal-ready")).toBe("");
+    expect(first.attributes.get("data-awesome-reveal-attached")).toBe("");
     state.attach(second.element);
-    expect(first.attributes.has("data-awesome-reveal-ready")).toBe(false);
-    expect(second.attributes.get("data-awesome-reveal-ready")).toBe("");
+    expect(first.attributes.has("data-awesome-reveal-attached")).toBe(false);
+    expect(second.attributes.get("data-awesome-reveal-attached")).toBe("");
     state.attach(null);
-    expect(second.attributes.has("data-awesome-reveal-ready")).toBe(false);
+    expect(second.attributes.has("data-awesome-reveal-attached")).toBe(false);
   });
 
   it("calls onReveal once for each reveal, also when the same element plays again", () => {

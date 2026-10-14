@@ -31,8 +31,8 @@ export interface RevealStore<Options extends RevealOptions = RevealOptions> {
    */
   subscribe(listener: (revealed: boolean) => void): () => void;
   /**
-   * Observes and animates the element, and marks it with `data-awesome-reveal-ready`, so that the
-   * stylesheet hides it until it reveals. A new element keeps the state and does not play the
+   * Observes and animates the element, and marks it with `data-awesome-reveal-attached`, so that
+   * the stylesheet hides it until it reveals. A new element keeps the state and does not play the
    * entrance again. `null` stops the observation and cancels the entrance. If you attach the same
    * element again right after `null`, its entrance plays again.
    */
@@ -62,7 +62,7 @@ function play(element: Element, options: CoreRevealOptions, interval?: number): 
 }
 
 // The stylesheet holds an element with this marker until it reveals. Without it, the hold ends after a few seconds.
-const ready = "data-awesome-reveal-ready";
+const attached = "data-awesome-reveal-attached";
 
 function createStore<Options extends CascadeOptions>(
   options: Options,
@@ -141,8 +141,8 @@ function createStore<Options extends CascadeOptions>(
     },
     attach(next) {
       if (next === element) return;
-      element?.removeAttribute(ready);
-      next?.setAttribute(ready, "");
+      element?.removeAttribute(attached);
+      next?.setAttribute(attached, "");
       cancel();
       preference?.removeEventListener?.("change", onPreference);
       if (next) preference?.addEventListener?.("change", onPreference);

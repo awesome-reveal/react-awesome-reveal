@@ -280,15 +280,15 @@ export function describeContract(name: string, harness: Harness) {
       expect(move!.easing).toBe(easing);
     });
 
-    it("marks the element as ready until it unmounts", async () => {
+    it("marks the element as attached until it unmounts", async () => {
       const m = await mount();
       const element = m.element();
-      expect(element.hasAttribute("data-awesome-reveal-ready")).toBe(true);
+      expect(element.hasAttribute("data-awesome-reveal-attached")).toBe(true);
       await intersect(m, true);
-      expect(element.hasAttribute("data-awesome-reveal-ready")).toBe(true);
+      expect(element.hasAttribute("data-awesome-reveal-attached")).toBe(true);
       await m.unmount();
       await m.flush();
-      expect(element.hasAttribute("data-awesome-reveal-ready")).toBe(false);
+      expect(element.hasAttribute("data-awesome-reveal-attached")).toBe(false);
     });
 
     // `:focus-within` needs real focus, so the scenarios focus a child and do not dispatch `focusin`.

@@ -56,7 +56,7 @@ Reveals work in these cases:
 
 A prerendered page does not animate until the browser activates it.
 
-The stylesheet hides the server markup for at most 5 seconds before the client script attaches the element. At the attach, the package adds `data-awesome-reveal-ready` to the element, and the element stays hidden until it reveals. So if the client script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again until it reveals. This can happen when the client script loads slowly, for example on a slow network.
+The stylesheet hides the server markup for at most 5 seconds before the client script attaches the element. At the attach, the package adds `data-awesome-reveal-attached` to the element, and the element stays hidden until it reveals. So if the client script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again until it reveals. This can happen when the client script loads slowly, for example on a slow network.
 
 ### Limits
 

@@ -31,7 +31,7 @@ Keep the item of the adapter on the plan board, https://github.com/orgs/awesome-
      - Let one core object own the observer, the animation and `when`. Do not rebuild that state machine in the adapter.
      - Render `hiddenAttributes` of core on the revealed element while `revealed` is false. A cascade renders `cascadeHiddenAttributes`, and `reveal.css` hides its direct children. Do not write a style: the package `reveal.css` hides the element. The client render must equal the server markup.
      - Do not replay the animation on a new element, such as a changed `as` tag. `attach` keeps the state. A directive that is bound to its element is the only exception.
-     - Treat `data-awesome-reveal` and `data-awesome-reveal-ready` as reserved. Do not let the framework render remove `data-awesome-reveal-ready`, which core sets at the attach. Leave the `style` of the user as it is.
+     - Treat `data-awesome-reveal` and `data-awesome-reveal-attached` as reserved. Do not let the framework render remove `data-awesome-reveal-attached`, which core sets at the attach. Leave the `style` of the user as it is.
      - Pass `onReveal` to core. If the framework has events, emit an event from it, as the Vue `<Reveal>` and the Astro custom element do.
      - Do not defer the entrance, for example with a timer or a frame callback: core starts it in the task of the report, before the next paint.
      - Do not catch the errors of core. It reports the errors of `onReveal`.

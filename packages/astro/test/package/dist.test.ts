@@ -76,7 +76,7 @@ describe("a static build of a page with the published component", () => {
   it("renders hidden content with package-owned CSS", () => {
     expect(site.html).toContain('<div data-awesome-reveal="hidden"><p>hello</p></div>');
     expect([site.html, ...Object.values(site.assets)].join("\n")).toMatch(
-      /\[data-awesome-reveal=["]?hidden["]?\]\[data-awesome-reveal-ready\],\[data-awesome-reveal=["]?cascade["]?\]\[data-awesome-reveal-ready\]>\*\{opacity:0!important\}/,
+      /\[data-awesome-reveal=["]?hidden["]?\]\[data-awesome-reveal-attached\],\[data-awesome-reveal=["]?cascade["]?\]\[data-awesome-reveal-attached\]>\*\{opacity:0!important\}/,
     );
   });
 
