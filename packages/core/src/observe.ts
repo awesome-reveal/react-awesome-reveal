@@ -3,13 +3,13 @@ import type { RevealOptions } from "./types.js";
 
 // The viewport is the largest root, so an element that cannot reach the threshold in it reveals at its entry.
 // In a smaller scroll container, the reveal at the exit stays the fallback.
+// A cross-origin frame gets no root bounds, and its own viewport is the largest area that it can show.
 function reachable(
-  { rootBounds: root, boundingClientRect: box }: IntersectionObserverEntry,
+  { rootBounds, boundingClientRect: box }: IntersectionObserverEntry,
   minimum: number,
 ) {
-  return (
-    !root || Math.min(1, root.width / box.width) * Math.min(1, root.height / box.height) >= minimum
-  );
+  const root = rootBounds ?? { width: innerWidth, height: innerHeight };
+  return Math.min(1, root.width / box.width) * Math.min(1, root.height / box.height) >= minimum;
 }
 
 // An entrance must not hide a focused control during its delay or its transparent start.

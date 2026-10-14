@@ -4,13 +4,13 @@ it.concurrent.each([
   {
     entry: "reveal.js",
     animationExports: ["motionPreference", "motions"],
-    bytes: 3800,
+    bytes: 3850,
     gzip: 1675,
   },
   {
     entry: "both.js",
     animationExports: ["cascadeInterval", "motionPreference", "motions"],
-    bytes: 3900,
+    bytes: 3950,
     gzip: 1725,
   },
 ])(

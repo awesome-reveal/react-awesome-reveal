@@ -164,6 +164,20 @@ describe("reveal", () => {
     observerOf(target)!.triggerSized(target, 0.1, { width: 500, height: 1000 }, root);
     expect(animations[0]?.play).not.toHaveBeenCalled();
   });
+  it.each([
+    [2000, true],
+    [1000, false],
+  ])(
+    "uses its own viewport in a cross-origin frame with no root bounds: height %d plays %s",
+    (height, plays) => {
+      vi.stubGlobal("innerWidth", 1000);
+      vi.stubGlobal("innerHeight", 500);
+      const target = element();
+      track(reveal(target, { threshold: 0.5 }));
+      observerOf(target)!.triggerSized(target, 0.1, { width: 500, height }, null);
+      expect(animations[0]?.play).toHaveBeenCalledTimes(Number(plays));
+    },
+  );
   it("cancels the entrance when focus enters the element, and stops observing", () => {
     const target = element();
     const link = target.appendChild(document.createElement("a"));

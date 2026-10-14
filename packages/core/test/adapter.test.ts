@@ -21,7 +21,14 @@ class FakeObserver {
 
   report(inView: boolean) {
     this.callback(
-      [{ isIntersecting: inView, intersectionRatio: Number(inView) }] as never,
+      [
+        {
+          isIntersecting: inView,
+          intersectionRatio: Number(inView),
+          boundingClientRect: { width: 0, height: 0 },
+          rootBounds: null,
+        },
+      ] as never,
       this as never,
     );
   }
