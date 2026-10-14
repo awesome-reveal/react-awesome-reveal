@@ -1,7 +1,7 @@
 {
-  "packages/astro": "1.0.0-next.6",
-  "packages/core": "1.0.0-next.6",
-  "packages/react": "1.0.0-next.6",
-  "packages/react-awesome-reveal": "5.0.0-next.6",
-  "packages/vue": "1.0.0-next.6"
+  "packages/astro": "1.0.0-next.7",
+  "packages/core": "1.0.0-next.7",
+  "packages/react": "1.0.0-next.7",
+  "packages/react-awesome-reveal": "5.0.0-next.7",
+  "packages/vue": "1.0.0-next.7"
 }
