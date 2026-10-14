@@ -12,6 +12,9 @@ function reachable(
   );
 }
 
+// An entrance must not hide a focused control during its delay or its transparent start.
+export const focused = (element: Element) => element.matches(":focus-within");
+
 // The browser validates the threshold. Without a working IntersectionObserver, the element reveals immediately.
 export function observe(
   element: Element,
@@ -53,8 +56,9 @@ export function observe(
       { threshold: [0, minimum] },
     );
     observer.observe(element);
-    // A focused element must not stay invisible.
+    // Focus reveals the element. Focus can come before the observation, such as in server markup before hydration.
     element.addEventListener("focusin", enter);
+    if (focused(element)) enter();
   } catch (error) {
     disconnect();
     report(error);

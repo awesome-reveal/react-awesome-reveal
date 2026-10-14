@@ -56,15 +56,23 @@ export class RevealElement extends HTMLElement {
     if (!target) return;
     const cascade = this.hasAttribute("cascade");
     const hidden = (cascade ? cascadeHiddenAttributes : hiddenAttributes)["data-awesome-reveal"];
-    // Invalid JSON throws after the reveal exists, so the element does not stay hidden.
     target.setAttribute("data-awesome-reveal", hidden);
-    this.controller = cascade ? createCascade({ onReveal }) : createReveal({ onReveal });
+    // The options must apply at the attach, because the attach reveals an element that contains focus.
+    let options: CascadeOptions = { onReveal };
+    let invalid: unknown;
+    try {
+      options = readOptions(this);
+    } catch (error) {
+      invalid = error;
+    }
+    this.controller = cascade ? createCascade(options) : createReveal(options);
     this.controller.subscribe((visible) => {
       if (visible) target.removeAttribute("data-awesome-reveal");
       else target.setAttribute("data-awesome-reveal", hidden);
     });
     this.controller.attach(target);
-    this.controller.setOptions(readOptions(this));
+    // Invalid JSON throws after the reveal exists, so the viewport still reveals the element.
+    if (invalid) throw invalid;
   }
 
   // The ClientRouter moves `transition:persist` elements with moveBefore(), which keeps the state.

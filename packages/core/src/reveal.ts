@@ -1,5 +1,5 @@
 import { cascadeInterval, motionPreference, motions } from "./animation.js";
-import { observe } from "./observe.js";
+import { focused, observe } from "./observe.js";
 import type { CascadeOptions, RevealHandle, RevealOptions, RevealTarget } from "./types.js";
 
 function resolveTargets(target: RevealTarget): Element[] {
@@ -22,7 +22,9 @@ function start(target: RevealTarget, options: RevealOptions, interval?: number):
   if (preference?.matches) return { dispose };
   for (const element of new Set(resolveTargets(target))) {
     const group = motions(element, options, interval);
-    const disconnect = observe(element, options, group.play);
+    const disconnect = observe(element, options, () =>
+      focused(element) ? group.dispose() : group.play(),
+    );
     cleanups.push(() => {
       disconnect();
       group.dispose();

@@ -1,6 +1,11 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { createCascade, createReveal, type RevealStore } from "../../src/adapter";
+import {
+  createCascade,
+  createReveal,
+  type CascadeOptions,
+  type RevealStore,
+} from "../../src/adapter";
 import css from "../../../react/src/reveal.css?raw";
 import { settle } from "./helpers";
 
@@ -29,6 +34,7 @@ beforeEach(() => {
 afterEach(() => {
   for (const store of stores) store.attach(null);
   document.getElementById("reveal-css")?.remove();
+  document.getElementById("author-css")?.remove();
   document.body.innerHTML = "";
 });
 
@@ -72,5 +78,88 @@ describe("reveal.css", () => {
     hold(late)!.finish();
     await settle();
     expect(opacity(late)).toBe("0");
+  });
+
+  it("owns the animation of hidden markup until the reveal, also after the hold", async () => {
+    document.head.insertAdjacentHTML(
+      "beforeend",
+      `<style id="author-css">@keyframes pulse { to { scale: 1.1 } } .pulse { animation: pulse 1s infinite }</style>`,
+    );
+    document.body.innerHTML = `<div id="target" class="pulse" data-awesome-reveal="hidden">a</div>`;
+    const target = document.getElementById("target")!;
+    const names = () =>
+      target.getAnimations().map((animation) => (animation as CSSAnimation).animationName);
+    expect(names()).toEqual(["awesome-reveal-hold"]);
+    hold(target)!.finish();
+    expect(names()).toEqual([]);
+    bind(createReveal({ when: true, duration: 1 }), target, "hidden");
+    expect(names()).toContain("pulse");
+  });
+
+  describe("focus", () => {
+    let target: HTMLElement;
+    beforeEach(() => {
+      document.body.innerHTML = `<div style="height: 150vh"></div><div id="target"><a href="#">a</a><a href="#">b</a><a href="#">c</a></div><div style="height: 150vh"></div>`;
+      scrollTo(0, 0);
+      target = document.getElementById("target")!;
+    });
+    const last = () => target.lastElementChild as HTMLElement;
+    function bindStore(options: CascadeOptions, cascade = false) {
+      target.setAttribute("data-awesome-reveal", cascade ? "cascade" : "hidden");
+      const store = cascade ? createCascade(options) : createReveal(options);
+      bind(store as RevealStore, target, cascade ? "cascade" : "hidden");
+      return store;
+    }
+    function expectShown(...elements: Element[]) {
+      for (const element of elements) {
+        expect(opacity(element)).toBe("1");
+        expect(element.getAnimations()).toEqual([]);
+      }
+    }
+
+    it.each([
+      ["a long delay", { delay: 60_000 }],
+      ["no delay", { duration: 60_000 }],
+      ["native keyframes", { keyframes: [{ opacity: 0 }, { opacity: 1 }], duration: 60_000 }],
+    ])("shows a waiting element at once with %s", async (_, options: CascadeOptions) => {
+      const onReveal = vi.fn();
+      bindStore({ ...options, onReveal });
+      expect(opacity(target)).toBe("0");
+      last().focus();
+      expectShown(target);
+      expect(onReveal.mock.calls).toEqual([[target]]);
+      await settle();
+      expectShown(target);
+    });
+
+    it("shows all the children of a cascade at once from a later child", () => {
+      bindStore({ duration: 60_000, interval: 10_000 }, true);
+      expect(opacity(last())).toBe("0");
+      last().focus();
+      expectShown(...target.children);
+    });
+
+    it("shows server markup that has focus before the attach", () => {
+      target.setAttribute("data-awesome-reveal", "hidden");
+      last().focus();
+      expect(opacity(target)).toBe("0");
+      bindStore({ delay: 60_000 });
+      expectShown(target);
+    });
+
+    it("keeps the element hidden with when: false", async () => {
+      bindStore({ when: false });
+      last().focus();
+      await settle();
+      expect(opacity(target)).toBe("0");
+    });
+
+    it("stops listening at the detach", () => {
+      const listen = vi.spyOn(target, "addEventListener");
+      const unlisten = vi.spyOn(target, "removeEventListener");
+      bindStore({}).attach(null);
+      expect(listen).toHaveBeenCalledWith("focusin", expect.any(Function));
+      expect(unlisten.mock.calls).toEqual(listen.mock.calls);
+    });
   });
 });

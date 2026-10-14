@@ -182,6 +182,19 @@ describe("<awesome-reveal>", () => {
       expect(observerOf(element)).toMatchObject({ thresholds: [0, 0.5] });
     });
 
+    it("keeps a focused element hidden at the connection with when: false", () => {
+      const { host, element } = connect({}, "false");
+      const onReveal = vi.fn();
+      host.addEventListener("reveal", onReveal);
+      element.tabIndex = -1;
+      element.focus();
+
+      activate();
+
+      expect(element).toHaveAttribute("data-awesome-reveal", "hidden");
+      expect(onReveal).not.toHaveBeenCalled();
+    });
+
     it("does nothing at the activation when the element is removed", () => {
       const { host, element } = connect({});
       host.remove();
@@ -228,6 +241,22 @@ describe("<awesome-reveal>", () => {
     expect(errors).toEqual([expect.any(SyntaxError)]);
     expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(animations[0]?.options).toMatchObject({ duration: 600 });
+  });
+
+  it("lets the viewport reveal with an invalid options attribute, also with when: false", () => {
+    const onError = (event: ErrorEvent) => event.preventDefault();
+    window.addEventListener("error", onError);
+    const host = document.createElement("awesome-reveal") as RevealElement;
+    host.setAttribute("options", "{");
+    host.setAttribute("when", "false");
+    host.innerHTML = `<p data-awesome-reveal="hidden">hello</p>`;
+    document.body.append(host);
+    window.removeEventListener("error", onError);
+    const element = host.firstElementChild as HTMLElement;
+
+    intersect(element, true);
+
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
   });
 
   it("uses the default options when the attribute changes to null", () => {

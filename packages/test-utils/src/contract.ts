@@ -291,17 +291,54 @@ export function describeContract(name: string, harness: Harness) {
       expect(element.hasAttribute("data-awesome-reveal-ready")).toBe(false);
     });
 
-    it("focus in the element reveals it, also below the threshold", async () => {
-      const m = await mount({ threshold: 0.5 });
-      await m.run(() => m.element().dispatchEvent(new FocusEvent("focusin", { bubbles: true })));
+    // `:focus-within` needs real focus, so the scenarios focus a child and do not dispatch `focusin`.
+    const focusChild = (m: Mounted, index = 0) => {
+      const child = m.element().children[index] as HTMLElement;
+      child.tabIndex = -1;
+      return m.run(() => child.focus());
+    };
+
+    it("focus in the element reveals it at once with no entrance, also below the threshold", async () => {
+      const onReveal = vi.fn();
+      const m = await mount({ threshold: 0.5, delay: 2000, onReveal });
+      await focusChild(m);
       expect(shown(m.element())).toBe(true);
       expect(observerOf(m.element())).toBeUndefined();
-      expect(runningAnimations()).toHaveLength(1);
+      expect(animations).toHaveLength(0);
+      expect(onReveal.mock.calls).toEqual([[m.element()]]);
+    });
+
+    it("a reveal of an element that contains focus plays no entrance", async () => {
+      const onReveal = vi.fn();
+      const m = await mount({ when: false, onReveal });
+      await focusChild(m);
+      expect(hidden(m.element())).toBe(true);
+      await rerender(m, { when: true, onReveal });
+      expect(shown(m.element())).toBe(true);
+      expect(animations).toHaveLength(0);
+      expect(onReveal).toHaveBeenCalledOnce();
+    });
+
+    it("unmount stops listening to focus", async () => {
+      const listen = vi.spyOn(HTMLElement.prototype, "addEventListener");
+      const unlisten = vi.spyOn(HTMLElement.prototype, "removeEventListener");
+      const m = await mount();
+      const element = m.element();
+      const focusListeners = (spy: typeof listen | typeof unlisten) =>
+        new Set(
+          spy.mock.calls
+            .filter(([type], i) => type === "focusin" && spy.mock.contexts[i] === element)
+            .map(([, listener]) => listener),
+        );
+      expect(focusListeners(listen).size).toBeGreaterThan(0);
+      await m.unmount();
+      await m.flush();
+      expect(focusListeners(unlisten)).toEqual(focusListeners(listen));
     });
 
     it("focus does not reveal the element with when: false", async () => {
       const m = await mount({ when: false });
-      await m.run(() => m.element().dispatchEvent(new FocusEvent("focusin", { bubbles: true })));
+      await focusChild(m);
       expect(hidden(m.element())).toBe(true);
       expect(animations).toHaveLength(0);
     });
@@ -421,6 +458,15 @@ export function describeCascadeContract(name: string, harness: Harness) {
       expect(runningAnimations()).toHaveLength(0);
       await m.rerender({ when: true });
       expect(runningAnimations()).toHaveLength(3);
+    });
+
+    it("focus in a later child reveals all the children at once with no entrance", async () => {
+      const m = await mount({ interval: 500 });
+      const last = m.element().lastElementChild as HTMLElement;
+      last.tabIndex = -1;
+      await m.run(() => last.focus());
+      expect(shown(m.element())).toBe(true);
+      expect(animations).toHaveLength(0);
     });
 
     it("onReveal is called with the container", async () => {

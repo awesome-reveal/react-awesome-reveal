@@ -120,7 +120,7 @@ The content that waits for its entrance also shows in print. After the print, it
 
 Core creates the paused native animations when you call it. The browser can paint the content before your script runs, because core does not hide server-rendered content. The framework packages hide it with their own stylesheet, which they load automatically. To render reveals declaratively, use the React, Vue or Astro package. Each one has a `Reveal` and a `Cascade` component.
 
-Focus in a waiting element reveals it, so a keyboard user does not focus invisible content. Hidden content stays in the accessibility tree. Keep important controls usable. Do not make large parts of a page depend on decorative motion.
+Focus in a waiting element shows it at once, with no entrance, so a keyboard user does not focus invisible content. Focus during a running entrance or its delay does not shorten it, so keep `delay` and `interval` short. Hidden content stays in the accessibility tree. Keep important controls usable. Do not make large parts of a page depend on decorative motion.
 
 ## Exports and browser support
 

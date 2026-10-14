@@ -164,14 +164,20 @@ describe("reveal", () => {
     observerOf(target)!.triggerSized(target, 0.1, { width: 500, height: 1000 }, root);
     expect(animations[0]?.play).not.toHaveBeenCalled();
   });
-  it("plays when focus enters the element, and stops observing", () => {
+  it("cancels the entrance when focus enters the element, and stops observing", () => {
     const target = element();
     const link = target.appendChild(document.createElement("a"));
+    link.tabIndex = -1;
     track(reveal(target, { threshold: 0.5 }));
-    link.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
-    expect(animations[0]?.play).toHaveBeenCalledOnce();
+    link.focus();
+    expect(animations[0]?.cancel).toHaveBeenCalledOnce();
+    expect(animations[0]?.play).not.toHaveBeenCalled();
     expect(observerOf(target)).toBeUndefined();
-    link.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+  });
+  it("plays the entrance when focus leaves before the reveal", () => {
+    const target = element();
+    track(reveal(target));
+    target.dispatchEvent(new FocusEvent("focusin"));
     expect(animations[0]?.play).toHaveBeenCalledOnce();
   });
   it("stops listening to focus on disposal", () => {

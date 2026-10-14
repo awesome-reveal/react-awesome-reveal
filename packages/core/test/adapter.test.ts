@@ -40,6 +40,7 @@ function fakeElement() {
     removeAttribute: (name: string) => attributes.delete(name),
     addEventListener: vi.fn(),
     removeEventListener: vi.fn(),
+    matches: () => false,
   };
   return { element: element as unknown as Element, animate, cancel, attributes };
 }

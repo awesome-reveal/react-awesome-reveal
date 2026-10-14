@@ -1,5 +1,5 @@
 import { cascadeInterval, motionPreference, motions } from "./animation.js";
-import { observe } from "./observe.js";
+import { focused, observe } from "./observe.js";
 import { report } from "./report.js";
 import type {
   CascadeOptions as CoreCascadeOptions,
@@ -10,7 +10,7 @@ import type {
 export type RevealOptions = CoreRevealOptions & {
   /** Controls the reveal manually. `true` reveals, `false` hides, and no value or `null` lets the viewport decide. Reduced motion reveals the element also when `when` is `false`. */
   when?: boolean | null;
-  /** Runs one time for each reveal, also when no entrance plays, such as with reduced motion. */
+  /** Runs one time for each reveal, also when no entrance plays, such as with reduced motion or focus. */
   onReveal?: (element: Element) => void;
 };
 
@@ -99,9 +99,10 @@ function createStore<Options extends CascadeOptions>(
     }
     if (revealed && element && !played) {
       played = true;
-      cancel = preference?.matches
-        ? () => {}
-        : play(element, current, cascade ? cascadeInterval(current) : undefined);
+      cancel =
+        preference?.matches || focused(element)
+          ? () => {}
+          : play(element, current, cascade ? cascadeInterval(current) : undefined);
       if (!notified) {
         notified = true;
         // A throwing callback must not break the render or the effect that attached the element.
