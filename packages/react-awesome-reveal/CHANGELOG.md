@@ -1,5 +1,19 @@
 # react-awesome-reveal
 
+## [5.0.0-next.7](https://github.com/awesome-reveal/awesome-reveal/compare/react-awesome-reveal@5.0.0-next.6...react-awesome-reveal@5.0.0-next.7) (2026-10-14)
+
+
+### Features
+
+* add a delay option to core and the adapters ([#296](https://github.com/awesome-reveal/awesome-reveal/issues/296)) ([34fbb3a](https://github.com/awesome-reveal/awesome-reveal/commit/34fbb3ae842ccbd19130c6a49a494954783768d1))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @awesome-reveal/react bumped to 1.0.0-next.7
+
 ## [5.0.0-next.6](https://github.com/awesome-reveal/awesome-reveal/compare/react-awesome-reveal@5.0.0-next.5...react-awesome-reveal@5.0.0-next.6) (2026-10-14)
 
 
