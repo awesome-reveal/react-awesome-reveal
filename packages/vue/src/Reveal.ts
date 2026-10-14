@@ -5,7 +5,7 @@ import {
   h,
   onMounted,
   type PropType,
-  type DefineComponent,
+  type DefineSetupFnComponent,
   ref,
   type SlotsType,
   watch,
@@ -40,15 +40,10 @@ type RuntimeProps = Omit<CascadeProps, "from" | "keyframes"> & {
   keyframes?: Keyframe[];
 };
 
-type Component<Props> = DefineComponent<
+type Component<Props extends Record<string, unknown>> = DefineSetupFnComponent<
   Props,
-  {},
-  {},
-  {},
-  {},
-  {},
-  {},
-  { reveal: (element: Element) => void }
+  { reveal: (element: Element) => void },
+  SlotsType<{ default: { revealed: boolean } }>
 >;
 
 function defineReveal(

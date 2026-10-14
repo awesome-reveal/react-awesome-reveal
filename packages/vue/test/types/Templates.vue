@@ -23,4 +23,12 @@ import { Cascade, Reveal, vCascade, vReveal } from "../../src";
     <li>two</li>
   </Cascade>
   <ul v-cascade="{ interval: 120, when: true }" />
+  <Reveal v-slot="{ revealed }">
+    <!-- @vue-expect-error The slot prop is a boolean. -->
+    {{ revealed.toUpperCase() }}
+  </Reveal>
+  <Cascade v-slot="{ revealed }">
+    <!-- @vue-expect-error The slot prop is a boolean. -->
+    {{ revealed.toUpperCase() }}
+  </Cascade>
 </template>
