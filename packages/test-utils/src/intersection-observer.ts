@@ -1,7 +1,6 @@
 export class MockIntersectionObserver {
   static readonly instances = new Set<MockIntersectionObserver>();
 
-  readonly rootMargin: string;
   readonly thresholds: readonly number[];
   readonly elements = new Set<Element>();
 
@@ -9,7 +8,6 @@ export class MockIntersectionObserver {
     private readonly callback: IntersectionObserverCallback,
     options: IntersectionObserverInit = {},
   ) {
-    this.rootMargin = options.rootMargin ?? "0px";
     this.thresholds = [options.threshold ?? 0].flat();
     MockIntersectionObserver.instances.add(this);
   }
@@ -23,9 +21,14 @@ export class MockIntersectionObserver {
     MockIntersectionObserver.instances.delete(this);
   }
 
-  trigger(target: Element, intersectionRatio: number) {
-    const entry = { target, intersectionRatio, isIntersecting: intersectionRatio > 0 };
-    this.callback([entry as IntersectionObserverEntry], this as unknown as IntersectionObserver);
+  /** Sends one report with an entry for each ratio, in order. */
+  trigger(target: Element, ...ratios: number[]) {
+    const entries = ratios.map((intersectionRatio) => ({
+      target,
+      intersectionRatio,
+      isIntersecting: intersectionRatio > 0,
+    }));
+    this.callback(entries as IntersectionObserverEntry[], this as unknown as IntersectionObserver);
   }
 }
 

@@ -19,8 +19,8 @@ const sources = {
   alias: [
     ...aliases([
       ["@awesome-reveal/core", "packages/core/src/index.ts"],
-      ["@awesome-reveal/core/keyframes", "packages/core/src/keyframes/index.ts"],
-      ["@awesome-reveal/core/reveal.css", "packages/core/src/reveal.css"],
+      ["@awesome-reveal/core/adapter", "packages/core/src/adapter.ts"],
+      ["#reveal-style", "packages/react/src/reveal.css"],
     ]),
     ...testUtils,
   ],
@@ -51,6 +51,11 @@ export default defineConfig({
         resolve: { alias: testUtils },
         test: {
           name: "core:unit",
+          typecheck: {
+            enabled: true,
+            tsconfig: "./test/tsconfig.json",
+            include: ["test/types.test-d.ts"],
+          },
           environment: "node",
           include: ["test/**/*.test.ts"],
           exclude: ["test/package/**", "test/browser/**"],
@@ -58,6 +63,7 @@ export default defineConfig({
       },
       {
         root: "packages/core",
+        resolve: { alias: testUtils },
         test: {
           name: "core:browser",
           include: ["test/browser/**/*.test.ts"],
@@ -67,7 +73,13 @@ export default defineConfig({
             enabled: true,
             headless: true,
             provider: playwright(),
-            instances: [{ browser: "chromium" }, { browser: "firefox" }, { browser: "webkit" }],
+            instances: (["chromium", "firefox", "webkit"] as const)
+              .filter(
+                (browser) =>
+                  !process.env.REVEAL_BROWSERS ||
+                  process.env.REVEAL_BROWSERS.split(",").includes(browser),
+              )
+              .map((browser) => ({ browser })),
             // The tests scroll by viewport heights.
             viewport: { width: 1280, height: 720 },
             trace: "on-first-retry",

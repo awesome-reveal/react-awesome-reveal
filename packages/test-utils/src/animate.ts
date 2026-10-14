@@ -5,6 +5,10 @@ interface RecordedAnimation {
   keyframes: Keyframe[] | PropertyIndexedKeyframes | null;
   options: number | KeyframeAnimationOptions | undefined;
   cancel: Mock<() => void>;
+  pause: Mock<() => void>;
+  play: Mock<() => void>;
+  effect: { updateTiming: Mock<(timing: OptionalEffectTiming) => void> };
+  playState: AnimationPlayState;
 }
 
 export const animations: RecordedAnimation[] = [];
@@ -16,9 +20,18 @@ export function runningAnimations(): RecordedAnimation[] {
 // jsdom has no Element.animate, so the stub only exists while a test runs.
 export function installAnimate() {
   Element.prototype.animate = function (this: Element, keyframes, options) {
-    const cancel = vi.fn();
-    animations.push({ element: this, keyframes, options, cancel });
-    return { cancel } as unknown as Animation;
+    const animation: RecordedAnimation = {
+      element: this,
+      keyframes,
+      options,
+      playState: "running",
+      cancel: vi.fn(() => void (animation.playState = "idle")),
+      pause: vi.fn(() => void (animation.playState = "paused")),
+      play: vi.fn(() => void (animation.playState = "running")),
+      effect: { updateTiming: vi.fn() },
+    };
+    animations.push(animation);
+    return animation as unknown as Animation;
   };
 }
 

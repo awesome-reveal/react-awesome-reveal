@@ -1,4 +1,6 @@
-import { createReveal, type RevealStore } from "../src/reveal";
+import { collectReports } from "@awesome-reveal/test-utils/reports";
+
+import { createCascade, createReveal, type RevealStore } from "../src/adapter";
 
 class FakeObserver {
   static instances: FakeObserver[] = [];
@@ -35,7 +37,7 @@ const ownerDocument = {
 
 function fakeElement() {
   const cancel = vi.fn();
-  const animate = vi.fn(() => ({ cancel }));
+  const animate = vi.fn(() => ({ cancel, pause: vi.fn(), play: vi.fn() }));
   const element = { animate, children: [], isConnected: false, ownerDocument };
   return { element: element as unknown as Element, animate, cancel };
 }
@@ -53,7 +55,7 @@ afterEach(() => {
 });
 
 describe("createReveal", () => {
-  const options = { reducedMotion: "never" } as const;
+  const options = {};
 
   // The server renders the element hidden, so the entrance of `when: true` plays after hydration.
   it("is hidden before the first attach, also with when: true", () => {
@@ -91,15 +93,14 @@ describe("createReveal", () => {
   it("calls onReveal once for each reveal, also when the same element plays again", () => {
     const { element } = fakeElement();
     const onReveal = vi.fn();
-    const state = createReveal({ ...options, once: false, onReveal });
+    const state = createReveal({ ...options, onReveal });
     state.attach(element);
-    const observer = live()[0]!;
-    observer.report(true);
+    live()[0]!.report(true);
     state.attach(null);
     state.attach(element);
     expect(onReveal.mock.calls).toEqual([[element]]);
-    live()[0]!.report(false);
-    live()[0]!.report(true);
+    state.setOptions({ ...options, onReveal, when: false });
+    state.setOptions({ ...options, onReveal, when: true });
     expect(onReveal).toHaveBeenCalledTimes(2);
   });
 
@@ -110,7 +111,7 @@ describe("createReveal", () => {
     state.subscribe((revealed) => order.push(`listener ${revealed}`));
     animate.mockImplementation(() => {
       order.push("play");
-      return { cancel: vi.fn() };
+      return { cancel: vi.fn(), pause: vi.fn(), play: vi.fn() };
     });
     state.attach(element);
     live()[0]!.report(true);
@@ -120,13 +121,13 @@ describe("createReveal", () => {
 
   it("cancels the animation before it tells the listener to hide the element", () => {
     const { element, cancel } = fakeElement();
-    const state = createReveal({ ...options, once: false });
+    const state = createReveal(options);
     const order: string[] = [];
     cancel.mockImplementation(() => order.push("cancel"));
     state.attach(element);
     live()[0]!.report(true);
     state.subscribe((revealed) => order.push(`listener ${revealed}`));
-    live()[0]!.report(false);
+    state.setOptions({ ...options, when: false });
     expect(order).toEqual(["cancel", "listener false"]);
   });
 
@@ -151,12 +152,12 @@ describe("createReveal", () => {
 
   it("does not reveal a stale in-view report when `when` is removed", () => {
     const { element } = fakeElement();
-    const state = createReveal({ ...options, once: false });
+    const state = createReveal(options);
     state.attach(element);
     live()[0]!.report(true);
-    state.setOptions({ ...options, once: false, when: false });
+    state.setOptions({ ...options, when: false });
     expect(state.revealed).toBe(false);
-    state.setOptions({ ...options, once: false });
+    state.setOptions(options);
     expect(state.revealed).toBe(false);
   });
 
@@ -174,7 +175,7 @@ describe("createReveal", () => {
   it("keeps a revealed state on a new element, and observes a hidden one", () => {
     const first = fakeElement();
     const second = fakeElement();
-    const state = createReveal({ ...options, once: false });
+    const state = createReveal(options);
     state.attach(first.element);
     state.attach(second.element);
     expect(live().map((observer) => observer.elements)).toEqual([[second.element]]);
@@ -183,20 +184,12 @@ describe("createReveal", () => {
     state.attach(third.element);
     expect(third.animate).not.toHaveBeenCalled();
     expect(state.revealed).toBe(true);
-    expect(live().map((observer) => observer.elements)).toEqual([[third.element]]);
-  });
-
-  it("does not observe a new element after the reveal with once", () => {
-    const state = createReveal(options);
-    state.attach(fakeElement().element);
-    live()[0]!.report(true);
-    state.attach(fakeElement().element);
     expect(live()).toEqual([]);
   });
 
   it("cancels the animation and stops observing when it gets null", () => {
     const { element, cancel } = fakeElement();
-    const state = createReveal({ ...options, once: false });
+    const state = createReveal(options);
     state.attach(element);
     live()[0]!.report(true);
     state.attach(null);
@@ -204,19 +197,7 @@ describe("createReveal", () => {
     expect(live()).toEqual([]);
   });
 
-  it("hides and plays again when the element leaves and enters with once: false", () => {
-    const { element, animate, cancel } = fakeElement();
-    const state = createReveal({ ...options, once: false });
-    state.attach(element);
-    const observer = live()[0]!;
-    observer.report(true);
-    observer.report(false);
-    expect(cancel).toHaveBeenCalledTimes(1);
-    observer.report(true);
-    expect(animate).toHaveBeenCalledTimes(2);
-  });
-
-  it("restarts the observer only for when, threshold, rootMargin and once", () => {
+  it("restarts the observer only for when and threshold", () => {
     const state = createReveal({ ...options, threshold: 0.5 });
     state.attach(fakeElement().element);
     const first = live()[0]!;
@@ -225,7 +206,6 @@ describe("createReveal", () => {
       ...options,
       threshold: 0.5,
       duration: 100,
-      rootMargin: null,
       when: null,
     } as never);
     expect(live()).toEqual([first]);
@@ -256,5 +236,74 @@ describe("createReveal", () => {
     mutable.threshold = 0.4;
     state.setOptions(mutable);
     expect(live()[0]).not.toBe(first);
+  });
+});
+
+it("reports a throwing adapter callback once without breaking the reveal", () => {
+  const reports = collectReports();
+  const error = new Error("callback failure");
+  const onReveal = () => {
+    throw error;
+  };
+  const state = createReveal({ onReveal });
+  state.attach(fakeElement().element);
+  live()[0]!.report(true);
+  state.setOptions({ onReveal, when: false });
+  state.setOptions({ onReveal, when: true });
+  expect(state.revealed).toBe(true);
+  expect(reports()).toEqual([error]);
+});
+
+describe("createCascade", () => {
+  const delays = (animate: ReturnType<typeof fakeElement>["animate"]) =>
+    animate.mock.calls.map((call) => (call as unknown[])[1] as KeyframeAnimationOptions);
+
+  function container(count: number) {
+    const children = Array.from({ length: count }, () => fakeElement());
+    const parent = fakeElement();
+    Object.assign(parent.element, { children: children.map((child) => child.element) });
+    return { ...parent, children };
+  }
+
+  it("animates the direct children at the reveal, interval milliseconds apart", () => {
+    const { element, animate, children } = container(3);
+    const state = createCascade();
+    state.attach(element);
+    expect(children[0]!.animate).not.toHaveBeenCalled();
+    live()[0]!.report(true);
+    expect(animate).not.toHaveBeenCalled();
+    expect(children.flatMap((child) => delays(child.animate).map((call) => call.delay))).toEqual([
+      0, 80, 160,
+    ]);
+  });
+
+  it("reads the children at the reveal, so children rendered after the attach play", () => {
+    const { element, children } = container(0);
+    const state = createCascade({ interval: 50 });
+    state.attach(element);
+    const late = container(2);
+    Object.assign(element, { children: late.children.map((child) => child.element) });
+    live()[0]!.report(true);
+    expect(children).toEqual([]);
+    expect(late.children.map((child) => delays(child.animate)[0]!.delay)).toEqual([0, 50]);
+  });
+
+  it("applies a new interval at the next reveal, and cancels every child when it hides", () => {
+    const { element, children } = container(2);
+    const state = createCascade({ when: true });
+    state.attach(element);
+    state.setOptions({ when: false, interval: 200 });
+    expect(children.map((child) => child.cancel.mock.calls.length)).toEqual([1, 1]);
+    state.setOptions({ when: true, interval: 200 });
+    expect(delays(children[1]!.animate).map((call) => call.delay)).toEqual([80, 200]);
+  });
+
+  it("reveals a container with no children and calls onReveal with the container", () => {
+    const { element } = container(0);
+    const onReveal = vi.fn();
+    const state = createCascade({ when: true, onReveal });
+    state.attach(element);
+    expect(state.revealed).toBe(true);
+    expect(onReveal.mock.calls).toEqual([[element]]);
   });
 });

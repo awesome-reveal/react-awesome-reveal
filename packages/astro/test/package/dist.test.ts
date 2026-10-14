@@ -1,6 +1,5 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
-import { pathToFileURL } from "node:url";
 
 import { describeDocs } from "@awesome-reveal/test-utils/docs";
 
@@ -12,13 +11,7 @@ const pkg = JSON.parse(readFileSync(new URL("package.json", root), "utf8"));
 const distFiles = readdirSync(dist, { recursive: true, encoding: "utf8" });
 const jsFiles = distFiles.filter((file) => /\.(c|m)?js$/.test(file)).sort();
 const { resolve } = createRequire(import.meta.url);
-
-const factories = ["blur", "enter", "fade", "pop", "scale", "slide", "spring"];
-
-// Resolves through the package "exports" map, as consumers do.
-function load(subpath: string) {
-  return import(pathToFileURL(resolve(`@awesome-reveal/astro${subpath.slice(1)}`)).href);
-}
+const components = ["Reveal.astro", "Cascade.astro", "Host.astro"];
 
 function packageName(specifier: string): string {
   return specifier.split("/", specifier.startsWith("@") ? 2 : 1).join("/");
@@ -29,20 +22,23 @@ function source(file: string): string {
 }
 
 describe("dist", () => {
-  it("contains one JavaScript file per source module, the component, and declarations only for src", () => {
-    expect(jsFiles).toEqual(["element.js", "index.js", "keyframes.js"]);
-    expect(distFiles).toContain("Reveal.astro");
+  it("contains one JavaScript file per source module, the components, and declarations only for src", () => {
+    expect(jsFiles).toEqual(["element.js", "index.js"]);
+    expect(distFiles).toEqual(expect.arrayContaining(components));
     expect(distFiles).toContain("index.d.ts");
     expect(distFiles.filter((file) => /(^|\/)test/.test(file))).toEqual([]);
   });
 
-  it("ships the component uncompiled, as Astro compiles the components of dependencies", () => {
-    expect(source("Reveal.astro")).toBe(readFileSync(new URL("src/Reveal.astro", root), "utf8"));
-  });
+  it.each(components)(
+    "ships %s uncompiled, as Astro compiles the components of dependencies",
+    (component) => {
+      expect(source(component)).toBe(readFileSync(new URL(`src/${component}`, root), "utf8"));
+    },
+  );
 
   it("imports only its dependencies and peer dependencies", () => {
     const allowed = Object.keys({ ...pkg.dependencies, ...pkg.peerDependencies });
-    const imports = [...jsFiles, "Reveal.astro"].flatMap((file) =>
+    const imports = [...jsFiles, ...components].flatMap((file) =>
       [...source(file).matchAll(/^\s*(?:import|export) (?:.* from )?"([^"]+)";$/gm)]
         .map(([, id]) => id!)
         .filter((id) => !id.startsWith("."))
@@ -52,25 +48,17 @@ describe("dist", () => {
     expect(imports.filter((id) => !allowed.includes(id))).toEqual([]);
   });
 
-  it("re-exports ./keyframes from the root entry", () => {
-    expect(source("index.js")).toContain('export * from "@awesome-reveal/core/keyframes";');
-  });
-
-  it("exposes the public API of ./keyframes", async () => {
-    expect(Object.keys(await load("./keyframes")).sort()).toEqual(
-      [...factories, "defineKeyframes"].sort(),
-    );
-  });
-
   // Node cannot import a .astro file, so only a build with Astro loads the root entry.
   it("exports the component from the root entry, with declarations that plain TypeScript reads", () => {
-    expect(source("index.js")).toContain('import Component from "./Reveal.astro";');
+    expect(source("index.js")).toContain('from "./Reveal.astro";');
+    expect(source("index.js")).toContain('from "./Cascade.astro";');
     expect(source("index.d.ts")).toContain("export declare const Reveal:");
+    expect(source("index.d.ts")).toContain("export declare const Cascade:");
     expect(source("index.d.ts")).not.toContain(".astro");
   });
 
   it("exports only the subpaths above and package.json", () => {
-    expect(Object.keys(pkg.exports)).toEqual([".", "./keyframes", "./package.json"]);
+    expect(Object.keys(pkg.exports)).toEqual([".", "./package.json"]);
   });
 });
 
@@ -80,32 +68,24 @@ describe("a static build of a page with the published component", () => {
   beforeAll(async () => {
     site = await buildSite(
       Object.fromEntries(
-        ["@awesome-reveal/astro", "@awesome-reveal/astro/keyframes"].map((specifier) => [
-          specifier,
-          resolve(specifier),
-        ]),
+        ["@awesome-reveal/astro"].map((specifier) => [specifier, resolve(specifier)]),
       ),
     );
   }, 60_000);
 
-  it("renders the element hidden, with the reveal.css of core", () => {
+  it("renders hidden content with package-owned CSS", () => {
     expect(site.html).toContain('<div data-reveal="hidden"><p>hello</p></div>');
     expect([site.html, ...Object.values(site.assets)].join("\n")).toMatch(
-      /\[data-reveal=["]?hidden["]?\]\{opacity:0!important\}/,
+      /\[data-reveal=["]?hidden["]?\],\[data-reveal=["]?cascade["]?\]>\*\{opacity:0!important\}/,
     );
   });
 
-  it("bundles a small client script with no presets", () => {
+  it("bundles a small client script", () => {
     const code = scripts(site);
 
     expect(code).toMatch(/customElements\.define\(["`]awesome-reveal["`]/);
-    // slide() runs in the frontmatter. play() keeps enter(), for the keyframes of `from`.
-    expect(code).not.toContain("1.56");
-    expect(code.length).toBeLessThan(5050);
+    expect(code.length).toBeLessThan(4750);
   });
 });
 
-describeDocs(root, {
-  keyframes: "@awesome-reveal/astro/keyframes",
-  factories,
-});
+describeDocs(root);

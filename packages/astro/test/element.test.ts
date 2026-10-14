@@ -22,10 +22,10 @@ function connect(options: object, when?: string) {
 
 describe("<awesome-reveal>", () => {
   it("hides its first element child, and reveals it with the options of the attribute", () => {
-    const { element } = connect({ duration: 100, threshold: 0.5, rootMargin: "10px" });
+    const { element } = connect({ duration: 100, threshold: 0.5 });
 
     expect(element).toHaveStyle({ opacity: "0" });
-    expect(observerOf(element)).toMatchObject({ thresholds: [0.5], rootMargin: "10px" });
+    expect(observerOf(element)).toMatchObject({ thresholds: [0, 0.5] });
 
     intersect(element, true);
 
@@ -77,13 +77,13 @@ describe("<awesome-reveal>", () => {
   });
 
   it("dispatches a reveal event that bubbles from the element at each reveal", () => {
-    const { host, element } = connect({ once: false });
+    const { host, element } = connect({});
     const targets: EventTarget[] = [];
     host.addEventListener("reveal", (event) => targets.push(event.target!));
 
     intersect(element, true);
-    intersect(element, false);
-    intersect(element, true);
+    host.when = false;
+    host.when = true;
 
     expect(targets).toEqual([element, element]);
   });
@@ -98,26 +98,42 @@ describe("<awesome-reveal>", () => {
   });
 
   it("keeps its state when it leaves and enters the document in one task", async () => {
-    const { host, element } = connect({ once: false });
+    const { host, element } = connect({});
     intersect(element, true);
 
     document.body.append(document.createElement("div"), host);
     await Promise.resolve();
 
     expect(element).not.toHaveAttribute("data-reveal");
-    expect(observerOf(element)).toBeDefined();
+    expect(observerOf(element)).toBeUndefined();
     expect(animations).toHaveLength(1);
   });
 
+  it.each(["re-append", "moveBefore"])(
+    "keeps the observer of a hidden element after a %s",
+    async (move) => {
+      const { host, element } = connect({});
+      const observer = observerOf(element);
+
+      // jsdom has no moveBefore(), which calls this callback instead of the disconnection.
+      if (move === "moveBefore") host.connectedMoveCallback();
+      else document.body.append(document.createElement("div"), host);
+      await Promise.resolve();
+
+      expect(element).toHaveAttribute("data-reveal", "hidden");
+      expect(observerOf(element)).toBe(observer);
+    },
+  );
+
   it("keeps its state when moveBefore() moves it", () => {
-    const { host, element } = connect({ once: false });
+    const { host, element } = connect({});
     intersect(element, true);
 
     // jsdom has no moveBefore(), which calls this callback instead of the disconnection.
     host.connectedMoveCallback();
 
     expect(element).not.toHaveAttribute("data-reveal");
-    expect(observerOf(element)).toBeDefined();
+    expect(observerOf(element)).toBeUndefined();
   });
 
   it("hides and observes the element again when it enters the document later", async () => {
@@ -163,7 +179,7 @@ describe("<awesome-reveal>", () => {
 
       activate();
 
-      expect(observerOf(element)).toMatchObject({ thresholds: [0.5] });
+      expect(observerOf(element)).toMatchObject({ thresholds: [0, 0.5] });
     });
 
     it("does nothing at the activation when the element is removed", () => {

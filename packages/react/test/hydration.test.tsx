@@ -5,7 +5,8 @@ import { hydrateRoot, type Root } from "react-dom/client";
 import { animations } from "@awesome-reveal/test-utils/animate";
 
 import { intersect } from "./intersect";
-import { Reveal } from "../src/Reveal";
+import { Cascade, Reveal } from "../src/Reveal";
+import { useCascade } from "../src/useCascade";
 import { type RevealOptions, useReveal } from "../src/useReveal";
 
 function HookBox(options: RevealOptions) {
@@ -14,6 +15,16 @@ function HookBox(options: RevealOptions) {
     <div {...getProps()}>
       <span>one</span>
     </div>
+  );
+}
+
+function CascadeHookBox() {
+  const { getProps } = useCascade<HTMLUListElement>();
+  return (
+    <ul {...getProps()}>
+      <li>a</li>
+      <li>b</li>
+    </ul>
   );
 }
 
@@ -76,5 +87,27 @@ describe(`hydration (React ${version})`, () => {
 
     expect(element).not.toHaveAttribute("data-reveal");
     expect(animations.map((animation) => animation.element)).toEqual([element]);
+  });
+
+  const CascadeBox = () => (
+    <Cascade as="ul">
+      <li>a</li>
+      <li>b</li>
+    </Cascade>
+  );
+
+  it.each([
+    ["Cascade", CascadeBox],
+    ["useCascade", CascadeHookBox],
+  ])("hydrates %s with hidden children, then reveals them in sequence", async (_, Box) => {
+    const element = await hydrate('<ul data-reveal="cascade"><li>a</li><li>b</li></ul>', <Box />);
+    const children = Array.from(element.children);
+
+    expect(element).toHaveStyle({ opacity: "1" });
+    expect(children[0]).toHaveStyle({ opacity: "0" });
+    intersect(element, true);
+    expect(element).not.toHaveAttribute("data-reveal");
+    expect(children[0]).toHaveStyle({ opacity: "1" });
+    expect(animations.map((animation) => animation.element)).toEqual(children);
   });
 });

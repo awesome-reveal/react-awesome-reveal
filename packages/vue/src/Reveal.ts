@@ -1,72 +1,124 @@
-import { defineComponent, h, onMounted, type PropType, ref, type SlotsType, watch } from "vue";
+import "#reveal-style";
 
-import { createReveal, type RevealOptions } from "@awesome-reveal/core";
+import {
+  defineComponent,
+  h,
+  onMounted,
+  type PropType,
+  type DefineSetupFnComponent,
+  ref,
+  type SlotsType,
+  watch,
+} from "vue";
 
-export interface RevealProps extends Omit<RevealOptions, "onReveal"> {
+import {
+  type CascadeOptions,
+  cascadeHiddenAttributes,
+  createCascade,
+  createReveal,
+  hiddenAttributes,
+  type RevealOptions,
+  type RevealStore,
+} from "@awesome-reveal/core/adapter";
+
+type WithoutCallback<T> = T extends unknown ? Omit<T, "onReveal"> : never;
+
+/** Configures the reveal and the element rendered around its slot. */
+export type RevealProps = WithoutCallback<RevealOptions> & {
   /**
-   * Tag of the rendered element.
+   * The tag of the rendered element.
    * @default "div"
    */
   as?: string;
+};
+
+/** Configures the cascade and the element rendered around its slot. */
+export type CascadeProps = RevealProps & Pick<CascadeOptions, "interval">;
+
+type RuntimeProps = Omit<CascadeProps, "from" | "keyframes"> & {
+  from?: RevealOptions["from"];
+  keyframes?: Keyframe[];
+};
+
+type Component<Props extends Record<string, unknown>> = DefineSetupFnComponent<
+  Props,
+  { reveal: (element: Element) => void },
+  SlotsType<{ default: { revealed: boolean } }>
+>;
+
+function defineReveal(
+  name: string,
+  create: (options: CascadeOptions) => RevealStore<CascadeOptions>,
+  hidden: Record<"data-reveal", string>,
+  extraProps: { interval?: NumberConstructor } = {},
+) {
+  return defineComponent(
+    (props: RuntimeProps, { emit, slots }) => {
+      const options = (): CascadeOptions =>
+        ({
+          ...props,
+          onReveal: (element) => emit("reveal", element),
+        }) as CascadeOptions;
+      const state = create(options());
+      const revealed = ref(state.revealed);
+      state.subscribe((value) => (revealed.value = value));
+      // The watcher runs after the patch, so a new element of the same tick plays with the new options.
+      watch(options, state.setOptions, { flush: "post" });
+      // Attaches in onMounted, which a pending Suspense defers while the element is outside the document.
+      let element: Element | null = null;
+      let mounted = false;
+      const attach = (node: unknown) => {
+        element = node as Element | null;
+        if (mounted) state.attach(element);
+      };
+      onMounted(() => {
+        mounted = true;
+        // Suspense defers the watcher too.
+        state.setOptions(options());
+        state.attach(element);
+      });
+
+      return () =>
+        h(
+          props.as ?? "div",
+          revealed.value ? { ref: attach } : { ref: attach, ...hidden },
+          slots.default?.({ revealed: revealed.value }),
+        );
+    },
+    {
+      name,
+      props: {
+        as: String,
+        keyframes: Array as PropType<RevealOptions["keyframes"]>,
+        from: [String, Object] as PropType<RevealOptions["from"]>,
+        duration: Number,
+        threshold: Number,
+        // Vue casts an absent Boolean prop to false, which would make `when` control the reveal.
+        when: { type: Boolean, default: undefined },
+        ...extraProps,
+      },
+      emits: { reveal: (element: Element) => element != null },
+      slots: Object as SlotsType<{ default: { revealed: boolean } }>,
+    },
+  );
 }
 
-/**
- * Renders one element that animates when it enters the viewport. It emits `reveal` with the
- * element each time it is revealed, and gives `revealed` to its default slot.
- * To animate an element of your own without a wrapper, use `v-reveal`.
- */
-export const Reveal = /* @__PURE__ */ defineComponent(
-  (props: RevealProps, { emit, slots }) => {
-    const options = (): RevealOptions => ({
-      ...props,
-      onReveal: (element) => emit("reveal", element),
-    });
-    const state = createReveal(options());
-    const revealed = ref(state.revealed);
-    state.subscribe((value) => (revealed.value = value));
-    // After the patch, so that a new element of the same tick plays with the new options.
-    watch(options, state.setOptions, { flush: "post" });
-    // Attaches in onMounted, which a pending Suspense defers while the element is outside the document.
-    let element: Element | null = null;
-    let mounted = false;
-    const attach = (node: unknown) => {
-      element = node as Element | null;
-      if (mounted) state.attach(element);
-    };
-    onMounted(() => {
-      mounted = true;
-      // Suspense defers the watcher too.
-      state.setOptions(options());
-      state.attach(element);
-    });
+/** Renders an element around its slot and reveals it when it enters the viewport. It emits `reveal` with the element. */
+export const Reveal = /* @__PURE__ */ defineReveal(
+  "Reveal",
+  createReveal,
+  hiddenAttributes,
+) as unknown as Component<RevealProps>;
 
-    return () =>
-      h(
-        props.as ?? "div",
-        revealed.value ? { ref: attach } : { ref: attach, "data-reveal": "hidden" },
-        slots.default?.({ revealed: revealed.value }),
-      );
-  },
+/**
+ * Renders an element and reveals its direct element children in sequence, `interval` milliseconds
+ * apart, when it enters the viewport.
+ */
+export const Cascade = /* @__PURE__ */ defineReveal(
+  "Cascade",
+  createCascade,
+  cascadeHiddenAttributes,
   {
-    name: "Reveal",
-    props: {
-      as: String,
-      keyframes: Array as PropType<RevealOptions["keyframes"]>,
-      from: [String, Object] as PropType<RevealOptions["from"]>,
-      distance: [Number, String],
-      easing: String,
-      bounce: Number,
-      duration: Number,
-      delay: Number,
-      stagger: Number,
-      threshold: Number,
-      rootMargin: String,
-      // Vue casts an absent Boolean prop to false, which would turn off the core defaults.
-      once: { type: Boolean, default: undefined },
-      when: { type: Boolean, default: undefined },
-      reducedMotion: String as PropType<RevealOptions["reducedMotion"]>,
-    },
-    emits: { reveal: (element: Element) => element != null },
-    slots: Object as SlotsType<{ default: { revealed: boolean } }>,
+    interval: Number,
   },
-);
+) as unknown as Component<CascadeProps>;

@@ -3,11 +3,13 @@ import type { CSSProperties, ReactElement } from "react";
 
 import {
   type ContractOptions,
+  describeCascadeContract,
   describeContract,
   type Harness,
 } from "@awesome-reveal/test-utils/contract";
 
-import { Reveal } from "../src/Reveal";
+import { Cascade, Reveal } from "../src/Reveal";
+import { useCascade } from "../src/useCascade";
 import { type RevealOptions, useReveal } from "../src/useReveal";
 
 const children = [1, 2, 3].map((n) => <span key={n}>{n}</span>);
@@ -77,4 +79,23 @@ function HookBox({
 describeContract(
   "React useReveal",
   harness((options, style, swap) => <HookBox options={options} style={style} swap={swap} />),
+);
+
+describeCascadeContract(
+  "React Cascade",
+  harness((options, style) => (
+    <Cascade {...(options as RevealOptions)} style={style} data-contract="">
+      {children}
+    </Cascade>
+  )),
+);
+
+function CascadeHookBox({ options }: { options: ContractOptions }) {
+  const { getProps } = useCascade<HTMLElement>(options as RevealOptions);
+  return <ul {...getProps({ "data-contract": "" })}>{children}</ul>;
+}
+
+describeCascadeContract(
+  "React useCascade",
+  harness((options) => <CascadeHookBox options={options} />),
 );

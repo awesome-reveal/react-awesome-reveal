@@ -1,4 +1,4 @@
-import { createSSRApp, nextTick } from "vue";
+import { createSSRApp, h, nextTick, withDirectives } from "vue";
 import { renderToString } from "vue/server-renderer";
 
 import { animations } from "@awesome-reveal/test-utils/animate";
@@ -6,6 +6,10 @@ import { animations } from "@awesome-reveal/test-utils/animate";
 import DirectiveBox from "./fixtures/DirectiveBox.vue";
 import RevealCard from "./fixtures/RevealCard.vue";
 import { intersect } from "./intersect";
+import { Cascade } from "../src/Reveal";
+import { vCascade } from "../src/vReveal";
+
+const items = () => [h("li", "a"), h("li", "b")];
 
 async function hydrate(
   component: Parameters<typeof createSSRApp>[0],
@@ -62,6 +66,22 @@ describe("hydration", () => {
     const { app, element } = await hydrate(DirectiveBox, { color: "red" });
 
     expect(element).toHaveStyle({ color: "rgb(255, 0, 0)", opacity: "0" });
+    app.unmount();
+  });
+
+  it.each([
+    ["the Cascade component", { render: () => h(Cascade, { as: "ul" }, items) }],
+    ["a v-cascade element", { render: () => withDirectives(h("ul", items()), [[vCascade]]) }],
+  ])("hydrates %s with hidden children, then reveals them in sequence", async (_, component) => {
+    const { app, element } = await hydrate(component);
+    const children = Array.from(element.children);
+
+    expect(element).toHaveStyle({ opacity: "1" });
+    expect(children[0]).toHaveStyle({ opacity: "0" });
+    await intersect(element, true);
+    expect(element).not.toHaveAttribute("data-reveal");
+    expect(children[0]).toHaveStyle({ opacity: "1" });
+    expect(animations.map((animation) => animation.element)).toEqual(children);
     app.unmount();
   });
 });

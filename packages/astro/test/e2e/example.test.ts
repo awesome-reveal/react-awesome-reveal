@@ -24,6 +24,12 @@ async function revealed(page: Page, selector: string) {
   }, selector);
 }
 
+function opacities(page: Page, selector: string) {
+  return page.$$eval(selector, (elements) =>
+    elements.map((element) => getComputedStyle(element).opacity),
+  );
+}
+
 function isHidden(page: Page, selector: string) {
   return page.$eval(
     selector,
@@ -32,11 +38,17 @@ function isHidden(page: Page, selector: string) {
   );
 }
 
-describe.each([
+const browsers = [
   ["chromium", chromium],
   ["firefox", firefox],
   ["webkit", webkit],
-])("example in %s", (_, browserType) => {
+] as const;
+describe.each(
+  browsers.filter(
+    ([name]) =>
+      !process.env.REVEAL_BROWSERS || process.env.REVEAL_BROWSERS.split(",").includes(name),
+  ),
+)("example in %s", (_, browserType) => {
   let browser: Browser;
   let page: Page;
 
@@ -70,11 +82,12 @@ describe.each([
   });
 
   it("shows the hidden elements in print, with the rule of reveal.css", async () => {
-    expect(await isHidden(page, "#stagger")).toBe(true);
+    expect(await isHidden(page, "#list")).toBe(true);
 
     await page.emulateMedia({ media: "print" });
 
-    expect(await page.$eval("#stagger", (element) => getComputedStyle(element).opacity)).toBe("1");
+    expect(await page.$eval("#list", (element) => getComputedStyle(element).opacity)).toBe("1");
+    expect(await opacities(page, "#cascade > li")).toEqual(["1", "1", "1"]);
   });
 
   it("shows the hidden elements when the page marks the reveal as failed", async () => {
@@ -84,27 +97,44 @@ describe.each([
 
     await page.evaluate(() => document.documentElement.setAttribute("data-reveal-failed", ""));
 
-    expect(await page.$eval("#stagger", (element) => getComputedStyle(element).opacity)).toBe("1");
+    expect(await page.$eval("#list", (element) => getComputedStyle(element).opacity)).toBe("1");
+    expect(await opacities(page, "#cascade > li")).toEqual(["1", "1", "1"]);
   });
 
   it("reveals the element in the viewport, and keeps the others hidden", async () => {
     await revealed(page, "#default");
 
-    expect(await isHidden(page, "#stagger")).toBe(true);
+    expect(await isHidden(page, "#list")).toBe(true);
   });
 
-  it("reveals an element when it scrolls into the viewport, and staggers its children", async () => {
-    await page.locator("#stagger").scrollIntoViewIfNeeded();
+  it("reveals an element when it scrolls into the viewport, as one composition", async () => {
+    await page.locator("#list").scrollIntoViewIfNeeded();
+    await page.waitForFunction(() => !document.querySelector("#list")!.hasAttribute("data-reveal"));
+
+    expect(
+      await page.$$eval("#list", (items) => items.map((item) => item.getAnimations().length)),
+    ).toEqual([1]);
+    await revealed(page, "#list");
+  });
+
+  it("hides the children of a cascade, then reveals them in sequence", async () => {
+    expect(await page.$eval("#cascade", (element) => element.getAttribute("data-reveal"))).toBe(
+      "cascade",
+    );
+    expect(await opacities(page, "#cascade > li")).toEqual(["0", "0", "0"]);
+
+    await page.locator("#cascade").scrollIntoViewIfNeeded();
     await page.waitForFunction(
-      () => !document.querySelector("#stagger")!.hasAttribute("data-reveal"),
+      () => !document.querySelector("#cascade")!.hasAttribute("data-reveal"),
     );
 
     expect(
-      await page.$$eval("#stagger > li", (items) =>
-        items.map((item) => item.getAnimations().length),
+      await page.$$eval("#cascade > li", (items) =>
+        items.map((item) => item.getAnimations()[0]?.effect?.getTiming().delay),
       ),
-    ).toEqual([1, 1, 1]);
-    await revealed(page, "#stagger");
+    ).toEqual([0, 80, 160]);
+    await revealed(page, "#cascade");
+    expect(await opacities(page, "#cascade > li")).toEqual(["1", "1", "1"]);
   });
 
   it("keeps the attributes of the element", async () => {
@@ -186,8 +216,8 @@ describe("example server markup", () => {
     await browser.close();
   });
 
-  it("hides the elements before the custom element starts", async () => {
-    const page = await browser.newPage({ baseURL });
+  async function openWithoutElement(options: Parameters<Browser["newPage"]>[0] = {}) {
+    const page = await browser.newPage({ baseURL, ...options });
     await page.addInitScript(() => {
       const define = customElements.define.bind(customElements);
       customElements.define = (name, ...rest) => {
@@ -195,8 +225,21 @@ describe("example server markup", () => {
       };
     });
     await page.goto("/");
+    return page;
+  }
+
+  it("hides the elements before the custom element starts", async () => {
+    const page = await openWithoutElement();
 
     expect(await isHidden(page, "#default")).toBe(true);
+    expect(await opacities(page, "#cascade > li")).toEqual(["0", "0", "0"]);
+  });
+
+  it("shows the hidden elements for reduced motion before the custom element starts", async () => {
+    const page = await openWithoutElement({ reducedMotion: "reduce" });
+
+    expect(await page.$eval("#default", (element) => getComputedStyle(element).opacity)).toBe("1");
+    expect(await opacities(page, "#cascade > li")).toEqual(["1", "1", "1"]);
   });
 
   it("shows the content without JavaScript", async () => {
@@ -204,10 +247,11 @@ describe("example server markup", () => {
     await page.goto("/");
 
     expect(
-      await page.$eval("#stagger", (element) => [
+      await page.$eval("#list", (element) => [
         element.getAttribute("data-reveal"),
         getComputedStyle(element).opacity,
       ]),
     ).toEqual(["hidden", "1"]);
+    expect(await opacities(page, "#cascade > li")).toEqual(["1", "1", "1"]);
   });
 });

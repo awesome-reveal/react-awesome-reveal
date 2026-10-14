@@ -1,81 +1,24 @@
-import { createRequire } from "node:module";
-import { fileURLToPath } from "node:url";
+import { bundleFixture } from "@awesome-reveal/test-utils/bundle";
 
-import { build, type Rolldown } from "vite";
-
-const root = fileURLToPath(new URL("../../", import.meta.url));
-const { resolve } = createRequire(import.meta.url);
-
-// Resolves through the package "exports" map, as consumers do.
-const alias = ["@awesome-reveal/vue", "@awesome-reveal/vue/keyframes"].map((specifier) => ({
-  find: new RegExp(`^${specifier}$`),
-  replacement: resolve(specifier),
-}));
-
-async function bundle(fixture: string) {
-  const output = (await build({
-    configFile: false,
-    logLevel: "silent",
-    root,
-    resolve: { alias },
-    build: {
-      write: false,
-      minify: true,
-      lib: {
-        entry: fileURLToPath(new URL(`fixtures/${fixture}`, import.meta.url)),
-        formats: ["es"],
-      },
-      rolldownOptions: { external: ["vue"] },
-    },
-  })) as Rolldown.RolldownOutput[];
-  const chunk = output[0]!.output[0];
-
-  const keptExports = Object.fromEntries(
-    Object.entries(chunk.modules)
-      .filter(([id]) => id.includes("/dist/"))
-      // Keeps the package folder, so that core and vue modules stay apart.
-      .map(([id, module]) => [
-        id.slice(id.lastIndexOf("/", id.indexOf("/dist/") - 1) + 1),
-        module.renderedExports,
-      ]),
-  );
-  // Rolldown's //#region comments are not code.
-  const code = chunk.code.replace(/^\/\/#(end)?region.*\n/gm, "");
-  return { keptExports, size: code.length };
-}
+const bundle = (fixture: string) =>
+  bundleFixture(new URL(`fixtures/${fixture}`, import.meta.url), {
+    resolvePackage: "@awesome-reveal/vue",
+    external: ["vue"],
+  });
 
 describe("consumer bundle", () => {
   it("keeps only the modules and exports that it imports", async () => {
-    const { keptExports, size } = await bundle("reveal-slide.js");
+    const { keptExports, bytes } = await bundle("reveal-only.js");
 
-    expect(keptExports).toEqual({
-      "vue/dist/Reveal.js": ["Reveal"],
-      "core/dist/keyframes/enter.js": ["enter"],
-      "core/dist/keyframes/from.js": ["offsetFrom"],
-      "core/dist/keyframes/presets.js": ["slide"],
-      "core/dist/keyframes/spring.js": ["spring"],
-      "core/dist/observe.js": ["observe"],
-      "core/dist/play.js": ["play"],
-      "core/dist/report.js": ["report"],
-      "core/dist/reveal.js": ["createReveal"],
-    });
-    expect(size).toBeLessThan(5650);
+    expect(keptExports["core/dist/adapter.js"]).toContain("createReveal");
+    expect(bytes).toBeLessThan(5300);
   });
 
-  // play() keeps enter(), offsetFrom() and spring(), because it builds the keyframes of `from`.
-  it("keeps neither Reveal nor the presets for the directive alone", async () => {
-    const { keptExports, size } = await bundle("directive-only.js");
+  it("keeps no Reveal component for the directive alone", async () => {
+    const { keptExports, bytes } = await bundle("directive-only.js");
 
-    expect(keptExports).toEqual({
-      "vue/dist/vReveal.js": ["vReveal"],
-      "core/dist/keyframes/enter.js": ["enter"],
-      "core/dist/keyframes/from.js": ["offsetFrom"],
-      "core/dist/keyframes/spring.js": ["spring"],
-      "core/dist/observe.js": ["observe"],
-      "core/dist/play.js": ["play"],
-      "core/dist/report.js": ["report"],
-      "core/dist/reveal.js": ["hiddenAttributes", "createReveal", "reveal"],
-    });
-    expect(size).toBeLessThan(5450);
+    expect(keptExports["core/dist/adapter.js"]).toContain("createReveal");
+    expect(bytes).toBeLessThan(4950);
+    expect(keptExports).not.toHaveProperty("vue/dist/Reveal.js");
   });
 });

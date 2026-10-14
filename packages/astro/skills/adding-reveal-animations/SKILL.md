@@ -1,140 +1,27 @@
 ---
 name: adding-reveal-animations
-description: Adds reveal-on-scroll animations to Astro pages and components with @awesome-reveal/astro, including staggered children and custom keyframes. Use when the user wants elements to animate as they enter the viewport, or when you edit code that imports @awesome-reveal/astro.
+description: Adds reveal-on-scroll animations with the Reveal and Cascade components of @awesome-reveal/astro and native Web Animations keyframes. Use when you animate elements of an Astro page that enter the viewport.
 ---
 
-# Reveal on scroll with @awesome-reveal/astro
+# Add reveal animations
 
-`@awesome-reveal/astro` hides an element until it enters the viewport, then animates it with the Web Animations API. It needs Astro 6 or 7.
+Import `Reveal` or `Cascade` in the component script (frontmatter). `Cascade` reveals the children of an element in sequence. The component loads its custom element and its CSS, and it needs no hydration directive.
 
-## The `Reveal` component
-
-`Reveal` renders one element and animates it. Use `as` to choose the tag (default `div`). It passes the other attributes and the default slot to that element. Call the keyframes factories in the frontmatter or in the template.
-
-```astro
----
-import { Reveal } from "@awesome-reveal/astro";
----
-
-<Reveal as="section" from="left" class="hero">…</Reveal>
-
-<Reveal as="article" from={{ scale: 0.95 }} threshold={0.3}>…</Reveal>
-```
-
-`Reveal` adds the stylesheet that hides the elements, so you do not import a CSS file.
-
-`Reveal` is an Astro component, so it works in `.astro` and `.mdx` files. In a React or Vue island, use `@awesome-reveal/react` or `@awesome-reveal/vue`.
-
-## Entrance
-
-Without options, the element fades in and moves up 24px. These options change the entrance:
-
-| Option     | Description                                                                                                     | Default                            |
-| ---------- | --------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
-| `from`     | Where the element starts: `"top"`, `"bottom"`, `"left"` or `"right"` of its resting position, or a start state. | `"bottom"`                         |
-| `distance` | Distance from the side of `from`.                                                                               | `24`                               |
-| `easing`   | A CSS easing, or `"spring"`.                                                                                    | `"cubic-bezier(0.22, 1, 0.36, 1)"` |
-| `bounce`   | Overshoot of the spring, from `0` to `0.8`. When `easing` is not set, it selects the spring.                    | `0.3`                              |
-
-- A start state is an object with `x`, `y`, `scale`, `rotate`, `blur` and `opacity`, such as `{ scale: 0.9, blur: 8 }`. `distance` applies only to a side.
-- The element fades in from `opacity: 0`. Add `opacity: 1` to a start state for movement with no fade.
-- A number for a length is in pixels, and a number for `rotate` is in degrees. A string can be any CSS length or angle.
-- `"spring"` uses CSS `linear()`. Chrome before 113, Firefox before 112 and Safari before 17.2 get the default easing.
-
-## Keyframes
-
-For an animation that the entrance options cannot give, set `keyframes`. It replaces the entrance options. Each factory takes optional options and returns Web Animations keyframes that end at the element's own style. Import the factories from `@awesome-reveal/astro` or `@awesome-reveal/astro/keyframes`.
-
-| Factory   | Effect                                     | Options                                                                                           |
-| --------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| `fade()`  | Fades in.                                  | `easing`                                                                                          |
-| `slide()` | Fades in and moves in from a side.         | `from` (`"bottom"` default, `"top"`, `"left"`, `"right"`), `distance` (`24`), `opacity`, `easing` |
-| `scale()` | Fades in and grows.                        | `from` (`0.95`), `opacity`, `easing`                                                              |
-| `blur()`  | Fades in and removes a blur.               | `from` (`8`), `opacity`, `easing`                                                                 |
-| `pop()`   | Fades in, grows past its size and settles. | `from` (`0.8`), `opacity`, `easing`                                                               |
-| `enter()` | Starts from any combination of the others. | `x`, `y`, `scale`, `rotate`, `blur`, `opacity`, `easing`                                          |
-
-- `opacity` is the start opacity (default `0`).
-- `spring()` returns an easing that follows a spring, for the `easing` option of a factory: `slide({ easing: spring({ bounce: 0.5 }) })`. The factories run on the server, so with `spring()`, Chrome before 113, Firefox before 112 and Safari before 17.2 show the element with no animation. Prefer the `easing: "spring"` option, which resolves in the browser.
-
-For a custom animation, use `defineKeyframes` or a keyframes array:
+Do not import a stylesheet. The package loads its stylesheet, which hides server-rendered content until the client script runs.
 
 ```ts
-import { defineKeyframes, type KeyframesFactory } from "@awesome-reveal/astro/keyframes";
-
-// keyframe(t) gets the progress t from 0 to 1. At t = 1, return the resting style.
-const spin = defineKeyframes<{ turns?: number }>(({ turns = 1 }) => ({
-  keyframe: (t) => ({ opacity: t, transform: `rotate(${(1 - t) * turns * 360}deg)` }),
-}));
-
-// The last keyframe must be the resting style: the animation does not stay applied.
-const drop: KeyframesFactory<{ height?: number }> = ({ height = 40 } = {}) => [
-  { opacity: 0, transform: `translateY(${-height}px)`, easing: "ease-out" },
-  {},
-];
+import type { CascadeProps, RevealProps } from "@awesome-reveal/astro";
+const options: RevealProps = { from: "left", duration: 500 };
+const list: CascadeProps<"ul"> = { as: "ul", interval: 120 };
+export { list, options };
 ```
 
-## Options
+Set `from` to `"top"`, `"right"`, `"bottom"` or `"left"` for an entrance that starts transparent and 24px away on that side. The defaults are `from: "bottom"`, `duration: 600` (milliseconds) and `threshold: 0`. Without `when`, the entrance plays one time. An element that leaves the viewport before it reaches `threshold` reveals then, so keep `threshold` low for tall elements. A `from` object is the complete start state: `{ opacity: 0 }` is a pure fade, and `{ scale: 0.9 }` adds no fade and no movement. A number is in pixels for `x`, `y` and `blur`, and in degrees for `rotate`. A string can contain a CSS value with its unit. The entrance adds its offset, scale, rotation and blur to the element's own transforms and filter. It fades to the element's own opacity. So do not override these styles for the entrance.
 
-`Reveal` takes the options as props.
+For a custom animation, give native `Keyframe[]` in `keyframes`. Do not use `from` and `keyframes` together. Put the easing of each segment in its keyframe. End at the resting style of the element, because the animation does not keep its last keyframe. Animate `transform` and `opacity` when possible. Leave reduced motion to the package: it shows the content with no entrance when the user prefers reduced motion.
 
-| Option          | Description                                                                                                    | Default  |
-| --------------- | -------------------------------------------------------------------------------------------------------------- | -------- |
-| `keyframes`     | The animation. It replaces the entrance options.                                                               | –        |
-| `duration`      | Duration in milliseconds.                                                                                      | `600`    |
-| `delay`         | Delay in milliseconds.                                                                                         | `0`      |
-| `stagger`       | Animates the element children, each one this many milliseconds after the last one. `0` animates them together. | –        |
-| `threshold`     | Fraction of the element (0 to 1) that must be visible.                                                         | `0`      |
-| `rootMargin`    | Grows or shrinks the viewport area, as a CSS margin in `px` or `%`.                                            | `"0px"`  |
-| `once`          | When `false`, the element hides again when it leaves the viewport.                                             | `true`   |
-| `when`          | Controls the reveal as a level: `true` reveals, `false` hides, `undefined` or `null` lets the viewport decide. | –        |
-| `reducedMotion` | `"user"` follows `prefers-reduced-motion`. `"always"` skips, `"never"` plays.                                  | `"user"` |
+For a long list, reveal each item separately. For a short group, use `Cascade`. It animates the direct element children in sequence, `interval` milliseconds apart (default 80), with no delay for the first child. It takes the same options as `Reveal`. Do not install `@awesome-reveal/core` for a cascade. The cascade reads the children when the container reveals, so a child that you add later shows with no animation. To cascade words or sentences, wrap each one in an element in the markup. Give inline children `display: inline-block`, because a transform does not apply to an inline box. The cascade does not animate a child with `display: contents`, such as a framework island or the host of a nested `Reveal`. Wrap an island in an element to put it in the cascade. Do not collect deeper descendants to animate them.
 
-## How it works
+Use `when` for manual control: `true` reveals the element and `false` resets it. The rendered tag dispatches a `reveal` event that bubbles.
 
-`Reveal` renders an `<awesome-reveal>` custom element with `display: contents` around your element. A script that Astro bundles defines the custom element. The custom element reveals its first element child, with the options that `Reveal` writes into its `options` attribute as JSON, and `when` in its `when` attribute.
-
-- The options go through JSON, so pass only plain values. The keyframes factories return plain values.
-- Each `Reveal` writes its own copy of the options. A `defineKeyframes` factory adds about 3 kB of HTML to each instance, and a built-in factory, such as `slide()`, about 100 to 200 bytes. The entrance options add a few bytes. For a long list, use one `Reveal` with `stagger`.
-- An `options` attribute with invalid JSON is reported to the console. When the element connects, it reveals with the default options. After that, the previous options stay.
-- To control the reveal from a script, set the `when` property of the `<awesome-reveal>` element: `true`, `false`, or `null` to give the control to the viewport. `revealed` tells if the element is revealed. The element that you render dispatches a `reveal` event, which bubbles, each time it is revealed:
-
-  ```astro
-  <button id="show">Show</button>
-  <Reveal id="details" when={false}>…</Reveal>
-
-  <script>
-    document.addEventListener("astro:page-load", () => {
-      const host = document.querySelector("#details")?.closest("awesome-reveal");
-      document.querySelector("#show")?.addEventListener("click", () => {
-        if (host) host.when = true;
-      });
-    });
-  </script>
-  ```
-
-- To change the other options in the browser, set the `options` attribute to new JSON. The new value replaces all the options, so parse the current value and merge your change into it. A change of `threshold`, `rootMargin` or `once` restarts the observer. The other options apply at the next reveal.
-- It works with the `<ClientRouter />`, with server islands and with `transition:persist`. A persisted element does not play again after a navigation. `transition:persist` works on `Reveal` and on an ancestor.
-- It works with `security.csp`. The server markup hides the element with `data-reveal="hidden"` and a stylesheet rule, not a `style` attribute.
-- The stylesheet shows the hidden elements when JavaScript is off, in Chrome 120, Firefox 113 and Safari 17 or later, and in print. Do not add a `<noscript>` or a print style.
-- If the script fails or a blocker stops it, the content stays hidden. To show it after a timeout, put this in the document head. When the `<awesome-reveal>` element is not defined in time, the script sets `data-reveal-failed` on `<html>`, and the stylesheet shows the hidden elements. `is:inline` keeps Astro from bundling the script. Use a timeout that is longer than the load time of the script on a slow network. With `security.csp`, allow the inline script, for example with `Astro.csp.insertScriptHash()`:
-
-  ```astro
-  <script is:inline>
-    setTimeout(() => {
-      if (!customElements.get("awesome-reveal")) document.documentElement.setAttribute("data-reveal-failed", "");
-    }, 5000);
-  </script>
-  ```
-
-## Rules
-
-- Do not put `Reveal` directly in a `<table>`, `<tbody>` or `<tr>`. The HTML parser moves the `<awesome-reveal>` element out of the table. Put `Reveal` around the whole table, or inside a cell.
-- For a list, animate the list with `stagger`, not each item: `<Reveal as="ul" stagger={80}>`. A `<ul>` must contain only `<li>` elements.
-- `stagger` animates element children only. Transforms do not apply to non-replaced inline elements, such as `span` or `a`, so give these children `display: inline-block`. With an inline `as` tag, `Reveal` itself also needs `display: inline-block`, or it only fades. It skips text nodes, so put text in an element. It reads the children when the element is revealed.
-- `when: true` at the start plays the entrance once, when the script runs. It ignores `threshold`, `rootMargin` and `once`. The server renders the element hidden.
-- `threshold: 1` never reveals an element that is taller than the viewport plus its `rootMargin`. A negative `rootMargin` never reveals an element at the end of the page that cannot scroll into the shrunk area.
-- `data-reveal` is reserved. Do not use it for other data.
-- `stagger` cannot animate framework islands that are direct children, because `<astro-island>` has `display: contents`, so it has no box to fade or move. Put each island in an element.
-- Keep `reducedMotion` at `"user"` unless the user asks for a different behavior. It respects the operating system setting of people whom motion makes ill.
-- Do not give a hidden element an inline `opacity` with `!important`. It wins over the stylesheet, so the element shows before the reveal.
+In the consumer project, check the build, the type check, the visibility before the reveal, reduced motion and the teardown.

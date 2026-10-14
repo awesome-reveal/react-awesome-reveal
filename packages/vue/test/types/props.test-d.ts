@@ -1,4 +1,4 @@
-import type { RevealOptions } from "@awesome-reveal/core";
+import type { RevealOptions } from "@awesome-reveal/core/adapter";
 import type { Directive } from "vue";
 
 import type { RevealProps } from "../../src";

@@ -1,13 +1,19 @@
-import { type RevealController, reveal, type RevealOptions } from "@awesome-reveal/core";
+import {
+  type CascadeOptions,
+  cascadeHiddenAttributes,
+  createCascade,
+  createReveal,
+  hiddenAttributes,
+  type RevealStore,
+} from "@awesome-reveal/core/adapter";
 
 const onReveal = (element: Element) =>
   element.dispatchEvent(new Event("reveal", { bubbles: true }));
 
-function readOptions(host: HTMLElement): RevealOptions {
-  const when = host.getAttribute("when");
+function readOptions(host: RevealElement): CascadeOptions {
   return {
     ...JSON.parse(host.getAttribute("options") || "{}"),
-    when: when == null ? undefined : when !== "false",
+    when: host.when ?? undefined,
     onReveal,
   };
 }
@@ -15,15 +21,13 @@ function readOptions(host: HTMLElement): RevealOptions {
 // The TypeScript DOM lib does not have the Speculation Rules additions yet.
 type PrerenderingDocument = Document & { prerendering?: boolean };
 
+/** Controls the entrance and reveal events of an Astro-rendered element. */
 export class RevealElement extends HTMLElement {
-  // No class fields: Safari 13.1 does not support them.
-  static get observedAttributes() {
-    return ["options", "when"];
-  }
+  static observedAttributes = ["options", "when"];
 
-  declare private controller?: RevealController;
+  private controller?: RevealStore<CascadeOptions>;
 
-  /** Whether the element is revealed. */
+  /** Tells if the element is revealed. */
   get revealed(): boolean {
     return this.controller?.revealed ?? false;
   }
@@ -50,8 +54,16 @@ export class RevealElement extends HTMLElement {
     }
     const target = this.firstElementChild as HTMLElement | null;
     if (!target) return;
+    const cascade = this.hasAttribute("cascade");
+    const hidden = (cascade ? cascadeHiddenAttributes : hiddenAttributes)["data-reveal"];
     // Invalid JSON throws after the reveal exists, so the element does not stay hidden.
-    this.controller = reveal(target, { onReveal });
+    target.setAttribute("data-reveal", hidden);
+    this.controller = cascade ? createCascade({ onReveal }) : createReveal({ onReveal });
+    this.controller.subscribe((visible) => {
+      if (visible) target.removeAttribute("data-reveal");
+      else target.setAttribute("data-reveal", hidden);
+    });
+    this.controller.attach(target);
     this.controller.setOptions(readOptions(this));
   }
 
@@ -62,7 +74,8 @@ export class RevealElement extends HTMLElement {
     // Without moveBefore(), a persisted element leaves and enters the DOM in one task.
     queueMicrotask(() => {
       if (this.isConnected) return;
-      this.controller?.destroy();
+      this.controller?.attach(null);
+      this.firstElementChild?.removeAttribute("data-reveal");
       this.controller = undefined;
     });
   }

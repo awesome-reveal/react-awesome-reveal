@@ -1,7 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { nextTick, reactive, type StyleValue, version } from "vue";
 
-import { slide } from "../src/keyframes";
+import { defaultKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
 import { animations, runningAnimations } from "@awesome-reveal/test-utils/animate";
 import { observerOf } from "@awesome-reveal/test-utils/intersection-observer";
 
@@ -10,7 +10,7 @@ import { intersect } from "./intersect";
 
 function mountBox(options?: object, color?: string, style?: StyleValue) {
   const wrapper = mount(DirectiveBox, {
-    props: { options: { keyframes: slide(), ...options }, color },
+    props: { options: { ...options }, color },
     attrs: { style },
     attachTo: document.body,
   });
@@ -34,7 +34,7 @@ describe(`v-reveal (Vue ${version})`, () => {
     expect(element).not.toHaveAttribute("data-reveal");
     expect(animations[0]).toMatchObject({
       element,
-      keyframes: slide(),
+      keyframes: defaultKeyframes,
       options: { duration: 600, delay: 0, fill: "backwards" },
     });
   });
@@ -43,27 +43,14 @@ describe(`v-reveal (Vue ${version})`, () => {
     const wrapper = mount(DirectiveBox);
     await intersect(wrapper.element, true);
 
-    expect(animations[0]?.keyframes).toEqual(slide());
+    expect(animations[0]?.keyframes).toEqual(defaultKeyframes);
   });
 
-  it("passes the options to the observer and the animation", async () => {
-    const { element } = mountBox({ threshold: 0.5, rootMargin: "10px", delay: 100, stagger: 50 });
-
-    expect(observerOf(element)).toMatchObject({ thresholds: [0.5], rootMargin: "10px" });
+  it("passes threshold and duration to core", async () => {
+    const { element } = mountBox({ threshold: 0.5, duration: 300 });
+    expect(observerOf(element)).toMatchObject({ thresholds: [0, 0.5] });
     await intersect(element, true);
-    expect(animations.map(({ element }) => element.textContent)).toEqual(["a", "b"]);
-    expect(animations.map(({ options }) => (options as KeyframeAnimationOptions).delay)).toEqual([
-      100, 150,
-    ]);
-  });
-
-  it("hides the element again when it leaves the viewport and once is false", async () => {
-    const { element } = mountBox({ once: false });
-    await intersect(element, true);
-    await intersect(element, false);
-
-    expect(element).toHaveStyle({ opacity: "0" });
-    expect(runningAnimations()).toHaveLength(0);
+    expect(animations[0]?.options).toMatchObject({ duration: 300 });
   });
 
   it("follows `when` and does not observe the viewport", async () => {
@@ -72,7 +59,7 @@ describe(`v-reveal (Vue ${version})`, () => {
     expect(observerOf(element)).toBeUndefined();
     expect(element).toHaveStyle({ opacity: "0" });
 
-    await wrapper.setProps({ options: { keyframes: slide(), when: true } });
+    await wrapper.setProps({ options: { keyframes: defaultKeyframes, when: true } });
     expect(element).toHaveStyle({ opacity: "1" });
     expect(animations).toHaveLength(1);
   });
@@ -116,7 +103,7 @@ describe(`v-reveal (Vue ${version})`, () => {
   });
 
   it("stops the observation and the animation on unmount", async () => {
-    const { wrapper, element } = mountBox({ once: false });
+    const { wrapper, element } = mountBox();
     await intersect(element, true);
     wrapper.unmount();
 

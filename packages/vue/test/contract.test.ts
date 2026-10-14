@@ -3,12 +3,13 @@ import { h, nextTick, shallowRef, type VNode, withDirectives } from "vue";
 
 import {
   type ContractOptions,
+  describeCascadeContract,
   describeContract,
   type Harness,
 } from "@awesome-reveal/test-utils/contract";
 
-import { Reveal } from "../src/Reveal";
-import { vReveal } from "../src/vReveal";
+import { Cascade, Reveal } from "../src/Reveal";
+import { vCascade, vReveal } from "../src/vReveal";
 
 const children = () => [1, 2, 3].map((n) => h("span", n));
 
@@ -79,3 +80,17 @@ describeContract("Vue v-reveal", {
   ),
   boundToElement: true,
 });
+
+describeCascadeContract(
+  "Vue Cascade",
+  harness((options, style) =>
+    h(Cascade, { ...options, style, "data-contract": "" } as never, children),
+  ),
+);
+
+describeCascadeContract(
+  "Vue v-cascade",
+  harness((options, style) =>
+    withDirectives(h("ul", { style, "data-contract": "" }, children()), [[vCascade, options]]),
+  ),
+);

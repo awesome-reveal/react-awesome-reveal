@@ -6,5 +6,6 @@
     "allowImportingTsExtensions": true,
     "types": ["node", "vitest/globals"]
   },
-  "include": ["../src", ".", "**/*.vue", "../vite.config.ts"]
+  "include": ["../src", ".", "**/*.vue", "../vite.config.ts"],
+  "exclude": ["package"]
 }

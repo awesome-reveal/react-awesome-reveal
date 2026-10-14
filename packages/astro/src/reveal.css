@@ -1,0 +1,15 @@
+/* Keep author opacity intact until the element reveals. */
+[data-reveal="hidden"],
+[data-reveal="cascade"] > * {
+  opacity: 0 !important;
+}
+@media (prefers-reduced-motion: reduce), (scripting: none), print {
+  [data-reveal="hidden"],
+  [data-reveal="cascade"] > * {
+    opacity: 1 !important;
+  }
+}
+html[data-reveal-failed] [data-reveal="hidden"],
+html[data-reveal-failed] [data-reveal="cascade"] > * {
+  opacity: 1 !important;
+}

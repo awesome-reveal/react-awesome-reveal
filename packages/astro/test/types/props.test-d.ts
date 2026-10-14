@@ -1,6 +1,6 @@
-import type { RevealOptions } from "@awesome-reveal/core";
+import type { RevealOptions } from "@awesome-reveal/core/adapter";
 
-import type { Reveal, RevealProps } from "../../src";
+import type { Cascade, CascadeProps, Reveal, RevealProps } from "../../src";
 
 test("Reveal takes the core options and as", () => {
   expectTypeOf<RevealProps>().toExtend<RevealOptions>();
@@ -18,7 +18,6 @@ test("Reveal takes the props of its as tag", () => {
 
 test("Reveal takes the entrance options, and no callback, which cannot cross to the client", () => {
   expectTypeOf<RevealProps>().toHaveProperty("from");
-  expectTypeOf<RevealProps>().toHaveProperty("bounce");
   expectTypeOf<RevealProps>().not.toHaveProperty("onReveal");
 });
 
@@ -26,4 +25,10 @@ test("the custom element has typed when and revealed properties", () => {
   const host = document.createElement("awesome-reveal");
   expectTypeOf(host.when).toEqualTypeOf<boolean | null>();
   expectTypeOf(host.revealed).toEqualTypeOf<boolean>();
+});
+
+test("only Cascade takes interval", () => {
+  expectTypeOf<CascadeProps>().toHaveProperty("interval");
+  expectTypeOf<RevealProps>().not.toHaveProperty("interval");
+  expectTypeOf<typeof Cascade<"ul">>().parameter(0).toEqualTypeOf<CascadeProps<"ul">>();
 });

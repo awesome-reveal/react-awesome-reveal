@@ -1,7 +1,7 @@
 import { flushPromises, mount } from "@vue/test-utils";
 import { defineComponent, h, ref, Suspense, version } from "vue";
 
-import { fade, slide } from "../src/keyframes";
+import { defaultKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
 import { Reveal } from "../src/Reveal";
 import { animations, runningAnimations } from "@awesome-reveal/test-utils/animate";
 import { observerOf } from "@awesome-reveal/test-utils/intersection-observer";
@@ -11,7 +11,7 @@ import { intersect } from "./intersect";
 
 function mountReveal(props: Record<string, unknown> = {}, attrs: Record<string, unknown> = {}) {
   const wrapper = mount(Reveal, {
-    props: { keyframes: fade(), ...props },
+    props: { ...props },
     attrs,
     slots: { default: () => [h("span", "one"), h("span", "two")] },
     // jsdom does not update the computed style of a detached element.
@@ -38,7 +38,7 @@ describe(`Reveal (Vue ${version})`, () => {
     expect(element).not.toHaveAttribute("data-reveal");
     expect(animations[0]).toMatchObject({
       element,
-      keyframes: fade(),
+      keyframes: defaultKeyframes,
       options: { duration: 600, delay: 0, fill: "backwards" },
     });
   });
@@ -56,7 +56,6 @@ describe(`Reveal (Vue ${version})`, () => {
 
   it("emits reveal with the element, and gives revealed to its slot", async () => {
     const wrapper = mount(Reveal, {
-      props: { once: false },
       slots: { default: ({ revealed }: { revealed: boolean }) => String(revealed) },
       attachTo: document.body,
     });
@@ -66,8 +65,8 @@ describe(`Reveal (Vue ${version})`, () => {
     await intersect(element, true);
     expect(element).toHaveTextContent("true");
     expect(wrapper.emitted("reveal")).toEqual([[element]]);
-    await intersect(element, false);
-    await intersect(element, true);
+    await wrapper.setProps({ when: false });
+    await wrapper.setProps({ when: true });
     expect(wrapper.emitted("reveal")).toHaveLength(2);
     wrapper.unmount();
   });
@@ -76,40 +75,22 @@ describe(`Reveal (Vue ${version})`, () => {
     const wrapper = mount(Reveal);
     await intersect(wrapper.element, true);
 
-    expect(animations[0]?.keyframes).toEqual(slide());
+    expect(animations[0]?.keyframes).toEqual(defaultKeyframes);
   });
 
-  it("passes the options to the observer and the animation", async () => {
-    const { element } = mountReveal({
-      threshold: 0.5,
-      rootMargin: "10px",
-      duration: 300,
-      stagger: 50,
-    });
-
-    expect(observerOf(element)).toMatchObject({ thresholds: [0.5], rootMargin: "10px" });
+  it("passes threshold and duration to core", async () => {
+    const { element } = mountReveal({ threshold: 0.5, duration: 300 });
+    expect(observerOf(element)).toMatchObject({ thresholds: [0, 0.5] });
     await intersect(element, true);
-    expect(animations.map(({ element }) => element.textContent)).toEqual(["one", "two"]);
-    expect(animations[1]?.options).toEqual({ duration: 300, delay: 50, fill: "backwards" });
+    expect(animations[0]?.options).toMatchObject({ duration: 300 });
   });
 
-  it("stays revealed without once, because an absent Boolean prop is not false", async () => {
+  it("observes the viewport without when, because an absent Boolean prop is not false", async () => {
     const { element } = mountReveal();
-    await intersect(element, true);
-
-    expect(observerOf(element)).toBeUndefined();
-  });
-
-  it("hides the element again when it leaves the viewport and once is false", async () => {
-    const { element } = mountReveal({ once: false });
-    await intersect(element, true);
-    await intersect(element, false);
-
-    expect(element).toHaveStyle({ opacity: "0" });
-    expect(runningAnimations()).toHaveLength(0);
+    expect(observerOf(element)).toBeDefined();
 
     await intersect(element, true);
-    expect(animations).toHaveLength(2);
+    expect(element).toHaveStyle({ opacity: "1" });
   });
 
   it("follows `when` and does not observe the viewport", async () => {
@@ -124,14 +105,14 @@ describe(`Reveal (Vue ${version})`, () => {
   });
 
   it("applies option changes to the next reveal without replaying", async () => {
-    const { wrapper, element } = mountReveal({ once: false, duration: 300 });
+    const { wrapper, element } = mountReveal({ duration: 300 });
     await intersect(element, true);
     await wrapper.setProps({ duration: 400 });
 
     expect(animations).toHaveLength(1);
 
-    await intersect(element, false);
-    await intersect(element, true);
+    await wrapper.setProps({ when: false });
+    await wrapper.setProps({ when: true });
     expect(animations[1]?.options).toMatchObject({ duration: 400 });
   });
 
@@ -215,11 +196,11 @@ describe(`Reveal (Vue ${version})`, () => {
     await intersect(element, true);
 
     expect(element).toHaveStyle({ color: "rgb(255, 0, 0)" });
-    expect(animations[0]?.keyframes).toEqual(slide());
+    expect(animations[0]?.keyframes).toEqual(defaultKeyframes);
   });
 
   it("stops the observation and the animation on unmount", async () => {
-    const { wrapper, element } = mountReveal({ once: false });
+    const { wrapper, element } = mountReveal();
     await intersect(element, true);
     wrapper.unmount();
 

@@ -3,16 +3,14 @@ import type { ContractOptions } from "./contract";
 export interface SSRHarness {
   /** Renders an element with `data-contract` and returns the HTML. */
   render(options: ContractOptions, style?: Record<string, string>): Promise<string>;
-  /** Scenario ids that fail until a later phase fixes them. */
-  drift?: string[];
 }
 
-function declarations(html: string) {
+function declarations(html: string, value: string) {
   const tag = /<[a-z][^>]*\bdata-contract\b[^>]*>/i.exec(html)?.[0] ?? "";
   expect(tag, "the markup has an element with data-contract").not.toBe("");
   const style = /\bstyle="([^"]*)"/.exec(tag)?.[1] ?? "";
   return {
-    hidden: /\bdata-reveal="hidden"/.test(tag),
+    hidden: new RegExp(`\\bdata-reveal="${value}"`).test(tag),
     style: style
       .split(";")
       .filter(Boolean)
@@ -23,28 +21,32 @@ function declarations(html: string) {
 const last = (style: [string, string][], property: string) =>
   style.findLast(([name]) => name === property)?.[1];
 
-export function describeSSRContract(name: string, harness: SSRHarness) {
-  const drift = new Set(harness.drift);
-  const scenario = (id: string, title: string, fn: () => Promise<void>) =>
-    (drift.has(id) ? it.fails : it)(`${id} ${title}`, fn);
-
-  describe(`reveal SSR contract: ${name}`, () => {
-    for (const [id, options] of [
-      ["SS01a", {}],
-      ["SS01b", { when: false }],
-      ["SS01c", { when: null }],
-      // The entrance plays after hydration, so a shown element does not flash.
-      ["SS02", { when: true }],
+/** Runs the SSR scenarios. A cascade hides its children with `data-reveal="cascade"`. */
+export function describeSSRContract(
+  name: string,
+  harness: SSRHarness,
+  hiddenValue: "hidden" | "cascade" = "hidden",
+) {
+  describe(`${hiddenValue === "cascade" ? "cascade" : "reveal"} SSR contract: ${name}`, () => {
+    for (const options of [
+      {},
+      { when: false },
+      { when: null },
+      // The entrance plays after hydration, so an element with `when: true` does not flash.
+      { when: true },
     ] as const) {
-      scenario(id, `renders the element hidden for ${JSON.stringify(options)}`, async () => {
-        const { hidden, style } = declarations(await harness.render(options));
+      it(`renders the element hidden for ${JSON.stringify(options)}`, async () => {
+        const { hidden, style } = declarations(await harness.render(options), hiddenValue);
         expect(hidden).toBe(true);
         expect(last(style, "opacity")).toBeUndefined();
       });
     }
 
-    scenario("SS03", "keeps the style of the user on a hidden element", async () => {
-      const { style } = declarations(await harness.render({}, { color: "red", opacity: "0.5" }));
+    it("keeps the style of the user on a hidden element", async () => {
+      const { style } = declarations(
+        await harness.render({}, { color: "red", opacity: "0.5" }),
+        hiddenValue,
+      );
       expect(last(style, "color")).toBe("red");
       expect(last(style, "opacity")).toBe("0.5");
     });

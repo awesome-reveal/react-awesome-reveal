@@ -1,7 +1,7 @@
 import { act, render, screen } from "@testing-library/react";
 import { StrictMode, useLayoutEffect, version } from "react";
 
-import { slide } from "../src/keyframes";
+import { defaultKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
 import { type RevealOptions, useReveal } from "../src/useReveal";
 import {
   animations,
@@ -13,7 +13,7 @@ import { observerOf } from "@awesome-reveal/test-utils/intersection-observer";
 import { intersect } from "./intersect";
 
 function Box(props: Partial<RevealOptions>) {
-  const { getProps, revealed } = useReveal<HTMLDivElement>({ keyframes: slide(), ...props });
+  const { getProps, revealed } = useReveal<HTMLDivElement>(props as RevealOptions);
 
   return (
     <div {...getProps({ "data-testid": "box", "data-revealed": revealed })}>
@@ -50,32 +50,9 @@ describe(`useReveal (React ${version})`, () => {
     expect(animations).toHaveLength(1);
     expect(animations[0]).toMatchObject({
       element: box(),
-      keyframes: slide(),
+      keyframes: defaultKeyframes,
       options: { duration: 600, delay: 0, fill: "backwards" },
     });
-  });
-
-  it("passes duration and delay to the animation", () => {
-    render(<Box duration={300} delay={100} />);
-    intersect(box(), true);
-
-    expect(animations[0]?.options).toEqual({ duration: 300, delay: 100, fill: "backwards" });
-  });
-
-  it("staggers the element children instead of the element", () => {
-    render(<Box delay={100} stagger={50} />);
-    intersect(box(), true);
-
-    expect(animations.map(({ element }) => element.textContent)).toEqual(["one", "two", "three"]);
-    expect(animations.map(({ options }) => (options as KeyframeAnimationOptions).delay)).toEqual([
-      100, 150, 200,
-    ]);
-  });
-
-  it("passes threshold and rootMargin to the observer", () => {
-    render(<Box threshold={0.5} rootMargin="10px" />);
-
-    expect(observerOf(box())).toMatchObject({ thresholds: [0.5], rootMargin: "10px" });
   });
 
   it("waits until the visible fraction reaches the threshold", () => {
@@ -95,19 +72,6 @@ describe(`useReveal (React ${version})`, () => {
     expect(observerOf(box())).toBeUndefined();
   });
 
-  it("hides the element again and cancels the animation when it leaves the viewport and once is false", () => {
-    render(<Box once={false} />);
-    intersect(box(), true);
-    intersect(box(), false);
-
-    expect(box()).toHaveStyle({ opacity: "0" });
-    expect(runningAnimations()).toHaveLength(0);
-
-    intersect(box(), true);
-    expect(animations).toHaveLength(2);
-    expect(runningAnimations()).toHaveLength(1);
-  });
-
   it("cancels the animation on unmount", async () => {
     const { unmount } = render(<Box />);
     intersect(box(), true);
@@ -118,16 +82,17 @@ describe(`useReveal (React ${version})`, () => {
   });
 
   it("applies option changes to the next reveal without replaying", () => {
-    const { rerender } = render(<Box once={false} duration={300} />);
+    const keyframes = [{ opacity: 0 }, { opacity: 1 }];
+    const { rerender } = render(<Box duration={300} />);
     intersect(box(), true);
-    rerender(<Box once={false} duration={400} keyframes={[{ opacity: 0 }, {}]} />);
+    rerender(<Box duration={400} keyframes={keyframes} />);
 
     expect(animations).toHaveLength(1);
 
-    intersect(box(), false);
-    intersect(box(), true);
+    rerender(<Box when={false} duration={400} keyframes={keyframes} />);
+    rerender(<Box when duration={400} keyframes={keyframes} />);
     expect(animations[1]).toMatchObject({
-      keyframes: [{ opacity: 0 }, {}],
+      keyframes: [{ opacity: 0 }, { opacity: 1 }],
       options: { duration: 400 },
     });
   });
@@ -135,7 +100,7 @@ describe(`useReveal (React ${version})`, () => {
   it("starts the animation in the commit that reveals the element", () => {
     const animationsAtCommit: number[] = [];
     function Probe() {
-      const { getProps, revealed } = useReveal<HTMLDivElement>({ keyframes: slide() });
+      const { getProps, revealed } = useReveal<HTMLDivElement>({ keyframes: defaultKeyframes });
       useLayoutEffect(() => {
         if (revealed) animationsAtCommit.push(animations.length);
       }, [revealed]);
@@ -159,22 +124,13 @@ describe(`useReveal (React ${version})`, () => {
     expect(animations).toHaveLength(1);
   });
 
-  it.each([
-    ["user", true, 0],
-    ["user", false, 1],
-    ["always", false, 0],
-    ["never", true, 1],
-  ] as const)(
-    "with reducedMotion %s and a reduce preference of %s, plays %i animations",
-    (reducedMotion, reduce, count) => {
-      stubReducedMotion(reduce);
-      render(<Box reducedMotion={reducedMotion} />);
-      intersect(box(), true);
-
-      expect(box()).toHaveStyle({ opacity: "1" });
-      expect(animations).toHaveLength(count);
-    },
-  );
+  it.each([true, false])("automatically respects reduced motion: %s", (reduce) => {
+    stubReducedMotion(reduce);
+    render(<Box />);
+    expect(box()).toHaveStyle({ opacity: reduce ? "1" : "0" });
+    intersect(box(), true);
+    expect(animations).toHaveLength(reduce ? 0 : 1);
+  });
 
   it("reveals the element when IntersectionObserver is not available", () => {
     vi.stubGlobal("IntersectionObserver", undefined);
@@ -215,7 +171,7 @@ describe(`useReveal (React ${version})`, () => {
 
   it("plays the entrance on a new element when `when` turns true as the old one unmounts", async () => {
     function Toggle({ show, when }: { show: boolean; when: boolean }) {
-      const { getProps } = useReveal<HTMLDivElement>({ keyframes: slide(), when });
+      const { getProps } = useReveal<HTMLDivElement>({ keyframes: defaultKeyframes, when });
       return show ? <div {...getProps({ "data-testid": "box" })} /> : null;
     }
     const { rerender } = render(<Toggle show when={false} />);
@@ -228,7 +184,11 @@ describe(`useReveal (React ${version})`, () => {
 
   it("plays the entrance of a new element with the options of the same commit", () => {
     function Late({ show, duration }: { show: boolean; duration: number }) {
-      const { getProps } = useReveal<HTMLDivElement>({ keyframes: slide(), when: true, duration });
+      const { getProps } = useReveal<HTMLDivElement>({
+        keyframes: defaultKeyframes,
+        when: true,
+        duration,
+      });
       return show ? <div {...getProps({ "data-testid": "box" })} /> : null;
     }
     const { rerender } = render(<Late show={false} duration={100} />);
@@ -240,7 +200,7 @@ describe(`useReveal (React ${version})`, () => {
 
   it("does not animate a new element when `when` turns false as it mounts", () => {
     function Late({ show, when }: { show: boolean; when: boolean }) {
-      const { getProps } = useReveal<HTMLDivElement>({ keyframes: slide(), when });
+      const { getProps } = useReveal<HTMLDivElement>({ keyframes: defaultKeyframes, when });
       return show ? <div {...getProps({ "data-testid": "box" })} /> : null;
     }
     const { rerender } = render(<Late show={false} when />);

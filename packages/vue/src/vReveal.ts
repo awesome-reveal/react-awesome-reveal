@@ -1,30 +1,58 @@
+import "#reveal-style";
+
 import type { Directive } from "vue";
-
 import {
+  type CascadeOptions,
+  cascadeHiddenAttributes,
+  createCascade,
+  createReveal,
   hiddenAttributes,
-  type RevealController,
-  reveal,
   type RevealOptions,
-} from "@awesome-reveal/core";
+  type RevealStore,
+} from "@awesome-reveal/core/adapter";
 
-const controllers = new WeakMap<HTMLElement, RevealController>();
+const stores = new WeakMap<HTMLElement, RevealStore<CascadeOptions>>();
+
+function defineDirective<Options extends CascadeOptions>(
+  create: (options?: Options) => RevealStore<Options>,
+  hidden: Record<"data-reveal", string>,
+): Directive<HTMLElement, Options | undefined> {
+  const hide = (element: HTMLElement) => element.setAttribute("data-reveal", hidden["data-reveal"]);
+  return {
+    deep: true,
+    mounted(element, { value }) {
+      const state = create(value);
+      state.subscribe((visible) => {
+        if (visible) element.removeAttribute("data-reveal");
+        else hide(element);
+      });
+      hide(element);
+      stores.set(element, state as RevealStore<CascadeOptions>);
+      state.attach(element);
+    },
+    updated(element, { value }) {
+      stores.get(element)?.setOptions(value ?? {});
+    },
+    beforeUnmount(element) {
+      stores.get(element)?.attach(null);
+      stores.delete(element);
+      element.removeAttribute("data-reveal");
+    },
+    getSSRProps: () => hidden,
+  };
+}
+
+/** Reveals an existing element and follows reactive directive options. */
+export const vReveal = /* @__PURE__ */ defineDirective<RevealOptions>(
+  createReveal,
+  hiddenAttributes,
+);
 
 /**
- * Animates the element when it enters the viewport: `<div v-reveal="{ keyframes: slide() }">`.
+ * Reveals the direct element children of an existing element in sequence, and follows reactive
+ * directive options.
  */
-export const vReveal: Directive<HTMLElement, RevealOptions | undefined> = {
-  // Runs `updated` when a reactive options object changes in place.
-  deep: true,
-  mounted(element, { value }) {
-    controllers.set(element, reveal(element, value ?? {}));
-  },
-  updated(element, { value }) {
-    controllers.get(element)!.setOptions(value ?? {});
-  },
-  beforeUnmount(element) {
-    controllers.get(element)?.destroy();
-    controllers.delete(element);
-  },
-  // Also with `when: true`: the entrance plays after hydration.
-  getSSRProps: () => hiddenAttributes,
-};
+export const vCascade = /* @__PURE__ */ defineDirective<CascadeOptions>(
+  createCascade,
+  cascadeHiddenAttributes,
+);

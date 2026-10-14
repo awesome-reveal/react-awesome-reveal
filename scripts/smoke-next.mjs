@@ -48,7 +48,8 @@ async function checkBrowser(base) {
     page.on("pageerror", (error) => problems.push(error.message));
 
     await page.goto(base);
-    // The first element is in view, so it reveals. The one below the fold stays hidden until scrolled to.
+    // The first element is in view, so it reveals. The element below the fold stays hidden until the
+    // test scrolls to it.
     await page.waitForSelector("#top:not([data-reveal])");
     expect(
       (await page.locator("#below").getAttribute("data-reveal")) === "hidden",

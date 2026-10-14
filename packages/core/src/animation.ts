@@ -1,0 +1,129 @@
+import { report } from "./report.js";
+import type { CascadeOptions, RevealOptions, StartState } from "./types.js";
+
+const unit = (value: number | string, suffix: string) =>
+  typeof value === "number" ? `${value}${suffix}` : value;
+
+function entrance(options: RevealOptions): Keyframe[] {
+  if (options.keyframes) return options.keyframes;
+  const from = options.from ?? "bottom";
+  const state: StartState =
+    typeof from === "object"
+      ? from
+      : {
+          opacity: 0,
+          ...(from === "left" || from === "right"
+            ? { x: from === "left" ? -24 : 24 }
+            : { y: from === "top" ? -24 : 24 }),
+        };
+  const { opacity, x, y, scale, rotate, blur } = state;
+  const easing = "cubic-bezier(0.22, 1, 0.36, 1)";
+  const frames: Keyframe[] = [];
+  const move: Keyframe = {};
+  const rest: Keyframe = {};
+  if (x !== undefined || y !== undefined) {
+    move.translate = `${unit(x ?? 0, "px")} ${unit(y ?? 0, "px")}`;
+    rest.translate = "0px 0px";
+  }
+  if (scale !== undefined) {
+    move.scale = scale;
+    rest.scale = 1;
+  }
+  if (rotate !== undefined) {
+    move.rotate = unit(rotate, "deg");
+    rest.rotate = "0deg";
+  }
+  if (blur !== undefined) {
+    move.filter = `blur(${unit(blur, "px")})`;
+    rest.filter = "blur(0px)";
+  }
+  // "add" with neutral values ends at the element's own styles, with no implicit keyframe.
+  const end: Keyframe = { offset: 1, composite: "add", ...rest };
+  if (opacity !== undefined) {
+    // Additive opacity cannot hide: Firefox and WebKit clamp a negative start before the addition.
+    frames.push({ offset: 0, easing, opacity });
+    end.opacity = 0;
+  }
+  if (Object.keys(move).length) {
+    // The observer measures the transformed box, and an offset can put it outside a clipping ancestor permanently.
+    // A hidden start waits at rest and moves only when it plays, while it is still transparent.
+    const hidden = opacity === 0;
+    if (hidden) frames.push({ offset: 0, composite: "add", ...rest });
+    frames.push({ offset: hidden ? 1e-6 : 0, easing, composite: "add", ...move });
+  }
+  return [...frames, end];
+}
+
+export const motionPreference = () =>
+  typeof matchMedia === "function" ? matchMedia("(prefers-reduced-motion: reduce)") : undefined;
+
+// A paused native effect holds any start keyframes, so the code does not copy CSS properties to the element.
+function motion(element: Element, options: RevealOptions, delay: number) {
+  let animation: Animation | undefined;
+  try {
+    animation = element.animate?.(entrance(options), {
+      duration: options.duration ?? 600,
+      delay,
+      fill: "backwards",
+    });
+    animation?.pause();
+    if (animation) animation.currentTime = 0;
+  } catch (error) {
+    // The browser can reject native keyframes or timing. Then the content must not stay hidden.
+    report(error);
+    animation?.cancel();
+    animation = undefined;
+  }
+  return animation;
+}
+
+interface Motions {
+  play(): void;
+  print(printing: boolean): void;
+  dispose(): void;
+}
+
+// Core has no print stylesheet, and the print rule of an adapter stops at the reveal, so print moves each effect past its fill.
+const following = new Set<Motions>();
+const onPrint = (event: Event) => {
+  for (const group of following) group.print(event.type === "beforeprint");
+};
+function listenPrint(method: "addEventListener" | "removeEventListener") {
+  globalThis[method]?.("beforeprint", onPrint);
+  globalThis[method]?.("afterprint", onPrint);
+}
+
+export const cascadeInterval = (options: CascadeOptions) => options.interval ?? 80;
+
+// Without an interval, the element itself animates.
+export function motions(element: Element, options: RevealOptions, interval?: number): Motions {
+  const targets = interval === undefined ? [element] : Array.from(element.children);
+  let animations = targets.map((target, index) => motion(target, options, index * (interval ?? 0)));
+  const group: Motions = {
+    play() {
+      for (const animation of animations)
+        // A waiting animation that page code finished or cancelled leaves the element at rest, so it does not play.
+        if (animation?.playState === "paused") animation.play();
+    },
+    // At its end time, a waiting effect is past its backwards fill, so the element prints at rest.
+    // A running child in its delay has no fill without "backwards", and keeps its time.
+    print(printing) {
+      for (const animation of animations) {
+        if (animation?.playState === "paused")
+          animation.currentTime = printing
+            ? (animation.effect?.getComputedTiming().endTime ?? 0)
+            : 0;
+        animation?.effect?.updateTiming({ fill: printing ? "none" : "backwards" });
+      }
+    },
+    dispose() {
+      for (const animation of animations) animation?.cancel();
+      animations = [];
+      following.delete(group);
+      if (!following.size) listenPrint("removeEventListener");
+    },
+  };
+  following.add(group);
+  listenPrint("addEventListener");
+  return group;
+}

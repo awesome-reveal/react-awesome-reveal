@@ -9,27 +9,37 @@ import {
   useSyncExternalStore,
 } from "react";
 
-import { createReveal, type RevealOptions } from "@awesome-reveal/core";
+import "#reveal-style";
+
+import {
+  type CascadeOptions,
+  createReveal,
+  hiddenAttributes,
+  type RevealOptions,
+  type RevealStore,
+} from "@awesome-reveal/core/adapter";
 
 export type { RevealOptions };
 
-export interface RevealTargetProps<T extends Element> {
+/** Binds an element ref and its initial visibility to a reveal. */
+export interface RevealTargetProps<T extends Element, Hidden extends string = "hidden"> {
   ref: RefCallback<T>;
-  "data-reveal": "hidden" | undefined;
+  "data-reveal": Hidden | undefined;
 }
 
-export interface RevealState<T extends Element> {
+/** Provides reveal state and props for an existing element. */
+export interface RevealState<T extends Element, Hidden extends string = "hidden"> {
   revealed: boolean;
   /**
    * Adds the reveal to the props of the element: its `ref`, merged with yours, and the
-   * `data-reveal` attribute that `reveal.css` hides. Spread the result on the element.
+   * `data-reveal` attribute that the package stylesheet hides. Spread the result on the element.
    */
   getProps<P extends object = object>(
     props?: P & { ref?: Ref<T> },
-  ): Omit<P, "ref"> & RevealTargetProps<T>;
+  ): Omit<P, "ref"> & RevealTargetProps<T, Hidden>;
 }
 
-// React 18 warns about useLayoutEffect during server rendering.
+// React 18 warns about useLayoutEffect on the server.
 const useIsomorphicLayoutEffect = typeof document === "undefined" ? useEffect : useLayoutEffect;
 
 function mergeRefs<T>(own: RefCallback<T>, user: NonNullable<Ref<T>>): RefCallback<T> {
@@ -53,15 +63,16 @@ function mergeRefs<T>(own: RefCallback<T>, user: NonNullable<Ref<T>>): RefCallba
 }
 
 // Core gets the element in the layout effect, after the options of the same commit. A detach waits
-// one microtask, so a callback ref that changes in one commit does not replay the animation.
-function createBinding<T extends Element>(options: RevealOptions) {
-  const state = createReveal(options);
-  // Stops a stable user ref from being called with null and the node again on each render.
+// one microtask, so a callback ref that changes in one commit does not replay the entrance.
+function createBinding<T extends Element, Options extends CascadeOptions>(
+  state: RevealStore<Options>,
+) {
+  // The map keeps one merged ref for each user ref, so React does not call a stable user ref again on each render.
   const refs = new WeakMap<object, RefCallback<T>>();
   let element: T | null = null;
   let attached: T | null = null;
-  function sync(next?: RevealOptions) {
-    // Drops an old element before the options apply, so that a reveal does not play on it.
+  function sync(next?: Options) {
+    // Detaches an old element before the options apply, so that the entrance does not play on it.
     if (element !== attached) state.attach(null);
     if (next) state.setOptions(next);
     state.attach((attached = element));
@@ -75,11 +86,19 @@ function createBinding<T extends Element>(options: RevealOptions) {
   return { state, refs, ref, sync, getRevealed };
 }
 
-export function useReveal<T extends Element = HTMLElement>(
-  options: RevealOptions = {},
-): RevealState<T> {
-  const [{ state, refs, ref, sync, getRevealed }] = useState(() => createBinding<T>(options));
-  // A store update renders in a microtask, before the frame of the animation start.
+export function useBinding<
+  T extends Element,
+  Options extends CascadeOptions,
+  Hidden extends string,
+>(
+  create: (options: Options) => RevealStore<Options>,
+  options: Options,
+  hidden: Hidden,
+): RevealState<T, Hidden> {
+  const [{ state, refs, ref, sync, getRevealed }] = useState(() =>
+    createBinding<T, Options>(create(options)),
+  );
+  // A store update renders in a microtask, before the frame in which the entrance starts.
   const revealed = useSyncExternalStore(state.subscribe, getRevealed, getRevealed);
   useIsomorphicLayoutEffect(() => sync(options));
 
@@ -93,9 +112,20 @@ export function useReveal<T extends Element = HTMLElement>(
     return {
       ...props,
       ref: target,
-      "data-reveal": revealed ? undefined : "hidden",
-    } as Omit<P, "ref"> & RevealTargetProps<T>;
+      "data-reveal": revealed ? undefined : hidden,
+    } as Omit<P, "ref"> & RevealTargetProps<T, Hidden>;
   }
 
   return { revealed, getProps };
+}
+
+/** Reveals an existing element through props that you spread on it. */
+export function useReveal<T extends Element = HTMLElement>(
+  options: RevealOptions = {},
+): RevealState<T> {
+  return useBinding<T, RevealOptions, "hidden">(
+    createReveal,
+    options,
+    hiddenAttributes["data-reveal"],
+  );
 }

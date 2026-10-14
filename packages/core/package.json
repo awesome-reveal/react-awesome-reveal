@@ -44,30 +44,24 @@
     "skills"
   ],
   "type": "module",
-  "sideEffects": [
-    "*.css"
-  ],
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./keyframes": {
-      "types": "./dist/keyframes/index.d.ts",
-      "default": "./dist/keyframes/index.js"
-    },
-    "./reveal.css": {
-      "types": "./dist/reveal.css.d.ts",
-      "default": "./dist/reveal.css"
-    },
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./adapter": {
+      "types": "./dist/adapter.d.ts",
+      "default": "./dist/adapter.js"
+    }
   },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "build": "tsc --noEmit && vite build",
-    "check:package": "publint --strict && attw --pack . --profile esm-only"
+    "check:package": "tsc -p test/package && publint --strict && attw --pack . --profile esm-only"
   },
   "engines": {
     "node": ">=20.19.0"

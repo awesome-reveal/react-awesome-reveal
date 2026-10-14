@@ -2,22 +2,25 @@ import { readFile } from "node:fs/promises";
 
 import { defineLibConfig } from "../../vite.lib.config.ts";
 
-// Astro compiles the .astro files of dependencies, so the component ships uncompiled.
+const components = ["Reveal.astro", "Cascade.astro", "Host.astro"];
+
+// Astro compiles the .astro files of dependencies, so the components ship uncompiled.
 export default defineLibConfig(
-  ["src/index.ts", "src/keyframes.ts", "src/element.ts"],
+  ["src/index.ts", "src/element.ts"],
   [
     {
       name: "ship-astro-components",
       enforce: "pre",
       resolveId(id) {
-        return id === "./Reveal.astro" ? { id, external: true } : null;
+        return components.some((file) => id === `./${file}`) ? { id, external: true } : null;
       },
       async generateBundle() {
-        this.emitFile({
-          type: "asset",
-          fileName: "Reveal.astro",
-          source: await readFile(new URL("src/Reveal.astro", import.meta.url), "utf8"),
-        });
+        for (const fileName of [...components, "reveal.css"])
+          this.emitFile({
+            type: "asset",
+            fileName,
+            source: await readFile(new URL(`src/${fileName}`, import.meta.url), "utf8"),
+          });
       },
     },
   ],
