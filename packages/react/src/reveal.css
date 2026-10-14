@@ -1,15 +1,17 @@
-/* Keep author opacity intact until the element reveals. */
-[data-reveal="hidden"],
-[data-reveal="cascade"] > * {
-  opacity: 0 !important;
-}
-@media (prefers-reduced-motion: reduce), (scripting: none), print {
-  [data-reveal="hidden"],
-  [data-reveal="cascade"] > * {
-    opacity: 1 !important;
+/* Until core attaches the element, a 5 s hold hides it, so content that no script reveals shows again. */
+@media screen and (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-awesome-reveal="hidden"],
+  [data-awesome-reveal="cascade"] > * {
+    animation: awesome-reveal-hold 5s !important;
+  }
+  [data-awesome-reveal="hidden"][data-awesome-reveal-ready],
+  [data-awesome-reveal="cascade"][data-awesome-reveal-ready] > * {
+    opacity: 0 !important;
   }
 }
-html[data-reveal-failed] [data-reveal="hidden"],
-html[data-reveal-failed] [data-reveal="cascade"] > * {
-  opacity: 1 !important;
+@keyframes awesome-reveal-hold {
+  from,
+  to {
+    opacity: 0;
+  }
 }

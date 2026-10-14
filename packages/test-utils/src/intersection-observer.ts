@@ -30,6 +30,23 @@ export class MockIntersectionObserver {
     }));
     this.callback(entries as IntersectionObserverEntry[], this as unknown as IntersectionObserver);
   }
+
+  /** Sends one report with an entry that has the sizes of the element and the root. */
+  triggerSized(target: Element, intersectionRatio: number, element: Size, root: Size) {
+    const entry = {
+      target,
+      intersectionRatio,
+      isIntersecting: intersectionRatio > 0,
+      boundingClientRect: element,
+      rootBounds: root,
+    };
+    this.callback([entry] as never, this as unknown as IntersectionObserver);
+  }
+}
+
+interface Size {
+  width: number;
+  height: number;
 }
 
 export function observerOf(element: Element): MockIntersectionObserver | undefined {

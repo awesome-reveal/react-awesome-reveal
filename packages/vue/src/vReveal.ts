@@ -15,15 +15,16 @@ const stores = new WeakMap<HTMLElement, RevealStore<CascadeOptions>>();
 
 function defineDirective<Options extends CascadeOptions>(
   create: (options?: Options) => RevealStore<Options>,
-  hidden: Record<"data-reveal", string>,
+  hidden: Record<"data-awesome-reveal", string>,
 ): Directive<HTMLElement, Options | undefined> {
-  const hide = (element: HTMLElement) => element.setAttribute("data-reveal", hidden["data-reveal"]);
+  const hide = (element: HTMLElement) =>
+    element.setAttribute("data-awesome-reveal", hidden["data-awesome-reveal"]);
   return {
     deep: true,
     mounted(element, { value }) {
       const state = create(value);
       state.subscribe((visible) => {
-        if (visible) element.removeAttribute("data-reveal");
+        if (visible) element.removeAttribute("data-awesome-reveal");
         else hide(element);
       });
       hide(element);
@@ -36,7 +37,7 @@ function defineDirective<Options extends CascadeOptions>(
     beforeUnmount(element) {
       stores.get(element)?.attach(null);
       stores.delete(element);
-      element.removeAttribute("data-reveal");
+      element.removeAttribute("data-awesome-reveal");
     },
     getSSRProps: () => hidden,
   };

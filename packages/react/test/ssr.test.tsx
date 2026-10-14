@@ -16,7 +16,7 @@ test("renders hidden content on the server without warnings", () => {
     </Reveal>,
   );
 
-  expect(html).toBe('<div data-reveal="hidden"><p>hello</p></div>');
+  expect(html).toBe('<div data-awesome-reveal="hidden"><p>hello</p></div>');
 });
 
 describeSSRContract("React Reveal", {

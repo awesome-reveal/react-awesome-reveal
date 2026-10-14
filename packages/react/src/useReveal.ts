@@ -24,7 +24,7 @@ export type { RevealOptions };
 /** Binds an element ref and its initial visibility to a reveal. */
 export interface RevealTargetProps<T extends Element, Hidden extends string = "hidden"> {
   ref: RefCallback<T>;
-  "data-reveal": Hidden | undefined;
+  "data-awesome-reveal": Hidden | undefined;
 }
 
 /** Provides reveal state and props for an existing element. */
@@ -32,7 +32,7 @@ export interface RevealState<T extends Element, Hidden extends string = "hidden"
   revealed: boolean;
   /**
    * Adds the reveal to the props of the element: its `ref`, merged with yours, and the
-   * `data-reveal` attribute that the package stylesheet hides. Spread the result on the element.
+   * `data-awesome-reveal` attribute that the package stylesheet hides. Spread the result on the element.
    */
   getProps<P extends object = object>(
     props?: P & { ref?: Ref<T> },
@@ -112,7 +112,7 @@ export function useBinding<
     return {
       ...props,
       ref: target,
-      "data-reveal": revealed ? undefined : hidden,
+      "data-awesome-reveal": revealed ? undefined : hidden,
     } as Omit<P, "ref"> & RevealTargetProps<T, Hidden>;
   }
 
@@ -126,6 +126,6 @@ export function useReveal<T extends Element = HTMLElement>(
   return useBinding<T, RevealOptions, "hidden">(
     createReveal,
     options,
-    hiddenAttributes["data-reveal"],
+    hiddenAttributes["data-awesome-reveal"],
   );
 }

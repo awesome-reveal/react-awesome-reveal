@@ -165,14 +165,22 @@ describe("zero-CSS reveal", () => {
     scrollIntoView(document.getElementById("clip")!);
     await expect.poll(() => animation(small).playState).toBe("running");
   });
-  it("reveals an element taller than the viewport when it leaves before the threshold", async () => {
+  it("reveals an element taller than the viewport at its entry when it cannot reach the threshold", async () => {
     target.style.height = "300vh";
     track(reveal(target, { ...native, threshold: 0.5 }));
-    scrollTo(0, target.offsetTop - innerHeight / 2);
     await settle();
     expect(animation().playState).toBe("paused");
-    scrollTo(0, target.offsetTop + target.offsetHeight + 1);
+    scrollTo(0, target.offsetTop - innerHeight / 2);
     await expect.poll(() => animation().playState).toBe("running");
+  });
+  it("reveals when focus enters the element, also below the threshold", async () => {
+    target.innerHTML = `<a href="#">a</a>`;
+    track(reveal(target, { ...native, threshold: 0.8 }));
+    showTopHalf(target);
+    await settle();
+    expect(animation().playState).toBe("paused");
+    target.querySelector("a")!.focus();
+    expect(animation().playState).toBe("running");
   });
   it("reveals an element taller than its scroll container when it leaves before the threshold", async () => {
     document.body.innerHTML = `<div id="scroller" style="height: 300px; overflow: auto"><div style="height: 400px"></div><div id="tall" style="height: 900px"></div><div style="height: 400px"></div></div>`;

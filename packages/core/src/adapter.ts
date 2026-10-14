@@ -31,7 +31,8 @@ export interface RevealStore<Options extends RevealOptions = RevealOptions> {
    */
   subscribe(listener: (revealed: boolean) => void): () => void;
   /**
-   * Observes and animates the element. A new element keeps the state and does not play the
+   * Observes and animates the element, and marks it with `data-awesome-reveal-ready`, so that the
+   * stylesheet hides it until it reveals. A new element keeps the state and does not play the
    * entrance again. `null` stops the observation and cancels the entrance. If you attach the same
    * element again right after `null`, its entrance plays again.
    */
@@ -45,14 +46,14 @@ export interface RevealStore<Options extends RevealOptions = RevealOptions> {
 }
 
 /** Gives the attributes that hide framework content before hydration. */
-export const hiddenAttributes = { "data-reveal": "hidden" } as const;
+export const hiddenAttributes = { "data-awesome-reveal": "hidden" } as const;
 
 /** Gives the attributes that hide the direct children of a cascade before hydration. */
-export const cascadeHiddenAttributes = { "data-reveal": "cascade" } as const;
+export const cascadeHiddenAttributes = { "data-awesome-reveal": "cascade" } as const;
 
 const restarts = ["when", "threshold"] as const;
 
-// The entrance starts before the next paint, so no flash shows when the adapter removes the `data-reveal` attribute.
+// The entrance starts before the next paint, so no flash shows when the adapter removes the `data-awesome-reveal` attribute.
 // A cascade reads the children here, so that children that render after `attach()` also play.
 function play(element: Element, options: CoreRevealOptions, interval?: number): () => void {
   const group = motions(element, options, interval);
@@ -60,10 +61,8 @@ function play(element: Element, options: CoreRevealOptions, interval?: number): 
   return group.dispose;
 }
 
-function start(element: Element) {
-  const root = element.ownerDocument.documentElement;
-  if (!root.hasAttribute("data-reveal-ready")) root.setAttribute("data-reveal-ready", "");
-}
+// The stylesheet holds an element with this marker until it reveals. Without it, the hold ends after a few seconds.
+const ready = "data-awesome-reveal-ready";
 
 function createStore<Options extends CascadeOptions>(
   options: Options,
@@ -141,7 +140,8 @@ function createStore<Options extends CascadeOptions>(
     },
     attach(next) {
       if (next === element) return;
-      if (next) start(next);
+      element?.removeAttribute(ready);
+      next?.setAttribute(ready, "");
       cancel();
       preference?.removeEventListener?.("change", onPreference);
       if (next) preference?.addEventListener?.("change", onPreference);

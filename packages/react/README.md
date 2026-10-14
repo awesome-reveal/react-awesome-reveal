@@ -42,7 +42,7 @@ export function Card() {
 }
 ```
 
-Spread `getProps()` on one element. Give your own `ref` to `getProps()`, so that the hook can merge it with its ref. The hook does not change your styles. For a custom component, pass the ref and the `data-reveal` prop to a DOM element. The package reserves `data-reveal`.
+Spread `getProps()` on one element. Give your own `ref` to `getProps()`, so that the hook can merge it with its ref. The hook does not change your styles. For a custom component, pass the ref and the `data-awesome-reveal` prop to a DOM element. The package reserves `data-awesome-reveal`.
 
 `when: true` reveals the element manually, and `when: false` resets it without an exit animation. To let the viewport control the reveal, omit `when` or set it to `null`. When the viewport controls the reveal, the entrance plays one time, and the observation stops when the entrance starts. A change of `when` from `false` to `true` plays the entrance again. `when: false` during the `delay` also resets the element, and the entrance does not play.
 
@@ -99,43 +99,24 @@ export function Steps() {
 
 ## SSR and accessibility
 
-The server markup has `data-reveal="hidden"`, or `data-reveal="cascade"` for a cascade. The package stylesheet hides this element, or the direct children of a cascade, until it reveals. The stylesheet shows the content in these cases:
+The server markup has `data-awesome-reveal="hidden"`, or `data-awesome-reveal="cascade"` for a cascade. The package stylesheet hides this element, or the direct children of a cascade, until it reveals. The stylesheet shows the content in these cases:
 
 - The user prefers reduced motion.
 - The user prints the page.
-- Scripting is off (`scripting: none`).
+- JavaScript is off.
 
 Reduced motion always has priority over the entrance and over `when: false`.
 
 `Reveal` and `Cascade` are Client Component boundaries, so a Next.js Server Component can render them with serializable options. Native keyframes are serializable too. The hook and the callbacks need a Client Component. On the server, the `node` import condition resolves the internal stylesheet import to an empty module. The browser build resolves it to the CSS.
 
-If hydration fails while JavaScript is on, the content can stay hidden. See [Recover when the script fails](#recover-when-the-script-fails).
-
-### Recover when the script fails
-
-The stylesheet does not show the content when a script fails or a blocker stops it, because the browser still runs scripts. To show the content in this case, put this script in the document head:
-
-```html
-<script>
-  setTimeout(() => {
-    const html = document.documentElement;
-    if (!html.hasAttribute("data-reveal-ready")) html.setAttribute("data-reveal-failed", "");
-  }, 5000);
-</script>
-```
-
-The package sets `data-reveal-ready` on `<html>` when it attaches the first element. If the attribute is not there after the timeout, the script sets `data-reveal-failed`, and the stylesheet shows the hidden elements.
-
-- Use a timeout that is longer than the load time of your script on a slow network.
-- The script does not cover code that loads later and fails, such as a dynamic `import()`.
-- With a strict Content Security Policy, give the `<script>` a `nonce`, or allow its hash.
+The stylesheet hides the server markup for at most 5 seconds before the script attaches the element. When it attaches the element, it adds `data-awesome-reveal-ready`, and the element stays hidden until it reveals. So if the script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again and plays its entrance. This happens with slow hydration, and each time with lazy hydration, such as an Astro `client:visible` island. Hydrate reveal content eagerly.
 
 ### Limits
 
-- The `scripting: none` rule needs Chrome 120, Firefox 113 or Safari 17. In older browsers, the content stays hidden when JavaScript is off.
 - The stylesheet does not reach a shadow root, so it does not hide an element in a shadow root before the reveal.
 - Do not give a hidden element an inline `opacity` with `!important`. It has priority over the stylesheet, so the element shows before the reveal.
-- Hidden content stays focusable. A focused control can stay hidden when `when` is `false` or `threshold` is high. Do not hide the only way to a control.
+- The stylesheet hides with the `awesome-reveal-hold` CSS animation, which replaces your own `animation` on a hidden element until it reveals. An `animation` with `!important` of your own stops the hold. The hold fires `animationstart` and `animationend` events, and shows in `getAnimations()`.
+- Focus in a hidden element reveals it, but not with `when: false`. Do not hide the only way to a control with `when: false`.
 
 ## Migrating from v4
 

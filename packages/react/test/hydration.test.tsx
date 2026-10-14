@@ -51,41 +51,47 @@ describe(`hydration (React ${version})`, () => {
   });
 
   it("hydrates Reveal hidden, then reveals it", async () => {
-    const element = await hydrate('<div data-reveal="hidden">x</div>', <Reveal>x</Reveal>);
+    const element = await hydrate('<div data-awesome-reveal="hidden">x</div>', <Reveal>x</Reveal>);
 
     expect(element).toHaveStyle({ opacity: "0" });
     expect(animations).toHaveLength(0);
     intersect(element, true);
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(element).toHaveStyle({ opacity: "1" });
     expect(animations).toHaveLength(1);
   });
 
   it("hydrates useReveal hidden, then reveals it", async () => {
-    const element = await hydrate('<div data-reveal="hidden"><span>one</span></div>', <HookBox />);
+    const element = await hydrate(
+      '<div data-awesome-reveal="hidden"><span>one</span></div>',
+      <HookBox />,
+    );
 
     expect(element).toHaveStyle({ opacity: "0" });
     expect(animations).toHaveLength(0);
     intersect(element, true);
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(element).toHaveStyle({ opacity: "1" });
     expect(animations).toHaveLength(1);
   });
 
   it("hydrates Reveal with when hidden, then plays the entrance once", async () => {
-    const element = await hydrate('<div data-reveal="hidden">x</div>', <Reveal when>x</Reveal>);
+    const element = await hydrate(
+      '<div data-awesome-reveal="hidden">x</div>',
+      <Reveal when>x</Reveal>,
+    );
 
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(animations.map((animation) => animation.element)).toEqual([element]);
   });
 
   it("hydrates useReveal with when hidden, then plays the entrance once", async () => {
     const element = await hydrate(
-      '<div data-reveal="hidden"><span>one</span></div>',
+      '<div data-awesome-reveal="hidden"><span>one</span></div>',
       <HookBox when />,
     );
 
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(animations.map((animation) => animation.element)).toEqual([element]);
   });
 
@@ -100,13 +106,16 @@ describe(`hydration (React ${version})`, () => {
     ["Cascade", CascadeBox],
     ["useCascade", CascadeHookBox],
   ])("hydrates %s with hidden children, then reveals them in sequence", async (_, Box) => {
-    const element = await hydrate('<ul data-reveal="cascade"><li>a</li><li>b</li></ul>', <Box />);
+    const element = await hydrate(
+      '<ul data-awesome-reveal="cascade"><li>a</li><li>b</li></ul>',
+      <Box />,
+    );
     const children = Array.from(element.children);
 
     expect(element).toHaveStyle({ opacity: "1" });
     expect(children[0]).toHaveStyle({ opacity: "0" });
     intersect(element, true);
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(children[0]).toHaveStyle({ opacity: "1" });
     expect(animations.map((animation) => animation.element)).toEqual(children);
   });

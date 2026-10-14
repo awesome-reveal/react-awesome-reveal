@@ -55,13 +55,13 @@ export class RevealElement extends HTMLElement {
     const target = this.firstElementChild as HTMLElement | null;
     if (!target) return;
     const cascade = this.hasAttribute("cascade");
-    const hidden = (cascade ? cascadeHiddenAttributes : hiddenAttributes)["data-reveal"];
+    const hidden = (cascade ? cascadeHiddenAttributes : hiddenAttributes)["data-awesome-reveal"];
     // Invalid JSON throws after the reveal exists, so the element does not stay hidden.
-    target.setAttribute("data-reveal", hidden);
+    target.setAttribute("data-awesome-reveal", hidden);
     this.controller = cascade ? createCascade({ onReveal }) : createReveal({ onReveal });
     this.controller.subscribe((visible) => {
-      if (visible) target.removeAttribute("data-reveal");
-      else target.setAttribute("data-reveal", hidden);
+      if (visible) target.removeAttribute("data-awesome-reveal");
+      else target.setAttribute("data-awesome-reveal", hidden);
     });
     this.controller.attach(target);
     this.controller.setOptions(readOptions(this));
@@ -75,7 +75,7 @@ export class RevealElement extends HTMLElement {
     queueMicrotask(() => {
       if (this.isConnected) return;
       this.controller?.attach(null);
-      this.firstElementChild?.removeAttribute("data-reveal");
+      this.firstElementChild?.removeAttribute("data-awesome-reveal");
       this.controller = undefined;
     });
   }

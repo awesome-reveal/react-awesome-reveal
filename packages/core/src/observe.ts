@@ -1,6 +1,17 @@
 import { report } from "./report.js";
 import type { RevealOptions } from "./types.js";
 
+// The viewport is the largest root, so an element that cannot reach the threshold in it reveals at its entry.
+// In a smaller scroll container, the reveal at the exit stays the fallback.
+function reachable(
+  { rootBounds: root, boundingClientRect: box }: IntersectionObserverEntry,
+  minimum: number,
+) {
+  return (
+    !root || Math.min(1, root.width / box.width) * Math.min(1, root.height / box.height) >= minimum
+  );
+}
+
 // The browser validates the threshold. Without a working IntersectionObserver, the element reveals immediately.
 export function observe(
   element: Element,
@@ -11,6 +22,11 @@ export function observe(
   const disconnect = () => {
     observer?.disconnect();
     observer = undefined;
+    element.removeEventListener("focusin", enter);
+  };
+  const enter = () => {
+    disconnect();
+    onEnter();
   };
   if (typeof IntersectionObserver === "undefined") {
     onEnter();
@@ -24,17 +40,21 @@ export function observe(
         // A fast scroll can deliver the entry below the threshold and the exit in one report.
         for (const entry of entries) {
           if (!observer) return;
-          // An element that leaves before it reaches the threshold, such as one taller than the viewport, must not stay hidden.
-          if (entry.isIntersecting && entry.intersectionRatio < minimum) seen = true;
-          else if (entry.isIntersecting || seen) {
-            disconnect();
-            onEnter();
-          }
+          if (
+            entry.isIntersecting &&
+            entry.intersectionRatio < minimum &&
+            reachable(entry, minimum)
+          )
+            seen = true;
+          // An element that leaves before it reaches the threshold, such as one in a small scroll container, must not stay hidden.
+          else if (entry.isIntersecting || seen) enter();
         }
       },
       { threshold: [0, minimum] },
     );
     observer.observe(element);
+    // Focus in a waiting element must not stay invisible.
+    element.addEventListener("focusin", enter);
   } catch (error) {
     disconnect();
     report(error);

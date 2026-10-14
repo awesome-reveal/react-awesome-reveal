@@ -4,7 +4,7 @@ import { intersect, observerOf } from "@awesome-reveal/test-utils/intersection-o
 import type { RevealElement } from "../src/element";
 
 function render(options?: object) {
-  document.body.innerHTML = `<awesome-reveal><p data-reveal="hidden">hello</p></awesome-reveal>`;
+  document.body.innerHTML = `<awesome-reveal><p data-awesome-reveal="hidden">hello</p></awesome-reveal>`;
   const host = document.querySelector<RevealElement>("awesome-reveal")!;
   // Sets the attribute after the connection, as the browser parser can.
   if (options) host.setAttribute("options", JSON.stringify(options));
@@ -15,7 +15,7 @@ function connect(options: object, when?: string) {
   const host = document.createElement("awesome-reveal") as RevealElement;
   host.setAttribute("options", JSON.stringify(options));
   if (when != null) host.setAttribute("when", when);
-  host.innerHTML = `<p data-reveal="hidden">hello</p>`;
+  host.innerHTML = `<p data-awesome-reveal="hidden">hello</p>`;
   document.body.append(host);
   return { host, element: host.firstElementChild as HTMLElement };
 }
@@ -29,7 +29,7 @@ describe("<awesome-reveal>", () => {
 
     intersect(element, true);
 
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(animations).toHaveLength(1);
     expect(animations[0]).toMatchObject({ element, options: { duration: 100 } });
   });
@@ -45,7 +45,7 @@ describe("<awesome-reveal>", () => {
   it("reveals at once with `when`, and does not observe the viewport", () => {
     const { element } = connect({}, "true");
 
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(observerOf(element)).toBeUndefined();
     expect(animations).toHaveLength(1);
   });
@@ -68,7 +68,7 @@ describe("<awesome-reveal>", () => {
     host.when = true;
     expect(host.getAttribute("when")).toBe("true");
     expect(host.revealed).toBe(true);
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
 
     host.when = null;
     expect(host.hasAttribute("when")).toBe(false);
@@ -104,7 +104,7 @@ describe("<awesome-reveal>", () => {
     document.body.append(document.createElement("div"), host);
     await Promise.resolve();
 
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(observerOf(element)).toBeUndefined();
     expect(animations).toHaveLength(1);
   });
@@ -120,7 +120,7 @@ describe("<awesome-reveal>", () => {
       else document.body.append(document.createElement("div"), host);
       await Promise.resolve();
 
-      expect(element).toHaveAttribute("data-reveal", "hidden");
+      expect(element).toHaveAttribute("data-awesome-reveal", "hidden");
       expect(observerOf(element)).toBe(observer);
     },
   );
@@ -132,7 +132,7 @@ describe("<awesome-reveal>", () => {
     // jsdom has no moveBefore(), which calls this callback instead of the disconnection.
     host.connectedMoveCallback();
 
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(observerOf(element)).toBeUndefined();
   });
 
@@ -195,7 +195,7 @@ describe("<awesome-reveal>", () => {
   function connectRaw(value: string) {
     const host = document.createElement("awesome-reveal") as RevealElement;
     host.setAttribute("options", value);
-    host.innerHTML = `<p data-reveal="hidden">hello</p>`;
+    host.innerHTML = `<p data-awesome-reveal="hidden">hello</p>`;
     document.body.append(host);
     return host.firstElementChild as HTMLElement;
   }
@@ -207,7 +207,7 @@ describe("<awesome-reveal>", () => {
 
       intersect(element, true);
 
-      expect(element).not.toHaveAttribute("data-reveal");
+      expect(element).not.toHaveAttribute("data-awesome-reveal");
       expect(animations).toHaveLength(1);
     },
   );
@@ -226,7 +226,7 @@ describe("<awesome-reveal>", () => {
     intersect(element, true);
 
     expect(errors).toEqual([expect.any(SyntaxError)]);
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(animations[0]?.options).toMatchObject({ duration: 600 });
   });
 

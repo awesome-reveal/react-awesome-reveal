@@ -34,7 +34,7 @@ describe("hydration", () => {
 
     expect(element).toHaveStyle({ opacity: "0" });
     await intersect(element, true);
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(element).toHaveStyle({ opacity: "1" });
     expect(animations).toHaveLength(1);
     app.unmount();
@@ -45,7 +45,7 @@ describe("hydration", () => {
 
     expect(element).toHaveStyle({ opacity: "0" });
     await intersect(element, true);
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(element).toHaveStyle({ opacity: "1" });
     app.unmount();
   });
@@ -57,7 +57,7 @@ describe("hydration", () => {
     const { app, element } = await hydrate(component, props);
 
     await nextTick();
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(animations.map((animation) => animation.element)).toEqual([element]);
     app.unmount();
   });
@@ -79,7 +79,7 @@ describe("hydration", () => {
     expect(element).toHaveStyle({ opacity: "1" });
     expect(children[0]).toHaveStyle({ opacity: "0" });
     await intersect(element, true);
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(children[0]).toHaveStyle({ opacity: "1" });
     expect(animations.map((animation) => animation.element)).toEqual(children);
     app.unmount();

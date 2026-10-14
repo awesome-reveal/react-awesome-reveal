@@ -49,7 +49,7 @@ type Component<Props extends Record<string, unknown>> = DefineSetupFnComponent<
 function defineReveal(
   name: string,
   create: (options: CascadeOptions) => RevealStore<CascadeOptions>,
-  hidden: Record<"data-reveal", string>,
+  hidden: Record<"data-awesome-reveal", string>,
   extraProps: { interval?: NumberConstructor } = {},
 ) {
   return defineComponent(

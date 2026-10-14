@@ -15,7 +15,7 @@ const [name, ...extra] = process.argv.slice(2);
 
 const hiddenCheck = (render) => `
 const html = ${render};
-if (!html.includes('data-reveal="hidden"')) throw new Error("The server markup is not hidden: " + html);
+if (!html.includes('data-awesome-reveal="hidden"')) throw new Error("The server markup is not hidden: " + html);
 console.log(html);
 `;
 
@@ -214,7 +214,7 @@ export function Card() {
     build: ["astro", "build"],
     verify: (app) => {
       const html = readFileSync(join(app, "dist/index.html"), "utf8");
-      if (!html.includes('data-reveal="hidden"'))
+      if (!html.includes('data-awesome-reveal="hidden"'))
         throw new Error("The built page has no hidden element");
     },
     files: {

@@ -22,7 +22,7 @@ describe(`v-reveal (Vue ${version})`, () => {
     const { element } = mountBox();
 
     expect(element).toHaveStyle({ opacity: "0" });
-    expect(element).toHaveAttribute("data-reveal", "hidden");
+    expect(element).toHaveAttribute("data-awesome-reveal", "hidden");
     expect(animations).toHaveLength(0);
   });
 
@@ -31,7 +31,7 @@ describe(`v-reveal (Vue ${version})`, () => {
     await intersect(element, true);
 
     expect(element).toHaveStyle({ opacity: "1" });
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(animations[0]).toMatchObject({
       element,
       keyframes: defaultKeyframes,
@@ -70,7 +70,7 @@ describe(`v-reveal (Vue ${version})`, () => {
     options.when = true;
     await nextTick();
 
-    expect(wrapper.element).not.toHaveAttribute("data-reveal");
+    expect(wrapper.element).not.toHaveAttribute("data-awesome-reveal");
     expect(animations).toHaveLength(1);
   });
 
@@ -97,7 +97,7 @@ describe(`v-reveal (Vue ${version})`, () => {
     await wrapper.setProps({ style: second });
 
     expect(element).toHaveStyle({ opacity: "0" });
-    expect(element).toHaveAttribute("data-reveal", "hidden");
+    expect(element).toHaveAttribute("data-awesome-reveal", "hidden");
     await intersect(element, true);
     expect(element.style.opacity).toBe("0.8");
   });

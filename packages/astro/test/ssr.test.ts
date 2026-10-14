@@ -23,7 +23,7 @@ async function render(props: Record<string, unknown> = {}, component: unknown = 
 describe("Reveal on the server", () => {
   it("renders a hidden div in an <awesome-reveal> element", async () => {
     expect(await render()).toBe(
-      '<awesome-reveal options="{}"><div data-reveal="hidden"><p>hello</p></div></awesome-reveal>',
+      '<awesome-reveal options="{}"><div data-awesome-reveal="hidden"><p>hello</p></div></awesome-reveal>',
     );
   });
 
@@ -31,7 +31,7 @@ describe("Reveal on the server", () => {
     const html = await render({ as: "section", class: "hero", id: "intro", style: "color: red" });
 
     expect(html).toContain(
-      '<section class="hero" id="intro" style="color: red" data-reveal="hidden"><p>hello</p></section>',
+      '<section class="hero" id="intro" style="color: red" data-awesome-reveal="hidden"><p>hello</p></section>',
     );
   });
 
@@ -54,7 +54,7 @@ describe("Reveal on the server", () => {
 
   it.each([true, false])("renders `when: %s` in its own attribute, hidden", async (when) => {
     expect(await render({ when })).toBe(
-      `<awesome-reveal options="{}" when="${when}"><div data-reveal="hidden"><p>hello</p></div></awesome-reveal>`,
+      `<awesome-reveal options="{}" when="${when}"><div data-awesome-reveal="hidden"><p>hello</p></div></awesome-reveal>`,
     );
   });
 
@@ -73,7 +73,7 @@ describe("Reveal on the server", () => {
 describe("Cascade on the server", () => {
   it("renders a cascade host and hides the children with the container attribute", async () => {
     expect(await render({ delay: 100, interval: 120 }, Cascade)).toBe(
-      '<awesome-reveal cascade options="{&quot;delay&quot;:100,&quot;interval&quot;:120}"><div data-reveal="cascade"><p>hello</p></div></awesome-reveal>',
+      '<awesome-reveal cascade options="{&quot;delay&quot;:100,&quot;interval&quot;:120}"><div data-awesome-reveal="cascade"><p>hello</p></div></awesome-reveal>',
     );
   });
 });

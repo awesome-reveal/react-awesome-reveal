@@ -30,7 +30,7 @@ it("renders hidden server content without setup", async () => {
       withDirectives(h("p", "hello"), [[api.vReveal, {}]]),
     ]),
   );
-  expect(html).toContain('<div data-reveal="hidden">hello</div>');
-  expect(html).toContain('<p data-reveal="hidden">hello</p>');
+  expect(html).toContain('<div data-awesome-reveal="hidden">hello</div>');
+  expect(html).toContain('<p data-awesome-reveal="hidden">hello</p>');
 });
 describeDocs(root);

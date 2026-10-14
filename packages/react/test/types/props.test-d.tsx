@@ -31,7 +31,7 @@ test("useReveal types the element props by element", () => {
 
   expectTypeOf(props.ref).toEqualTypeOf<RefCallback<HTMLImageElement>>();
   expectTypeOf(props.className).toEqualTypeOf<string>();
-  expectTypeOf(props["data-reveal"]).toEqualTypeOf<"hidden" | undefined>();
+  expectTypeOf(props["data-awesome-reveal"]).toEqualTypeOf<"hidden" | undefined>();
   expectTypeOf(getProps()).not.toHaveProperty("style");
   // @ts-expect-error an input ref on an image
   getProps({ ref: createRef<HTMLInputElement>() });
@@ -55,5 +55,5 @@ test("only Cascade and useCascade take interval", () => {
 
 test("useCascade hides the children with its own attribute value", () => {
   const { getProps } = useCascade<HTMLUListElement>();
-  expectTypeOf(getProps()["data-reveal"]).toEqualTypeOf<"cascade" | undefined>();
+  expectTypeOf(getProps()["data-awesome-reveal"]).toEqualTypeOf<"cascade" | undefined>();
 });

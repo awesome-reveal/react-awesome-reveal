@@ -47,7 +47,7 @@ describe("reveal", () => {
     intersect(target, true);
     expect(animations[0]?.play).toHaveBeenCalledOnce();
     expect(observerOf(target)).toBeUndefined();
-    expect(target.hasAttribute("data-reveal")).toBe(false);
+    expect(target.hasAttribute("data-awesome-reveal")).toBe(false);
   });
   it.each([
     ["left", "-24px 0px"],
@@ -149,6 +149,39 @@ describe("reveal", () => {
     expect(animations[0]?.play).toHaveBeenCalledOnce();
     expect(observerOf(target)).toBeUndefined();
   });
+  it("plays at the entry when the element cannot reach the threshold in the viewport", () => {
+    const target = element();
+    track(reveal(target, { threshold: 0.5 }));
+    const root = { width: 1000, height: 500 };
+    observerOf(target)!.triggerSized(target, 0.1, { width: 500, height: 2000 }, root);
+    expect(animations[0]?.play).toHaveBeenCalledOnce();
+    expect(observerOf(target)).toBeUndefined();
+  });
+  it("waits for the threshold when the element can reach it in the viewport", () => {
+    const target = element();
+    track(reveal(target, { threshold: 0.5 }));
+    const root = { width: 1000, height: 500 };
+    observerOf(target)!.triggerSized(target, 0.1, { width: 500, height: 1000 }, root);
+    expect(animations[0]?.play).not.toHaveBeenCalled();
+  });
+  it("plays when focus enters the element, and stops observing", () => {
+    const target = element();
+    const link = target.appendChild(document.createElement("a"));
+    track(reveal(target, { threshold: 0.5 }));
+    link.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+    expect(animations[0]?.play).toHaveBeenCalledOnce();
+    expect(observerOf(target)).toBeUndefined();
+    link.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+    expect(animations[0]?.play).toHaveBeenCalledOnce();
+  });
+  it("stops listening to focus on disposal", () => {
+    const target = element();
+    const listen = vi.spyOn(target, "addEventListener");
+    const unlisten = vi.spyOn(target, "removeEventListener");
+    track(reveal(target)).dispose();
+    expect(listen).toHaveBeenCalledWith("focusin", expect.any(Function));
+    expect(unlisten.mock.calls).toEqual(listen.mock.calls);
+  });
   it.each([
     [0.3, 0],
     [0.6, 0],
@@ -227,7 +260,7 @@ describe("reveal", () => {
     expect(() =>
       track(reveal(target, { keyframes: [{ opacity: 0, easing: "bogus" }, { opacity: 1 }] })),
     ).not.toThrow();
-    expect(target.hasAttribute("data-reveal")).toBe(false);
+    expect(target.hasAttribute("data-awesome-reveal")).toBe(false);
     expect(target.style.opacity).toBe("");
     expect(reports()).toEqual([error]);
   });

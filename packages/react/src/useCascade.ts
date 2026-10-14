@@ -17,6 +17,6 @@ export function useCascade<T extends Element = HTMLElement>(
   return useBinding<T, CascadeOptions, "cascade">(
     createCascade,
     options,
-    cascadeHiddenAttributes["data-reveal"],
+    cascadeHiddenAttributes["data-awesome-reveal"],
   );
 }

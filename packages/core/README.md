@@ -102,7 +102,7 @@ reveal(".hero h1", { from: "left" });
 reveal(".hero p", { from: { opacity: 0 }, delay: 200 });
 ```
 
-An element reveals when `threshold` of it is visible, or when it leaves the visible area before that. An element that is larger than the viewport or its scroll container cannot reach a high threshold. Keep the default 0 for tall elements and long cascades.
+An element reveals when `threshold` of it is visible. If the viewport is too small to show `threshold` of the element, the element reveals when it enters the viewport. In a scroll container that is too small, it reveals when it leaves the visible area. Keep the default 0 for tall elements and long cascades.
 
 `reveal()` observes the element while it waits. A start state with `opacity: 0`, such as each side, waits at the resting position and moves only when the entrance plays. Other start states and native keyframes wait at their first keyframe, so their offset, scale and rotation change the box that the observer sees. If an ancestor with `overflow` clips that box fully, the element does not reveal. `cascade()` observes the container, which does not move.
 
@@ -120,7 +120,7 @@ The content that waits for its entrance also shows in print. After the print, it
 
 Core creates the paused native animations when you call it. The browser can paint the content before your script runs, because core does not hide server-rendered content. The framework packages hide it with their own stylesheet, which they load automatically. To render reveals declaratively, use the React, Vue or Astro package. Each one has a `Reveal` and a `Cascade` component.
 
-Hidden content stays in the accessibility tree. Keep important controls usable. Do not make large parts of a page depend on decorative motion.
+Focus in a waiting element reveals it, so a keyboard user does not focus invisible content. Hidden content stays in the accessibility tree. Keep important controls usable. Do not make large parts of a page depend on decorative motion.
 
 ## Exports and browser support
 
