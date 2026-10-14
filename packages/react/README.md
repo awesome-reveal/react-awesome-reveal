@@ -42,7 +42,7 @@ export function Card() {
 }
 ```
 
-Spread `getProps()` on one element. Give your own `ref` to `getProps()`, so that the hook can merge it with its ref. The hook does not change your styles. For a custom component, pass the ref and the `data-awesome-reveal` prop to a DOM element. The package reserves `data-awesome-reveal` and `data-awesome-reveal-ready`.
+Spread `getProps()` on one element. Give your own `ref` to `getProps()`, so that the hook can merge it with its ref. The hook does not change your styles. For a custom component, pass the ref and the `data-awesome-reveal` prop to a DOM element. The package reserves `data-awesome-reveal` and `data-awesome-reveal-attached`.
 
 `when: true` reveals the element manually, and `when: false` resets it without an exit animation. To let the viewport control the reveal, omit `when` or set it to `null`. When the viewport controls the reveal, the entrance plays one time, and the observation stops when the entrance starts. A change of `when` from `false` to `true` plays the entrance again. `when: false` during the `delay` also resets the element, and the entrance does not play.
 
@@ -109,7 +109,7 @@ Reduced motion always has priority over the entrance and over `when: false`.
 
 `Reveal` and `Cascade` are Client Component boundaries, so a Next.js Server Component can render them with serializable options. Native keyframes are serializable too. The hook and the callbacks need a Client Component. On the server, the `node` import condition resolves the internal stylesheet import to an empty module. The browser build resolves it to the CSS.
 
-The stylesheet hides the server markup for at most 5 seconds before the script attaches the element. At the attach, the package adds `data-awesome-reveal-ready` to the element, and the element stays hidden until it reveals. So if the script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again until it reveals. This happens with slow hydration, and often with lazy hydration, such as an Astro `client:visible` island, when the user scrolls to the content after 5 seconds. Hydrate reveal content eagerly.
+The stylesheet hides the server markup for at most 5 seconds before the script attaches the element. At the attach, the package adds `data-awesome-reveal-attached` to the element, and the element stays hidden until it reveals. So if the script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again until it reveals. This happens with slow hydration, and often with lazy hydration, such as an Astro `client:visible` island, when the user scrolls to the content after 5 seconds. Hydrate reveal content eagerly.
 
 ### Limits
 

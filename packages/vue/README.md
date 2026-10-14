@@ -76,7 +76,7 @@ On the server, the `node` import condition resolves the internal stylesheet impo
 
 Reduced motion shows the content immediately and cancels the active animation. The package does not change your styles.
 
-The stylesheet hides the server markup for at most 5 seconds before the script attaches the element. At the attach, the package adds `data-awesome-reveal-ready` to the element, and the element stays hidden until it reveals. So if the script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again until it reveals. This happens with slow hydration, and often with lazy hydration, such as `hydrateOnVisible()` or a Nuxt `hydrate-on-visible` component, when the user scrolls to the content after 5 seconds. Hydrate reveal content eagerly.
+The stylesheet hides the server markup for at most 5 seconds before the script attaches the element. At the attach, the package adds `data-awesome-reveal-attached` to the element, and the element stays hidden until it reveals. So if the script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again until it reveals. This happens with slow hydration, and often with lazy hydration, such as `hydrateOnVisible()` or a Nuxt `hydrate-on-visible` component, when the user scrolls to the content after 5 seconds. Hydrate reveal content eagerly.
 
 ### Limits
 

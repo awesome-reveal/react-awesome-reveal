@@ -4,8 +4,8 @@
   [data-awesome-reveal="cascade"] > * {
     animation: awesome-reveal-hold 5s !important;
   }
-  [data-awesome-reveal="hidden"][data-awesome-reveal-ready],
-  [data-awesome-reveal="cascade"][data-awesome-reveal-ready] > * {
+  [data-awesome-reveal="hidden"][data-awesome-reveal-attached],
+  [data-awesome-reveal="cascade"][data-awesome-reveal-attached] > * {
     opacity: 0 !important;
   }
 }

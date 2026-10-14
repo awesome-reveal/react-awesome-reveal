@@ -27,7 +27,7 @@ describe("a static build of a page with Reveal", () => {
 
   it("bundles reveal.css, so the user does not import it", () => {
     expect(page).toMatch(
-      /\[data-awesome-reveal=["]?hidden["]?\]\[data-awesome-reveal-ready\],\[data-awesome-reveal=["]?cascade["]?\]\[data-awesome-reveal-ready\]>\*\{opacity:0!important\}/,
+      /\[data-awesome-reveal=["]?hidden["]?\]\[data-awesome-reveal-attached\],\[data-awesome-reveal=["]?cascade["]?\]\[data-awesome-reveal-attached\]>\*\{opacity:0!important\}/,
     );
     expect(page).toMatch(/\(scripting: ?none\)/);
     expect(page).toMatch(/@keyframes awesome-reveal-hold/);
