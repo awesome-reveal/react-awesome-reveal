@@ -192,6 +192,25 @@ describe("zero-CSS reveal", () => {
     expect(opacity()).toBe("1");
     expect(target.getAnimations({ subtree: true })).toEqual([]);
   });
+  it("print shows the waiting entrances, and the reveal still plays after the print", async () => {
+    track(reveal(target, native));
+    dispatchEvent(new Event("beforeprint"));
+    expect(opacity()).toBe("1");
+    dispatchEvent(new Event("afterprint"));
+    expect(opacity()).toBe("0");
+    await enter();
+    expect(animation().currentTime as number).toBeLessThan(60_000);
+  });
+  it("print does not change a playing entrance", async () => {
+    track(reveal(target, native));
+    await enter();
+    const time = animation().currentTime as number;
+    dispatchEvent(new Event("beforeprint"));
+    dispatchEvent(new Event("afterprint"));
+    expect(animation().playState).toBe("running");
+    expect(animation().currentTime as number).toBeGreaterThanOrEqual(time);
+    expect(animation().currentTime as number).toBeLessThan(60_000);
+  });
   it("invalid thresholds reveal immediately and report the browser error", () => {
     const reports = collectReports();
     track(reveal(target, { ...native, threshold: 2 }));
@@ -231,6 +250,21 @@ describe("cascade", () => {
       "1",
       "1",
       "1",
+    ]);
+  });
+  it("print shows the waiting children", () => {
+    track(cascade(target, { ...native, interval: 10_000 }));
+    dispatchEvent(new Event("beforeprint"));
+    expect(Array.from(target.children).map((c) => getComputedStyle(c).opacity)).toEqual([
+      "1",
+      "1",
+      "1",
+    ]);
+    dispatchEvent(new Event("afterprint"));
+    expect(Array.from(target.children).map((c) => getComputedStyle(c).opacity)).toEqual([
+      "0",
+      "0",
+      "0",
     ]);
   });
   it("reduced motion bypasses every child delay", () => {

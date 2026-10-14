@@ -72,6 +72,11 @@ export function motion(element: Element, options: RevealOptions, delay = 0) {
       // A waiting animation that page code finished or cancelled leaves the element at rest, so it does not play.
       if (animation?.playState === "paused") animation.play();
     },
+    // At its end time, a waiting effect is past its backwards fill, so the element prints at rest.
+    print(printing: boolean) {
+      if (animation?.playState === "paused")
+        animation.currentTime = printing ? (animation.effect?.getComputedTiming().endTime ?? 0) : 0;
+    },
     dispose() {
       animation?.cancel();
       animation = undefined;
