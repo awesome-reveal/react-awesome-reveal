@@ -32,7 +32,9 @@ it.each(modules)("keeps the 'use client' directive of src/%s", (file) => {
   expect(directive.test(output)).toBe(directive.test(source));
 });
 it("automatically imports SSR visibility CSS through its bindings", () => {
-  expect(readFileSync(new URL("useReveal.js", dist), "utf8")).toContain('import "#reveal-style"');
+  expect(readFileSync(new URL("useReveal.js", dist), "utf8")).toContain(
+    'import "#reveal-style.css"',
+  );
 });
 it("renders hidden server content without setup", async () => {
   expect(renderToString(createElement(api.Reveal, {}, "hello"))).toBe(

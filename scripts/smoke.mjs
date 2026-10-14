@@ -330,6 +330,8 @@ try {
     run("pnpm", ["exec", ...config.build], app);
     await config.verify(app);
   } else {
+    // Runs the dev server pre-bundle, which handles CSS imports differently from the build.
+    run("pnpm", ["exec", "vite", "optimize", "--force"], app);
     run("pnpm", ["exec", "vite", "build"], app);
     run(
       "pnpm",

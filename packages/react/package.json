@@ -52,7 +52,7 @@
   ],
   "types": "dist/index.d.ts",
   "imports": {
-    "#reveal-style": {
+    "#reveal-style.css": {
       "node": {
         "types": "./dist/no-style.d.ts",
         "default": "./dist/no-style.js"

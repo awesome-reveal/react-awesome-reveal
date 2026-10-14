@@ -1,4 +1,4 @@
-import "#reveal-style";
+import "#reveal-style.css";
 
 import {
   defineComponent,
