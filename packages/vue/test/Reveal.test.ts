@@ -80,7 +80,7 @@ describe(`Reveal (Vue ${version})`, () => {
 
   it("passes threshold and duration to core", async () => {
     const { element } = mountReveal({ threshold: 0.5, duration: 300 });
-    expect(observerOf(element)).toMatchObject({ thresholds: [0.5] });
+    expect(observerOf(element)).toMatchObject({ thresholds: [0, 0.5] });
     await intersect(element, true);
     expect(animations[0]?.options).toMatchObject({ duration: 300 });
   });

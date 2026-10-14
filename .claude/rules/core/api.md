@@ -12,6 +12,7 @@ paths:
 - Every failure leaves content visible. A throw from `animate()`, from the observer constructor or from `observe()` reveals at once. `dispose()` cancels the animations, so the elements go to their resting style. Do not add runtime validation for values that the browser validates.
 - Reduced motion is automatic and has no option. When `prefers-reduced-motion: reduce` matches, `reveal` and `cascade` create no animation, and a later change to `reduce` disposes them.
 - `cascade` observes each container and animates its direct element children with `delay = index * interval`. It reads the children once, when it starts. Do not add a child selector or a timeline abstraction.
+- `observe` uses the thresholds `[0, threshold]`, and also reveals an element that leaves the root before it reaches `threshold`. An element larger than the root cannot reach a high threshold. A clamp from `rootBounds` was rejected: it fails in scroll containers, after the element grows and with a large start offset.
 - Do not throw when an API is missing. Without IntersectionObserver, reveal at once. Without `Element.animate`, reveal with no animation.
 - Do not use `window` or `document` at module level. Server renderers import core. A selector resolves to no elements when `document` is undefined.
 - The `.d.ts` files carry the JSDoc, and the JS output has none. Write the option docs and defaults in the type JSDoc.

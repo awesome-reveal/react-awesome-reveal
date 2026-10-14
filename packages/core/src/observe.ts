@@ -19,15 +19,21 @@ export function observe(
       return disconnect;
     }
     const minimum = options.threshold ?? 0;
+    let seen = false;
     observer = new IntersectionObserver(
       (entries) => {
-        if (!active) return;
         const entry = entries[entries.length - 1];
-        if (!entry?.isIntersecting || entry.intersectionRatio < minimum) return;
+        if (!active || !entry) return;
+        // An element that leaves before it reaches the threshold, such as one taller than the viewport, must not stay hidden.
+        if (entry.isIntersecting && entry.intersectionRatio < minimum) {
+          seen = true;
+          return;
+        }
+        if (!entry.isIntersecting && !seen) return;
         disconnect();
         onEnter();
       },
-      { threshold: minimum },
+      { threshold: [0, minimum] },
     );
     observer.observe(element);
   } catch {

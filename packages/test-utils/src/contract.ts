@@ -118,6 +118,15 @@ export function describeContract(name: string, harness: Harness) {
       expect(MockIntersectionObserver.instances.size).toBe(1);
     });
 
+    it("reveals when the element leaves before it reaches the threshold", async () => {
+      const m = await mount({ threshold: 0.5 });
+      await intersect(m, 0.2);
+      expect(hidden(m.element())).toBe(true);
+      await intersect(m, false);
+      expect(shown(m.element())).toBe(true);
+      expect(runningAnimations()).toHaveLength(1);
+    });
+
     it("the other options apply at the next reveal", async () => {
       const m = await mount({ duration: 300 });
       const before = observerOf(m.element());

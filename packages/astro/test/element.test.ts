@@ -25,7 +25,7 @@ describe("<awesome-reveal>", () => {
     const { element } = connect({ duration: 100, threshold: 0.5 });
 
     expect(element).toHaveStyle({ opacity: "0" });
-    expect(observerOf(element)).toMatchObject({ thresholds: [0.5] });
+    expect(observerOf(element)).toMatchObject({ thresholds: [0, 0.5] });
 
     intersect(element, true);
 
@@ -179,7 +179,7 @@ describe("<awesome-reveal>", () => {
 
       activate();
 
-      expect(observerOf(element)).toMatchObject({ thresholds: [0.5] });
+      expect(observerOf(element)).toMatchObject({ thresholds: [0, 0.5] });
     });
 
     it("does nothing at the activation when the element is removed", () => {

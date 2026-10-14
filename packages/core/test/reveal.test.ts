@@ -118,7 +118,7 @@ describe("reveal", () => {
     const target = element();
     track(reveal(target, { threshold: 0.5 }));
     const observer = observerOf(target)!;
-    expect(observer.thresholds).toEqual([0.5]);
+    expect(observer.thresholds).toEqual([0, 0.5]);
     intersect(target, 0.2);
     expect(animations[0]?.play).not.toHaveBeenCalled();
     intersect(target, 0.5);
@@ -129,6 +129,16 @@ describe("reveal", () => {
     expect(animations[0]?.play).toHaveBeenCalledOnce();
     expect(animations[0]?.pause).toHaveBeenCalledOnce();
     expect(animations).toHaveLength(1);
+  });
+  it("plays when the element leaves before it reaches the threshold", () => {
+    const target = element();
+    track(reveal(target, { threshold: 0.5 }));
+    intersect(target, false);
+    expect(animations[0]?.play).not.toHaveBeenCalled();
+    intersect(target, 0.2);
+    intersect(target, false);
+    expect(animations[0]?.play).toHaveBeenCalledOnce();
+    expect(observerOf(target)).toBeUndefined();
   });
   it.each(["selector", "iterable", "array-like", "live collection"])(
     "resolves multiple %s targets independently",

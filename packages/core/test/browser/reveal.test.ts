@@ -121,6 +121,26 @@ describe("zero-CSS reveal", () => {
     expect(animation().playState).toBe("paused");
     await enter();
   });
+  it("reveals an element taller than the viewport when it leaves before the threshold", async () => {
+    target.style.height = "300vh";
+    track(reveal(target, { ...native, threshold: 0.5 }));
+    scrollTo(0, target.offsetTop - innerHeight / 2);
+    await settle();
+    expect(animation().playState).toBe("paused");
+    scrollTo(0, target.offsetTop + target.offsetHeight + 1);
+    await expect.poll(() => animation().playState).toBe("running");
+  });
+  it("reveals an element taller than its scroll container when it leaves before the threshold", async () => {
+    document.body.innerHTML = `<div id="scroller" style="height: 300px; overflow: auto"><div style="height: 400px"></div><div id="tall" style="height: 900px"></div><div style="height: 400px"></div></div>`;
+    const scroller = document.getElementById("scroller")!;
+    const tall = document.getElementById("tall")!;
+    track(reveal(tall, { ...native, threshold: 0.5 }));
+    scroller.scrollTop = 300;
+    await settle();
+    expect(animation(tall).playState).toBe("paused");
+    scroller.scrollTop = 1400;
+    await expect.poll(() => animation(tall).playState).toBe("running");
+  });
   it.each([false, true])(
     "disposes to resting style before/during animation: %s",
     async (during) => {

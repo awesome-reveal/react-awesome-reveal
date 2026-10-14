@@ -27,7 +27,10 @@ type AnimationOptions =
 export type RevealOptions = AnimationOptions & {
   /** The duration of the animation, in milliseconds. @default 600 */
   duration?: number;
-  /** The visible fraction of the element, from 0 to 1, that reveals it. @default 0 */
+  /**
+   * The visible fraction of the element, from 0 to 1, that reveals it. An element that leaves the
+   * visible area before it reaches the threshold reveals then. @default 0
+   */
   threshold?: number;
 };
 

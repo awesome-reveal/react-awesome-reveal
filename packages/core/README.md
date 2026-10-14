@@ -79,6 +79,8 @@ You can use the native keyframe properties `easing`, `offset` and `composite`. T
 
 The entrance plays one time. When it starts, the observation stops. There is no exit animation.
 
+An element reveals when `threshold` of it is visible, or when it leaves the visible area before that. An element larger than the viewport or its scroll container cannot reach a high threshold, so keep the default 0 for tall elements and long cascades.
+
 ## Accessibility and SSR
 
 Reduced motion is automatic. With `prefers-reduced-motion: reduce`, all the content shows immediately, with no animation and no delay. This includes each cascade child. If the preference changes to reduced motion, core cancels the pending and the active animations.
