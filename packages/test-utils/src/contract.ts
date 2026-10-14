@@ -30,9 +30,9 @@ export interface Harness {
   boundToElement?: boolean;
 }
 
-const hidden = (element: HTMLElement) => element.getAttribute("data-reveal") === "hidden";
+const hidden = (element: HTMLElement) => element.getAttribute("data-awesome-reveal") === "hidden";
 
-const shown = (element: HTMLElement) => !element.hasAttribute("data-reveal");
+const shown = (element: HTMLElement) => !element.hasAttribute("data-awesome-reveal");
 
 const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
 
@@ -280,10 +280,67 @@ export function describeContract(name: string, harness: Harness) {
       expect(move!.easing).toBe(easing);
     });
 
-    it("the first reveal marks the document as started", async () => {
-      document.documentElement.removeAttribute("data-reveal-ready");
-      await mount();
-      expect(document.documentElement.hasAttribute("data-reveal-ready")).toBe(true);
+    it("marks the element as ready until it unmounts", async () => {
+      const m = await mount();
+      const element = m.element();
+      expect(element.hasAttribute("data-awesome-reveal-ready")).toBe(true);
+      await intersect(m, true);
+      expect(element.hasAttribute("data-awesome-reveal-ready")).toBe(true);
+      await m.unmount();
+      await m.flush();
+      expect(element.hasAttribute("data-awesome-reveal-ready")).toBe(false);
+    });
+
+    // `:focus-within` needs real focus, so the scenarios focus a child and do not dispatch `focusin`.
+    const focusChild = (m: Mounted, index = 0) => {
+      const child = m.element().children[index] as HTMLElement;
+      child.tabIndex = -1;
+      return m.run(() => child.focus());
+    };
+
+    it("focus in the element reveals it at once with no entrance, also below the threshold", async () => {
+      const onReveal = vi.fn();
+      const m = await mount({ threshold: 0.5, delay: 2000, onReveal });
+      await focusChild(m);
+      expect(shown(m.element())).toBe(true);
+      expect(observerOf(m.element())).toBeUndefined();
+      expect(animations).toHaveLength(0);
+      expect(onReveal.mock.calls).toEqual([[m.element()]]);
+    });
+
+    it("a reveal of an element that contains focus plays no entrance", async () => {
+      const onReveal = vi.fn();
+      const m = await mount({ when: false, onReveal });
+      await focusChild(m);
+      expect(hidden(m.element())).toBe(true);
+      await rerender(m, { when: true, onReveal });
+      expect(shown(m.element())).toBe(true);
+      expect(animations).toHaveLength(0);
+      expect(onReveal).toHaveBeenCalledOnce();
+    });
+
+    it("unmount stops listening to focus", async () => {
+      const listen = vi.spyOn(HTMLElement.prototype, "addEventListener");
+      const unlisten = vi.spyOn(HTMLElement.prototype, "removeEventListener");
+      const m = await mount();
+      const element = m.element();
+      const focusListeners = (spy: typeof listen | typeof unlisten) =>
+        new Set(
+          spy.mock.calls
+            .filter(([type], i) => type === "focusin" && spy.mock.contexts[i] === element)
+            .map(([, listener]) => listener),
+        );
+      expect(focusListeners(listen).size).toBeGreaterThan(0);
+      await m.unmount();
+      await m.flush();
+      expect(focusListeners(unlisten)).toEqual(focusListeners(listen));
+    });
+
+    it("focus does not reveal the element with when: false", async () => {
+      const m = await mount({ when: false });
+      await focusChild(m);
+      expect(hidden(m.element())).toBe(true);
+      expect(animations).toHaveLength(0);
     });
 
     it("with no IntersectionObserver the element shows at once", async () => {
@@ -369,7 +426,7 @@ export function describeCascadeContract(name: string, harness: Harness) {
 
     it("hides the children with the container attribute and observes the container", async () => {
       const m = await mount();
-      expect(m.element().getAttribute("data-reveal")).toBe("cascade");
+      expect(m.element().getAttribute("data-awesome-reveal")).toBe("cascade");
       expect(animations).toHaveLength(0);
       expect(observerOf(m.element())).toBeDefined();
     });
@@ -397,10 +454,19 @@ export function describeCascadeContract(name: string, harness: Harness) {
     it("a toggle of when replays all the children", async () => {
       const m = await mount({ when: true });
       await m.rerender({ when: false });
-      expect(m.element().getAttribute("data-reveal")).toBe("cascade");
+      expect(m.element().getAttribute("data-awesome-reveal")).toBe("cascade");
       expect(runningAnimations()).toHaveLength(0);
       await m.rerender({ when: true });
       expect(runningAnimations()).toHaveLength(3);
+    });
+
+    it("focus in a later child reveals all the children at once with no entrance", async () => {
+      const m = await mount({ interval: 500 });
+      const last = m.element().lastElementChild as HTMLElement;
+      last.tabIndex = -1;
+      await m.run(() => last.focus());
+      expect(shown(m.element())).toBe(true);
+      expect(animations).toHaveLength(0);
     });
 
     it("onReveal is called with the container", async () => {

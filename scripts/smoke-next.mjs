@@ -50,9 +50,9 @@ async function checkBrowser(base) {
     await page.goto(base);
     // The first element is in view, so it reveals. The element below the fold stays hidden until the
     // test scrolls to it.
-    await page.waitForSelector("#top:not([data-reveal])");
+    await page.waitForSelector("#top:not([data-awesome-reveal])");
     expect(
-      (await page.locator("#below").getAttribute("data-reveal")) === "hidden",
+      (await page.locator("#below").getAttribute("data-awesome-reveal")) === "hidden",
       "#below is not hidden before it scrolls into view",
     );
     expect(
@@ -61,15 +61,15 @@ async function checkBrowser(base) {
       "reveal.css does not hide #below",
     );
     await page.locator("#below").scrollIntoViewIfNeeded();
-    await page.waitForSelector("#below:not([data-reveal])");
+    await page.waitForSelector("#below:not([data-awesome-reveal])");
     await page.locator("#card").scrollIntoViewIfNeeded();
-    await page.waitForSelector("#card:not([data-reveal])");
+    await page.waitForSelector("#card:not([data-awesome-reveal])");
 
     // Each page mounts its own reveal after a client navigation.
     for (const { path, id } of routes.slice(1)) {
       await page.locator(`a[href="${path}"]`).click();
       await page.waitForURL(`**${path}`);
-      await page.waitForSelector(`${id}:not([data-reveal])`);
+      await page.waitForSelector(`${id}:not([data-awesome-reveal])`);
     }
 
     expect(problems.length === 0, `The browser reported problems:\n${problems.join("\n")}`);
@@ -95,7 +95,7 @@ export async function verifyNext(cwd) {
         const response = await fetch(base + path);
         expect(response.ok, `${path} answered ${response.status}`);
         expect(
-          (await response.text()).includes('data-reveal="hidden"'),
+          (await response.text()).includes('data-awesome-reveal="hidden"'),
           `${path} has no hidden element in the HTML`,
         );
       }),

@@ -38,7 +38,7 @@ it("automatically imports SSR visibility CSS through its bindings", () => {
 });
 it("renders hidden server content without setup", async () => {
   expect(renderToString(createElement(api.Reveal, {}, "hello"))).toBe(
-    '<div data-reveal="hidden">hello</div>',
+    '<div data-awesome-reveal="hidden">hello</div>',
   );
 });
 describeDocs(root, {

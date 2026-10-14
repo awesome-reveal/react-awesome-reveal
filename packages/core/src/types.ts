@@ -33,8 +33,9 @@ export type RevealOptions = AnimationOptions & {
    */
   delay?: number;
   /**
-   * The visible fraction of the element, from 0 to 1, that reveals it. An element that leaves the
-   * visible area before it reaches the threshold reveals then. @default 0
+   * The visible fraction of the element, from 0 to 1, that reveals it. An element too large for the
+   * viewport to show this fraction reveals when it enters. In a scroll container that is too small,
+   * it reveals when it leaves the visible area. @default 0
    */
   threshold?: number;
 };

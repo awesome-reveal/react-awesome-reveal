@@ -27,7 +27,7 @@ describe(`Reveal (Vue ${version})`, () => {
     expect(element.tagName).toBe("DIV");
     expect(element).toHaveTextContent("onetwo");
     expect(element).toHaveStyle({ opacity: "0" });
-    expect(element).toHaveAttribute("data-reveal", "hidden");
+    expect(element).toHaveAttribute("data-awesome-reveal", "hidden");
   });
 
   it("reveals and animates when it enters the viewport", async () => {
@@ -35,7 +35,7 @@ describe(`Reveal (Vue ${version})`, () => {
     await intersect(element, true);
 
     expect(element).toHaveStyle({ opacity: "1" });
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(animations[0]).toMatchObject({
       element,
       keyframes: defaultKeyframes,
@@ -43,7 +43,7 @@ describe(`Reveal (Vue ${version})`, () => {
     });
   });
 
-  it("starts the animation and removes data-reveal in the task of the report", async () => {
+  it("starts the animation and removes data-awesome-reveal in the task of the report", async () => {
     const { element } = mountReveal();
     let timerRan = false;
     setTimeout(() => (timerRan = true));
@@ -130,7 +130,7 @@ describe(`Reveal (Vue ${version})`, () => {
     await wrapper.setProps({ as: "section" });
 
     expect(wrapper.element.tagName).toBe("SECTION");
-    expect(wrapper.element).not.toHaveAttribute("data-reveal");
+    expect(wrapper.element).not.toHaveAttribute("data-awesome-reveal");
     expect(animations).toHaveLength(1);
   });
 

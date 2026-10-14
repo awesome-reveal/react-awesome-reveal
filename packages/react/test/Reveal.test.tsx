@@ -21,7 +21,7 @@ describe(`Reveal (React ${version})`, () => {
     expect(element.tagName).toBe("DIV");
     expect(element).toHaveTextContent("onetexttwo");
     expect(element).toHaveStyle({ opacity: "0" });
-    expect(element).toHaveAttribute("data-reveal", "hidden");
+    expect(element).toHaveAttribute("data-awesome-reveal", "hidden");
     expect(element).not.toHaveAttribute("class");
   });
 
@@ -31,7 +31,7 @@ describe(`Reveal (React ${version})`, () => {
     intersect(element, true);
 
     expect(element).toHaveStyle({ opacity: "1" });
-    expect(element).not.toHaveAttribute("data-reveal");
+    expect(element).not.toHaveAttribute("data-awesome-reveal");
     expect(animations[0]?.element).toBe(element);
   });
 

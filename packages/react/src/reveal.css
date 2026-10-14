@@ -1,15 +1,24 @@
-/* Keep author opacity intact until the element reveals. */
-[data-reveal="hidden"],
-[data-reveal="cascade"] > * {
-  opacity: 0 !important;
-}
-@media (prefers-reduced-motion: reduce), (scripting: none), print {
-  [data-reveal="hidden"],
-  [data-reveal="cascade"] > * {
-    opacity: 1 !important;
+/* The hold ends, so markup that no script attaches shows again. */
+@media screen and (prefers-reduced-motion: no-preference) {
+  [data-awesome-reveal="hidden"],
+  [data-awesome-reveal="cascade"] > * {
+    animation: awesome-reveal-hold 5s !important;
+  }
+  [data-awesome-reveal="hidden"][data-awesome-reveal-ready],
+  [data-awesome-reveal="cascade"][data-awesome-reveal-ready] > * {
+    opacity: 0 !important;
   }
 }
-html[data-reveal-failed] [data-reveal="hidden"],
-html[data-reveal-failed] [data-reveal="cascade"] > * {
-  opacity: 1 !important;
+/* A separate query, so browsers without the `scripting` feature still hide. */
+@media (scripting: none) {
+  [data-awesome-reveal="hidden"],
+  [data-awesome-reveal="cascade"] > * {
+    animation: none !important;
+  }
+}
+@keyframes awesome-reveal-hold {
+  from,
+  to {
+    opacity: 0;
+  }
 }

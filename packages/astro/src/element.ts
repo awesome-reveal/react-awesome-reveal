@@ -55,16 +55,24 @@ export class RevealElement extends HTMLElement {
     const target = this.firstElementChild as HTMLElement | null;
     if (!target) return;
     const cascade = this.hasAttribute("cascade");
-    const hidden = (cascade ? cascadeHiddenAttributes : hiddenAttributes)["data-reveal"];
-    // Invalid JSON throws after the reveal exists, so the element does not stay hidden.
-    target.setAttribute("data-reveal", hidden);
-    this.controller = cascade ? createCascade({ onReveal }) : createReveal({ onReveal });
+    const hidden = (cascade ? cascadeHiddenAttributes : hiddenAttributes)["data-awesome-reveal"];
+    target.setAttribute("data-awesome-reveal", hidden);
+    // The options must apply at the attach, because the attach reveals an element that contains focus.
+    let options: CascadeOptions = { onReveal };
+    let invalid: unknown;
+    try {
+      options = readOptions(this);
+    } catch (error) {
+      invalid = error;
+    }
+    this.controller = cascade ? createCascade(options) : createReveal(options);
     this.controller.subscribe((visible) => {
-      if (visible) target.removeAttribute("data-reveal");
-      else target.setAttribute("data-reveal", hidden);
+      if (visible) target.removeAttribute("data-awesome-reveal");
+      else target.setAttribute("data-awesome-reveal", hidden);
     });
     this.controller.attach(target);
-    this.controller.setOptions(readOptions(this));
+    // Invalid JSON throws after the reveal exists, so the viewport still reveals the element.
+    if (invalid) throw invalid;
   }
 
   // The ClientRouter moves `transition:persist` elements with moveBefore(), which keeps the state.
@@ -75,7 +83,7 @@ export class RevealElement extends HTMLElement {
     queueMicrotask(() => {
       if (this.isConnected) return;
       this.controller?.attach(null);
-      this.firstElementChild?.removeAttribute("data-reveal");
+      this.firstElementChild?.removeAttribute("data-awesome-reveal");
       this.controller = undefined;
     });
   }

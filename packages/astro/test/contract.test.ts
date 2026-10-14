@@ -23,7 +23,7 @@ const harness = (cascade: boolean): Harness => ({
     host.addEventListener("reveal", (event) => current.onReveal?.(event.target as Element));
     const element = document.createElement("div");
     element.setAttribute("data-contract", "");
-    element.setAttribute("data-reveal", cascade ? "cascade" : "hidden");
+    element.setAttribute("data-awesome-reveal", cascade ? "cascade" : "hidden");
     Object.assign(element.style, init?.style);
     element.innerHTML = "<span>1</span><span>2</span><span>3</span>";
     host.append(element);

@@ -21,32 +21,41 @@ class FakeObserver {
 
   report(inView: boolean) {
     this.callback(
-      [{ isIntersecting: inView, intersectionRatio: Number(inView) }] as never,
+      [
+        {
+          isIntersecting: inView,
+          intersectionRatio: Number(inView),
+          boundingClientRect: { width: 0, height: 0 },
+          rootBounds: null,
+        },
+      ] as never,
       this as never,
     );
   }
 }
 
-const root = new Map<string, string>();
-const ownerDocument = {
-  documentElement: {
-    hasAttribute: (name: string) => root.has(name),
-    setAttribute: (name: string, value: string) => root.set(name, value),
-  },
-};
-
 function fakeElement() {
   const cancel = vi.fn();
   const animate = vi.fn(() => ({ cancel, pause: vi.fn(), play: vi.fn() }));
-  const element = { animate, children: [], isConnected: false, ownerDocument };
-  return { element: element as unknown as Element, animate, cancel };
+  const attributes = new Map<string, string>();
+  const element = {
+    animate,
+    children: [],
+    isConnected: false,
+    attributes,
+    setAttribute: (name: string, value: string) => attributes.set(name, value),
+    removeAttribute: (name: string) => attributes.delete(name),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    matches: () => false,
+  };
+  return { element: element as unknown as Element, animate, cancel, attributes };
 }
 
 const live = () => FakeObserver.instances.filter((observer) => !observer.disconnected);
 
 beforeEach(() => {
   FakeObserver.instances = [];
-  root.clear();
   vi.stubGlobal("IntersectionObserver", FakeObserver);
 });
 
@@ -83,11 +92,17 @@ describe("createReveal", () => {
     expect(animate).toHaveBeenCalledTimes(1);
   });
 
-  it("marks the document as ready at the first attach", () => {
+  it("marks the attached element as ready, and unmarks it at the detach", () => {
+    const first = fakeElement();
+    const second = fakeElement();
     const state = createReveal(options);
-    expect(root.has("data-reveal-ready")).toBe(false);
-    state.attach(fakeElement().element);
-    expect(root.get("data-reveal-ready")).toBe("");
+    state.attach(first.element);
+    expect(first.attributes.get("data-awesome-reveal-ready")).toBe("");
+    state.attach(second.element);
+    expect(first.attributes.has("data-awesome-reveal-ready")).toBe(false);
+    expect(second.attributes.get("data-awesome-reveal-ready")).toBe("");
+    state.attach(null);
+    expect(second.attributes.has("data-awesome-reveal-ready")).toBe(false);
   });
 
   it("calls onReveal once for each reveal, also when the same element plays again", () => {

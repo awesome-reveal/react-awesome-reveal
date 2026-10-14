@@ -10,7 +10,7 @@ const track = (handle: RevealHandle) => {
   handles.push(handle);
   return handle;
 };
-const opacity = (element = target) => getComputedStyle(element).opacity;
+const opacity = (element: Element = target) => getComputedStyle(element).opacity;
 const animation = (element = target) => element.getAnimations()[0]!;
 const native = { keyframes: [{ opacity: 0 }, { opacity: 1 }], duration: 60_000 };
 
@@ -165,14 +165,58 @@ describe("zero-CSS reveal", () => {
     scrollIntoView(document.getElementById("clip")!);
     await expect.poll(() => animation(small).playState).toBe("running");
   });
-  it("reveals an element taller than the viewport when it leaves before the threshold", async () => {
+  it("reveals an element taller than the viewport at its entry when it cannot reach the threshold", async () => {
     target.style.height = "300vh";
     track(reveal(target, { ...native, threshold: 0.5 }));
-    scrollTo(0, target.offsetTop - innerHeight / 2);
     await settle();
     expect(animation().playState).toBe("paused");
-    scrollTo(0, target.offsetTop + target.offsetHeight + 1);
+    scrollTo(0, target.offsetTop - innerHeight / 2);
     await expect.poll(() => animation().playState).toBe("running");
+  });
+  describe("focus shows the element at once, with no entrance", () => {
+    const link = (element = target) => element.querySelector("a")!;
+    beforeEach(() => {
+      target.innerHTML = `<a href="#">a</a><a href="#">b</a><a href="#">c</a>`;
+    });
+    async function expectShown(...elements: Element[]) {
+      for (const element of elements) {
+        expect(opacity(element)).toBe("1");
+        expect(getComputedStyle(element).translate).toBe("none");
+        expect(element.getAnimations()).toEqual([]);
+      }
+      await settle();
+      for (const element of elements) expect(opacity(element)).toBe("1");
+    }
+    it.each([
+      ["a long delay", { delay: 60_000 }],
+      ["no delay", { duration: 60_000 }],
+      ["native keyframes", native],
+    ])("with %s, also below the threshold", async (_, options: RevealOptions) => {
+      track(reveal(target, { ...options, threshold: 0.8 }));
+      showTopHalf(target);
+      await settle();
+      expect(opacity()).toBe("0");
+      link().focus();
+      await expectShown(target);
+    });
+    it("in a later child of a cascade with an interval", async () => {
+      track(cascade(target, { duration: 60_000, interval: 10_000 }));
+      expect(opacity(target.lastElementChild!)).toBe("0");
+      (target.lastElementChild as HTMLElement).focus();
+      await expectShown(...target.children);
+    });
+    it("when the element has focus before the reveal starts", async () => {
+      link().focus();
+      track(reveal(target, { delay: 60_000 }));
+      await expectShown(target);
+    });
+    it("stops listening at disposal", () => {
+      const listen = vi.spyOn(target, "addEventListener");
+      const unlisten = vi.spyOn(target, "removeEventListener");
+      track(reveal(target, native)).dispose();
+      expect(listen).toHaveBeenCalledWith("focusin", expect.any(Function));
+      expect(unlisten.mock.calls).toEqual(listen.mock.calls);
+    });
   });
   it("reveals an element taller than its scroll container when it leaves before the threshold", async () => {
     document.body.innerHTML = `<div id="scroller" style="height: 300px; overflow: auto"><div style="height: 400px"></div><div id="tall" style="height: 900px"></div><div style="height: 400px"></div></div>`;

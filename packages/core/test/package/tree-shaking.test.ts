@@ -4,14 +4,14 @@ it.concurrent.each([
   {
     entry: "reveal.js",
     animationExports: ["motionPreference", "motions"],
-    bytes: 3550,
-    gzip: 1525,
+    bytes: 3850,
+    gzip: 1675,
   },
   {
     entry: "both.js",
     animationExports: ["cascadeInterval", "motionPreference", "motions"],
-    bytes: 3650,
-    gzip: 1575,
+    bytes: 3950,
+    gzip: 1725,
   },
 ])(
   "keeps only the imperative modules for $entry",

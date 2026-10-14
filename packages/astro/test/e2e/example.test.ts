@@ -17,7 +17,7 @@ async function revealed(page: Page, selector: string) {
     const element = document.querySelector(selector);
     return (
       element !== null &&
-      !element.hasAttribute("data-reveal") &&
+      !element.hasAttribute("data-awesome-reveal") &&
       getComputedStyle(element).opacity === "1" &&
       element.getAnimations({ subtree: true }).length === 0
     );
@@ -34,7 +34,8 @@ function isHidden(page: Page, selector: string) {
   return page.$eval(
     selector,
     (element) =>
-      element.getAttribute("data-reveal") === "hidden" && getComputedStyle(element).opacity === "0",
+      element.getAttribute("data-awesome-reveal") === "hidden" &&
+      getComputedStyle(element).opacity === "0",
   );
 }
 
@@ -90,15 +91,33 @@ describe.each(
     expect(await opacities(page, "#cascade > li")).toEqual(["1", "1", "1"]);
   });
 
-  it("shows the hidden elements when the page marks the reveal as failed", async () => {
-    expect(
-      await page.evaluate(() => document.documentElement.hasAttribute("data-reveal-ready")),
-    ).toBe(true);
+  it("shows the hidden elements after the hold when the client script is blocked", async () => {
+    const blocked = await browser.newPage({ baseURL, viewport: { width: 1280, height: 720 } });
+    await blocked.route("**/*", async (route) => {
+      const response = await route.fetch();
+      await route.fulfill({
+        response,
+        headers: { ...response.headers(), "content-security-policy": "script-src 'none'" },
+      });
+    });
+    await blocked.goto("/");
 
-    await page.evaluate(() => document.documentElement.setAttribute("data-reveal-failed", ""));
+    expect(await opacities(blocked, "#list")).toEqual(["0"]);
+    await blocked.evaluate(() => {
+      for (const animation of document.getAnimations()) animation.finish();
+    });
+    expect(await opacities(blocked, "#list")).toEqual(["1"]);
+    expect(await opacities(blocked, "#cascade > li")).toEqual(["1", "1", "1"]);
+    await blocked.close();
+  });
 
-    expect(await page.$eval("#list", (element) => getComputedStyle(element).opacity)).toBe("1");
-    expect(await opacities(page, "#cascade > li")).toEqual(["1", "1", "1"]);
+  it("keeps an element hidden after the hold when the script has attached it", async () => {
+    await page.evaluate(() => {
+      for (const animation of document.getAnimations()) animation.finish();
+    });
+
+    expect(await isHidden(page, "#list")).toBe(true);
+    expect(await opacities(page, "#cascade > li")).toEqual(["0", "0", "0"]);
   });
 
   it("reveals the element in the viewport, and keeps the others hidden", async () => {
@@ -109,7 +128,9 @@ describe.each(
 
   it("reveals an element when it scrolls into the viewport, as one composition", async () => {
     await page.locator("#list").scrollIntoViewIfNeeded();
-    await page.waitForFunction(() => !document.querySelector("#list")!.hasAttribute("data-reveal"));
+    await page.waitForFunction(
+      () => !document.querySelector("#list")!.hasAttribute("data-awesome-reveal"),
+    );
 
     expect(
       await page.$$eval("#list", (items) => items.map((item) => item.getAnimations().length)),
@@ -118,14 +139,14 @@ describe.each(
   });
 
   it("hides the children of a cascade, then reveals them in sequence", async () => {
-    expect(await page.$eval("#cascade", (element) => element.getAttribute("data-reveal"))).toBe(
-      "cascade",
-    );
+    expect(
+      await page.$eval("#cascade", (element) => element.getAttribute("data-awesome-reveal")),
+    ).toBe("cascade");
     expect(await opacities(page, "#cascade > li")).toEqual(["0", "0", "0"]);
 
     await page.locator("#cascade").scrollIntoViewIfNeeded();
     await page.waitForFunction(
-      () => !document.querySelector("#cascade")!.hasAttribute("data-reveal"),
+      () => !document.querySelector("#cascade")!.hasAttribute("data-awesome-reveal"),
     );
 
     expect(
@@ -198,7 +219,7 @@ describe.each(
     expect(
       await page.$eval("#persisted", (element) => [
         element.hasAttribute("data-before"),
-        element.hasAttribute("data-reveal"),
+        element.hasAttribute("data-awesome-reveal"),
         element.getAnimations().length,
       ]),
     ).toEqual([true, false, 0]);
@@ -248,7 +269,7 @@ describe("example server markup", () => {
 
     expect(
       await page.$eval("#list", (element) => [
-        element.getAttribute("data-reveal"),
+        element.getAttribute("data-awesome-reveal"),
         getComputedStyle(element).opacity,
       ]),
     ).toEqual(["hidden", "1"]);

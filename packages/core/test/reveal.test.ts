@@ -47,7 +47,7 @@ describe("reveal", () => {
     intersect(target, true);
     expect(animations[0]?.play).toHaveBeenCalledOnce();
     expect(observerOf(target)).toBeUndefined();
-    expect(target.hasAttribute("data-reveal")).toBe(false);
+    expect(target.hasAttribute("data-awesome-reveal")).toBe(false);
   });
   it.each([
     ["left", "-24px 0px"],
@@ -149,6 +149,59 @@ describe("reveal", () => {
     expect(animations[0]?.play).toHaveBeenCalledOnce();
     expect(observerOf(target)).toBeUndefined();
   });
+  it("plays at the entry when the element cannot reach the threshold in the viewport", () => {
+    const target = element();
+    track(reveal(target, { threshold: 0.5 }));
+    const root = { width: 1000, height: 500 };
+    observerOf(target)!.triggerSized(target, 0.1, { width: 500, height: 2000 }, root);
+    expect(animations[0]?.play).toHaveBeenCalledOnce();
+    expect(observerOf(target)).toBeUndefined();
+  });
+  it("waits for the threshold when the element can reach it in the viewport", () => {
+    const target = element();
+    track(reveal(target, { threshold: 0.5 }));
+    const root = { width: 1000, height: 500 };
+    observerOf(target)!.triggerSized(target, 0.1, { width: 500, height: 1000 }, root);
+    expect(animations[0]?.play).not.toHaveBeenCalled();
+  });
+  it.each([
+    [2000, true],
+    [1000, false],
+  ])(
+    "uses its own viewport in a cross-origin frame with no root bounds: height %d plays %s",
+    (height, plays) => {
+      vi.stubGlobal("innerWidth", 1000);
+      vi.stubGlobal("innerHeight", 500);
+      const target = element();
+      track(reveal(target, { threshold: 0.5 }));
+      observerOf(target)!.triggerSized(target, 0.1, { width: 500, height }, null);
+      expect(animations[0]?.play).toHaveBeenCalledTimes(Number(plays));
+    },
+  );
+  it("cancels the entrance when focus enters the element, and stops observing", () => {
+    const target = element();
+    const link = target.appendChild(document.createElement("a"));
+    link.tabIndex = -1;
+    track(reveal(target, { threshold: 0.5 }));
+    link.focus();
+    expect(animations[0]?.cancel).toHaveBeenCalledOnce();
+    expect(animations[0]?.play).not.toHaveBeenCalled();
+    expect(observerOf(target)).toBeUndefined();
+  });
+  it("plays the entrance when focus leaves before the reveal", () => {
+    const target = element();
+    track(reveal(target));
+    target.dispatchEvent(new FocusEvent("focusin"));
+    expect(animations[0]?.play).toHaveBeenCalledOnce();
+  });
+  it("stops listening to focus on disposal", () => {
+    const target = element();
+    const listen = vi.spyOn(target, "addEventListener");
+    const unlisten = vi.spyOn(target, "removeEventListener");
+    track(reveal(target)).dispose();
+    expect(listen).toHaveBeenCalledWith("focusin", expect.any(Function));
+    expect(unlisten.mock.calls).toEqual(listen.mock.calls);
+  });
   it.each([
     [0.3, 0],
     [0.6, 0],
@@ -227,7 +280,7 @@ describe("reveal", () => {
     expect(() =>
       track(reveal(target, { keyframes: [{ opacity: 0, easing: "bogus" }, { opacity: 1 }] })),
     ).not.toThrow();
-    expect(target.hasAttribute("data-reveal")).toBe(false);
+    expect(target.hasAttribute("data-awesome-reveal")).toBe(false);
     expect(target.style.opacity).toBe("");
     expect(reports()).toEqual([error]);
   });
