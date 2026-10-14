@@ -105,7 +105,7 @@ Do this after the `publish` job of a stable release from `next` succeeds. A fail
 
 1. Fetch, and check whether `main` is an ancestor of `next`: `git merge-base --is-ancestor origin/main origin/next`.
 2. If it is, fast-forward: `git push origin origin/next:main`. No force is necessary.
-3. If it is not, `main` has commits that `next` lacks. List them with `git log origin/next..origin/main`. Continue only when you do not need them, or when you first cherry-pick them onto `next` in a PR and re-run the release. Then reset: `git push --force-with-lease=main:<old main SHA> origin origin/next:main`. If GitHub rejects the push, allow force pushes on `main` in its branch protection, push, and turn the setting off again.
+3. If it is not, `main` has commits that `next` lacks. List them with `git log origin/next..origin/main`. Continue only when you do not need them, or when you first cherry-pick them onto `next` in a PR and re-run the release. Then reset: `git push --force-with-lease=main:<old main SHA> origin origin/next:main`. If GitHub rejects the push, allow force pushes on `main` in its branch protection, push, and disable the setting again.
 4. Check that the release workflow on `main` finds no release to make.
 
 Make no direct commits to `main`. Hotfixes go to `next` first, so that `main` stays an ancestor of `next` and step 2 works.
