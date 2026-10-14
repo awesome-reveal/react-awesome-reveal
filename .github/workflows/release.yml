@@ -57,7 +57,7 @@ jobs:
     if: needs.release-please.outputs.releases_created == 'true'
     runs-on: ubuntu-latest
     environment: npm
-    timeout-minutes: 30
+    timeout-minutes: 45
     permissions:
       contents: read
       id-token: write
@@ -93,7 +93,23 @@ jobs:
         # A prerelease goes to latest while the package has no stable version, so that a plain install gets it.
         run: |
           set -o pipefail
-          # The adapters depend on core, so core goes first.
+          # npm stages an accepted version for some minutes, and npm view cannot see it. The malware scan of
+          # npm can also hold or block a staged version, so a successful publish does not prove the release.
+          wait_for_npm() {
+            for _ in {1..40}; do
+              local missing=()
+              for spec in "$@"; do
+                [[ -n $(npm view "$spec" version --prefer-online 2>/dev/null) ]] || missing+=("$spec")
+              done
+              ((${#missing[@]})) || return 0
+              set -- "${missing[@]}"
+              sleep 30
+            done
+            echo "::error::$* did not show on npm in 20 minutes. Check it with npm stage list."
+            return 1
+          }
+          published=()
+          # The adapters depend on core, so core goes first, and the job waits until core shows on npm.
           for path in $(jq -r 'sort_by(. != "packages/core") | .[]' <<<"$PATHS_RELEASED"); do
             name=$(jq -r .name "$path/package.json")
             version=$(jq -r .version "$path/package.json")
@@ -105,17 +121,12 @@ jobs:
             fi
             tag=latest
             if [[ $version == *-* && -n $current && $current != *-* ]]; then tag=next; fi
-            # npm stages an accepted version for some minutes, and npm view cannot see it. A re-run in that
-            # window gets a 409 "previously staged version". The malware scan of npm can also hold or block
-            # a staged version, so the job waits until the version shows.
+            # A re-run while npm stages a version gets a 409 "previously staged version".
             if ! pnpm --filter "./$path" publish --no-git-checks --tag "$tag" 2>&1 | tee "$RUNNER_TEMP/publish.log"; then
               grep -q 'previously staged version' "$RUNNER_TEMP/publish.log"
-              echo "::warning::npm already staged $name@$version. The job waits until it shows on the registry."
-              for _ in {1..40}; do
-                [[ -n $(npm view "$name@$version" version --prefer-online 2>/dev/null) ]] && continue 2
-                sleep 30
-              done
-              echo "::error::$name@$version did not show on npm in 20 minutes. Check it with npm stage list."
-              exit 1
+              echo "::warning::npm already staged $name@$version."
             fi
+            published+=("$name@$version")
+            if [[ $path == packages/core ]]; then wait_for_npm "$name@$version"; fi
           done
+          wait_for_npm "${published[@]}"
