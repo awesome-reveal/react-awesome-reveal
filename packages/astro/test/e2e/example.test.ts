@@ -79,6 +79,8 @@ describe.each(
     expect(
       await page.evaluate(() => (window as unknown as { violations: string[] }).violations),
     ).toEqual([]);
+    // A route handler can still fetch, for example the server island, when the page closes.
+    await page.unrouteAll({ behavior: "ignoreErrors" });
     await page.close();
   });
 
@@ -108,6 +110,7 @@ describe.each(
     });
     expect(await opacities(blocked, "#list")).toEqual(["1"]);
     expect(await opacities(blocked, "#cascade > li")).toEqual(["1", "1", "1"]);
+    await blocked.unrouteAll({ behavior: "ignoreErrors" });
     await blocked.close();
   });
 
