@@ -1,7 +1,11 @@
 // @vitest-environment jsdom
 import { reveal, cascade, type RevealHandle } from "../src/index";
 import { animations, installAnimate, uninstallAnimate } from "@awesome-reveal/test-utils/animate";
-import { defaultKeyframes, fadeKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
+import {
+  defaultKeyframes,
+  easing,
+  fadeKeyframes,
+} from "@awesome-reveal/test-utils/entrance-fixtures";
 import { collectReports } from "@awesome-reveal/test-utils/reports";
 import {
   intersect,
@@ -14,7 +18,6 @@ const track = (handle: RevealHandle) => {
   handles.push(handle);
   return handle;
 };
-const easing = "cubic-bezier(0.22, 1, 0.36, 1)";
 const element = () => document.body.appendChild(document.createElement("div"));
 
 beforeEach(() => {

@@ -20,8 +20,8 @@ const sources = {
     ...aliases([
       ["@awesome-reveal/core", "packages/core/src/index.ts"],
       ["@awesome-reveal/core/adapter", "packages/core/src/adapter.ts"],
+      ["#reveal-style", "packages/react/src/reveal.css"],
     ]),
-    ...aliases([["#reveal-style", "packages/react/src/reveal.css"]]),
     ...testUtils,
   ],
 };

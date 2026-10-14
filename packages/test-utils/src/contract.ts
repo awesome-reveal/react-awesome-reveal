@@ -1,6 +1,7 @@
 import type { CascadeOptions } from "@awesome-reveal/core/adapter";
 
 import { animations, runningAnimations } from "./animate";
+import { easing } from "./entrance-fixtures";
 import { intersect as report, MockIntersectionObserver, observerOf } from "./intersection-observer";
 
 export type ContractOptions = CascadeOptions;
@@ -249,7 +250,7 @@ export function describeContract(name: string, harness: Harness) {
       await intersect(m, true);
       const [, , move] = animations[0]!.keyframes as Keyframe[];
       expect(move).toMatchObject({ translate: "-24px 0px", composite: "add" });
-      expect(move!.easing).toBe("cubic-bezier(0.22, 1, 0.36, 1)");
+      expect(move!.easing).toBe(easing);
     });
 
     it("the first reveal marks the document as started", async () => {

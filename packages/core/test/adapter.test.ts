@@ -1,3 +1,5 @@
+import { collectReports } from "@awesome-reveal/test-utils/reports";
+
 import { createCascade, createReveal, type RevealStore } from "../src/adapter";
 
 class FakeObserver {
@@ -238,8 +240,7 @@ describe("createReveal", () => {
 });
 
 it("reports a throwing adapter callback once without breaking the reveal", () => {
-  const callbacks: VoidFunction[] = [];
-  vi.stubGlobal("queueMicrotask", (callback: VoidFunction) => callbacks.push(callback));
+  const reports = collectReports();
   const error = new Error("callback failure");
   const onReveal = () => {
     throw error;
@@ -250,8 +251,7 @@ it("reports a throwing adapter callback once without breaking the reveal", () =>
   state.setOptions({ onReveal, when: false });
   state.setOptions({ onReveal, when: true });
   expect(state.revealed).toBe(true);
-  expect(callbacks).toHaveLength(1);
-  expect(callbacks[0]).toThrow(error);
+  expect(reports()).toEqual([error]);
 });
 
 describe("createCascade", () => {
