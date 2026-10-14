@@ -3,6 +3,7 @@ import { relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import ts from "typescript";
+import { parse } from "yaml";
 
 interface DocsOptions {
   /** The JSX options of the framework, if it uses JSX. */
@@ -34,20 +35,19 @@ export function describeDocs(root: URL, { jsx, skipFences }: DocsOptions = {}) {
 
     it.each(skills)("gives the %s skill the frontmatter of the Agent Skills spec", (skill) => {
       const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---\r?\n/.exec(skillText(skill))?.[1] ?? "";
-      const fields: Record<string, string> = Object.fromEntries(
-        frontmatter.split(/\r?\n/).flatMap((line) => {
-          const field = /^([\w-]+):\s*(.*)$/.exec(line);
-          return field ? [[field[1], field[2]]] : [];
-        }),
-      );
+      const fields: Record<string, unknown> = parse(frontmatter) ?? {};
 
       expect(fields.name).toBe(skill);
-      expect(fields.description).toBeTruthy();
-      expect(fields.description!.length).toBeLessThanOrEqual(1024);
       // npmx.dev warns on a skill without `license` or `compatibility`.
       expect(fields.license).toBe(pkg.license);
-      expect(fields.compatibility).toBeTruthy();
-      expect(fields.compatibility!.length).toBeLessThanOrEqual(500);
+      for (const [field, maxLength] of [
+        ["description", 1024],
+        ["compatibility", 500],
+      ] as const) {
+        expect(fields[field]).toBeTypeOf("string");
+        expect((fields[field] as string).length).toBeGreaterThan(0);
+        expect((fields[field] as string).length).toBeLessThanOrEqual(maxLength);
+      }
     });
 
     it("type-checks the TypeScript examples against the package types", () => {
