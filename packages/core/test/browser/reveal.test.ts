@@ -114,6 +114,24 @@ describe("zero-CSS reveal", () => {
     expect(opacity()).toBe("1");
     expect(target.getAnimations()).toEqual([]);
   });
+  it.each(["finish", "cancel"] as const)(
+    "does not play a waiting entrance that page code called %s() on",
+    async (method) => {
+      track(reveal(target, native));
+      const effect = animation();
+      effect[method]();
+      expect(opacity()).toBe("1");
+      scrollIntoView(target);
+      await settle();
+      expect(effect.playState).toBe(method === "finish" ? "finished" : "idle");
+      expect(opacity()).toBe("1");
+    },
+  );
+  it("plays a waiting entrance that page code paused", async () => {
+    track(reveal(target, native));
+    animation().pause();
+    await enter();
+  });
   it("waits for the threshold", async () => {
     track(reveal(target, { ...native, threshold: 0.8 }));
     showTopHalf(target);

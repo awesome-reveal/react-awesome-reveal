@@ -67,10 +67,8 @@ export function motion(element: Element, options: RevealOptions, delay = 0) {
   }
   return {
     play() {
-      if (animation) {
-        animation.currentTime = 0;
-        animation.play();
-      }
+      // A waiting animation that page code finished or cancelled leaves the element at rest, so it does not play.
+      if (animation?.playState === "paused") animation.play();
     },
     dispose() {
       animation?.cancel();

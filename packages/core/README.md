@@ -25,6 +25,8 @@ Both functions accept an element, a CSS selector, an iterable of elements, or an
 
 `dispose()` disconnects the observers and cancels the active and the delayed animations. It removes the start state of the call, and the elements go back to their own styles. You can call it more than one time.
 
+Each waiting entrance is a paused native animation. If your code finishes or cancels it before the element enters the viewport, the element shows at rest and the entrance does not play. A paused animation does not finish. So code that waits for all of `document.getAnimations()` to finish must skip the paused ones, for example with `animation.playState !== "paused"`.
+
 ## Entrance
 
 The default entrance starts at opacity 0 and 24 px below the resting position, and moves up in 600 ms. You cannot change its easing. For a different easing, use native keyframes.

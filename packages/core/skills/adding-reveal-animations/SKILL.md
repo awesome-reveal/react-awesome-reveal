@@ -7,7 +7,7 @@ description: Adds reveal-on-scroll animations with reveal() and cascade() from @
 
 Use `reveal(target, options?)` to animate each target element when it enters the viewport. Use `cascade(container, options?)` to animate the direct element children of a container in sequence. Both functions return only `{ dispose() }`. Call `dispose()` in your teardown code.
 
-Core needs no stylesheet. It applies the start state when you call it. It does not hide server-rendered content. Only the framework packages do that.
+Core needs no stylesheet. It applies the start state when you call it, with a paused native animation. Code that waits for all page animations to finish must skip the paused ones. It does not hide server-rendered content. Only the framework packages do that.
 
 ```ts
 import { reveal, cascade } from "@awesome-reveal/core";
