@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { reveal, cascade, type RevealHandle } from "../src/index";
 import { animations, installAnimate, uninstallAnimate } from "@awesome-reveal/test-utils/animate";
+import { defaultKeyframes, fadeKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
 import {
   intersect,
   observerOf,
@@ -12,6 +13,7 @@ const track = (handle: RevealHandle) => {
   handles.push(handle);
   return handle;
 };
+const easing = "cubic-bezier(0.22, 1, 0.36, 1)";
 const element = () => document.body.appendChild(document.createElement("div"));
 
 beforeEach(() => {
@@ -34,10 +36,7 @@ describe("reveal", () => {
     const target = element();
     const handle = track(reveal(target));
     expect(Object.keys(handle)).toEqual(["dispose"]);
-    expect(animations[0]?.keyframes).toEqual([
-      { opacity: 0, transform: "translate(0px, 24px)", easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
-      {},
-    ]);
+    expect(animations[0]?.keyframes).toEqual(defaultKeyframes);
     expect(animations[0]?.options).toEqual({ duration: 600, delay: 0, fill: "backwards" });
     expect(animations[0]?.pause).toHaveBeenCalledOnce();
     expect(animations[0]?.play).not.toHaveBeenCalled();
@@ -47,43 +46,63 @@ describe("reveal", () => {
     expect(target.hasAttribute("data-reveal")).toBe(false);
   });
   it.each([
-    ["left", "translate(-24px, 0px)"],
-    ["right", "translate(24px, 0px)"],
-    ["top", "translate(0px, -24px)"],
-    ["bottom", "translate(0px, 24px)"],
-  ] as const)("generates %s", (from, transform) => {
+    ["left", "-24px 0px"],
+    ["right", "24px 0px"],
+    ["top", "0px -24px"],
+    ["bottom", "0px 24px"],
+  ] as const)("generates %s", (from, translate) => {
     track(reveal(element(), { from }));
-    expect(animations[0]?.keyframes).toMatchObject([{ opacity: 0, transform }, {}]);
+    expect(animations[0]?.keyframes).toMatchObject([
+      { offset: 0, opacity: 0 },
+      { offset: 0, composite: "add", translate },
+      { offset: 1, composite: "add", opacity: 0, translate: "0px 0px" },
+    ]);
   });
-  it.each([{ opacity: 0 }, { scale: 0.9 }, {}])(
-    "uses exactly the custom start state %j",
-    (from) => {
-      track(reveal(element(), { from }));
-      const frame = (animations[0]!.keyframes as Keyframe[])[0]!;
-      expect(frame).not.toHaveProperty("transform", "translate(0px, 24px)");
-      expect(frame.opacity).toBe(from.opacity);
-      if (from.scale) expect(frame.transform).toBe("scale(0.9)");
-      else expect(frame).not.toHaveProperty("transform");
-    },
-  );
+  it.each([
+    [{ opacity: 0 }, fadeKeyframes],
+    [
+      { scale: 0.9 },
+      [
+        { offset: 0, easing, composite: "add", scale: 0.9 },
+        { offset: 1, composite: "add", scale: 1 },
+      ],
+    ],
+    [{}, [{ offset: 1, composite: "add" }]],
+  ])("uses exactly the custom start state %j", (from, keyframes) => {
+    track(reveal(element(), { from }));
+    expect(animations[0]?.keyframes).toEqual(keyframes);
+  });
   it("converts numeric and string CSS values", () => {
     track(
       reveal(element(), {
         from: { opacity: 0.3, x: -16, y: "-100%", scale: 0.8, rotate: -5, blur: 8 },
       }),
     );
-    expect(animations[0]?.keyframes).toMatchObject([
+    expect(animations[0]?.keyframes).toEqual([
+      { offset: 0, easing, opacity: 0.3 },
       {
-        opacity: 0.3,
-        transform: "translate(-16px, -100%) scale(0.8) rotate(-5deg)",
+        offset: 0,
+        easing,
+        composite: "add",
+        translate: "-16px -100%",
+        scale: 0.8,
+        rotate: "-5deg",
         filter: "blur(8px)",
       },
-      {},
+      {
+        offset: 1,
+        composite: "add",
+        opacity: 0,
+        translate: "0px 0px",
+        scale: 1,
+        rotate: "0deg",
+        filter: "blur(0px)",
+      },
     ]);
     track(reveal(element(), { from: { x: "2rem", rotate: "0.5turn", blur: "0.5rem" } }));
     expect(animations[1]?.keyframes).toMatchObject([
-      { transform: "translate(2rem, 0px) rotate(0.5turn)", filter: "blur(0.5rem)" },
-      {},
+      { translate: "2rem 0px", rotate: "0.5turn", filter: "blur(0.5rem)" },
+      { translate: "0px 0px", rotate: "0deg", filter: "blur(0px)" },
     ]);
   });
   it("passes native keyframes unchanged and honors duration", () => {

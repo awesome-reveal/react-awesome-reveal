@@ -36,10 +36,7 @@ describe("zero-CSS reveal", () => {
     expect(target.style.cssText).toBe("height: 100px;");
     expect(document.querySelectorAll("style").length).toBe(styles);
     expect(animation().effect!.getTiming().duration).toBe(600);
-    expect((animation().effect as KeyframeEffect).getKeyframes()[0]).toMatchObject({
-      opacity: "0",
-      transform: "translate(0px, 24px)",
-    });
+    expect(getComputedStyle(target).translate).toBe("0px 24px");
     await enter();
     animation().finish();
     expect(opacity()).toBe("1");
@@ -60,17 +57,51 @@ describe("zero-CSS reveal", () => {
     expect(getComputedStyle(target).transform).toBe(
       "matrix(0.984808, 0.173648, -0.173648, 0.984808, 0, 0)",
     );
-    expect((animation().effect as KeyframeEffect).getKeyframes()[0]).not.toHaveProperty(
-      "transform",
-    );
+    expect((animation().effect as KeyframeEffect).getKeyframes()).toHaveLength(2);
   });
   it("applies transform-only custom state without a fade", () => {
     track(reveal(target, { from: { scale: 0.9, rotate: "-5deg", blur: "0.5rem" } }));
     expect(opacity()).toBe("1");
-    expect((animation().effect as KeyframeEffect).getKeyframes()[0]).toMatchObject({
-      transform: "scale(0.9) rotate(-5deg)",
-      filter: "blur(0.5rem)",
+    expect(getComputedStyle(target)).toMatchObject({
+      scale: "0.9",
+      rotate: "-5deg",
+      filter: "blur(8px)",
     });
+  });
+  it("adds the entrance to the element's own transforms, filter and opacity", () => {
+    Object.assign(target.style, {
+      transform: "scale(2)",
+      translate: "10px 0px",
+      rotate: "10deg",
+      filter: "brightness(0.5)",
+      opacity: "0.5",
+    });
+    track(reveal(target, { from: { opacity: 0, x: 24, rotate: 5, blur: 8 }, duration: 1000 }));
+    const style = getComputedStyle(target);
+    expect(style).toMatchObject({
+      opacity: "0",
+      translate: "34px",
+      rotate: "15deg",
+      filter: "brightness(0.5) blur(8px)",
+    });
+    animation().currentTime = 500;
+    // The easing is at about 96% of the change at the midpoint, so the fade goes to the element's 0.5.
+    expect(Number(style.opacity)).toBeCloseTo(0.48, 2);
+    animation().currentTime = 1000;
+    expect(style).toMatchObject({
+      opacity: "0.5",
+      translate: "10px",
+      rotate: "10deg",
+      filter: "brightness(0.5)",
+      transform: "matrix(2, 0, 0, 2, 0, 0)",
+    });
+  });
+  it("moves the offset in screen pixels when the element has its own scale", () => {
+    target.style.transform = "scale(2)";
+    track(reveal(target, { from: { x: 24 }, duration: 1000 }));
+    const start = target.getBoundingClientRect().x;
+    animation().currentTime = 1000;
+    expect(start - target.getBoundingClientRect().x).toBeCloseTo(24);
   });
   it("plays once and stays revealed when the element leaves and enters again", async () => {
     track(reveal(target, native));

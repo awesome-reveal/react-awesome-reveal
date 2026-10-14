@@ -26,10 +26,15 @@ const sides = ["top", "right", "bottom", "left"] as const;
     <Reveal from={{ scale: 0.9 }}>Scale only</Reveal>
   </PageSection>
   <PageSection>
+    <Reveal from="left" class="tilted">
+      Keeps its own rotation
+    </Reveal>
+  </PageSection>
+  <PageSection>
     <Reveal
       keyframes={[
         { opacity: 0, transform: "scale(.8)", easing: "ease-out" },
-        {},
+        { opacity: 1, transform: "scale(1)" },
       ]}
     >
       Native keyframes

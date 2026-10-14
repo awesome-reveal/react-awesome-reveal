@@ -13,7 +13,13 @@ import { Reveal, vReveal } from "@awesome-reveal/vue";
 <template>
   <Reveal from="left">Hello</Reveal>
   <p v-reveal="{ from: { opacity: 0 }, duration: 500 }">Pure fade</p>
-  <Reveal :keyframes="[{ opacity: 0, transform: 'scale(.8)' }, {}]">Native animation</Reveal>
+  <Reveal
+    :keyframes="[
+      { opacity: 0, transform: 'scale(.8)' },
+      { opacity: 1, transform: 'scale(1)' },
+    ]"
+    >Native animation</Reveal
+  >
 </template>
 ```
 

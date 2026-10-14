@@ -222,9 +222,9 @@ export function describeContract(name: string, harness: Harness) {
     it("direction builds the entrance", async () => {
       const m = await mount({ from: "left" });
       await intersect(m, true);
-      const [start] = animations[0]!.keyframes as Keyframe[];
-      expect(start).toMatchObject({ opacity: 0, transform: "translate(-24px, 0px)" });
-      expect(start!.easing).toBe("cubic-bezier(0.22, 1, 0.36, 1)");
+      const [, move] = animations[0]!.keyframes as Keyframe[];
+      expect(move).toMatchObject({ translate: "-24px 0px", composite: "add" });
+      expect(move!.easing).toBe("cubic-bezier(0.22, 1, 0.36, 1)");
     });
 
     it("the first reveal marks the document as started", async () => {

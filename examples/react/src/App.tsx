@@ -52,6 +52,11 @@ export const App = () => (
       <Reveal from={{ scale: 0.9 }}>Scale only</Reveal>
     </Section>
     <Section>
+      <Reveal from="left" style={{ rotate: "-3deg" }}>
+        Keeps its own rotation
+      </Reveal>
+    </Section>
+    <Section>
       <Reveal
         keyframes={[
           {
@@ -59,7 +64,7 @@ export const App = () => (
             transform: "rotate(-10deg) scale(.8)",
             easing: "cubic-bezier(.34,1.56,.64,1)",
           },
-          {},
+          { opacity: 1, transform: "rotate(0deg) scale(1)" },
         ]}
       >
         Native keyframes

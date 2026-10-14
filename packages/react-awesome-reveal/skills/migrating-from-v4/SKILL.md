@@ -14,7 +14,14 @@ import { Reveal } from "@awesome-reveal/react";
 
 <Reveal from={{ opacity: 0 }}>Pure fade</Reveal>;
 <Reveal from="left">Directional entrance</Reveal>;
-<Reveal keyframes={[{ opacity: 0, transform: "scale(.8)" }, {}]}>Native animation</Reveal>;
+<Reveal
+  keyframes={[
+    { opacity: 0, transform: "scale(.8)" },
+    { opacity: 1, transform: "scale(1)" },
+  ]}
+>
+  Native animation
+</Reveal>;
 ```
 
 The default entrance starts transparent and 24px below the resting position. It takes 600 ms and plays one time. A custom start state does not get these defaults. The package loads its CSS automatically. `Reveal` renders one element around its children, and `as` sets its tag.

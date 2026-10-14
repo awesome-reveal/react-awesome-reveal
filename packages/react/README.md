@@ -15,7 +15,14 @@ import { Reveal } from "@awesome-reveal/react";
 <Reveal from={{ opacity: 0 }} duration={500}>
   Pure fade
 </Reveal>;
-<Reveal keyframes={[{ opacity: 0, transform: "scale(.8)" }, {}]}>Native keyframes</Reveal>;
+<Reveal
+  keyframes={[
+    { opacity: 0, transform: "scale(.8)" },
+    { opacity: 1, transform: "scale(1)" },
+  ]}
+>
+  Native keyframes
+</Reveal>;
 ```
 
 ## Component and hook

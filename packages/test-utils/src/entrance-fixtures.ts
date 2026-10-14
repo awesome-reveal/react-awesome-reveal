@@ -1,8 +1,11 @@
+const easing = "cubic-bezier(0.22, 1, 0.36, 1)";
+
 export const fadeKeyframes: Keyframe[] = [
-  { opacity: 0, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
-  {},
+  { offset: 0, easing, opacity: 0 },
+  { offset: 1, composite: "add", opacity: 0 },
 ];
 export const defaultKeyframes: Keyframe[] = [
-  { opacity: 0, transform: "translate(0px, 24px)", easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
-  {},
+  { offset: 0, easing, opacity: 0 },
+  { offset: 0, easing, composite: "add", translate: "0px 24px" },
+  { offset: 1, composite: "add", opacity: 0, translate: "0px 0px" },
 ];

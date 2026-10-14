@@ -20,7 +20,12 @@ export default function Page() {
         </Section>
       ))}
       <Section>
-        <Reveal keyframes={[{ opacity: 0, transform: "scale(.8)", easing: "ease-out" }, {}]}>
+        <Reveal
+          keyframes={[
+            { opacity: 0, transform: "scale(.8)", easing: "ease-out" },
+            { opacity: 1, transform: "scale(1)" },
+          ]}
+        >
           Native frames created on the server
         </Reveal>
       </Section>

@@ -27,13 +27,21 @@ onBeforeUnmount(() => handle?.dispose());
   <PageSection><Reveal :from="{ scale: 0.9 }">Scale only</Reveal></PageSection>
   <PageSection>
     <Reveal
+      from="left"
+      :style="{ rotate: '-3deg' }"
+    >
+      Keeps its own rotation
+    </Reveal>
+  </PageSection>
+  <PageSection>
+    <Reveal
       :keyframes="[
         {
           opacity: 0,
           transform: 'rotate(-10deg) scale(.8)',
           easing: 'ease-out',
         },
-        {},
+        { opacity: 1, transform: 'rotate(0deg) scale(1)' },
       ]"
     >
       Native keyframes

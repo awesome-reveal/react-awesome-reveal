@@ -46,7 +46,9 @@ reveal(".logo", { from: { scale: 0.9 } }); // Scale only
 reveal(".card", { from: { opacity: 0, x: "-100%", rotate: "-5deg", blur: "0.5rem" } });
 ```
 
-`StartState` has the properties `opacity`, `x`, `y`, `scale`, `rotate` and `blur`. A number for `x`, `y` or `blur` is in pixels, and a number for `rotate` is in degrees. A string can contain a CSS value with its unit. The animation ends at the element's own styles.
+`StartState` has the properties `opacity`, `x`, `y`, `scale`, `rotate` and `blur`. A number for `x`, `y` or `blur` is in pixels, and a number for `rotate` is in degrees. A string can contain a CSS value with its unit.
+
+The entrance adds its offset, scale, rotation and blur to the element's own `transform`, `translate`, `scale`, `rotate` and `filter`, with `composite: "add"`. It fades to the element's own opacity. So your styles stay in effect during the entrance, for example the `translate(-50%, -50%)` of a centred dialog. Do not reveal one element two times, because the offsets add up. Chromium runs an additive animation on the main thread. For an entrance that the browser can run on the compositor, use native keyframes.
 
 ## Native keyframes
 
@@ -63,7 +65,7 @@ reveal(".logo", {
 });
 ```
 
-You can use the native keyframe properties `easing`, `offset` and `composite`. The browser validates the values. If the browser rejects an animation, the content stays visible. The animation does not keep its last keyframe after it ends, so end your keyframes at the resting style of the element.
+You can use the native keyframe properties `easing`, `offset` and `composite`. The browser validates the values. If the browser rejects an animation, the content stays visible. The animation does not keep its last keyframe after it ends, so end your keyframes at the resting style of the element. To end at the element's own value, end with a neutral additive keyframe, for example `{ opacity: 0, composite: "add" }`.
 
 ## Options
 
@@ -89,7 +91,7 @@ Hidden content stays in the accessibility tree. Keep important controls usable. 
 
 The root entry exports only `reveal`, `cascade` and their types: `Side`, `StartState`, `RevealOptions`, `CascadeOptions`, `RevealTarget` and `RevealHandle`. `@awesome-reveal/core/adapter` is the contract that the official framework packages use. It is not an API for imperative animations.
 
-Core needs Chrome 84, Firefox 75 (79 on Android) or Safari 13.1, or later. These versions support the Web Animations API with implicit keyframes. If IntersectionObserver or `Element.animate` is not available, the content reveals immediately and does not stay hidden. An open WebKit bug ([212409](https://bugs.webkit.org/show_bug.cgi?id=212409)) can take an implicit start value from an earlier animation of the element, so give explicit values to the first keyframe of your native keyframes. You can import the module where there is no DOM, for example on a server. A transform needs a transformable element, so give inline text children `display: inline-block`.
+Core needs Chrome 104, Firefox 80 or Safari 16, or later. These versions support individual transform properties and additive keyframes. If IntersectionObserver or `Element.animate` is not available, the content reveals immediately and does not stay hidden. An open WebKit bug ([212409](https://bugs.webkit.org/show_bug.cgi?id=212409)) can take an implicit start value from an earlier animation of the element, so give explicit values to the first keyframe of your native keyframes. You can import the module where there is no DOM, for example on a server. A transform needs a transformable element, so give inline text children `display: inline-block`.
 
 ## Agent skills
 
