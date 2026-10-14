@@ -110,6 +110,10 @@ describe("reveal", () => {
       { translate: "0px 0px", rotate: "0deg", filter: "blur(0px)" },
     ]);
   });
+  it("passes delay to the animation", () => {
+    track(reveal(element(), { delay: 200 }));
+    expect(animations[0]?.options).toEqual({ duration: 600, delay: 200, fill: "backwards" });
+  });
   it("passes native keyframes unchanged and honors duration", () => {
     const keyframes: Keyframe[] = [
       { opacity: 0, transform: "scale(.8)", easing: "ease-in", offset: 0, composite: "replace" },
@@ -276,25 +280,26 @@ describe("cascade", () => {
     target.innerHTML = "text<span><b>nested</b></span><!--comment--><span>b</span><span>c</span>";
     return target;
   }
+  const delays = () => animations.map((a) => (a.options as KeyframeAnimationOptions).delay);
   it("observes the container and only animates direct element children with no first delay", () => {
     const target = container();
     track(cascade(target, { interval: 50 }));
     expect(animations.map((a) => a.element)).toEqual(Array.from(target.children));
-    expect(animations.map((a) => (a.options as KeyframeAnimationOptions).delay)).toEqual([
-      0, 50, 100,
-    ]);
+    expect(delays()).toEqual([0, 50, 100]);
     expect(observerOf(target)).toBeDefined();
     expect(observerOf(target.firstElementChild!)).toBeUndefined();
     intersect(target, true);
     expect(animations.every((a) => a.play.mock.calls.length === 1)).toBe(true);
   });
+  it("delay moves the start of the whole sequence", () => {
+    track(cascade(container(), { delay: 100, interval: 50 }));
+    expect(delays()).toEqual([100, 150, 200]);
+  });
   it("keeps multiple containers independent", () => {
     const a = container(),
       b = container();
     track(cascade("body > div"));
-    expect(animations.map((a) => (a.options as KeyframeAnimationOptions).delay)).toEqual([
-      0, 80, 160, 0, 80, 160,
-    ]);
+    expect(delays()).toEqual([0, 80, 160, 0, 80, 160]);
     intersect(a, true);
     expect(animations.slice(0, 3).every((a) => a.play.mock.calls.length === 1)).toBe(true);
     expect(animations.slice(3).every((a) => a.play.mock.calls.length === 0)).toBe(true);

@@ -158,9 +158,36 @@ export function describeContract(name: string, harness: Harness) {
       expect(animations[1]!.options).toMatchObject({ duration: 500 });
     });
 
-    it("reduced motion shows the element with no animation", async () => {
+    it("passes delay to core, and not to the element", async () => {
+      const m = await mount({ delay: 150, when: true });
+      expect(animations[0]!.options).toMatchObject({ delay: 150 });
+      expect(m.element().hasAttribute("delay")).toBe(false);
+    });
+
+    it("a hide during the delay cancels the entrance and hides the element", async () => {
+      const m = await mount({ delay: 60_000, when: true });
+      expect(animations[0]!.options).toMatchObject({ delay: 60_000 });
+      await rerender(m, { delay: 60_000, when: false });
+      expect(hidden(m.element())).toBe(true);
+      expect(animations).toHaveLength(1);
+      expect(runningAnimations()).toHaveLength(0);
+    });
+
+    it("print shows the element in its delay until the print ends", async () => {
+      const m = await mount({ delay: 60_000, when: true });
+      const [animation] = animations;
+      const fill = () => animation!.effect.updateTiming.mock.lastCall?.[0].fill;
+      dispatchEvent(new Event("beforeprint"));
+      expect(fill()).toBe("none");
+      dispatchEvent(new Event("afterprint"));
+      expect(fill()).toBe("backwards");
+      expect(animation!.playState).toBe("running");
+      expect(shown(m.element())).toBe(true);
+    });
+
+    it("reduced motion shows the element with no animation, also with a delay", async () => {
       vi.stubGlobal("matchMedia", () => ({ matches: true }));
-      const m = await mount({});
+      const m = await mount({ delay: 60_000 });
       await intersect(m, true);
       expect(shown(m.element())).toBe(true);
       expect(animations).toHaveLength(0);
@@ -359,6 +386,12 @@ export function describeCascadeContract(name: string, harness: Harness) {
     it("interval sets the delay between the children", async () => {
       await mount({ interval: 120, when: true });
       expect(delays()).toEqual([0, 120, 240]);
+    });
+
+    it("delay moves the start of the whole sequence", async () => {
+      const m = await mount({ delay: 100, interval: 120, when: true });
+      expect(delays()).toEqual([100, 220, 340]);
+      expect(m.element().hasAttribute("delay")).toBe(false);
     });
 
     it("a toggle of when replays all the children", async () => {

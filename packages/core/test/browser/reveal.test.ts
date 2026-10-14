@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { reveal, cascade, type RevealHandle } from "../../src/index";
+import { reveal, cascade, type RevealHandle, type RevealOptions } from "../../src/index";
+import { createReveal } from "../../src/adapter";
 import { collectReports } from "@awesome-reveal/test-utils/reports";
 import { mountBelowTheFold, scrollIntoView, scrollToTop, settle, showTopHalf } from "./helpers";
 
@@ -107,6 +108,19 @@ describe("zero-CSS reveal", () => {
     animation().currentTime = 1000;
     expect(start - target.getBoundingClientRect().x).toBeCloseTo(24);
   });
+  it.each<[string, RevealOptions]>([
+    ["from", { from: "left", duration: 60_000 }],
+    ["keyframes", native],
+  ])("delay holds the start state of %s until the delay ends", async (_, options) => {
+    track(reveal(target, { ...options, delay: 60_000 }));
+    await enter();
+    expect(opacity()).toBe("0");
+    animation().currentTime = 59_999;
+    expect(opacity()).toBe("0");
+    animation().currentTime = 90_000;
+    expect(Number(opacity())).toBeGreaterThan(0);
+    expect(Number(opacity())).toBeLessThan(1);
+  });
   it("plays once and stays revealed when the element leaves and enters again", async () => {
     track(reveal(target, native));
     await enter();
@@ -196,9 +210,9 @@ describe("zero-CSS reveal", () => {
     expect(target.getAnimations()).toEqual([]);
     expect(reports()).toEqual([expect.any(TypeError)]);
   });
-  it("reduced motion immediately exposes generated and native entrances", () => {
+  it("reduced motion immediately exposes generated, native and delayed entrances", () => {
     vi.mocked(window.matchMedia).mockReturnValue({ matches: true } as MediaQueryList);
-    track(reveal(target, native));
+    track(reveal(target, { ...native, delay: 60_000 }));
     track(reveal(target.firstElementChild!));
     expect(opacity()).toBe("1");
     expect(target.getAnimations({ subtree: true })).toEqual([]);
@@ -210,6 +224,16 @@ describe("zero-CSS reveal", () => {
     dispatchEvent(new Event("afterprint"));
     expect(opacity()).toBe("0");
     await enter();
+    expect(animation().currentTime as number).toBeLessThan(60_000);
+  });
+  it("print shows an entrance in its delay, and it keeps the delay after the print", async () => {
+    track(reveal(target, { ...native, delay: 60_000 }));
+    await enter();
+    dispatchEvent(new Event("beforeprint"));
+    expect(opacity()).toBe("1");
+    dispatchEvent(new Event("afterprint"));
+    expect(opacity()).toBe("0");
+    expect(animation().playState).toBe("running");
     expect(animation().currentTime as number).toBeLessThan(60_000);
   });
   it("print does not change a playing entrance", async () => {
@@ -304,5 +328,23 @@ describe("cascade", () => {
       "1",
       "1",
     ]);
+  });
+});
+
+describe("adapter store", () => {
+  it("a hide during the delay resets the element, and no entrance plays later", async () => {
+    const options = { ...native, delay: 60_000 };
+    const state = createReveal({ ...options, when: true });
+    state.attach(target);
+    const entrance = animation();
+    entrance.currentTime = 30_000;
+    expect(entrance.playState).toBe("running");
+    expect(opacity()).toBe("0");
+    state.setOptions({ ...options, when: false });
+    expect(entrance.playState).toBe("idle");
+    expect(opacity()).toBe("1");
+    await settle();
+    expect(target.getAnimations()).toEqual([]);
+    state.attach(null);
   });
 });

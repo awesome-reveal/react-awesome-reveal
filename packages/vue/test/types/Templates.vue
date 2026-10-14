@@ -3,7 +3,7 @@ import { Cascade, Reveal, vCascade, vReveal } from "../../src";
 </script>
 
 <template>
-  <div v-reveal="{ duration: 300, when: true }" />
+  <div v-reveal="{ duration: 300, delay: 200, when: true }" />
   <Reveal
     as="ul"
     :keyframes="[{ opacity: 0 }, {}]"
@@ -12,17 +12,21 @@ import { Cascade, Reveal, vCascade, vReveal } from "../../src";
     <li>one</li>
     <li>two</li>
   </Reveal>
-  <Reveal from="left" />
+  <Reveal
+    from="left"
+    :delay="200"
+  />
   <Reveal :from="{ x: '-100%', rotate: -5, blur: '0.5rem' }" />
   <Cascade
     as="ul"
     :interval="120"
+    :delay="200"
     from="left"
   >
     <li>one</li>
     <li>two</li>
   </Cascade>
-  <ul v-cascade="{ interval: 120, when: true }" />
+  <ul v-cascade="{ interval: 120, delay: 200, when: true }" />
   <Reveal v-slot="{ revealed }">
     <!-- @vue-expect-error The slot prop is a boolean. -->
     {{ revealed.toUpperCase() }}

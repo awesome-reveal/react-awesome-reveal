@@ -72,6 +72,14 @@ export const App = () => (
       </Cascade>
     </Section>
     <Section>
+      <Reveal as="h2" from="left">
+        A header
+      </Reveal>
+      <Reveal from={{ opacity: 0 }} delay={250}>
+        Its content starts 250 ms later
+      </Reveal>
+    </Section>
+    <Section>
       <CascadeHookExample />
     </Section>
     <Section>

@@ -55,6 +55,14 @@ const sides = ["top", "right", "bottom", "left"] as const;
     </Cascade>
   </PageSection>
   <PageSection>
+    <Reveal as="h2" from="left">
+      A header
+    </Reveal>
+    <Reveal from={{ opacity: 0 }} delay={250}>
+      Its content starts 250 ms later
+    </Reveal>
+  </PageSection>
+  <PageSection>
     <Reveal
       as="h2"
       from={{ opacity: 0, blur: 8 }}

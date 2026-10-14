@@ -92,6 +92,7 @@ function defineReveal(
         keyframes: Array as PropType<RevealOptions["keyframes"]>,
         from: [String, Object] as PropType<RevealOptions["from"]>,
         duration: Number,
+        delay: Number,
         threshold: Number,
         // Vue casts an absent Boolean prop to false, which would make `when` control the reveal.
         when: { type: Boolean, default: undefined },

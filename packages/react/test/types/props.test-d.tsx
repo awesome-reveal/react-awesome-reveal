@@ -37,6 +37,13 @@ test("useReveal types the element props by element", () => {
   getProps({ ref: createRef<HTMLInputElement>() });
 });
 
+test("every entry point takes delay", () => {
+  void (<Reveal delay={200} />);
+  void (<Cascade delay={200} interval={80} />);
+  useReveal({ delay: 200 });
+  useCascade({ delay: 200 });
+});
+
 test("only Cascade and useCascade take interval", () => {
   void (<Cascade as="ul" interval={120} from="left" />);
   useCascade({ interval: -40 });

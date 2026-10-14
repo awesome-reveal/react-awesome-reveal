@@ -39,6 +39,7 @@ describe("Reveal on the server", () => {
     const options = {
       keyframes: fadeKeyframes,
       duration: 1000,
+      delay: 200,
       threshold: 0.5,
     };
 
@@ -71,8 +72,8 @@ describe("Reveal on the server", () => {
 
 describe("Cascade on the server", () => {
   it("renders a cascade host and hides the children with the container attribute", async () => {
-    expect(await render({ interval: 120 }, Cascade)).toBe(
-      '<awesome-reveal cascade options="{&quot;interval&quot;:120}"><div data-reveal="cascade"><p>hello</p></div></awesome-reveal>',
+    expect(await render({ delay: 100, interval: 120 }, Cascade)).toBe(
+      '<awesome-reveal cascade options="{&quot;delay&quot;:100,&quot;interval&quot;:120}"><div data-reveal="cascade"><p>hello</p></div></awesome-reveal>',
     );
   });
 });

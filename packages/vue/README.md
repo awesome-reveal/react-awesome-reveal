@@ -31,7 +31,9 @@ import { Cascade, Reveal, vReveal } from "@awesome-reveal/vue";
 
 `Reveal` renders one element. `as` sets the tag, and the default is `div`. The component passes the other attributes to the element. `vReveal` animates an element that you already render. Both accept the [core reveal options](https://www.npmjs.com/package/@awesome-reveal/core) and a reactive `when`.
 
-`when: true` reveals the element manually, and `when: false` resets it. With `null` or `undefined`, the viewport controls the reveal. When the viewport controls the reveal, the entrance plays one time, and the observation stops when the entrance starts. A change of `when` from `false` to `true` plays the entrance again. A change to `when` or `threshold` restarts the observation. A change to the other options applies at the next entrance.
+`delay` sets the time between the reveal and the entrance, in milliseconds. The default is 0. Keep `delay` below about 300 ms. A long delay makes content appear late when the user scrolls quickly.
+
+`when: true` reveals the element manually, and `when: false` resets it. With `null` or `undefined`, the viewport controls the reveal. When the viewport controls the reveal, the entrance plays one time, and the observation stops when the entrance starts. A change of `when` from `false` to `true` plays the entrance again. `when: false` during the `delay` also resets the element, and the entrance does not play. A change to `when` or `threshold` restarts the observation. A change to the other options applies at the next entrance.
 
 The component emits `reveal` with the element, and gives `revealed` to its default slot. The directive accepts `onReveal` in its options.
 
@@ -44,7 +46,7 @@ export const card = h(Reveal, { from: "left", when: true }, () => "Hello");
 
 ## Cascade
 
-`Cascade` works like `Reveal`, but it animates each direct child element in sequence when the element enters the viewport. `interval` sets the delay between two children, in milliseconds, and the default is 80. The first child starts immediately. `vCascade` does the same for an element that you already render, for example `<ul v-cascade="{ interval: 120 }">`. The cascade observes the container, and the `reveal` event and `onReveal` get the container.
+`Cascade` works like `Reveal`, but it animates each direct child element in sequence when the element enters the viewport. `interval` sets the time between the entrances of two children, in milliseconds, and the default is 80. `delay` moves the start of the whole sequence: the first child starts after `delay`, and `interval` spaces the other children. `vCascade` does the same for an element that you already render, for example `<ul v-cascade="{ interval: 120 }">`. The cascade observes the container, and the `reveal` event and `onReveal` get the container.
 
 ```ts
 import { h } from "vue";

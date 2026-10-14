@@ -98,7 +98,10 @@ export const cascadeInterval = (options: CascadeOptions) => options.interval ?? 
 // Without an interval, the element itself animates.
 export function motions(element: Element, options: RevealOptions, interval?: number): Motions {
   const targets = interval === undefined ? [element] : Array.from(element.children);
-  let animations = targets.map((target, index) => motion(target, options, index * (interval ?? 0)));
+  const delay = options.delay ?? 0;
+  let animations = targets.map((target, index) =>
+    motion(target, options, delay + index * (interval ?? 0)),
+  );
   const group: Motions = {
     play() {
       for (const animation of animations)
@@ -106,7 +109,7 @@ export function motions(element: Element, options: RevealOptions, interval?: num
         if (animation?.playState === "paused") animation.play();
     },
     // At its end time, a waiting effect is past its backwards fill, so the element prints at rest.
-    // A running child in its delay has no fill without "backwards", and keeps its time.
+    // A running animation in its delay has no fill without "backwards", and keeps its time.
     print(printing) {
       for (const animation of animations) {
         if (animation?.playState === "paused")
