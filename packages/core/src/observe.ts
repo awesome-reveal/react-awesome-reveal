@@ -1,3 +1,4 @@
+import { report } from "./report.js";
 import type { RevealOptions } from "./types.js";
 
 // The browser validates the threshold. Without a working IntersectionObserver, the element reveals at once.
@@ -36,8 +37,9 @@ export function observe(
       { threshold: [0, minimum] },
     );
     observer.observe(element);
-  } catch {
+  } catch (error) {
     disconnect();
+    report(error);
     onEnter();
   }
   return disconnect;

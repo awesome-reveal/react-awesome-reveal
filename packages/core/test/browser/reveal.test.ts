@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { reveal, cascade, type RevealHandle } from "../../src/index";
+import { collectReports } from "@awesome-reveal/test-utils/reports";
 import { mountBelowTheFold, scrollIntoView, scrollToTop, settle, showTopHalf } from "./helpers";
 
 let target: HTMLElement;
@@ -177,10 +178,12 @@ describe("zero-CSS reveal", () => {
       expect(target.getAnimations()).toEqual([]);
     },
   );
-  it("invalid native values fail visible", () => {
+  it("invalid native values fail visible and report the browser error", () => {
+    const reports = collectReports();
     track(reveal(target, { keyframes: [{ opacity: 0, easing: "invalid" }, {}] }));
     expect(opacity()).toBe("1");
     expect(target.getAnimations()).toEqual([]);
+    expect(reports()).toEqual([expect.any(TypeError)]);
   });
   it("reduced motion immediately exposes generated and native entrances", () => {
     vi.mocked(window.matchMedia).mockReturnValue({ matches: true } as MediaQueryList);
@@ -189,9 +192,11 @@ describe("zero-CSS reveal", () => {
     expect(opacity()).toBe("1");
     expect(target.getAnimations({ subtree: true })).toEqual([]);
   });
-  it("unsupported observation and invalid thresholds reveal immediately", () => {
+  it("invalid thresholds reveal immediately and report the browser error", () => {
+    const reports = collectReports();
     track(reveal(target, { ...native, threshold: 2 }));
     expect(animation().playState).toBe("running");
+    expect(reports()).toEqual([expect.any(RangeError)]);
   });
 });
 

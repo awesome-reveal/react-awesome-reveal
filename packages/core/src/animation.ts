@@ -1,3 +1,4 @@
+import { report } from "./report.js";
 import type { RevealOptions, StartState } from "./types.js";
 
 const unit = (value: number | string, suffix: string) =>
@@ -60,8 +61,9 @@ export function motion(element: Element, options: RevealOptions, delay = 0) {
     });
     animation?.pause();
     if (animation) animation.currentTime = 0;
-  } catch {
+  } catch (error) {
     // The browser can reject native keyframes or timing. Then the content must not stay hidden.
+    report(error);
     animation?.cancel();
     animation = undefined;
   }

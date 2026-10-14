@@ -1,5 +1,6 @@
 import { motion, motionPreference } from "./animation.js";
 import { observe } from "./observe.js";
+import { report } from "./report.js";
 import type { RevealOptions as CoreRevealOptions } from "./types.js";
 
 /** Configures a declarative entrance and optional manual control. */
@@ -142,16 +143,4 @@ export function createReveal(options: RevealOptions = {}): RevealStore {
       if (restarts.some((key) => (next[key] ?? null) !== (previous[key] ?? null))) connect();
     },
   };
-}
-
-const reported = new Set<string>();
-
-// Throws from a microtask, so the error reaches the window error event and error trackers, but not a render or an effect.
-function report(error: unknown) {
-  const message = error instanceof Error ? error.message : String(error);
-  if (reported.has(message)) return;
-  reported.add(message);
-  queueMicrotask(() => {
-    throw error;
-  });
 }

@@ -67,7 +67,7 @@ reveal(".logo", {
 });
 ```
 
-You can use the native keyframe properties `easing`, `offset` and `composite`. The browser validates the values. If the browser rejects an animation, the content stays visible. The animation does not keep its last keyframe after it ends, so end your keyframes at the resting style of the element. To end at the element's own value, end with a neutral additive keyframe, for example `{ opacity: 0, composite: "add" }`.
+You can use the native keyframe properties `easing`, `offset` and `composite`. The browser validates the values. The animation does not keep its last keyframe after it ends, so end your keyframes at the resting style of the element. To end at the element's own value, end with a neutral additive keyframe, for example `{ opacity: 0, composite: "add" }`.
 
 ## Options
 
@@ -82,6 +82,10 @@ You can use the native keyframe properties `easing`, `offset` and `composite`. T
 The entrance plays one time. When it starts, the observation stops. There is no exit animation.
 
 An element reveals when `threshold` of it is visible, or when it leaves the visible area before that. An element larger than the viewport or its scroll container cannot reach a high threshold, so keep the default 0 for tall elements and long cascades.
+
+## Errors
+
+The browser validates the options. If it rejects one, such as an invalid easing, duration or threshold, the element shows with no animation. `reveal` and `cascade` do not throw. Core throws the browser's error from a microtask, one time for each error message on a page, so the console and your error tracker get it. WebKit gives the same message to different easing and duration errors. Fix the first error, then reload the page to see the next one. The browser ignores an invalid CSS value in a keyframe, and reports nothing.
 
 ## Accessibility and SSR
 

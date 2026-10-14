@@ -2,6 +2,7 @@
 import { reveal, cascade, type RevealHandle } from "../src/index";
 import { animations, installAnimate, uninstallAnimate } from "@awesome-reveal/test-utils/animate";
 import { defaultKeyframes, fadeKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
+import { collectReports } from "@awesome-reveal/test-utils/reports";
 import {
   intersect,
   observerOf,
@@ -198,16 +199,31 @@ describe("reveal", () => {
     expect(animations[0]?.cancel).toHaveBeenCalledOnce();
     expect(MockIntersectionObserver.instances.size).toBe(0);
   });
-  it("fails safe when native animation creation throws", () => {
+  it("fails safe and reports when native animation creation throws", () => {
+    const error = new TypeError("invalid easing");
     vi.spyOn(Element.prototype, "animate").mockImplementation(() => {
-      throw new TypeError("invalid easing");
+      throw error;
     });
+    const reports = collectReports();
     const target = element();
     expect(() =>
       track(reveal(target, { keyframes: [{ opacity: 0, easing: "bogus" }, {}] })),
     ).not.toThrow();
     expect(target.hasAttribute("data-reveal")).toBe(false);
     expect(target.style.opacity).toBe("");
+    expect(reports()).toEqual([error]);
+  });
+  it("reports an error message once for all the elements", () => {
+    const error = new TypeError("invalid duration");
+    vi.spyOn(Element.prototype, "animate").mockImplementation(() => {
+      throw error;
+    });
+    const reports = collectReports();
+    const container = element();
+    container.innerHTML = "<p></p><p></p><p></p>";
+    track(cascade(container, { duration: -1 }));
+    track(reveal(container.children, { duration: -1 }));
+    expect(reports()).toEqual([error]);
   });
   it("exposes content with no WAAPI or IntersectionObserver", () => {
     vi.stubGlobal("IntersectionObserver", undefined);
@@ -217,17 +233,20 @@ describe("reveal", () => {
     uninstallAnimate();
     track(reveal(element()));
   });
-  it("fails safe when observer construction or observation throws", () => {
+  it("fails safe and reports when observer construction throws", () => {
+    const error = new RangeError("threshold");
     vi.stubGlobal(
       "IntersectionObserver",
       class {
         constructor() {
-          throw new RangeError("threshold");
+          throw error;
         }
       },
     );
+    const reports = collectReports();
     expect(() => track(reveal(element(), { threshold: 2 }))).not.toThrow();
     expect(animations[0]?.play).toHaveBeenCalledOnce();
+    expect(reports()).toEqual([error]);
   });
   it("accepts empty and duplicate targets", () => {
     track(reveal(".absent"));

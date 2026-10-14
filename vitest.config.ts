@@ -63,6 +63,7 @@ export default defineConfig({
       },
       {
         root: "packages/core",
+        resolve: { alias: testUtils },
         test: {
           name: "core:browser",
           include: ["test/browser/**/*.test.ts"],

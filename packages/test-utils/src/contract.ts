@@ -35,6 +35,22 @@ const shown = (element: HTMLElement) => !element.hasAttribute("data-reveal");
 
 const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
 
+// Reports throw from a microtask. The wrapper keeps the microtasks of the framework running.
+function collectReports() {
+  const errors: unknown[] = [];
+  const original = globalThis.queueMicrotask;
+  vi.stubGlobal("queueMicrotask", (callback: VoidFunction) =>
+    original(() => {
+      try {
+        callback();
+      } catch (error) {
+        errors.push(error);
+      }
+    }),
+  );
+  return errors;
+}
+
 export function describeContract(name: string, harness: Harness) {
   describe(`reveal contract: ${name}`, () => {
     let current: Mounted | undefined;
@@ -251,7 +267,8 @@ export function describeContract(name: string, harness: Harness) {
     });
 
     it("a throwing IntersectionObserver shows the element", async () => {
-      const message = "Invalid threshold";
+      // A test file can run more than one harness, and each message reports once per module.
+      const message = `Invalid threshold: ${name}`;
       vi.stubGlobal(
         "IntersectionObserver",
         class {
@@ -267,6 +284,7 @@ export function describeContract(name: string, harness: Harness) {
         windowErrors.push(event.error);
       };
       window.addEventListener("error", onError);
+      const reports = collectReports();
       let thrown: unknown;
       try {
         await mount({ threshold: 2 }).catch((error) => (thrown = error));
@@ -276,24 +294,27 @@ export function describeContract(name: string, harness: Harness) {
       }
       expect(thrown).toBeUndefined();
       expect(windowErrors).toEqual([]);
+      expect(reports).toEqual([new SyntaxError(message)]);
       const element = document.querySelector<HTMLElement>("[data-contract]");
       expect(element && shown(element)).toBe(true);
     });
 
-    it("invalid native keyframes leave the element visible", async () => {
-      const message = "Invalid easing";
+    it("invalid native keyframes leave the element visible, and report once", async () => {
+      const message = `Invalid easing: ${name}`;
       const original = Element.prototype.animate;
       Element.prototype.animate = function (keyframes, options) {
         if (JSON.stringify(keyframes).includes('"bogus"')) throw new TypeError(message);
         return original.call(this, keyframes, options);
       };
       const keyframes = [{ opacity: 0, easing: "bogus" }, {}];
+      const reports = collectReports();
       const m = await mount({ keyframes });
       await intersect(m, true);
       await rerender(m, { when: false, keyframes });
       await rerender(m, { when: true, keyframes });
       await settle();
       expect(shown(m.element())).toBe(true);
+      expect(reports).toEqual([new TypeError(message)]);
     });
   });
 }
