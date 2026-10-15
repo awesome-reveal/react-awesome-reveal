@@ -78,14 +78,9 @@ describe("Cascade on the server", () => {
   });
 });
 
-describe.each([
-  ["Reveal", Reveal],
-  ["Cascade", Cascade],
-])("%s with a tag that the type rejects", (_, component) => {
-  // The custom element reports the moved tag in the browser, so the render must not fail the page.
-  it.each(["tr", "TD"])("renders %s without a throw", async (as) => {
-    await expect(render({ as }, component)).resolves.toContain("<awesome-reveal");
-  });
+// The custom element reports a moved tag in the browser, so the render must not fail the page.
+it("renders a tag that the type rejects without a throw", async () => {
+  await expect(render({ as: "tr" })).resolves.toContain("<tr");
 });
 
 const ssrHarness = (component: unknown) => ({

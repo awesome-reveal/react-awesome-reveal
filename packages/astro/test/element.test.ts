@@ -1,5 +1,6 @@
 import { animations } from "@awesome-reveal/test-utils/animate";
 import { intersect, observerOf } from "@awesome-reveal/test-utils/intersection-observer";
+import { collectWindowErrors } from "@awesome-reveal/test-utils/reports";
 
 import type { RevealElement } from "../src/element";
 
@@ -226,15 +227,9 @@ describe("<awesome-reveal>", () => {
   );
 
   it("reports an invalid options attribute and reveals with the defaults", () => {
-    const errors: unknown[] = [];
-    // jsdom reports the error of a custom element callback to the window, and fails the run on it.
-    const onError = (event: ErrorEvent) => {
-      event.preventDefault();
-      errors.push(event.error);
-    };
-    window.addEventListener("error", onError);
+    const stop = collectWindowErrors();
     const element = connectRaw("{");
-    window.removeEventListener("error", onError);
+    const errors = stop();
 
     intersect(element, true);
 
@@ -244,14 +239,13 @@ describe("<awesome-reveal>", () => {
   });
 
   it("lets the viewport reveal with an invalid options attribute, also with when: false", () => {
-    const onError = (event: ErrorEvent) => event.preventDefault();
-    window.addEventListener("error", onError);
+    const stop = collectWindowErrors();
     const host = document.createElement("awesome-reveal") as RevealElement;
     host.setAttribute("options", "{");
     host.setAttribute("when", "false");
     host.innerHTML = `<p data-awesome-reveal="hidden">hello</p>`;
     document.body.append(host);
-    window.removeEventListener("error", onError);
+    stop();
     const element = host.firstElementChild as HTMLElement;
 
     intersect(element, true);
@@ -270,25 +264,19 @@ describe("<awesome-reveal>", () => {
 
   it("keeps the previous options when the attribute changes to invalid JSON", () => {
     const { host, element } = connect({ duration: 100 });
-    const onError = (event: ErrorEvent) => event.preventDefault();
-    window.addEventListener("error", onError);
+    const stop = collectWindowErrors();
     host.setAttribute("options", "{");
-    window.removeEventListener("error", onError);
+    stop();
     intersect(element, true);
 
     expect(animations[0]).toMatchObject({ element, options: { duration: 100 } });
   });
 
   it("reports a host whose element child the parser moved out", () => {
-    const errors: unknown[] = [];
-    const onError = (event: ErrorEvent) => {
-      event.preventDefault();
-      errors.push(event.error);
-    };
-    window.addEventListener("error", onError);
+    const stop = collectWindowErrors();
     document.body.innerHTML =
       '<p>Intro <awesome-reveal><div data-awesome-reveal="hidden">hello</div></awesome-reveal></p>';
-    window.removeEventListener("error", onError);
+    const errors = stop();
 
     expect(document.querySelector("awesome-reveal")!.childElementCount).toBe(0);
     expect(errors).toEqual([

@@ -3,6 +3,7 @@ import type { CascadeOptions } from "@awesome-reveal/core/adapter";
 import { animations, runningAnimations } from "./animate";
 import { easing } from "./entrance-fixtures";
 import { intersect as report, MockIntersectionObserver, observerOf } from "./intersection-observer";
+import { collectWindowErrors } from "./reports";
 
 export type ContractOptions = CascadeOptions;
 
@@ -401,20 +402,15 @@ export function describeContract(name: string, harness: Harness) {
           }
         },
       );
-      // jsdom reports an error of a custom element callback as an error event of the window.
-      const windowErrors: unknown[] = [];
-      const onError = (event: ErrorEvent) => {
-        event.preventDefault();
-        windowErrors.push(event.error);
-      };
-      window.addEventListener("error", onError);
+      const stopWindowErrors = collectWindowErrors();
       const reports = collectReports();
       let thrown: unknown;
+      let windowErrors: unknown[];
       try {
         await mount({ threshold: 2 }).catch((error) => (thrown = error));
         await settle();
       } finally {
-        window.removeEventListener("error", onError);
+        windowErrors = stopWindowErrors();
       }
       expect(thrown).toBeUndefined();
       expect(windowErrors).toEqual([]);

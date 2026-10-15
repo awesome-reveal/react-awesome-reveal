@@ -57,11 +57,12 @@ const restarts = ["when", "threshold"] as const;
 // A cascade reads the children here, so that children that render after `attach()` also play.
 // The cancel function tells if the entrance was still running.
 function play(element: Element, options: CoreRevealOptions, interval?: number): () => boolean {
-  const animations = entrances(element, options, interval);
+  let animations = entrances(element, options, interval);
   const group = motions(animations);
   group.play();
   return () => {
     const running = animations.some((animation) => animation?.playState === "running");
+    animations = [];
     group.dispose();
     return running;
   };
@@ -152,13 +153,12 @@ function createStore<Options extends CascadeOptions>(
       if (next === element) return;
       element?.removeAttribute(attached);
       next?.setAttribute(attached, "");
-      const interrupted = cancel();
       preference?.removeEventListener?.("change", onPreference);
       if (next) preference?.addEventListener?.("change", onPreference);
-      // The same element that returns immediately after null plays again, because `attach(null)`
+      // The same element that returns immediately after null plays again when `attach(null)`
       // cancelled its entrance before it could finish.
       if (next && next === detached) played = false;
-      detached = next || !interrupted ? null : element;
+      detached = next || !cancel() ? null : element;
       element = next;
       connect();
     },

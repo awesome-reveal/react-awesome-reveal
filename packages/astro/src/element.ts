@@ -55,7 +55,7 @@ export class RevealElement extends HTMLElement {
     const target = this.firstElementChild as HTMLElement | null;
     if (!target)
       throw new Error(
-        "The HTML parser moved the element out of <awesome-reveal>. In a <p>, use an inline tag, such as span.",
+        "The HTML parser moved the element out of <awesome-reveal>. Check its parent elements.",
       );
     const cascade = this.hasAttribute("cascade");
     const hidden = (cascade ? cascadeHiddenAttributes : hiddenAttributes)["data-awesome-reveal"];

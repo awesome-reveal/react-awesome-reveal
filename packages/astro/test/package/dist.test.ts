@@ -99,7 +99,7 @@ describe("a static build of a page with the published component", () => {
     const code = scripts(site);
 
     expect(code).toMatch(/customElements\.define\(["`]awesome-reveal["`]/);
-    expect(code.length).toBeLessThan(5175);
+    expect(code.length).toBeLessThan(5150);
   });
 });
 

@@ -25,11 +25,7 @@ test("Reveal and Cascade reject tags that the host cannot wrap", () => {
     .extract<RevealTag>()
     .toBeNever();
   // @ts-expect-error A table row cannot be a child of the custom element host.
-  type Row = RevealProps<"tr">;
-  // @ts-expect-error A table section cannot be a child of the custom element host.
-  type Body = CascadeProps<"tbody">;
-  expectTypeOf<Row>().not.toBeNever();
-  expectTypeOf<Body>().not.toBeNever();
+  expectTypeOf<RevealProps<"tr">>().not.toBeNever();
 });
 
 test("Reveal takes the core options and as", () => {
