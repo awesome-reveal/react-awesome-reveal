@@ -1,6 +1,34 @@
 import type { RevealOptions } from "@awesome-reveal/core/adapter";
 
-import type { Cascade, CascadeProps, Reveal, RevealProps } from "../../src";
+import type { Cascade, CascadeProps, Reveal, RevealProps, RevealTag } from "../../src";
+
+test("Reveal and Cascade reject tags that the host cannot wrap", () => {
+  expectTypeOf<"table" | "select" | "a" | "div">().toExtend<RevealTag>();
+  expectTypeOf<
+    | "html"
+    | "head"
+    | "body"
+    | "caption"
+    | "col"
+    | "colgroup"
+    | "thead"
+    | "tbody"
+    | "tfoot"
+    | "tr"
+    | "td"
+    | "th"
+    | "option"
+    | "optgroup"
+  >()
+    .extract<RevealTag>()
+    .toBeNever();
+  // @ts-expect-error A table row cannot be a child of the custom element host.
+  type Row = RevealProps<"tr">;
+  // @ts-expect-error A table section cannot be a child of the custom element host.
+  type Body = CascadeProps<"tbody">;
+  expectTypeOf<Row>().not.toBeNever();
+  expectTypeOf<Body>().not.toBeNever();
+});
 
 test("Reveal takes the core options and as", () => {
   expectTypeOf<RevealProps>().toExtend<RevealOptions>();

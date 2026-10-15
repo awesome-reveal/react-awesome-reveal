@@ -175,6 +175,16 @@ describe.each(
     expect(await opacities(page, "#cascade > li")).toEqual(["1", "1", "1"]);
   });
 
+  it("keeps a table inside its host and reveals it with its rows intact", async () => {
+    expect(await isHidden(page, "#table")).toBe(true);
+    expect(await page.locator("awesome-reveal > #table > tbody > tr").count()).toBe(2);
+
+    await page.locator("#table").scrollIntoViewIfNeeded();
+    await revealed(page, "#table");
+
+    expect(await page.locator("#table td").allTextContents()).toEqual(["One", "Two"]);
+  });
+
   it("keeps the attributes of the element", async () => {
     const title = page.locator(".title");
     await title.scrollIntoViewIfNeeded();

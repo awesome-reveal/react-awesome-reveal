@@ -1,13 +1,13 @@
 ---
 import { cascadeHiddenAttributes, hiddenAttributes } from "@awesome-reveal/core/adapter";
-import type { HTMLTag } from "astro/types";
 
 import "./reveal.css";
 
-import type { CascadeProps } from "./index.js";
+import type { CascadeProps, RevealTag } from "./index.js";
+import { assertRevealTag } from "./tags.js";
 
 // Reveal.astro and Cascade.astro render this host. `cascade` reveals the direct children.
-type Props<Tag extends HTMLTag = "div"> = CascadeProps<Tag> & { cascade?: boolean };
+type Props<Tag extends RevealTag = "div"> = CascadeProps<Tag> & { cascade?: boolean };
 
 const {
   as: Tag = "div",
@@ -21,6 +21,8 @@ const {
   cascade,
   ...rest
 } = Astro.props;
+
+assertRevealTag(Tag);
 
 // `transition:persist` on the component must move the host, which holds the reveal state.
 const {

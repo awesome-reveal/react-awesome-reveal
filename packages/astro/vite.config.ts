@@ -6,7 +6,7 @@ const components = ["Reveal.astro", "Cascade.astro", "Host.astro"];
 
 // Astro compiles the .astro files of dependencies, so the components ship uncompiled.
 export default defineLibConfig(
-  ["src/index.ts", "src/element.ts"],
+  ["src/index.ts", "src/element.ts", "src/tags.ts"],
   [
     {
       name: "ship-astro-components",

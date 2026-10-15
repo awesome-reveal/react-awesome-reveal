@@ -1,5 +1,8 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
+
+import ts from "typescript";
 
 import { describeDocs } from "@awesome-reveal/test-utils/docs";
 
@@ -22,8 +25,32 @@ function source(file: string): string {
 }
 
 describe("dist", () => {
+  it.each([
+    ["NodeNext", ts.ModuleKind.NodeNext, ts.ModuleResolutionKind.NodeNext],
+    ["Bundler", ts.ModuleKind.ESNext, ts.ModuleResolutionKind.Bundler],
+  ] as const)(
+    "constrains the published tag types with %s resolution",
+    (_, module, moduleResolution) => {
+      const program = ts.createProgram([fileURLToPath(new URL("types.ts", import.meta.url))], {
+        module,
+        moduleResolution,
+        strict: true,
+        skipLibCheck: true,
+        noEmit: true,
+        types: [],
+        target: ts.ScriptTarget.ESNext,
+      });
+
+      expect(
+        ts
+          .getPreEmitDiagnostics(program)
+          .map((diagnostic) => ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")),
+      ).toEqual([]);
+    },
+  );
+
   it("contains one JavaScript file per source module, the components, and declarations only for src", () => {
-    expect(jsFiles).toEqual(["element.js", "index.js"]);
+    expect(jsFiles).toEqual(["element.js", "index.js", "tags.js"]);
     expect(distFiles).toEqual(expect.arrayContaining(components));
     expect(distFiles).toContain("index.d.ts");
     expect(distFiles.filter((file) => /(^|\/)test/.test(file))).toEqual([]);

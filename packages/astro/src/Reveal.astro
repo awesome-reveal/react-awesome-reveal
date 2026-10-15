@@ -1,10 +1,8 @@
 ---
-import type { HTMLTag } from "astro/types";
-
 import Host from "./Host.astro";
-import type { RevealProps } from "./index.js";
+import type { RevealProps, RevealTag } from "./index.js";
 
-type Props<Tag extends HTMLTag = "div"> = RevealProps<Tag>;
+type Props<Tag extends RevealTag = "div"> = RevealProps<Tag>;
 ---
 
 <Host {...Astro.props}><slot /></Host>

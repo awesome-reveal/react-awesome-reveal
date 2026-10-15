@@ -62,8 +62,8 @@ function mergeRefs<T>(own: RefCallback<T>, user: NonNullable<Ref<T>>): RefCallba
   };
 }
 
-// Core gets the element in the layout effect, after the options of the same commit. A detach waits
-// one microtask, so a callback ref that changes in one commit does not replay the entrance.
+// Core gets the element after this commit's options. The microtask covers child-only commits and
+// keeps a callback ref change in one commit from cancelling and replaying the entrance.
 function createBinding<T extends Element, Options extends CascadeOptions>(
   state: RevealStore<Options>,
 ) {
@@ -79,7 +79,7 @@ function createBinding<T extends Element, Options extends CascadeOptions>(
   }
   function ref(node: T | null) {
     element = node;
-    if (!node) queueMicrotask(sync);
+    queueMicrotask(sync);
   }
   // A new function on each render makes React run an effect on each commit.
   const getRevealed = () => state.revealed;

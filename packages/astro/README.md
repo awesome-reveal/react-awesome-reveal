@@ -20,6 +20,16 @@ import { Cascade, Reveal } from "@awesome-reveal/astro";
 
 `Reveal` renders the tag that `as` sets (the default is `div`) inside an `awesome-reveal` host element with `display: contents`. The component passes the attributes and the children to this tag. It accepts the serializable [core reveal options](https://www.npmjs.com/package/@awesome-reveal/core) and `when`. You do not need a hydration directive or a stylesheet import.
 
+`as` accepts a `RevealTag` that the HTML parser keeps inside the host. It rejects document tags (`html`, `head`, `body`), table parts (`caption`, `col`, `colgroup`, `thead`, `tbody`, `tfoot`, `tr`, `td`, `th`), and select parts (`option`, `optgroup`). TypeScript reports these tags, and the server render throws for them. Reveal the whole `table` or `select` instead. You can also reveal content inside a table cell. Do not put the host directly inside `table`, `thead`, `tbody`, `tfoot`, `tr`, `colgroup`, `select`, or `optgroup`: the parser can remove or move it.
+
+```astro
+<Reveal as="table">
+  <tbody>
+    <tr><td>The whole table reveals together.</td></tr>
+  </tbody>
+</Reveal>
+```
+
 `delay` sets the time between the reveal and the entrance, in milliseconds. The default is 0. Keep `delay` below about 300 ms. A long delay makes content appear late when the user scrolls quickly.
 
 `when: true` reveals the element manually, and `when: false` resets the entrance, also during the `delay`. With `null` or `undefined`, the viewport controls the reveal. After the page loads, you can change it with the `when` property of the host element. The host has a `revealed` property. When the rendered tag reveals, it dispatches a `reveal` event that bubbles. In the example below, the type import adds the `awesome-reveal` element to the DOM types.

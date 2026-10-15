@@ -78,6 +78,33 @@ describe("Cascade on the server", () => {
   });
 });
 
+describe.each([
+  ["Reveal", Reveal],
+  ["Cascade", Cascade],
+])("%s tag validation", (_, component) => {
+  it.each([
+    "html",
+    "head",
+    "body",
+    "caption",
+    "col",
+    "colgroup",
+    "thead",
+    "tbody",
+    "tfoot",
+    "tr",
+    "td",
+    "th",
+    "option",
+    "optgroup",
+    "TR",
+  ])("rejects %s before it produces invalid host markup", async (as) => {
+    await expect(render({ as }, component)).rejects.toThrow(
+      `The <awesome-reveal> host cannot wrap <${as}>. Reveal the containing table, select or content element instead.`,
+    );
+  });
+});
+
 const ssrHarness = (component: unknown) => ({
   async render(options: Record<string, unknown>, style?: Record<string, string>) {
     const css =

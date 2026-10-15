@@ -1,11 +1,12 @@
 import type { CascadeOptions, RevealOptions } from "@awesome-reveal/core/adapter";
-import type { HTMLTag, Polymorphic } from "astro/types";
+import type { Polymorphic } from "astro/types";
 
 import type { RevealElement } from "./element.js";
+import type { RevealTag } from "./tags.js";
 import CascadeComponent from "./Cascade.astro";
 import RevealComponent from "./Reveal.astro";
 
-export type { CascadeOptions, RevealElement, RevealOptions };
+export type { CascadeOptions, RevealElement, RevealOptions, RevealTag };
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -16,16 +17,16 @@ declare global {
 type WithoutCallback<T> = T extends unknown ? Omit<T, "onReveal"> : never;
 
 /** Configures the rendered tag, its attributes and the serializable reveal options. */
-export type RevealProps<Tag extends HTMLTag = "div"> = Polymorphic<{ as: Tag }> &
+export type RevealProps<Tag extends RevealTag = "div"> = Polymorphic<{ as: Tag }> &
   WithoutCallback<RevealOptions>;
 
 /** Configures the rendered tag, its attributes and the serializable cascade options. */
-export type CascadeProps<Tag extends HTMLTag = "div"> = RevealProps<Tag> &
+export type CascadeProps<Tag extends RevealTag = "div"> = RevealProps<Tag> &
   Pick<CascadeOptions, "interval">;
 
 // Only the Astro language tools resolve a .astro import, so the declarations must not contain one.
 /** Renders one element and reveals it when it enters the viewport. */
-export const Reveal = RevealComponent as unknown as <Tag extends HTMLTag = "div">(
+export const Reveal = RevealComponent as unknown as <Tag extends RevealTag = "div">(
   props: RevealProps<Tag>,
 ) => any;
 
@@ -33,7 +34,7 @@ export const Reveal = RevealComponent as unknown as <Tag extends HTMLTag = "div"
  * Renders one element and reveals its direct element children in sequence, `interval` milliseconds
  * apart, when it enters the viewport.
  */
-export const Cascade = CascadeComponent as unknown as <Tag extends HTMLTag = "div">(
+export const Cascade = CascadeComponent as unknown as <Tag extends RevealTag = "div">(
   props: CascadeProps<Tag>,
 ) => any;
 
