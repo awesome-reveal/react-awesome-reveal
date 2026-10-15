@@ -119,18 +119,20 @@ describe("createReveal", () => {
     expect(onReveal).toHaveBeenCalledTimes(2);
   });
 
-  it("tells the listener and plays the animation when the element enters the viewport", () => {
-    const { element, animate } = fakeElement();
-    const state = createReveal(options);
+  it("tells the listener, removes the hidden attribute, plays and calls onReveal when the element enters the viewport", () => {
+    const { element, animate, attributes } = fakeElement();
+    element.setAttribute("data-awesome-reveal", "hidden");
     const order: string[] = [];
-    state.subscribe((revealed) => order.push(`listener ${revealed}`));
+    const hidden = () => attributes.has("data-awesome-reveal");
+    const state = createReveal({ ...options, onReveal: () => order.push(`onReveal ${hidden()}`) });
+    state.subscribe((revealed) => order.push(`listener ${revealed} ${hidden()}`));
     animate.mockImplementation(() => {
-      order.push("play");
+      order.push(`play ${hidden()}`);
       return { cancel: vi.fn(), pause: vi.fn(), play: vi.fn() };
     });
     state.attach(element);
     live()[0]!.report(true);
-    expect(order).toEqual(["listener true", "play"]);
+    expect(order).toEqual(["listener true true", "play false", "onReveal false"]);
     expect(state.revealed).toBe(true);
   });
 

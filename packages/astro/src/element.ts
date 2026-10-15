@@ -67,8 +67,7 @@ export class RevealElement extends HTMLElement {
     }
     this.controller = cascade ? createCascade(options) : createReveal(options);
     this.controller.subscribe((visible) => {
-      if (visible) target.removeAttribute("data-awesome-reveal");
-      else target.setAttribute("data-awesome-reveal", hidden);
+      if (!visible) target.setAttribute("data-awesome-reveal", hidden);
     });
     this.controller.attach(target);
     // Invalid JSON throws after the reveal exists, so the viewport still reveals the element.
