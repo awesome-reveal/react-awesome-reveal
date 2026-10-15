@@ -1,7 +1,10 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
 
-import { describeDocs } from "@awesome-reveal/test-utils/docs";
+import ts from "typescript";
+
+import { checkOptions, describeDocs, typeErrors } from "@awesome-reveal/test-utils/docs";
 
 import { buildSite, scripts, type Site } from "../build-site";
 
@@ -22,6 +25,18 @@ function source(file: string): string {
 }
 
 describe("dist", () => {
+  it.each([
+    ["NodeNext", ts.ModuleKind.NodeNext, ts.ModuleResolutionKind.NodeNext],
+    ["Bundler", ts.ModuleKind.ESNext, ts.ModuleResolutionKind.Bundler],
+  ] as const)(
+    "constrains the published tag types with %s resolution",
+    (_, module, moduleResolution) => {
+      const types = fileURLToPath(new URL("types.ts", import.meta.url));
+
+      expect(typeErrors(root, [types], { ...checkOptions, module, moduleResolution })).toEqual([]);
+    },
+  );
+
   it("contains one JavaScript file per source module, the components, and declarations only for src", () => {
     expect(jsFiles).toEqual(["element.js", "index.js"]);
     expect(distFiles).toEqual(expect.arrayContaining(components));
@@ -84,7 +99,7 @@ describe("a static build of a page with the published component", () => {
     const code = scripts(site);
 
     expect(code).toMatch(/customElements\.define\(["`]awesome-reveal["`]/);
-    expect(code.length).toBeLessThan(4975);
+    expect(code.length).toBeLessThan(5150);
   });
 });
 

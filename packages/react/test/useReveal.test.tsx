@@ -1,5 +1,5 @@
 import { act, render, screen } from "@testing-library/react";
-import { StrictMode, useLayoutEffect, version } from "react";
+import { forwardRef, StrictMode, Suspense, useLayoutEffect, useState, version } from "react";
 
 import { defaultKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
 import { type RevealOptions, useReveal } from "../src/useReveal";
@@ -11,6 +11,7 @@ import {
 import { observerOf } from "@awesome-reveal/test-utils/intersection-observer";
 
 import { intersect } from "./intersect";
+import { useCascade } from "../src/useCascade";
 
 function Box(props: Partial<RevealOptions>) {
   const { getProps, revealed } = useReveal<HTMLDivElement>(props as RevealOptions);
@@ -196,6 +197,93 @@ describe(`useReveal (React ${version})`, () => {
 
     expect(animations).toHaveLength(1);
     expect(animations[0]?.options).toMatchObject({ duration: 900 });
+  });
+
+  it.each([
+    ["useReveal in the viewport", useReveal, undefined],
+    ["useCascade in the viewport", useCascade, undefined],
+    ["useReveal with when", useReveal, true],
+    ["useCascade with when", useCascade, true],
+  ] as const)(
+    "%s attaches an element mounted by a child after the hook's commit",
+    async (_, useTarget, when) => {
+      const onReveal = vi.fn();
+      const Late = forwardRef<HTMLDivElement, object>(function Late(props, ref) {
+        const [show, setShow] = useState(false);
+        return (
+          <>
+            <button onClick={() => setShow(true)}>Show</button>
+            {show && (
+              <div {...props} ref={ref} data-testid="box">
+                <span>one</span>
+                <span>two</span>
+              </div>
+            )}
+          </>
+        );
+      });
+      function Parent() {
+        const { getProps } = useTarget<HTMLDivElement>({ when, onReveal });
+        return <Late {...getProps()} />;
+      }
+      const { unmount } = render(<Parent />);
+
+      await act(async () => screen.getByRole("button", { name: "Show" }).click());
+
+      if (when == null) {
+        expect(observerOf(box())).toBeDefined();
+        intersect(box(), true);
+      } else expect(observerOf(box())).toBeUndefined();
+      expect(onReveal).toHaveBeenCalledExactlyOnceWith(box());
+      expect(animations.map(({ element }) => element)).toEqual(
+        useTarget === useCascade ? Array.from(box().children) : [box()],
+      );
+      unmount();
+      await act(async () => {});
+      expect(runningAnimations()).toHaveLength(0);
+    },
+  );
+
+  it("does not replay a finished entrance when Suspense in a child hides and shows the element", async () => {
+    let resume = () => {};
+    let done = false;
+    function Pending({ wait }: { wait?: Promise<void> }) {
+      if (wait && !done) throw wait;
+      return null;
+    }
+    const Child = forwardRef<HTMLDivElement, object>(function Child(props, ref) {
+      const [wait, setWait] = useState<Promise<void>>();
+      return (
+        <>
+          <button onClick={() => setWait(new Promise((resolve) => (resume = resolve)))}>
+            Suspend
+          </button>
+          <Suspense fallback={null}>
+            <div {...props} ref={ref} data-testid="box" />
+            <Pending wait={wait} />
+          </Suspense>
+        </>
+      );
+    });
+    function Parent() {
+      const { getProps } = useReveal<HTMLDivElement>({ when: true });
+      return <Child {...getProps()} />;
+    }
+    render(<Parent />);
+    await act(async () => {});
+    const element = box();
+    for (const animation of animations) animation.finish();
+
+    await act(async () => screen.getByRole("button", { name: "Suspend" }).click());
+    expect(element).not.toHaveAttribute("data-awesome-reveal-attached");
+    await act(async () => {
+      done = true;
+      resume();
+    });
+
+    expect(box()).toBe(element);
+    expect(element).toHaveAttribute("data-awesome-reveal-attached");
+    expect(animations).toHaveLength(1);
   });
 
   it("does not animate a new element when `when` turns false as it mounts", () => {

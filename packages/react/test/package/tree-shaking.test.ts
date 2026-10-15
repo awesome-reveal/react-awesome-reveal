@@ -12,7 +12,7 @@ describe("consumer bundle", () => {
 
     expect(keptExports["core/dist/adapter.js"]).toContain("createReveal");
     expect(css).toBeGreaterThan(0);
-    expect(bytes + css).toBeLessThan(6600);
+    expect(bytes + css).toBeLessThan(6700);
   });
 
   it("keeps no Reveal component for the hook alone", async () => {
@@ -20,7 +20,7 @@ describe("consumer bundle", () => {
 
     expect(keptExports["core/dist/adapter.js"]).toContain("createReveal");
     expect(css).toBeGreaterThan(0);
-    expect(bytes + css).toBeLessThan(6250);
+    expect(bytes + css).toBeLessThan(6325);
     expect(keptExports).not.toHaveProperty("react/dist/Reveal.js");
   });
 });

@@ -78,6 +78,11 @@ describe("Cascade on the server", () => {
   });
 });
 
+// The custom element reports a moved tag in the browser, so the render must not fail the page.
+it("renders a tag that the type rejects without a throw", async () => {
+  await expect(render({ as: "tr" })).resolves.toContain("<tr");
+});
+
 const ssrHarness = (component: unknown) => ({
   async render(options: Record<string, unknown>, style?: Record<string, string>) {
     const css =

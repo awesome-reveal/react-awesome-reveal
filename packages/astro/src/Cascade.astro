@@ -1,10 +1,8 @@
 ---
-import type { HTMLTag } from "astro/types";
-
 import Host from "./Host.astro";
-import type { CascadeProps } from "./index.js";
+import type { CascadeProps, RevealTag } from "./index.js";
 
-type Props<Tag extends HTMLTag = "div"> = CascadeProps<Tag>;
+type Props<Tag extends RevealTag = "div"> = CascadeProps<Tag>;
 ---
 
 <Host {...Astro.props} cascade><slot /></Host>

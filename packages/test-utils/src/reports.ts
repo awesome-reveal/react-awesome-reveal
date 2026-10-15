@@ -17,3 +17,20 @@ export function collectReports(): () => unknown[] {
     return errors;
   };
 }
+
+/**
+ * Collects the errors of the window error event, where jsdom reports an error of a custom element
+ * callback, and returns a function that stops the collection and gives the errors.
+ */
+export function collectWindowErrors(): () => unknown[] {
+  const errors: unknown[] = [];
+  const onError = (event: ErrorEvent) => {
+    event.preventDefault();
+    errors.push(event.error);
+  };
+  window.addEventListener("error", onError);
+  return () => {
+    window.removeEventListener("error", onError);
+    return errors;
+  };
+}

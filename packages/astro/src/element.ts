@@ -53,7 +53,10 @@ export class RevealElement extends HTMLElement {
       return;
     }
     const target = this.firstElementChild as HTMLElement | null;
-    if (!target) return;
+    if (!target)
+      throw new Error(
+        "The HTML parser moved the element out of <awesome-reveal>. Check its parent elements.",
+      );
     const cascade = this.hasAttribute("cascade");
     const hidden = (cascade ? cascadeHiddenAttributes : hiddenAttributes)["data-awesome-reveal"];
     target.setAttribute("data-awesome-reveal", hidden);

@@ -34,8 +34,8 @@ export interface RevealStore<Options extends RevealOptions = RevealOptions> {
   /**
    * Observes and animates the element, and marks it with `data-awesome-reveal-attached`, so that
    * the stylesheet hides it until it reveals. A new element keeps the state and does not play the
-   * entrance again. `null` stops the observation and cancels the entrance. If you attach the same
-   * element again right after `null`, its entrance plays again.
+   * entrance again. `null` stops the observation and cancels the entrance. If `null` cancelled a
+   * running entrance and you attach the same element again right after, its entrance plays again.
    */
   attach(element: Element | null): void;
   /**
@@ -55,10 +55,17 @@ export const cascadeHiddenAttributes = { "data-awesome-reveal": "cascade" } as c
 const restarts = ["when", "threshold"] as const;
 
 // A cascade reads the children here, so that children that render after `attach()` also play.
-function play(element: Element, options: CoreRevealOptions, interval?: number): () => void {
-  const group = motions(entrances(element, options, interval));
+// The cancel function tells if the entrance was still running.
+function play(element: Element, options: CoreRevealOptions, interval?: number): () => boolean {
+  let animations = entrances(element, options, interval);
+  const group = motions(animations);
   group.play();
-  return group.dispose;
+  return () => {
+    const running = animations.some((animation) => animation?.playState === "running");
+    animations = [];
+    group.dispose();
+    return running;
+  };
 }
 
 // The stylesheet holds an element with this marker until it reveals. Without it, the hold ends after a few seconds.
@@ -79,7 +86,7 @@ function createStore<Options extends CascadeOptions>(
   // A replay on the same element, such as in React StrictMode, is not a new reveal.
   let notified = false;
   let listener: (revealed: boolean) => void = () => {};
-  let cancel = () => {};
+  let cancel = (): boolean => false;
   let disconnect = () => {};
   const preference = motionPreference();
   function onPreference() {
@@ -104,7 +111,7 @@ function createStore<Options extends CascadeOptions>(
       element.removeAttribute(hidden);
       cancel =
         preference?.matches || focused(element)
-          ? () => {}
+          ? () => false
           : play(element, current, cascade ? cascadeInterval(current) : undefined);
       if (!notified) {
         notified = true;
@@ -146,13 +153,12 @@ function createStore<Options extends CascadeOptions>(
       if (next === element) return;
       element?.removeAttribute(attached);
       next?.setAttribute(attached, "");
-      cancel();
       preference?.removeEventListener?.("change", onPreference);
       if (next) preference?.addEventListener?.("change", onPreference);
-      // The same element that returns immediately after null plays again, because `attach(null)`
+      // The same element that returns immediately after null plays again when `attach(null)`
       // cancelled its entrance before it could finish.
       if (next && next === detached) played = false;
-      detached = next ? null : element;
+      detached = !cancel() || next ? null : element;
       element = next;
       connect();
     },
