@@ -382,3 +382,80 @@ describe("cascade", () => {
     expect(MockIntersectionObserver.instances.size).toBe(0);
   });
 });
+
+describe("release without dispose", () => {
+  const flush = () => new Promise((resolve) => setTimeout(resolve));
+  let listening: () => Promise<string[]>;
+  const all = ["beforeprint", "afterprint", "change"];
+  beforeEach(() => {
+    const media = Object.assign(new EventTarget(), { matches: false });
+    vi.stubGlobal("matchMedia", () => media);
+    const listen = vi.spyOn(globalThis, "addEventListener");
+    const listenPreference = vi.spyOn(media, "addEventListener");
+    const unlisten = vi.spyOn(globalThis, "removeEventListener");
+    const unlistenPreference = vi.spyOn(media, "removeEventListener");
+    listening = async () => {
+      await flush();
+      const types = [...listen.mock.calls, ...listenPreference.mock.calls].map(([type]) => type);
+      for (const [type] of [...unlisten.mock.calls, ...unlistenPreference.mock.calls])
+        types.splice(types.indexOf(type), 1);
+      return types;
+    };
+  });
+  it("releases a finished reveal", async () => {
+    const target = element();
+    reveal(target);
+    expect(await listening()).toEqual(all);
+    intersect(target, true);
+    expect(await listening()).toEqual(all);
+    animations[0]!.finish();
+    expect(await listening()).toEqual([]);
+  });
+  it("releases a cascade when every child finished", async () => {
+    const target = element();
+    target.innerHTML = "<p></p><p></p>";
+    cascade(target);
+    intersect(target, true);
+    animations[0]!.finish();
+    expect(await listening()).toEqual(all);
+    animations[1]!.finish();
+    expect(await listening()).toEqual([]);
+  });
+  it("releases an empty cascade at once", async () => {
+    cascade(element());
+    expect(await listening()).toEqual([]);
+  });
+  it("releases an entrance that page code cancels", async () => {
+    reveal(element());
+    animations[0]!.cancel();
+    expect(await listening()).toEqual([]);
+  });
+  it("stays safe to dispose after the finish", async () => {
+    const target = element();
+    const handle = reveal(target);
+    intersect(target, true);
+    animations[0]!.finish();
+    expect(await listening()).toEqual([]);
+    expect(() => {
+      handle.dispose();
+      handle.dispose();
+    }).not.toThrow();
+    expect(animations[0]!.cancel).not.toHaveBeenCalled();
+  });
+  it("keeps the print listeners for a waiting reveal when another call is disposed", async () => {
+    reveal(element()).dispose();
+    const waiting = reveal(element());
+    expect(await listening()).toEqual(all);
+    waiting.dispose();
+    expect(await listening()).toEqual([]);
+  });
+  it("releases each finished target while another target of the call waits", async () => {
+    const finished = element(),
+      waiting = element();
+    reveal([finished, waiting]);
+    animations[0]!.finish();
+    await flush();
+    expect(observerOf(finished)).toBeUndefined();
+    expect(observerOf(waiting)).toBeDefined();
+  });
+});

@@ -80,7 +80,7 @@ function motion(element: Element, options: RevealOptions, delay: number) {
 interface Motions {
   play(): void;
   print(printing: boolean): void;
-  dispose(): void;
+  dispose(keep?: boolean): void;
 }
 
 // Core has no print stylesheet, and the print rule of an adapter stops at the reveal, so print moves each effect past its fill.
@@ -96,12 +96,13 @@ function listenPrint(method: "addEventListener" | "removeEventListener") {
 export const cascadeInterval = (options: CascadeOptions) => options.interval ?? 80;
 
 // Without an interval, the element itself animates.
-export function motions(element: Element, options: RevealOptions, interval?: number): Motions {
+export function entrances(element: Element, options: RevealOptions, interval?: number) {
   const targets = interval === undefined ? [element] : Array.from(element.children);
   const delay = options.delay ?? 0;
-  let animations = targets.map((target, index) =>
-    motion(target, options, delay + index * (interval ?? 0)),
-  );
+  return targets.map((target, index) => motion(target, options, delay + index * (interval ?? 0)));
+}
+
+export function motions(animations: (Animation | undefined)[]): Motions {
   const group: Motions = {
     play() {
       for (const animation of animations)
@@ -119,8 +120,9 @@ export function motions(element: Element, options: RevealOptions, interval?: num
         animation?.effect?.updateTiming({ fill: printing ? "none" : "backwards" });
       }
     },
-    dispose() {
-      for (const animation of animations) animation?.cancel();
+    // A settled group passes keep: cancel() on a finished animation fires a cancel event and makes it idle.
+    dispose(keep) {
+      if (!keep) for (const animation of animations) animation?.cancel();
       animations = [];
       following.delete(group);
       if (!following.size) listenPrint("removeEventListener");

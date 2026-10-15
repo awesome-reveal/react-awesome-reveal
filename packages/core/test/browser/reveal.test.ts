@@ -290,6 +290,17 @@ describe("zero-CSS reveal", () => {
     expect(animation().currentTime as number).toBeGreaterThanOrEqual(time);
     expect(animation().currentTime as number).toBeLessThan(60_000);
   });
+  it("releases a finished entrance with no dispose", async () => {
+    const unlisten = vi.spyOn(window, "removeEventListener");
+    reveal(target, native);
+    await enter();
+    const entrance = animation();
+    entrance.finish();
+    await expect
+      .poll(() => unlisten.mock.calls.map(([type]) => type))
+      .toEqual(["beforeprint", "afterprint"]);
+    expect(entrance.playState).toBe("finished");
+  });
   it("invalid thresholds reveal immediately and report the browser error", () => {
     const reports = collectReports();
     track(reveal(target, { ...native, threshold: 2 }));

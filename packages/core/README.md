@@ -32,7 +32,7 @@ The function finds the targets one time, when you call it. Each call returns a `
 
 The child at position `index` waits `delay + index * interval` milliseconds after the reveal. So with no `delay`, the first child starts immediately. The default interval is 80 ms. A negative interval gives negative delays, so each later child starts further into its entrance. To cascade the words or sentences of a text, wrap each one in an element before you call `cascade()`. A transform needs a transformable element, so give inline children `display: inline-block`.
 
-`dispose()` disconnects the observers and cancels the pending, the active and the delayed animations. It removes the start state of the call, and the elements return to their own styles. You can call it more than one time.
+`dispose()` disconnects the observers and cancels the pending, the active and the delayed animations. It removes the start state of the call, and the elements return to their own styles. You can call it more than one time. After all the entrances of a call finish, core keeps no reference to them, so you do not need `dispose()`. If you remove an element before it reveals, call `dispose()`.
 
 When you call the function, core calls `element.animate(keyframes, { duration, delay, fill: "backwards" })` for each element that it animates. It pauses the animation at its start. It plays the animation when the observed element enters the viewport. If your code finishes or cancels it before the element enters the viewport, the element shows at rest and the entrance does not play.
 
