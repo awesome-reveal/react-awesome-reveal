@@ -40,7 +40,7 @@ if (host) host.when = true;
 - It reads the children when the container reveals. A child that you add after the reveal shows with no animation.
 - Only the direct element children animate. Text and children with `display: contents` show immediately.
 - A framework island and the host of a nested `Reveal` have `display: contents`, so the cascade does not animate them. A nested `Reveal` plays only its own entrance. To put an island in the cascade, wrap it in an element.
-- For a long list, reveal each item separately. A cascade has one observer, so the children below the viewport animate before you scroll to them.
+- A cascade schedules all children when its container enters the viewport, so the last children of a long list start late or out of view. For a long list, or a grid that is taller than the viewport, use `Reveal` on each item.
 
 ## SSR and accessibility
 
