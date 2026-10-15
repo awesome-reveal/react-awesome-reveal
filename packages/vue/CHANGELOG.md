@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.0.0-next.9](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/vue@1.0.0-next.8...@awesome-reveal/vue@1.0.0-next.9) (2026-10-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* The Astro `RevealTag` type accepts HTML tags and `svg`, without document tags, table parts and SVG-only tags. Reveal the containing table, or content inside a table cell, instead.
+
+### Bug Fixes
+
+* attach late React refs and report moved Astro tags ([#314](https://github.com/awesome-reveal/awesome-reveal/issues/314)) ([3160bcc](https://github.com/awesome-reveal/awesome-reveal/commit/3160bcc17740630109ef834294a57d77030f0e87))
+* **core:** release finished reveals without dispose ([#305](https://github.com/awesome-reveal/awesome-reveal/issues/305)) ([7d78397](https://github.com/awesome-reveal/awesome-reveal/commit/7d78397fd3af2f5ead9c67f5ea4a229c6303ccec))
+* export reveal.css for Astro islands ([#306](https://github.com/awesome-reveal/awesome-reveal/issues/306)) ([a46cfc9](https://github.com/awesome-reveal/awesome-reveal/commit/a46cfc962c5368e3482786d2a5f81c2ae5bf6cbf))
+* remove the hidden attribute before the reveal callback ([#312](https://github.com/awesome-reveal/awesome-reveal/issues/312)) ([12ca319](https://github.com/awesome-reveal/awesome-reveal/commit/12ca319821ef516b3a6336988b3b5791f25c5d71))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @awesome-reveal/core bumped to 1.0.0-next.9
+
 ## [1.0.0-next.8](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/vue@1.0.0-next.7...@awesome-reveal/vue@1.0.0-next.8) (2026-10-14)
 
 

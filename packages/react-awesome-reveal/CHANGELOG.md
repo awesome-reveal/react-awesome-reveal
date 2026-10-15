@@ -1,5 +1,19 @@
 # react-awesome-reveal
 
+## [5.0.0-next.9](https://github.com/awesome-reveal/awesome-reveal/compare/react-awesome-reveal@5.0.0-next.8...react-awesome-reveal@5.0.0-next.9) (2026-10-15)
+
+
+### Bug Fixes
+
+* export reveal.css for Astro islands ([#306](https://github.com/awesome-reveal/awesome-reveal/issues/306)) ([a46cfc9](https://github.com/awesome-reveal/awesome-reveal/commit/a46cfc962c5368e3482786d2a5f81c2ae5bf6cbf))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @awesome-reveal/react bumped to 1.0.0-next.9
+
 ## [5.0.0-next.8](https://github.com/awesome-reveal/awesome-reveal/compare/react-awesome-reveal@5.0.0-next.7...react-awesome-reveal@5.0.0-next.8) (2026-10-14)
 
 
