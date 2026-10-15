@@ -62,6 +62,13 @@ A prerendered page does not animate until the browser activates it.
 
 The stylesheet hides the server markup for at most 5 seconds before the client script attaches the element. At the attach, the package adds `data-awesome-reveal-attached` to the element, and the element stays hidden until it reveals. So if the client script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again until it reveals. This can happen when the client script loads slowly, for example on a slow network.
 
+### Content Security Policy
+
+The package writes no `style` attribute, no inline script and no CSS at runtime. The entrance uses `element.animate()`, which CSP does not restrict. But Astro can put the package stylesheet, and your small scripts, inline in the HTML. Use one of these setups:
+
+- Set `security.csp: true`. Astro then adds a `<meta>` policy with hashes for the inline styles and scripts that it emits. Astro adds the policy only to the build, so use `astro build` and `astro preview` to check it. Astro does not support this option with the `<ClientRouter />`.
+- Send your own policy, such as `style-src 'self'; script-src 'self'`, and set `build.inlineStylesheets: 'never'`. With the default `'auto'`, Astro puts stylesheets smaller than `vite.build.assetsInlineLimit` (4 kB by default) in a `<style>` element. If the package stylesheet is inline, the policy blocks it. Then the content does not hide before the reveal, and the host element is not `display: contents`. Also make sure that the built HTML has no inline `<script>` that your policy blocks.
+
 ### Limits
 
 - The stylesheet does not reach a shadow root, so it does not hide an element in a shadow root before the reveal.
