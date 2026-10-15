@@ -90,16 +90,22 @@ export function Details() {
 }
 ```
 
-To wait for the end of the entrance, call this function in `onReveal`. It skips the CSS animations, because the package stylesheet hides the element with a CSS animation that stops at the reveal. The promise resolves at once when no entrance plays. It rejects when the entrance stops early, for example after `when: false` or an unmount.
+To wait for the end of the entrance, use the `finished` promises of the animations in `onReveal`. The promise waits for each animation of the element and of its descendants, also your own animations, so use it on an element that has no other animations. It resolves at once when no entrance plays. It rejects when the entrance stops early, for example after `when: false` or an unmount.
 
-```ts
-export const entranceEnd = (element: Element) =>
-  Promise.all(
-    element
-      .getAnimations({ subtree: true })
-      .filter((animation) => !(animation instanceof CSSAnimation))
-      .map((animation) => animation.finished),
-  );
+```tsx
+import { Reveal } from "@awesome-reveal/react";
+
+export const Card = () => (
+  <Reveal
+    onReveal={(element) =>
+      Promise.all(
+        element.getAnimations({ subtree: true }).map((animation) => animation.finished),
+      ).then(() => element.classList.add("entered"))
+    }
+  >
+    Hello
+  </Reveal>
+);
 ```
 
 ## Cascade

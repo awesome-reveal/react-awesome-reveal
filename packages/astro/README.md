@@ -35,16 +35,15 @@ if (host) host.when = true;
 
 The `reveal` event fires one time for each reveal, when the reveal starts, not when the entrance ends. It also fires when no entrance plays, for example with reduced motion or focus. After `when: false`, the next reveal fires it again.
 
-To wait for the end of the entrance, call this function with the `target` of the event. It skips the CSS animations, because they are not part of the entrance. The promise resolves at once when no entrance plays. It rejects when the entrance stops early, for example after `when: false`.
+To wait for the end of the entrance, use the `finished` promises of the animations of the event `target`. The promise waits for each animation of the element and of its descendants, also your own animations, so use it on an element that has no other animations. It resolves at once when no entrance plays. It rejects when the entrance stops early, for example after `when: false`.
 
 ```ts
-export const entranceEnd = (element: Element) =>
-  Promise.all(
-    element
-      .getAnimations({ subtree: true })
-      .filter((animation) => !(animation instanceof CSSAnimation))
-      .map((animation) => animation.finished),
+document.addEventListener("reveal", (event) => {
+  const element = event.target as Element;
+  Promise.all(element.getAnimations({ subtree: true }).map((animation) => animation.finished)).then(
+    () => element.classList.add("entered"),
   );
+});
 ```
 
 ## Cascade

@@ -43,16 +43,22 @@ Use `when` for manual control: `true` reveals the element and `false` resets the
 
 The component emits `reveal` with the element, or with the container for a cascade. The directive calls the `onReveal` function of its options with the same element. Both run one time for each reveal, when the reveal starts, not when the entrance ends. They also run when no entrance plays, such as with reduced motion or focus. After `when: false`, the next reveal runs them again.
 
-To wait for the end of the entrance, call this function with the element. It skips the CSS animations, because the package stylesheet hides the element with a CSS animation that stops at the reveal. The promise resolves at once when no entrance plays. It rejects when the entrance stops early, such as after `when: false` or an unmount.
+To wait for the end of the entrance, use the `finished` promises of the animations of the element. The promise waits for each animation of the element and of its descendants, also your own animations, so use it on an element that has no other animations. It resolves at once when no entrance plays. It rejects when the entrance stops early, such as after `when: false` or an unmount.
 
 ```ts
-export const entranceEnd = (element: Element) =>
-  Promise.all(
-    element
-      .getAnimations({ subtree: true })
-      .filter((animation) => !(animation instanceof CSSAnimation))
-      .map((animation) => animation.finished),
-  );
+import { h } from "vue";
+import { Reveal } from "@awesome-reveal/vue";
+
+export const entered = h(
+  Reveal,
+  {
+    onReveal: (element: Element) =>
+      Promise.all(
+        element.getAnimations({ subtree: true }).map((animation) => animation.finished),
+      ).then(() => element.classList.add("entered")),
+  },
+  () => "Hello",
+);
 ```
 
 In the consumer project, check the build, the type check, the visibility before the reveal, reduced motion and the teardown.

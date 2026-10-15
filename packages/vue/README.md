@@ -60,16 +60,22 @@ import { Reveal } from "@awesome-reveal/vue";
 export const card = h(Reveal, { from: "left", when: true }, () => "Hello");
 ```
 
-To wait for the end of the entrance, call this function with the element of the `reveal` event or of `onReveal`. It skips the CSS animations, because the package stylesheet hides the element with a CSS animation that stops at the reveal. The promise resolves at once when no entrance plays. It rejects when the entrance stops early, for example after `when: false` or an unmount.
+To wait for the end of the entrance, use the `finished` promises of the animations of the element that the `reveal` event or `onReveal` gets. The promise waits for each animation of the element and of its descendants, also your own animations, so use it on an element that has no other animations. It resolves at once when no entrance plays. It rejects when the entrance stops early, for example after `when: false` or an unmount.
 
 ```ts
-export const entranceEnd = (element: Element) =>
-  Promise.all(
-    element
-      .getAnimations({ subtree: true })
-      .filter((animation) => !(animation instanceof CSSAnimation))
-      .map((animation) => animation.finished),
-  );
+import { h } from "vue";
+import { Reveal } from "@awesome-reveal/vue";
+
+export const entered = h(
+  Reveal,
+  {
+    onReveal: (element: Element) =>
+      Promise.all(
+        element.getAnimations({ subtree: true }).map((animation) => animation.finished),
+      ).then(() => element.classList.add("entered")),
+  },
+  () => "Hello",
+);
 ```
 
 ## Cascade
