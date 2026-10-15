@@ -1,12 +1,13 @@
 import type { CascadeOptions, RevealOptions } from "@awesome-reveal/core/adapter";
+// Astro's JSX entry resolves its ambient types in NodeNext; astro/types uses an extensionless import.
+import type { JSX } from "astro/jsx-runtime";
 import type { Polymorphic } from "astro/types";
 
 import type { RevealElement } from "./element.js";
-import type { RevealTag } from "./tags.js";
 import CascadeComponent from "./Cascade.astro";
 import RevealComponent from "./Reveal.astro";
 
-export type { CascadeOptions, RevealElement, RevealOptions, RevealTag };
+export type { CascadeOptions, RevealElement, RevealOptions };
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -15,6 +16,19 @@ declare global {
 }
 
 type WithoutCallback<T> = T extends unknown ? Omit<T, "onReveal"> : never;
+
+type TablePart = "caption" | "col" | "colgroup" | "thead" | "tbody" | "tfoot" | "tr" | "td" | "th";
+
+/**
+ * Selects an HTML tag, or `svg`, that the HTML parser keeps inside the custom element host. It
+ * excludes document tags, table parts and SVG-only tags.
+ */
+export type RevealTag =
+  | Exclude<
+      Extract<keyof JSX.DefinedIntrinsicElements, keyof HTMLElementTagNameMap>,
+      "html" | "head" | "body" | TablePart
+    >
+  | "svg";
 
 /** Configures the rendered tag, its attributes and the serializable reveal options. */
 export type RevealProps<Tag extends RevealTag = "div"> = Polymorphic<{ as: Tag }> &

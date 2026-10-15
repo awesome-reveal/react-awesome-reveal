@@ -279,9 +279,22 @@ describe("<awesome-reveal>", () => {
     expect(animations[0]).toMatchObject({ element, options: { duration: 100 } });
   });
 
-  it("does nothing without an element child", () => {
-    document.body.innerHTML = "<awesome-reveal>text</awesome-reveal>";
+  it("reports a host whose element child the parser moved out", () => {
+    const errors: unknown[] = [];
+    const onError = (event: ErrorEvent) => {
+      event.preventDefault();
+      errors.push(event.error);
+    };
+    window.addEventListener("error", onError);
+    document.body.innerHTML =
+      '<p>Intro <awesome-reveal><div data-awesome-reveal="hidden">hello</div></awesome-reveal></p>';
+    window.removeEventListener("error", onError);
 
-    expect(document.body.textContent).toBe("text");
+    expect(document.querySelector("awesome-reveal")!.childElementCount).toBe(0);
+    expect(errors).toEqual([
+      expect.objectContaining({
+        message: expect.stringContaining("moved the element out of <awesome-reveal>"),
+      }),
+    ]);
   });
 });

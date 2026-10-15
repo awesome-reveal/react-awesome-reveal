@@ -20,7 +20,9 @@ import { Cascade, Reveal } from "@awesome-reveal/astro";
 
 `Reveal` renders the tag that `as` sets (the default is `div`) inside an `awesome-reveal` host element with `display: contents`. The component passes the attributes and the children to this tag. It accepts the serializable [core reveal options](https://www.npmjs.com/package/@awesome-reveal/core) and `when`. You do not need a hydration directive or a stylesheet import.
 
-`as` accepts a `RevealTag` that the HTML parser keeps inside the host. It rejects document tags (`html`, `head`, `body`), table parts (`caption`, `col`, `colgroup`, `thead`, `tbody`, `tfoot`, `tr`, `td`, `th`), and select parts (`option`, `optgroup`). TypeScript reports these tags, and the server render throws for them. Reveal the whole `table` or `select` instead. You can also reveal content inside a table cell. Do not put the host directly inside `table`, `thead`, `tbody`, `tfoot`, `tr`, `colgroup`, `select`, or `optgroup`: the parser can remove or move it.
+`as` accepts a `RevealTag`: an HTML tag or `svg`. TypeScript rejects document tags (`html`, `head`, `body`), table parts (`caption`, `col`, `colgroup`, `thead`, `tbody`, `tfoot`, `tr`, `td`, `th`) and SVG-only tags, because the HTML parser does not keep them inside the host. Reveal the whole `table` instead, or reveal content inside a table cell.
+
+Do not put `Reveal` or `Cascade` directly in a `<table>`, a table section, a row or a `<select>`. The HTML parser moves the host before the table, or drops it. In a `<p>`, also inline in MDX text, use an inline tag such as `as="span"`. The parser moves a block tag, such as the default `div`, out of the host. The host then reports an error in the browser console, and the tag shows without an entrance after a few seconds.
 
 ```astro
 <Reveal as="table">

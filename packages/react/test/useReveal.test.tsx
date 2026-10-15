@@ -1,5 +1,5 @@
 import { act, render, screen } from "@testing-library/react";
-import { forwardRef, StrictMode, useLayoutEffect, useState, version } from "react";
+import { forwardRef, StrictMode, Suspense, useLayoutEffect, useState, version } from "react";
 
 import { defaultKeyframes } from "@awesome-reveal/test-utils/entrance-fixtures";
 import { type RevealOptions, useReveal } from "../src/useReveal";
@@ -243,6 +243,48 @@ describe(`useReveal (React ${version})`, () => {
       expect(runningAnimations()).toHaveLength(0);
     },
   );
+
+  it("does not replay a finished entrance when Suspense in a child hides and shows the element", async () => {
+    let resume = () => {};
+    let done = false;
+    function Pending({ wait }: { wait?: Promise<void> }) {
+      if (wait && !done) throw wait;
+      return null;
+    }
+    const Child = forwardRef<HTMLDivElement, object>(function Child(props, ref) {
+      const [wait, setWait] = useState<Promise<void>>();
+      return (
+        <>
+          <button onClick={() => setWait(new Promise((resolve) => (resume = resolve)))}>
+            Suspend
+          </button>
+          <Suspense fallback={null}>
+            <div {...props} ref={ref} data-testid="box" />
+            <Pending wait={wait} />
+          </Suspense>
+        </>
+      );
+    });
+    function Parent() {
+      const { getProps } = useReveal<HTMLDivElement>({ when: true });
+      return <Child {...getProps()} />;
+    }
+    render(<Parent />);
+    await act(async () => {});
+    const element = box();
+    for (const animation of animations) animation.finish();
+
+    await act(async () => screen.getByRole("button", { name: "Suspend" }).click());
+    expect(element).not.toHaveAttribute("data-awesome-reveal-attached");
+    await act(async () => {
+      done = true;
+      resume();
+    });
+
+    expect(box()).toBe(element);
+    expect(element).toHaveAttribute("data-awesome-reveal-attached");
+    expect(animations).toHaveLength(1);
+  });
 
   it("does not animate a new element when `when` turns false as it mounts", () => {
     function Late({ show, when }: { show: boolean; when: boolean }) {

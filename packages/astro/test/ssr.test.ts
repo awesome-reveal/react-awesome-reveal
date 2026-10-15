@@ -81,27 +81,10 @@ describe("Cascade on the server", () => {
 describe.each([
   ["Reveal", Reveal],
   ["Cascade", Cascade],
-])("%s tag validation", (_, component) => {
-  it.each([
-    "html",
-    "head",
-    "body",
-    "caption",
-    "col",
-    "colgroup",
-    "thead",
-    "tbody",
-    "tfoot",
-    "tr",
-    "td",
-    "th",
-    "option",
-    "optgroup",
-    "TR",
-  ])("rejects %s before it produces invalid host markup", async (as) => {
-    await expect(render({ as }, component)).rejects.toThrow(
-      `The <awesome-reveal> host cannot wrap <${as}>. Reveal the containing table, select or content element instead.`,
-    );
+])("%s with a tag that the type rejects", (_, component) => {
+  // The custom element reports the moved tag in the browser, so the render must not fail the page.
+  it.each(["tr", "TD"])("renders %s without a throw", async (as) => {
+    await expect(render({ as }, component)).resolves.toContain("<awesome-reveal");
   });
 });
 

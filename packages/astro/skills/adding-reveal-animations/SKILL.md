@@ -9,7 +9,7 @@ compatibility: Requires @awesome-reveal/astro and Astro 6 or 7.
 
 Import `Reveal` or `Cascade` in the component script (frontmatter). `Cascade` reveals the children of an element in sequence. The component loads its custom element and its CSS, and it needs no hydration directive.
 
-Reveal a whole `table` or `select` with `as="table"` or `as="select"`. You can also reveal content inside a table cell. The `RevealTag` type excludes document tags, table parts and select parts, and the server render rejects them. Do not place the host directly inside `table`, `thead`, `tbody`, `tfoot`, `tr`, `colgroup`, `select`, or `optgroup`: the parser can remove or move it.
+Reveal a whole table with `as="table"`, or reveal content inside a table cell. The `RevealTag` type excludes document tags, table parts and SVG-only tags. Do not place `Reveal` or `Cascade` directly in a `<table>`, a table section, a row or a `<select>`: the HTML parser moves the host before the table, or drops it. In a `<p>`, also inline in MDX text, use an inline tag such as `as="span"`. The parser moves a block tag, such as the default `div`, out of the host, and the host reports an error in the browser console.
 
 Do not import a stylesheet. The package loads its stylesheet, which hides server-rendered content until it reveals. The stylesheet replaces a CSS `animation` of the hidden element or of a cascade child until the reveal, so put your own animation on an inner element.
 

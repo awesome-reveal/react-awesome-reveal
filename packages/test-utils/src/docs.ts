@@ -12,6 +12,29 @@ interface DocsOptions {
   skipFences?: RegExp;
 }
 
+/** Gives the compiler options that the type checks of the built packages share. */
+export const checkOptions: ts.CompilerOptions = {
+  noEmit: true,
+  skipLibCheck: true,
+  strict: true,
+  target: ts.ScriptTarget.ESNext,
+  types: [],
+};
+
+/** Type-checks the files, and gives each error with its file relative to `root`. */
+export function typeErrors(
+  root: URL,
+  files: string[],
+  options: ts.CompilerOptions,
+  host?: ts.CompilerHost,
+): string[] {
+  const program = ts.createProgram(files, options, host);
+  return ts.getPreEmitDiagnostics(program).map((diagnostic) => {
+    const file = diagnostic.file ? relative(fileURLToPath(root), diagnostic.file.fileName) : "";
+    return `${file}: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")}`;
+  });
+}
+
 /** Checks the consumer skills in `<root>/skills` and the README against the built package types. */
 export function describeDocs(root: URL, { jsx, skipFences }: DocsOptions = {}) {
   describe("docs", () => {
@@ -69,15 +92,11 @@ export function describeDocs(root: URL, { jsx, skipFences }: DocsOptions = {}) {
       }
 
       const options: ts.CompilerOptions = {
+        ...checkOptions,
         ...jsx,
         lib: ["lib.esnext.d.ts", "lib.dom.d.ts"],
         module: ts.ModuleKind.ESNext,
         moduleResolution: ts.ModuleResolutionKind.Bundler,
-        noEmit: true,
-        skipLibCheck: true,
-        strict: true,
-        target: ts.ScriptTarget.ESNext,
-        types: [],
       };
       const host = ts.createCompilerHost(options);
       const { fileExists, readFile, getSourceFile } = host;
@@ -88,11 +107,7 @@ export function describeDocs(root: URL, { jsx, skipFences }: DocsOptions = {}) {
           ? ts.createSourceFile(file, files.get(file)!, language)
           : getSourceFile(file, language, ...rest);
 
-      const program = ts.createProgram([...files.keys()], options, host);
-      const errors = ts.getPreEmitDiagnostics(program).map((diagnostic) => {
-        const file = diagnostic.file ? relative(fileURLToPath(root), diagnostic.file.fileName) : "";
-        return `${file}: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")}`;
-      });
+      const errors = typeErrors(root, [...files.keys()], options, host);
 
       expect(files.size).toBeGreaterThan(0);
       expect(errors).toEqual([]);

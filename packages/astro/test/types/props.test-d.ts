@@ -3,7 +3,7 @@ import type { RevealOptions } from "@awesome-reveal/core/adapter";
 import type { Cascade, CascadeProps, Reveal, RevealProps, RevealTag } from "../../src";
 
 test("Reveal and Cascade reject tags that the host cannot wrap", () => {
-  expectTypeOf<"table" | "select" | "a" | "div">().toExtend<RevealTag>();
+  expectTypeOf<"table" | "select" | "option" | "a" | "div" | "svg">().toExtend<RevealTag>();
   expectTypeOf<
     | "html"
     | "head"
@@ -17,8 +17,10 @@ test("Reveal and Cascade reject tags that the host cannot wrap", () => {
     | "tr"
     | "td"
     | "th"
-    | "option"
-    | "optgroup"
+    | "path"
+    | "circle"
+    | "g"
+    | "image"
   >()
     .extract<RevealTag>()
     .toBeNever();

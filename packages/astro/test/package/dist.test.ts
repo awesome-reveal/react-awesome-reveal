@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 import ts from "typescript";
 
-import { describeDocs } from "@awesome-reveal/test-utils/docs";
+import { checkOptions, describeDocs, typeErrors } from "@awesome-reveal/test-utils/docs";
 
 import { buildSite, scripts, type Site } from "../build-site";
 
@@ -31,26 +31,14 @@ describe("dist", () => {
   ] as const)(
     "constrains the published tag types with %s resolution",
     (_, module, moduleResolution) => {
-      const program = ts.createProgram([fileURLToPath(new URL("types.ts", import.meta.url))], {
-        module,
-        moduleResolution,
-        strict: true,
-        skipLibCheck: true,
-        noEmit: true,
-        types: [],
-        target: ts.ScriptTarget.ESNext,
-      });
+      const types = fileURLToPath(new URL("types.ts", import.meta.url));
 
-      expect(
-        ts
-          .getPreEmitDiagnostics(program)
-          .map((diagnostic) => ts.flattenDiagnosticMessageText(diagnostic.messageText, "\n")),
-      ).toEqual([]);
+      expect(typeErrors(root, [types], { ...checkOptions, module, moduleResolution })).toEqual([]);
     },
   );
 
   it("contains one JavaScript file per source module, the components, and declarations only for src", () => {
-    expect(jsFiles).toEqual(["element.js", "index.js", "tags.js"]);
+    expect(jsFiles).toEqual(["element.js", "index.js"]);
     expect(distFiles).toEqual(expect.arrayContaining(components));
     expect(distFiles).toContain("index.d.ts");
     expect(distFiles.filter((file) => /(^|\/)test/.test(file))).toEqual([]);
@@ -111,7 +99,7 @@ describe("a static build of a page with the published component", () => {
     const code = scripts(site);
 
     expect(code).toMatch(/customElements\.define\(["`]awesome-reveal["`]/);
-    expect(code.length).toBeLessThan(4975);
+    expect(code.length).toBeLessThan(5175);
   });
 });
 

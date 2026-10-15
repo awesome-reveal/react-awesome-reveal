@@ -36,7 +36,7 @@ class FakeObserver {
 
 function fakeElement() {
   const cancel = vi.fn();
-  const animate = vi.fn(() => ({ cancel, pause: vi.fn(), play: vi.fn() }));
+  const animate = vi.fn(() => ({ cancel, pause: vi.fn(), play: vi.fn(), playState: "running" }));
   const attributes = new Map<string, string>();
   const element = {
     animate,
@@ -128,7 +128,7 @@ describe("createReveal", () => {
     state.subscribe((revealed) => order.push(`listener ${revealed} ${hidden()}`));
     animate.mockImplementation(() => {
       order.push(`play ${hidden()}`);
-      return { cancel: vi.fn(), pause: vi.fn(), play: vi.fn() };
+      return { cancel: vi.fn(), pause: vi.fn(), play: vi.fn(), playState: "running" };
     });
     state.attach(element);
     live()[0]!.report(true);
@@ -155,6 +155,16 @@ describe("createReveal", () => {
     state.attach(null);
     state.attach(element);
     expect(animate).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not replay a finished entrance when the same element comes back after null", () => {
+    const { element, animate } = fakeElement();
+    const state = createReveal({ ...options, when: true });
+    state.attach(element);
+    for (const { value } of animate.mock.results) Object.assign(value, { playState: "finished" });
+    state.attach(null);
+    state.attach(element);
+    expect(animate).toHaveBeenCalledTimes(1);
   });
 
   it("plays no entrance on a different element after null", () => {
