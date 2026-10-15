@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.0.0-next.10](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/astro@1.0.0-next.9...@awesome-reveal/astro@1.0.0-next.10) (2026-10-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* the generated entrance replaces the element's own values of the properties that the start state sets (translate, scale, rotate, filter, opacity) while the element waits and during the entrance, and ends at their neutral values, so a fade now ends at opacity 1. The element's own transform still applies. To keep one of these values during the entrance, put it on an inner element or use native keyframes.
+
+### Performance Improvements
+
+* run the generated entrance on the compositor ([#316](https://github.com/awesome-reveal/awesome-reveal/issues/316)) ([2264119](https://github.com/awesome-reveal/awesome-reveal/commit/22641197ccb4effd93605af172dc54b3090df962))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @awesome-reveal/core bumped to 1.0.0-next.10
+
 ## [1.0.0-next.9](https://github.com/awesome-reveal/awesome-reveal/compare/@awesome-reveal/astro@1.0.0-next.8...@awesome-reveal/astro@1.0.0-next.9) (2026-10-15)
 
 
