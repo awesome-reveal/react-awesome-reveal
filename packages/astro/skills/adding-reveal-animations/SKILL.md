@@ -32,6 +32,20 @@ A cascade schedules all children when its container enters the viewport, so the 
 
 The cascade reads the children when the container reveals, so a child that you add later shows with no animation. To cascade words or sentences, wrap each one in an element in the markup. Give inline children `display: inline-block`, because a transform does not apply to an inline box. The cascade does not animate a child with `display: contents`, such as a framework island or the host of a nested `Reveal`. Wrap an island in an element to put it in the cascade. Do not collect deeper descendants to animate them.
 
-Use `when` for manual control: `true` reveals the element and `false` resets the entrance. `null` or `undefined` returns the control to the viewport. `when` does not show or hide content. With `when: false`, the element is transparent, but screen readers still read it, and the keyboard can focus its controls. To hide content, add the `hidden` attribute to the rendered tag, not to the host, or do not render it. `inert` does not hide the element. It only blocks focus, clicks and assistive technology. After the page loads, set the `when` property of the `awesome-reveal` host element. The rendered tag dispatches a `reveal` event that bubbles, one time for each reveal, also when no entrance plays.
+Use `when` for manual control: `true` reveals the element and `false` resets the entrance. `null` or `undefined` returns the control to the viewport. `when` does not show or hide content. With `when: false`, the element is transparent, but screen readers still read it, and the keyboard can focus its controls. To hide content, add the `hidden` attribute to the rendered tag, not to the host, or do not render it. `inert` does not hide the element. It only blocks focus, clicks and assistive technology. After the page loads, set the `when` property of the `awesome-reveal` host element.
+
+The rendered tag dispatches a `reveal` event that bubbles, one time for each reveal. The event fires when the reveal starts, not when the entrance ends. It also fires when no entrance plays, such as with reduced motion or focus. After `when: false`, the next reveal fires it again.
+
+To wait for the end of the entrance, call this function with the `target` of the event. It skips the CSS animations, because they are not part of the entrance. The promise resolves at once when no entrance plays. It rejects when the entrance stops early, such as after `when: false`.
+
+```ts
+export const entranceEnd = (element: Element) =>
+  Promise.all(
+    element
+      .getAnimations({ subtree: true })
+      .filter((animation) => !(animation instanceof CSSAnimation))
+      .map((animation) => animation.finished),
+  );
+```
 
 In the consumer project, check the build, the type check, the visibility before the reveal, reduced motion and the teardown.

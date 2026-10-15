@@ -36,4 +36,14 @@ To cascade words or sentences, wrap each one in an element in the markup. Give i
 
 Core has no `when` option and no reveal callback. Only the framework packages have them. The only core option for the viewport is `threshold`.
 
+Core has no manual trigger. For content that the observer cannot see, such as a clipped carousel slide, play the paused animations of the element. For a cascade, use `getAnimations({ subtree: true })` on the container. A later entry into the viewport does not play the entrance again. The observer stays connected until the element enters the viewport or gets focus, or until `dispose()`. The loop also plays the other paused animations of the element.
+
+```ts
+export function playEntrance(element: Element) {
+  for (const animation of element.getAnimations()) {
+    if (animation.playState === "paused") animation.play();
+  }
+}
+```
+
 In the consumer project, check the build, the type check, the visibility before the reveal, reduced motion and the teardown.

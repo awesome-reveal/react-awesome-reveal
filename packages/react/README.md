@@ -69,7 +69,7 @@ Spread `getProps()` on one element. Give your own `ref` to `getProps()`, so that
 
 `when` controls the entrance. It does not show or hide content. With `when: false`, the element is transparent. Screen readers still read it, and the keyboard can focus its controls. To hide content, use the `hidden` attribute, or do not render it. `inert` does not hide the element. It only blocks focus, clicks and assistive technology. The example below adds `hidden`.
 
-`onReveal` gets the element one time for each reveal, also in React StrictMode. A change to `when` or `threshold` applies immediately. A change to the other options applies at the next reveal.
+`onReveal` gets the element one time for each reveal, also in React StrictMode. It runs when the reveal starts, not when the entrance ends. It also runs when no entrance plays, for example with reduced motion or focus. After `when: false`, the next reveal calls it again. A change to `when` or `threshold` applies immediately. A change to the other options applies at the next reveal.
 
 ```tsx
 import { useState } from "react";
@@ -88,6 +88,18 @@ export function Details() {
     </>
   );
 }
+```
+
+To wait for the end of the entrance, call this function in `onReveal`. It skips the CSS animations, because the package stylesheet hides the element with a CSS animation that stops at the reveal. The promise resolves at once when no entrance plays. It rejects when the entrance stops early, for example after `when: false` or an unmount.
+
+```ts
+export const entranceEnd = (element: Element) =>
+  Promise.all(
+    element
+      .getAnimations({ subtree: true })
+      .filter((animation) => !(animation instanceof CSSAnimation))
+      .map((animation) => animation.finished),
+  );
 ```
 
 ## Cascade

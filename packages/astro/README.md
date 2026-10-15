@@ -33,6 +33,20 @@ const host = document.querySelector("awesome-reveal");
 if (host) host.when = true;
 ```
 
+The `reveal` event fires one time for each reveal, when the reveal starts, not when the entrance ends. It also fires when no entrance plays, for example with reduced motion or focus. After `when: false`, the next reveal fires it again.
+
+To wait for the end of the entrance, call this function with the `target` of the event. It skips the CSS animations, because they are not part of the entrance. The promise resolves at once when no entrance plays. It rejects when the entrance stops early, for example after `when: false`.
+
+```ts
+export const entranceEnd = (element: Element) =>
+  Promise.all(
+    element
+      .getAnimations({ subtree: true })
+      .filter((animation) => !(animation instanceof CSSAnimation))
+      .map((animation) => animation.finished),
+  );
+```
+
 ## Cascade
 
 `Cascade` works like `Reveal`, but it animates each direct child element in sequence when the element enters the viewport. `interval` sets the time between the entrances of two children, in milliseconds, and the default is 80. `delay` moves the start of the whole sequence: the first child starts after `delay`, and `interval` spaces the other children. The host element has a `cascade` attribute, and the `reveal` event comes from the rendered tag.

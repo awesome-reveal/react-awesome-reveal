@@ -51,13 +51,25 @@ import "@awesome-reveal/vue/reveal.css";
 
 A change to `when` or `threshold` applies immediately. A change to the other options applies at the next reveal.
 
-The component emits `reveal` with the element, and gives `revealed` to its default slot. The directive accepts `onReveal` in its options.
+The component emits `reveal` with the element, and gives `revealed` to its default slot. The directive accepts `onReveal` in its options. Both run one time for each reveal, when the reveal starts, not when the entrance ends. They also run when no entrance plays, for example with reduced motion or focus. After `when: false`, the next reveal runs them again.
 
 ```ts
 import { h } from "vue";
 import { Reveal } from "@awesome-reveal/vue";
 
 export const card = h(Reveal, { from: "left", when: true }, () => "Hello");
+```
+
+To wait for the end of the entrance, call this function with the element of the `reveal` event or of `onReveal`. It skips the CSS animations, because the package stylesheet hides the element with a CSS animation that stops at the reveal. The promise resolves at once when no entrance plays. It rejects when the entrance stops early, for example after `when: false` or an unmount.
+
+```ts
+export const entranceEnd = (element: Element) =>
+  Promise.all(
+    element
+      .getAnimations({ subtree: true })
+      .filter((animation) => !(animation instanceof CSSAnimation))
+      .map((animation) => animation.finished),
+  );
 ```
 
 ## Cascade
