@@ -158,7 +158,7 @@ function createStore<Options extends CascadeOptions>(
       // The same element that returns immediately after null plays again when `attach(null)`
       // cancelled its entrance before it could finish.
       if (next && next === detached) played = false;
-      detached = next || !cancel() ? null : element;
+      detached = !cancel() || next ? null : element;
       element = next;
       connect();
     },

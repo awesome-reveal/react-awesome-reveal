@@ -167,6 +167,15 @@ describe("createReveal", () => {
     expect(animate).toHaveBeenCalledTimes(1);
   });
 
+  it("cancels the entrance when a new element replaces the element", () => {
+    const first = fakeElement();
+    const second = fakeElement();
+    const state = createReveal({ ...options, when: true });
+    state.attach(first.element);
+    state.attach(second.element);
+    expect(first.cancel).toHaveBeenCalled();
+  });
+
   it("plays no entrance on a different element after null", () => {
     const first = fakeElement();
     const second = fakeElement();
