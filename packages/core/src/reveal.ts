@@ -1,4 +1,4 @@
-import { cascadeInterval, motionPreference, motions } from "./animation.js";
+import { cascadeInterval, entrances, motionPreference, motions } from "./animation.js";
 import { focused, observe } from "./observe.js";
 import type { CascadeOptions, RevealHandle, RevealOptions, RevealTarget } from "./types.js";
 
@@ -9,33 +9,33 @@ function resolveTargets(target: RevealTarget): Element[] {
 }
 
 function start(target: RevealTarget, options: RevealOptions, interval?: number): RevealHandle {
-  let cleanups: (() => void)[] = [];
+  const releases = new Set<(keep?: boolean) => void>();
   const preference = motionPreference();
-  const unlisten = () => preference?.removeEventListener?.("change", onPreference);
   const dispose = () => {
-    for (const cleanup of cleanups) cleanup();
-    cleanups = [];
-    unlisten();
+    for (const release of releases) release();
   };
   const onPreference = () => {
     if (preference?.matches) dispose();
   };
   if (preference?.matches) return { dispose };
-  const settled: Promise<unknown>[] = [];
   for (const element of new Set(resolveTargets(target))) {
-    const group = motions(element, options, interval);
-    settled.push(group.settled);
+    const animations = entrances(element, options, interval);
+    const group = motions(animations);
     const disconnect = observe(element, options, () =>
       focused(element) ? group.dispose() : group.play(),
     );
-    cleanups.push(() => {
+    const release = (keep?: boolean) => {
+      if (!releases.delete(release)) return;
       disconnect();
-      group.dispose();
-    });
+      group.dispose(keep);
+      if (!releases.size) preference?.removeEventListener?.("change", onPreference);
+    };
+    releases.add(release);
+    Promise.allSettled(animations.map((animation) => animation?.finished)).then(() =>
+      release(true),
+    );
   }
-  preference?.addEventListener?.("change", onPreference);
-  // After every entrance is at rest, reduced motion has nothing to stop.
-  Promise.all(settled).then(unlisten);
+  if (releases.size) preference?.addEventListener?.("change", onPreference);
   return { dispose };
 }
 

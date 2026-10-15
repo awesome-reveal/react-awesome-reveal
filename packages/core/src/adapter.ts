@@ -1,4 +1,4 @@
-import { cascadeInterval, motionPreference, motions } from "./animation.js";
+import { cascadeInterval, entrances, motionPreference, motions } from "./animation.js";
 import { focused, observe } from "./observe.js";
 import { report } from "./report.js";
 import type {
@@ -56,7 +56,7 @@ const restarts = ["when", "threshold"] as const;
 
 // A cascade reads the children here, so that children that render after `attach()` also play.
 function play(element: Element, options: CoreRevealOptions, interval?: number): () => void {
-  const group = motions(element, options, interval);
+  const group = motions(entrances(element, options, interval));
   group.play();
   return group.dispose;
 }

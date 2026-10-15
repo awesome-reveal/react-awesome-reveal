@@ -3,13 +3,13 @@ import { bundleFixture } from "@awesome-reveal/test-utils/bundle";
 it.concurrent.each([
   {
     entry: "reveal.js",
-    animationExports: ["motionPreference", "motions"],
+    animationExports: ["entrances", "motionPreference", "motions"],
     bytes: 4025,
     gzip: 1750,
   },
   {
     entry: "both.js",
-    animationExports: ["cascadeInterval", "motionPreference", "motions"],
+    animationExports: ["cascadeInterval", "entrances", "motionPreference", "motions"],
     bytes: 4125,
     gzip: 1800,
   },

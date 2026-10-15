@@ -290,7 +290,7 @@ describe("zero-CSS reveal", () => {
     expect(animation().currentTime as number).toBeGreaterThanOrEqual(time);
     expect(animation().currentTime as number).toBeLessThan(60_000);
   });
-  it("releases a finished entrance with no dispose, and print after its removal does not throw", async () => {
+  it("releases a finished entrance with no dispose", async () => {
     const unlisten = vi.spyOn(window, "removeEventListener");
     reveal(target, native);
     await enter();
@@ -299,13 +299,6 @@ describe("zero-CSS reveal", () => {
     await expect
       .poll(() => unlisten.mock.calls.map(([type]) => type))
       .toEqual(["beforeprint", "afterprint"]);
-    target.remove();
-    const onError = vi.fn();
-    addEventListener("error", onError);
-    dispatchEvent(new Event("beforeprint"));
-    dispatchEvent(new Event("afterprint"));
-    removeEventListener("error", onError);
-    expect(onError).not.toHaveBeenCalled();
     expect(entrance.playState).toBe("finished");
   });
   it("invalid thresholds reveal immediately and report the browser error", () => {

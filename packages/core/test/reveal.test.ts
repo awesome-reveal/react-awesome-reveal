@@ -1,5 +1,4 @@
 // @vitest-environment jsdom
-import type { MockInstance } from "vitest";
 import { reveal, cascade, type RevealHandle } from "../src/index";
 import { animations, installAnimate, uninstallAnimate } from "@awesome-reveal/test-utils/animate";
 import {
@@ -386,29 +385,31 @@ describe("cascade", () => {
 
 describe("release without dispose", () => {
   const flush = () => new Promise((resolve) => setTimeout(resolve));
-  let print: MockInstance<typeof removeEventListener>;
-  let released: () => Promise<boolean>;
+  let listening: () => Promise<string[]>;
+  const all = ["beforeprint", "afterprint", "change"];
   beforeEach(() => {
     const media = Object.assign(new EventTarget(), { matches: false });
     vi.stubGlobal("matchMedia", () => media);
-    print = vi.spyOn(globalThis, "removeEventListener");
-    const preference = vi.spyOn(media, "removeEventListener");
-    released = async () => {
+    const listen = vi.spyOn(globalThis, "addEventListener");
+    const listenPreference = vi.spyOn(media, "addEventListener");
+    const unlisten = vi.spyOn(globalThis, "removeEventListener");
+    const unlistenPreference = vi.spyOn(media, "removeEventListener");
+    listening = async () => {
       await flush();
-      const types = [...print.mock.calls, ...preference.mock.calls].map(([type]) => type);
-      if (!types.length) return false;
-      expect(types).toEqual(["beforeprint", "afterprint", "change"]);
-      return true;
+      const types = [...listen.mock.calls, ...listenPreference.mock.calls].map(([type]) => type);
+      for (const [type] of [...unlisten.mock.calls, ...unlistenPreference.mock.calls])
+        types.splice(types.indexOf(type), 1);
+      return types;
     };
   });
   it("releases a finished reveal", async () => {
     const target = element();
     reveal(target);
-    expect(await released()).toBe(false);
+    expect(await listening()).toEqual(all);
     intersect(target, true);
-    expect(await released()).toBe(false);
+    expect(await listening()).toEqual(all);
     animations[0]!.finish();
-    expect(await released()).toBe(true);
+    expect(await listening()).toEqual([]);
   });
   it("releases a cascade when every child finished", async () => {
     const target = element();
@@ -416,38 +417,45 @@ describe("release without dispose", () => {
     cascade(target);
     intersect(target, true);
     animations[0]!.finish();
-    expect(await released()).toBe(false);
+    expect(await listening()).toEqual(all);
     animations[1]!.finish();
-    expect(await released()).toBe(true);
+    expect(await listening()).toEqual([]);
   });
   it("releases an empty cascade at once", async () => {
     cascade(element());
-    expect(await released()).toBe(true);
+    expect(await listening()).toEqual([]);
   });
   it("releases an entrance that page code cancels", async () => {
     reveal(element());
     animations[0]!.cancel();
-    expect(await released()).toBe(true);
+    expect(await listening()).toEqual([]);
   });
   it("stays safe to dispose after the finish", async () => {
     const target = element();
     const handle = reveal(target);
     intersect(target, true);
     animations[0]!.finish();
-    expect(await released()).toBe(true);
+    expect(await listening()).toEqual([]);
     expect(() => {
       handle.dispose();
       handle.dispose();
     }).not.toThrow();
-    expect(animations[0]!.cancel).toHaveBeenCalledOnce();
+    expect(animations[0]!.cancel).not.toHaveBeenCalled();
   });
   it("keeps the print listeners for a waiting reveal when another call is disposed", async () => {
     reveal(element()).dispose();
     const waiting = reveal(element());
-    await flush();
-    expect(print).not.toHaveBeenCalled();
+    expect(await listening()).toEqual(all);
     waiting.dispose();
+    expect(await listening()).toEqual([]);
+  });
+  it("releases each finished target while another target of the call waits", async () => {
+    const finished = element(),
+      waiting = element();
+    reveal([finished, waiting]);
+    animations[0]!.finish();
     await flush();
-    expect(print.mock.calls.map(([type]) => type)).toEqual(["beforeprint", "afterprint"]);
+    expect(observerOf(finished)).toBeUndefined();
+    expect(observerOf(waiting)).toBeDefined();
   });
 });
