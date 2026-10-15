@@ -28,7 +28,10 @@ import { Reveal } from "@awesome-reveal/react";
 </Reveal>;
 ```
 
-The default entrance starts transparent and 24px below the resting position. It takes 600 ms and plays one time. A `from` object replaces the start state, so it gets no default fade and no offset. The package loads its CSS automatically.
+The default entrance starts transparent and 24px below the resting position. It takes 600 ms and plays one time. A `from` object replaces the start state, so it gets no default fade and no offset. The package loads its CSS automatically. Two setups need a step:
+
+- In an Astro island, import `reveal.css` from the package that you install in the page or the layout: `react-awesome-reveal/reveal.css` or `@awesome-reveal/react/reveal.css`.
+- In the Next.js Pages Router with webpack, add `"@awesome-reveal/react"` to `transpilePackages`. Add it also when you install only `react-awesome-reveal`.
 
 Check these behavior changes, because the type check does not find them:
 

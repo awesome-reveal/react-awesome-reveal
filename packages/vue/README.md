@@ -1,6 +1,6 @@
 # @awesome-reveal/vue
 
-`@awesome-reveal/vue` adds reveal-on-scroll animations to Vue 3 (3.5 or later). The package loads its stylesheet automatically, so you do not need to import CSS.
+`@awesome-reveal/vue` adds reveal-on-scroll animations to Vue 3 (3.5 or later). The package loads its stylesheet automatically. Only an Astro island needs a [setup step](#stylesheet).
 
 ```sh
 npm install @awesome-reveal/vue
@@ -25,6 +25,18 @@ import { Cascade, Reveal, vReveal } from "@awesome-reveal/vue";
     <li>Small</li>
   </Cascade>
 </template>
+```
+
+## Stylesheet
+
+The modules of the package import its stylesheet. On the server, the `node` import condition resolves this import to an empty module, and the browser build resolves it to the CSS. A client bundler, such as Vite, adds the CSS to the page, so you do not import it.
+
+An Astro island needs a step. Astro collects the CSS of a page from the server build, so it does not get the stylesheet. Import the stylesheet in the page or in the layout that renders the island:
+
+```astro
+---
+import "@awesome-reveal/vue/reveal.css";
+---
 ```
 
 ## Component and directive
@@ -73,8 +85,6 @@ On the server, the components and the directives add `data-awesome-reveal="hidde
 - The user prefers reduced motion.
 - The user prints the page.
 - JavaScript is off.
-
-On the server, the `node` import condition resolves the internal stylesheet import to an empty module. The browser build resolves it to the CSS.
 
 Reduced motion shows the content immediately and cancels the active animation. The package does not change your styles.
 

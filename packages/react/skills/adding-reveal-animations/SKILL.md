@@ -9,7 +9,12 @@ compatibility: Requires @awesome-reveal/react and React 18 or 19.
 
 Use the `Reveal` component, or the `useReveal` hook for an element that you render. `Cascade` and `useCascade` reveal the children of an element in sequence. Spread all the props from `getProps()` on the element, and give your own `ref` to `getProps()`, so that the hook can merge it.
 
-Do not import a stylesheet. The package loads its stylesheet, which hides the content until it reveals. The stylesheet replaces a CSS `animation` of the hidden element or of a cascade child until the reveal, so put your own animation on an inner element. Do not set `data-awesome-reveal` yourself, because the package sets it. When you spread `getProps()` on a custom component, the component must pass `data-awesome-reveal` and the ref to its DOM element.
+The package loads its stylesheet, which hides the content until it reveals. Do not import the stylesheet, except in these two setups:
+
+- In an Astro island, add `import "@awesome-reveal/react/reveal.css";` to the frontmatter of the page or the layout that renders the island. Astro collects the CSS of a page from the server build, which does not import the stylesheet.
+- In the Next.js Pages Router with webpack, add `"@awesome-reveal/react"` to `transpilePackages` in the Next.js config. Without it, the build fails with "Global CSS cannot be imported from within node_modules". The App Router and Turbopack need no step.
+
+The stylesheet replaces a CSS `animation` of the hidden element or of a cascade child until the reveal, so put your own animation on an inner element. Do not set `data-awesome-reveal` yourself, because the package sets it. When you spread `getProps()` on a custom component, the component must pass `data-awesome-reveal` and the ref to its DOM element.
 
 ```tsx
 import { Cascade, Reveal } from "@awesome-reveal/react";

@@ -9,7 +9,11 @@ compatibility: Requires @awesome-reveal/vue and Vue 3.5 or later.
 
 Use the `Reveal` component, or the `vReveal` directive on an element that you render. `Cascade` and `vCascade` reveal the children of an element in sequence. The directive follows reactive options.
 
-Do not import a stylesheet. The package loads its stylesheet, which hides the content until it reveals. The stylesheet replaces a CSS `animation` of the hidden element or of a cascade child until the reveal, so put your own animation on an inner element.
+The package loads its stylesheet, which hides the content until it reveals. Do not import the stylesheet, except in an Astro island.
+
+In an Astro island, add `import "@awesome-reveal/vue/reveal.css";` to the frontmatter of the page or the layout that renders the island. Astro collects the CSS of a page from the server build, which does not import the stylesheet.
+
+The stylesheet replaces a CSS `animation` of the hidden element or of a cascade child until the reveal, so put your own animation on an inner element.
 
 ```ts
 import { h } from "vue";

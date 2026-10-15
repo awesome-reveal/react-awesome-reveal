@@ -1,6 +1,6 @@
 # @awesome-reveal/react
 
-`@awesome-reveal/react` adds reveal-on-scroll animations to React 18 and 19. The package loads its stylesheet automatically, so you do not need to import CSS.
+`@awesome-reveal/react` adds reveal-on-scroll animations to React 18 and 19. The package loads its stylesheet automatically. Only an Astro island and the Next.js Pages Router with webpack need a [setup step](#stylesheet).
 
 ```sh
 npm install @awesome-reveal/react
@@ -24,6 +24,27 @@ import { Reveal } from "@awesome-reveal/react";
   Native keyframes
 </Reveal>;
 ```
+
+## Stylesheet
+
+The modules of the package import its stylesheet. On the server, the `node` import condition resolves this import to an empty module, and the browser build resolves it to the CSS. A client bundler, such as Vite or the Next.js App Router, adds the CSS to the page, so you do not import it. Two setups need a step:
+
+- **Astro island.** Astro collects the CSS of a page from the server build, so it does not get the stylesheet. Import the stylesheet in the page or in the layout that renders the island:
+
+  ```astro
+  ---
+  import "@awesome-reveal/react/reveal.css";
+  ---
+  ```
+
+- **Next.js Pages Router with webpack.** Next.js does not let a package in `node_modules` import global CSS, and the build fails. Add the package to `transpilePackages`, so that Next.js bundles it:
+
+  ```js
+  // next.config.mjs
+  export default { transpilePackages: ["@awesome-reveal/react"] };
+  ```
+
+  The App Router and Turbopack need no step.
 
 ## Component and hook
 
@@ -107,7 +128,7 @@ The server markup has `data-awesome-reveal="hidden"`, or `data-awesome-reveal="c
 
 Reduced motion always has priority over the entrance and over `when: false`.
 
-`Reveal` and `Cascade` are Client Component boundaries, so a Next.js Server Component can render them with serializable options. Native keyframes are serializable too. The hook and the callbacks need a Client Component. On the server, the `node` import condition resolves the internal stylesheet import to an empty module. The browser build resolves it to the CSS.
+`Reveal` and `Cascade` are Client Component boundaries, so a Next.js Server Component can render them with serializable options. Native keyframes are serializable too. The hook and the callbacks need a Client Component.
 
 The stylesheet hides the server markup for at most 5 seconds before the script attaches the element. At the attach, the package adds `data-awesome-reveal-attached` to the element, and the element stays hidden until it reveals. So if the script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again until it reveals. This happens with slow hydration, and often with lazy hydration, such as an Astro `client:visible` island, when the user scrolls to the content after 5 seconds. Hydrate reveal content eagerly.
 

@@ -3,13 +3,22 @@ import { readFile } from "node:fs/promises";
 import { defineConfig, type Plugin, type PluginOption } from "vite";
 import dts from "vite-plugin-dts";
 
-/** Emits reveal.css for the browser build, and an empty module for the `node` import condition. */
+/** Emits reveal.css for the `./reveal.css` export and the browser build of `#reveal-style.css`. */
 export function revealCss(css: URL): Plugin {
   return {
     name: "reveal-css",
     async generateBundle() {
       this.emitFile({ type: "asset", fileName: "reveal.css", source: await readFile(css, "utf8") });
       this.emitFile({ type: "asset", fileName: "reveal.css.d.ts", source: "export {};\n" });
+    },
+  };
+}
+
+/** Emits the empty module of the `node` import condition of `#reveal-style.css`. */
+export function noStyle(): Plugin {
+  return {
+    name: "no-style",
+    generateBundle() {
       this.emitFile({ type: "asset", fileName: "no-style.js", source: "export {};\n" });
       this.emitFile({ type: "asset", fileName: "no-style.d.ts", source: "export {};\n" });
     },
