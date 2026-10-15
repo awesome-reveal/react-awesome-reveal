@@ -1,6 +1,6 @@
 {
   "name": "@awesome-reveal/vue",
-  "version": "1.0.0-next.9",
+  "version": "1.0.0-next.10",
   "description": "Reveal-on-scroll animations for Vue, built on the Web Animations API and IntersectionObserver.",
   "keywords": [
     "animate-on-scroll",
