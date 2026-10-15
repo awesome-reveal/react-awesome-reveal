@@ -94,7 +94,7 @@ export function Steps() {
 - It reads the children when the container reveals. A child that you add after the reveal shows with no animation.
 - Only the direct element children animate. Text and children with `display: contents` show immediately.
 - Do not put a reveal directly inside a cascade. The two entrances combine on the same element.
-- For a long or a virtualized list, reveal each item separately. A cascade has one observer, so the children below the viewport animate before you scroll to them.
+- A cascade schedules all children when its container enters the viewport, so the last children of a long list start late or out of view. For a long list, a virtualized list, or a grid that is taller than the viewport, use `Reveal` or `useReveal` on each item.
 - A component that returns a fragment gives one child for each element of the fragment.
 
 ## SSR and accessibility

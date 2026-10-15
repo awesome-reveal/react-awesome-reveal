@@ -30,7 +30,7 @@ Inside an ancestor that clips its overflow, such as a carousel or a box with `ov
 
 For a custom animation, give native `Keyframe[]` in `keyframes`. Do not use `from` and `keyframes` together. Put the easing of each segment in its keyframe. End at the resting style of the element, because the animation does not keep its last keyframe. Animate `transform` and `opacity` when possible. Leave reduced motion to the package: it shows the content with no entrance when the user prefers reduced motion.
 
-For a long list, reveal each item separately. `cascade()` animates only the direct element children of a container, with `interval` milliseconds between them. The first child starts after `delay`, so `delay` moves the whole sequence. `cascade()` reads the children when you call it, so a child that you add later does not animate.
+A cascade schedules all children when its container enters the viewport, so the last children of a long list start late or out of view. For a long list, or a grid that is taller than the viewport, use `reveal()` on each item. `cascade()` animates only the direct element children of a container, with `interval` milliseconds between them. The first child starts after `delay`, so `delay` moves the whole sequence. `cascade()` reads the children when you call it, so a child that you add later does not animate.
 
 To cascade words or sentences, wrap each one in an element in the markup. Give inline children `display: inline-block`, because a transform does not apply to an inline box. Do not collect deeper descendants to animate them.
 

@@ -28,7 +28,7 @@ Both functions accept these targets:
 
 The function finds the targets one time, when you call it. Each call returns a `RevealHandle` that has only `dispose()`.
 
-`reveal()` observes each target separately. `cascade()` observes each container separately and reveals only its direct element children. It reads the children one time, when you call it, so a child that you add later does not animate. Text nodes and deeper descendants do not animate. For a long list, use `reveal()` on the items.
+`reveal()` observes each target separately. `cascade()` observes each container separately and reveals only its direct element children. It reads the children one time, when you call it, so a child that you add later does not animate. Text nodes and deeper descendants do not animate. A cascade schedules all children when its container enters the viewport, so the last children of a long list start late or out of view. For a long list, or a grid that is taller than the viewport, use `reveal()` on each item.
 
 The child at position `index` waits `delay + index * interval` milliseconds after the reveal. So with no `delay`, the first child starts immediately. The default interval is 80 ms. A negative interval gives negative delays, so each later child starts further into its entrance. To cascade the words or sentences of a text, wrap each one in an element before you call `cascade()`. A transform needs a transformable element, so give inline children `display: inline-block`.
 
