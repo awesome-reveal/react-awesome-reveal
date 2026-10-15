@@ -6,9 +6,10 @@ paths:
 
 # Adapter store
 
-- `createReveal` and `createCascade` share one store. It owns the state: the observer, `when ?? inView` and the play. It changes no DOM, except `data-awesome-reveal-attached` on the attached element. The adapter renders `data-awesome-reveal` from `revealed`.
+- `createReveal` and `createCascade` share one store. It owns the state: the observer, `when ?? inView` and the play. It changes only two attributes of the attached element: it sets `data-awesome-reveal-attached`, and it removes `data-awesome-reveal` at the reveal. At a hide, the adapter sets it again: React and Vue render it from `revealed`, and Astro and the directives set it in the listener. React and Vue diff against their previous render, not the DOM, so the removal by core does not confuse them.
+- Remove `data-awesome-reveal` before `onReveal`. The attribute keeps the CSS hold running, and its removal cancels the hold. So with the attribute still present, `getAnimations()` in the callback includes the hold, and its `finished` promise rejects with `AbortError`.
 - Start `play` in the same task that removes `data-awesome-reveal`. Between the two, the element shows at full opacity, because `fill: "backwards"` applies the first keyframe only after `play` creates the animation.
-- Hide in this order: cancel the animation, then tell the listener. Reveal in this order: tell the listener, then `play`, in the same task.
+- Hide in this order: cancel the animation, then tell the listener. Reveal in this order, in the same task: tell the listener, remove `data-awesome-reveal`, `play`, then call `onReveal`.
 - `setOptions` replaces the options and does not merge them. Only a change of `when` or `threshold` restarts the observer. `createReveal` copies the options, because a directive can pass the same mutated object again.
 - `when == null` means that the viewport decides. Use `??` and `== null`, not default values, because defaults do not apply to `null`.
 - A revealed state plays once. `revealed` starts `false`, also with `when: true`, so that the server renders the element hidden. The first `attach` reveals and plays the entrance. A new element keeps the state and does not play again. The same element attached again right after `attach(null)` plays again, because `null` cancelled its animation.

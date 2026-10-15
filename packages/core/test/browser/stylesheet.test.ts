@@ -20,11 +20,9 @@ let stores: RevealStore[];
 
 function bind(store: RevealStore, element: HTMLElement, value: string) {
   stores.push(store);
-  store.subscribe((revealed) =>
-    revealed
-      ? element.removeAttribute("data-awesome-reveal")
-      : element.setAttribute("data-awesome-reveal", value),
-  );
+  store.subscribe((revealed) => {
+    if (!revealed) element.setAttribute("data-awesome-reveal", value);
+  });
   store.attach(element);
 }
 
@@ -80,6 +78,47 @@ describe("reveal.css", () => {
     await settle();
     expect(opacity(late)).toBe("0");
   });
+
+  // React and Vue render `revealed` one microtask after the store tells them.
+  function bindLikeAFramework(store: RevealStore, element: HTMLElement, value: string) {
+    stores.push(store);
+    store.subscribe((revealed) =>
+      queueMicrotask(() =>
+        revealed
+          ? element.removeAttribute("data-awesome-reveal")
+          : element.setAttribute("data-awesome-reveal", value),
+      ),
+    );
+    store.attach(element);
+  }
+
+  it.each([
+    ["the element", "hidden", createReveal],
+    ["the children of a cascade", "cascade", createCascade],
+  ] as const)(
+    "lets onReveal wait for the entrance of %s with the finished promises during the hold",
+    async (_, value, create) => {
+      document.body.innerHTML = `<ul id="target" data-awesome-reveal="${value}"><li>a</li><li>b</li></ul>`;
+      const target = document.getElementById("target")!;
+      let entrance: Animation[] = [];
+      let finished: Promise<unknown> | undefined;
+      const options: CascadeOptions = {
+        duration: 50,
+        interval: 10,
+        onReveal(element) {
+          entrance = element.getAnimations({ subtree: true });
+          finished = Promise.all(entrance.map((animation) => animation.finished));
+        },
+      };
+      const store = create({ ...options, when: false }) as RevealStore;
+      bindLikeAFramework(store, target, value);
+      expect(hold(value === "hidden" ? target : target.firstElementChild!)).toBeDefined();
+      store.setOptions({ ...options, when: true });
+      expect(entrance.length).toBeGreaterThan(0);
+      expect(entrance.some((animation) => animation instanceof CSSAnimation)).toBe(false);
+      await expect(finished).resolves.toBeDefined();
+    },
+  );
 
   it("owns the animation of hidden markup until the reveal, also after the hold", async () => {
     document.head.insertAdjacentHTML(

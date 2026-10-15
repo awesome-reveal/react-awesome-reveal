@@ -24,8 +24,7 @@ function defineDirective<Options extends CascadeOptions>(
     mounted(element, { value }) {
       const state = create(value);
       state.subscribe((visible) => {
-        if (visible) element.removeAttribute("data-awesome-reveal");
-        else hide(element);
+        if (!visible) hide(element);
       });
       hide(element);
       stores.set(element, state as RevealStore<CascadeOptions>);

@@ -25,8 +25,9 @@ export interface RevealStore<Options extends RevealOptions = RevealOptions> {
    */
   readonly revealed: boolean;
   /**
-   * Calls `listener` when `revealed` changes. The listener must hide or show the element before
-   * the next frame. There is one listener: a new call replaces it.
+   * Calls `listener` when `revealed` changes. The listener must hide the element before the next
+   * frame. At the reveal, the store removes `data-awesome-reveal` itself, before `onReveal`. There is
+   * one listener: a new call replaces it.
    * @returns A function that removes the listener.
    */
   subscribe(listener: (revealed: boolean) => void): () => void;
@@ -53,7 +54,6 @@ export const cascadeHiddenAttributes = { "data-awesome-reveal": "cascade" } as c
 
 const restarts = ["when", "threshold"] as const;
 
-// The entrance starts before the next paint, so no flash shows when the adapter removes the `data-awesome-reveal` attribute.
 // A cascade reads the children here, so that children that render after `attach()` also play.
 function play(element: Element, options: CoreRevealOptions, interval?: number): () => void {
   const group = motions(element, options, interval);
@@ -63,6 +63,7 @@ function play(element: Element, options: CoreRevealOptions, interval?: number): 
 
 // The stylesheet holds an element with this marker until it reveals. Without it, the hold ends after a few seconds.
 const attached = "data-awesome-reveal-attached";
+const hidden = "data-awesome-reveal";
 
 function createStore<Options extends CascadeOptions>(
   options: Options,
@@ -99,6 +100,8 @@ function createStore<Options extends CascadeOptions>(
     }
     if (revealed && element && !played) {
       played = true;
+      // Ends the CSS hold before `onReveal`, so `getAnimations()` in the callback gets only the entrance.
+      element.removeAttribute(hidden);
       cancel =
         preference?.matches || focused(element)
           ? () => {}

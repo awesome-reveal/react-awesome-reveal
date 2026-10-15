@@ -279,6 +279,18 @@ export function describeContract(name: string, harness: Harness) {
       expect(onReveal).toHaveBeenCalledTimes(2);
     });
 
+    it("onReveal sees the element without the hidden attribute", async () => {
+      const attributes: (string | null)[] = [];
+      const onReveal = (element: Element) =>
+        attributes.push(element.getAttribute("data-awesome-reveal"));
+      const m = await mount({ onReveal });
+      await intersect(m, true);
+      await rerender(m, { when: false, onReveal });
+      expect(hidden(m.element())).toBe(true);
+      await rerender(m, { when: true, onReveal });
+      expect(attributes).toEqual([null, null]);
+    });
+
     it("direction builds the entrance", async () => {
       const m = await mount({ from: "left" });
       await intersect(m, true);
@@ -508,6 +520,17 @@ export function describeCascadeContract(name: string, harness: Harness) {
       const onReveal = vi.fn();
       const m = await mount({ onReveal, when: true });
       expect(onReveal.mock.calls).toEqual([[m.element()]]);
+    });
+
+    it("onReveal sees the container without the hidden attribute", async () => {
+      const attributes: (string | null)[] = [];
+      const onReveal = (element: Element) =>
+        attributes.push(element.getAttribute("data-awesome-reveal"));
+      const m = await mount({ onReveal, when: true });
+      await m.rerender({ when: false, onReveal });
+      expect(m.element().getAttribute("data-awesome-reveal")).toBe("cascade");
+      await m.rerender({ when: true, onReveal });
+      expect(attributes).toEqual([null, null]);
     });
 
     it("reduced motion shows the children with no animation", async () => {
