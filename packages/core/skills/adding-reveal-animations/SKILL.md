@@ -20,7 +20,7 @@ handle.dispose();
 
 Set `from` to `"top"`, `"right"`, `"bottom"` or `"left"` for an entrance that starts transparent and 24px away on that side. The defaults are `from: "bottom"`, `duration: 600` (milliseconds), `delay: 0` (milliseconds) and `threshold: 0`. The entrance plays one time.
 
-A `from` object is the complete start state: `{ opacity: 0 }` is a pure fade, and `{ scale: 0.9 }` adds no fade and no movement. A number is in pixels for `x`, `y` and `blur`, and in degrees for `rotate`. A string can contain a CSS value with its unit. The entrance adds its offset, scale, rotation and blur to the element's own transforms and filter. It fades to the element's own opacity. So do not override these styles for the entrance.
+A `from` object is the complete start state: `{ opacity: 0 }` is a pure fade, and `{ scale: 0.9 }` adds no fade and no movement. A number is in pixels for `x`, `y` and `blur`, and in degrees for `rotate`. A string can contain a CSS value with its unit. The entrance animates only the properties that the start state sets, and ends at their neutral values: no offset, no rotation, no blur, a scale of 1 and an opacity of 1. The element's own `transform` stays in effect. The element's own values of the animated properties do not apply until the entrance ends, so put them on an inner element when they must apply during the entrance. Prefer a start state without `blur` on pages that must stay smooth: with a blur, Chromium runs the full entrance on the main thread.
 
 Use `delay` to start separate elements at different times. During the delay, the element stays in its start state. Keep `delay` below about 300 ms. A long delay makes content appear late when the user scrolls quickly.
 

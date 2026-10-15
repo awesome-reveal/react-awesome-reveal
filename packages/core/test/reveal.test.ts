@@ -56,11 +56,10 @@ describe("reveal", () => {
     ["bottom", "0px 24px"],
   ] as const)("generates %s", (from, translate) => {
     track(reveal(element(), { from }));
-    expect(animations[0]?.keyframes).toMatchObject([
-      { offset: 0, opacity: 0 },
-      { offset: 0, composite: "add", translate: "0px 0px" },
-      { offset: 1e-6, composite: "add", translate },
-      { offset: 1, composite: "add", opacity: 0, translate: "0px 0px" },
+    expect(animations[0]?.keyframes).toEqual([
+      { offset: 0, easing, opacity: 0, translate: "0px 0px" },
+      { offset: 1e-6, easing, translate },
+      { offset: 1, opacity: 1, translate: "0px 0px" },
     ]);
   });
   it.each([
@@ -68,11 +67,11 @@ describe("reveal", () => {
     [
       { scale: 0.9 },
       [
-        { offset: 0, easing, composite: "add", scale: 0.9 },
-        { offset: 1, composite: "add", scale: 1 },
+        { offset: 0, easing, scale: 0.9 },
+        { offset: 1, scale: 1 },
       ],
     ],
-    [{}, [{ offset: 1, composite: "add" }]],
+    [{}, [{ offset: 0, easing }, { offset: 1 }]],
   ])("uses exactly the custom start state %j", (from, keyframes) => {
     track(reveal(element(), { from }));
     expect(animations[0]?.keyframes).toEqual(keyframes);
@@ -84,11 +83,10 @@ describe("reveal", () => {
       }),
     );
     expect(animations[0]?.keyframes).toEqual([
-      { offset: 0, easing, opacity: 0.3 },
       {
         offset: 0,
         easing,
-        composite: "add",
+        opacity: 0.3,
         translate: "-16px -100%",
         scale: 0.8,
         rotate: "-5deg",
@@ -96,8 +94,7 @@ describe("reveal", () => {
       },
       {
         offset: 1,
-        composite: "add",
-        opacity: 0,
+        opacity: 1,
         translate: "0px 0px",
         scale: 1,
         rotate: "0deg",
