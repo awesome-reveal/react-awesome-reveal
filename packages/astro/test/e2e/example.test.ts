@@ -114,6 +114,20 @@ describe.each(
     await blocked.close();
   });
 
+  it("shows the content without JavaScript", async () => {
+    const noScript = await browser.newPage({ baseURL, javaScriptEnabled: false });
+    await noScript.goto("/");
+
+    expect(
+      await noScript.$eval("#list", (element) => [
+        element.getAttribute("data-awesome-reveal"),
+        getComputedStyle(element).opacity,
+      ]),
+    ).toEqual(["hidden", "1"]);
+    expect(await opacities(noScript, "#cascade > li")).toEqual(["1", "1", "1"]);
+    await noScript.close();
+  });
+
   it("keeps an element hidden after the hold when the script has attached it", async () => {
     await page.evaluate(() => {
       for (const animation of document.getAnimations()) animation.finish();
@@ -266,19 +280,6 @@ describe("example server markup", () => {
     const page = await openWithoutElement({ reducedMotion: "reduce" });
 
     expect(await page.$eval("#default", (element) => getComputedStyle(element).opacity)).toBe("1");
-    expect(await opacities(page, "#cascade > li")).toEqual(["1", "1", "1"]);
-  });
-
-  it("shows the content without JavaScript", async () => {
-    const page = await browser.newPage({ baseURL, javaScriptEnabled: false });
-    await page.goto("/");
-
-    expect(
-      await page.$eval("#list", (element) => [
-        element.getAttribute("data-awesome-reveal"),
-        getComputedStyle(element).opacity,
-      ]),
-    ).toEqual(["hidden", "1"]);
     expect(await opacities(page, "#cascade > li")).toEqual(["1", "1", "1"]);
   });
 });

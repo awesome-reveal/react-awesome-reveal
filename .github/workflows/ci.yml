@@ -183,17 +183,18 @@ jobs:
           - name: Astro 7
             case: astro
             deps: astro@7 @astrojs/check typescript@5.9
+          - name: Astro 7 + React island
+            case: astro-island
           - name: Next 16
             case: next
-            browser: true
           - name: Next 15
             case: next
-            browser: true
             deps: next@15 react@19 react-dom@19 @types/react@19 @types/react-dom@19
           - name: Next 14 + React 18
             case: next
-            browser: true
             deps: next@14 react@18 react-dom@18 @types/react@18 @types/react-dom@18
+          - name: Next 16 Pages Router
+            case: next-pages
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -216,7 +217,7 @@ jobs:
         run: pnpm build
 
       - name: Install Chromium
-        if: matrix.browser
+        if: matrix.case != 'core' && matrix.case != 'compat'
         run: pnpm exec playwright install --with-deps --only-shell chromium
 
       - name: Smoke test

@@ -8,17 +8,19 @@ const bundle = (fixture: string) =>
 
 describe("consumer bundle", () => {
   it("keeps only the modules and exports that it imports", async () => {
-    const { keptExports, bytes } = await bundle("reveal-only.js");
+    const { keptExports, bytes, css } = await bundle("reveal-only.js");
 
     expect(keptExports["core/dist/adapter.js"]).toContain("createReveal");
-    expect(bytes).toBeLessThan(6125);
+    expect(css).toBeGreaterThan(0);
+    expect(bytes + css).toBeLessThan(6600);
   });
 
   it("keeps no Reveal component for the hook alone", async () => {
-    const { keptExports, bytes } = await bundle("hook-only.js");
+    const { keptExports, bytes, css } = await bundle("hook-only.js");
 
     expect(keptExports["core/dist/adapter.js"]).toContain("createReveal");
-    expect(bytes).toBeLessThan(5775);
+    expect(css).toBeGreaterThan(0);
+    expect(bytes + css).toBeLessThan(6250);
     expect(keptExports).not.toHaveProperty("react/dist/Reveal.js");
   });
 });

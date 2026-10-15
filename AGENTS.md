@@ -23,7 +23,7 @@ Use the Node version in `.nvmrc`. jsdom needs Node `^22.22.2`, `^24.15.0` or `>=
 - `REVEAL_BROWSERS=chromium,webkit pnpm test`: run the browser tests only in the listed browsers. The default is chromium, firefox and webkit.
 - `pnpm exec tsc -p packages/<package>/test`: type-check the tests. For Vue, run `pnpm --filter @awesome-reveal/vue exec vue-tsc -p test`. `pnpm build` type-checks only `src`.
 - `pnpm test:package`: build, then test the `dist` output with Vitest, publint and attw.
-- `pnpm build`, then `node scripts/smoke.mjs <core|react|compat|vue|astro|next> [dependency@version ...]`: install the packed tarballs into a clean project and build it. CI runs the matrix.
+- `pnpm build`, then `node scripts/smoke.mjs <core|react|compat|vue|astro|astro-island|next|next-pages> [dependency@version ...]`: install the packed tarballs into a clean project and build it. Most cases also load the build in Chromium. CI runs the matrix.
 - `pnpm lint` and `pnpm format`: lint and format the files. CI runs `pnpm format:check`.
 
 The pre-commit hook runs oxlint, oxfmt and the unit and SSR tests related to the staged files.
