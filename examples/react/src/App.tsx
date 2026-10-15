@@ -16,8 +16,10 @@ function ManualExample() {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button onClick={() => setOpen(!open)}>Toggle</button>
-      <Reveal when={open} from={{ opacity: 0 }}>
+      <button aria-expanded={open} onClick={() => setOpen(!open)}>
+        Toggle
+      </button>
+      <Reveal when={open} hidden={!open} from={{ opacity: 0 }}>
         Manual entrance
       </Reveal>
     </>

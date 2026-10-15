@@ -75,9 +75,15 @@ const open = ref(false);
     <h2 v-reveal="{ from: { opacity: 0, blur: 8 } }">A directive on your own element</h2>
   </PageSection>
   <PageSection>
-    <button @click="open = !open">Toggle</button>
+    <button
+      :aria-expanded="open"
+      @click="open = !open"
+    >
+      Toggle
+    </button>
     <Reveal
       :when="open"
+      :hidden="!open"
       :from="{ opacity: 0 }"
     >
       Manual entrance

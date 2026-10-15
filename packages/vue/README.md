@@ -45,7 +45,9 @@ import "@awesome-reveal/vue/reveal.css";
 
 `delay` sets the time between the reveal and the entrance, in milliseconds. The default is 0. Keep `delay` below about 300 ms. A long delay makes content appear late when the user scrolls quickly.
 
-`when: true` reveals the element manually, and `when: false` resets it. With `null` or `undefined`, the viewport controls the reveal. When the viewport controls the reveal, the entrance plays one time, and the observation stops at the reveal. A change of `when` from `false` to `true` plays the entrance again. `when: false` during the `delay` also resets the element, and the entrance does not play.
+`when: true` reveals the element manually, and `when: false` resets the entrance. With `null` or `undefined`, the viewport controls the reveal. When the viewport controls the reveal, the entrance plays one time, and the observation stops at the reveal. A change of `when` from `false` to `true` plays the entrance again. `when: false` during the `delay` also resets the entrance, and the entrance does not play.
+
+`when` controls the entrance. It does not show or hide content. With `when: false`, the element is transparent. Screen readers still read it, and the keyboard can focus its controls. To hide content, use the `hidden` attribute, or do not render it with `v-if`. `inert` does not hide the element. It only blocks focus, clicks and assistive technology.
 
 A change to `when` or `threshold` applies immediately. A change to the other options applies at the next reveal.
 
@@ -96,7 +98,7 @@ The stylesheet hides the server markup for at most 5 seconds before the script a
 - Do not give a hidden element an inline `opacity` with `!important`. It has priority over the stylesheet, so the element shows before the reveal.
 - The stylesheet hides with the `awesome-reveal-hold` CSS animation, which replaces your own `animation` on a hidden element or cascade child until it reveals. If no script reveals the element, such as when the script fails or JavaScript is off, your animation does not run. Put your own animation on an inner element.
 - An `animation` of your own with `!important` can have priority over the hold. Then the element shows until the script attaches it. The hold fires `animationstart` and `animationend` events, and shows in `getAnimations()`.
-- Focus in a waiting element shows it at once, with no entrance, but not with `when: false`. Focus during a running entrance or its delay does not shorten it, so keep `delay` and `interval` short. Do not hide the only way to a control with `when: false`.
+- Focus in a waiting element shows it at once, with no entrance, but not with `when: false`. Focus during a running entrance or its delay does not shorten it, so keep `delay` and `interval` short.
 - In browsers without the `scripting` media feature, such as Safari 16, content shows after 5 seconds when JavaScript is off.
 
 ## Agent skills and license
