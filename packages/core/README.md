@@ -150,7 +150,7 @@ Focus in a waiting element shows it at once, with no entrance, so a keyboard use
 
 The root entry exports only `reveal`, `cascade` and their types: `Side`, `StartState`, `RevealOptions`, `CascadeOptions`, `RevealTarget` and `RevealHandle`. `@awesome-reveal/core/adapter` is the contract that the official framework packages use. It is not an API for imperative animations.
 
-Core needs Chrome 104, Firefox 80 or Safari 16, or later. If IntersectionObserver or `Element.animate` is not available, the content reveals immediately and does not stay hidden. Give explicit values to the first keyframe of your native keyframes. An open WebKit bug ([212409](https://bugs.webkit.org/show_bug.cgi?id=212409)) can take an implicit start value from an earlier animation of the element. You can import the module where there is no DOM, for example on a server.
+Core needs Chrome 104, Edge 104, Firefox 74 or Safari 14.1 (iOS 14.5), or later. These versions support the individual transform properties and the JavaScript syntax of the package. A native keyframe with `composite` needs Firefox 80 or Safari 16. If IntersectionObserver or `Element.animate` is not available, the content reveals immediately and does not stay hidden. Give explicit values to the first keyframe of your native keyframes. An open WebKit bug ([212409](https://bugs.webkit.org/show_bug.cgi?id=212409)) can take an implicit start value from an earlier animation of the element. You can import the module where there is no DOM, for example on a server.
 
 ## Agent skills
 
