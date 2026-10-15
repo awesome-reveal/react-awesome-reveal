@@ -82,6 +82,8 @@ reveal(".logo", {
 
 You can use the native keyframe properties `easing`, `offset` and `composite`. The browser validates the values. The animation does not keep its last keyframe after it ends, so end your keyframes at the resting style of the element. To end at the element's own value, end with a neutral additive keyframe, for example `{ opacity: 0, composite: "add" }`. Like the generated entrance, an additive keyframe runs on the main thread in Chromium.
 
+Animate `opacity`, `transform` and the individual `translate`, `scale` and `rotate` properties when possible. The browser can run them on the compositor. A layout property, such as `width`, `top` or `margin`, causes a layout and a paint on each frame. Do not add `will-change` for a reveal. The browser treats an animated property as if `will-change` already names it.
+
 ## Options
 
 | Option                      | Default    | Meaning                                                         |
