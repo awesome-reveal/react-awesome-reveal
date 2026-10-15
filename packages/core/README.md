@@ -108,6 +108,24 @@ An element reveals when `threshold` of it is visible. If the viewport is too sma
 
 `reveal()` observes the element while it waits. A start state with `opacity: 0`, such as each side, waits at the resting position and moves only when the entrance plays. Other start states and native keyframes wait at their first keyframe, so their offset, scale and rotation change the box that the observer sees. If an ancestor with `overflow` clips that box fully, the element does not reveal. `cascade()` observes the container, which does not move.
 
+## Manual play
+
+Core has no manual trigger. Some content does not reach the observer, for example a carousel slide that its track clips. To play the waiting entrance of an element, play its paused animations:
+
+```ts
+import { reveal } from "@awesome-reveal/core";
+
+reveal(".slide", { from: "left" });
+
+export function playEntrance(slide: Element) {
+  for (const animation of slide.getAnimations()) {
+    if (animation.playState === "paused") animation.play();
+  }
+}
+```
+
+For a cascade, call `getAnimations({ subtree: true })` on the container. The entrance plays one time, so a later entry into the viewport does not play it again. The observer stays connected until the element enters the viewport or gets focus, or until you call `dispose()`. The loop also plays the other paused animations of the element, such as your own.
+
 ## Errors
 
 The browser validates the options. If it rejects an easing or a duration, the element shows with no animation. If it rejects the threshold, the entrance plays immediately. `reveal` and `cascade` do not throw for an invalid option, but an invalid CSS selector throws the `SyntaxError` of `querySelectorAll`. The browser ignores an invalid CSS value in a keyframe, and reports nothing.

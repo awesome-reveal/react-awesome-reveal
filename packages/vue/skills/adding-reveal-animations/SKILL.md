@@ -39,6 +39,26 @@ A cascade schedules all children when its container enters the viewport, so the 
 
 The cascade reads the children when the container reveals, so a child that you add later shows with no animation. To cascade words or sentences, wrap each one in an element in the markup. Give inline children `display: inline-block`, because a transform does not apply to an inline box. Do not put a `Reveal` directly inside a `Cascade`, because the two entrances combine. Do not collect deeper descendants to animate them.
 
-Use `when` for manual control: `true` reveals the element and `false` resets the entrance. `null` or `undefined` returns the control to the viewport. `when` does not show or hide content. With `when: false`, the element is transparent, but screen readers still read it, and the keyboard can focus its controls. To hide content, add the `hidden` attribute, or do not render it. `inert` does not hide the element. It only blocks focus, clicks and assistive technology. The component emits `reveal` with the element, or with the container for a cascade. The directive accepts `onReveal` in its options. The component emits `reveal`, and the directive calls `onReveal`, one time for each reveal, also when no entrance plays.
+Use `when` for manual control: `true` reveals the element and `false` resets the entrance. `null` or `undefined` returns the control to the viewport. `when` does not show or hide content. With `when: false`, the element is transparent, but screen readers still read it, and the keyboard can focus its controls. To hide content, add the `hidden` attribute, or do not render it. `inert` does not hide the element. It only blocks focus, clicks and assistive technology.
+
+The component emits `reveal` with the element, or with the container for a cascade. The directive calls the `onReveal` function of its options with the same element. Both run one time for each reveal, when the reveal starts, not when the entrance ends. They also run when no entrance plays, such as with reduced motion or focus. After `when: false`, the next reveal runs them again. With reduced motion, `when: false` does not reset the reveal, so they do not run again.
+
+To wait for the end of the entrance, use the `finished` promises of the animations of the element. The promise waits for each animation of the element and of its descendants, also your own animations, so use it on an element that has no other animations. It resolves at once when no entrance plays. It rejects when the entrance stops early, such as after `when: false` or an unmount. Catch the rejection, or the browser reports an unhandled rejection.
+
+```ts
+import { h } from "vue";
+import { Reveal } from "@awesome-reveal/vue";
+
+export const entered = h(
+  Reveal,
+  {
+    onReveal: (element: Element) =>
+      Promise.all(element.getAnimations({ subtree: true }).map((animation) => animation.finished))
+        .then(() => element.classList.add("entered"))
+        .catch(() => {}),
+  },
+  () => "Hello",
+);
+```
 
 In the consumer project, check the build, the type check, the visibility before the reveal, reduced motion and the teardown.

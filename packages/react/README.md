@@ -69,7 +69,7 @@ Spread `getProps()` on one element. Give your own `ref` to `getProps()`, so that
 
 `when` controls the entrance. It does not show or hide content. With `when: false`, the element is transparent. Screen readers still read it, and the keyboard can focus its controls. To hide content, use the `hidden` attribute, or do not render it. `inert` does not hide the element. It only blocks focus, clicks and assistive technology. The example below adds `hidden`.
 
-`onReveal` gets the element one time for each reveal, also in React StrictMode. A change to `when` or `threshold` applies immediately. A change to the other options applies at the next reveal.
+`onReveal` gets the element one time for each reveal, also in React StrictMode. It runs when the reveal starts, not when the entrance ends. It also runs when no entrance plays, for example with reduced motion or focus. After `when: false`, the next reveal calls it again. With reduced motion, `when: false` does not reset the reveal, so `onReveal` does not run again. A change to `when` or `threshold` applies immediately. A change to the other options applies at the next reveal.
 
 ```tsx
 import { useState } from "react";
@@ -88,6 +88,24 @@ export function Details() {
     </>
   );
 }
+```
+
+To wait for the end of the entrance, use the `finished` promises of the animations in `onReveal`. The promise waits for each animation of the element and of its descendants, also your own animations, so use it on an element that has no other animations. It resolves at once when no entrance plays. It rejects when the entrance stops early, for example after `when: false` or an unmount. Catch the rejection, or the browser reports an unhandled rejection.
+
+```tsx
+import { Reveal } from "@awesome-reveal/react";
+
+export const Card = () => (
+  <Reveal
+    onReveal={(element) =>
+      Promise.all(element.getAnimations({ subtree: true }).map((animation) => animation.finished))
+        .then(() => element.classList.add("entered"))
+        .catch(() => {})
+    }
+  >
+    Hello
+  </Reveal>
+);
 ```
 
 ## Cascade
