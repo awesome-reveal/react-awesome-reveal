@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import type { MockInstance } from "vitest";
 import { reveal, cascade, type RevealHandle } from "../src/index";
 import { animations, installAnimate, uninstallAnimate } from "@awesome-reveal/test-utils/animate";
 import {
@@ -380,5 +381,73 @@ describe("cascade", () => {
     track(cascade(container(), { interval: 1000 }));
     expect(animations).toHaveLength(0);
     expect(MockIntersectionObserver.instances.size).toBe(0);
+  });
+});
+
+describe("release without dispose", () => {
+  const flush = () => new Promise((resolve) => setTimeout(resolve));
+  let print: MockInstance<typeof removeEventListener>;
+  let released: () => Promise<boolean>;
+  beforeEach(() => {
+    const media = Object.assign(new EventTarget(), { matches: false });
+    vi.stubGlobal("matchMedia", () => media);
+    print = vi.spyOn(globalThis, "removeEventListener");
+    const preference = vi.spyOn(media, "removeEventListener");
+    released = async () => {
+      await flush();
+      const types = [...print.mock.calls, ...preference.mock.calls].map(([type]) => type);
+      if (!types.length) return false;
+      expect(types).toEqual(["beforeprint", "afterprint", "change"]);
+      return true;
+    };
+  });
+  it("releases a finished reveal", async () => {
+    const target = element();
+    reveal(target);
+    expect(await released()).toBe(false);
+    intersect(target, true);
+    expect(await released()).toBe(false);
+    animations[0]!.finish();
+    expect(await released()).toBe(true);
+  });
+  it("releases a cascade when every child finished", async () => {
+    const target = element();
+    target.innerHTML = "<p></p><p></p>";
+    cascade(target);
+    intersect(target, true);
+    animations[0]!.finish();
+    expect(await released()).toBe(false);
+    animations[1]!.finish();
+    expect(await released()).toBe(true);
+  });
+  it("releases an empty cascade at once", async () => {
+    cascade(element());
+    expect(await released()).toBe(true);
+  });
+  it("releases an entrance that page code cancels", async () => {
+    reveal(element());
+    animations[0]!.cancel();
+    expect(await released()).toBe(true);
+  });
+  it("stays safe to dispose after the finish", async () => {
+    const target = element();
+    const handle = reveal(target);
+    intersect(target, true);
+    animations[0]!.finish();
+    expect(await released()).toBe(true);
+    expect(() => {
+      handle.dispose();
+      handle.dispose();
+    }).not.toThrow();
+    expect(animations[0]!.cancel).toHaveBeenCalledOnce();
+  });
+  it("keeps the print listeners for a waiting reveal when another call is disposed", async () => {
+    reveal(element()).dispose();
+    const waiting = reveal(element());
+    await flush();
+    expect(print).not.toHaveBeenCalled();
+    waiting.dispose();
+    await flush();
+    expect(print.mock.calls.map(([type]) => type)).toEqual(["beforeprint", "afterprint"]);
   });
 });

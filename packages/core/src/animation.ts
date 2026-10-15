@@ -81,6 +81,7 @@ interface Motions {
   play(): void;
   print(printing: boolean): void;
   dispose(): void;
+  settled: Promise<unknown>;
 }
 
 // Core has no print stylesheet, and the print rule of an adapter stops at the reveal, so print moves each effect past its fill.
@@ -122,11 +123,15 @@ export function motions(element: Element, options: RevealOptions, interval?: num
     dispose() {
       for (const animation of animations) animation?.cancel();
       animations = [];
-      following.delete(group);
-      if (!following.size) listenPrint("removeEventListener");
     },
+    settled: Promise.allSettled(animations.map((animation) => animation?.finished)),
   };
   following.add(group);
   listenPrint("addEventListener");
+  // An entrance that finished, or that dispose or page code cancelled, is at rest, so print no longer needs it.
+  group.settled.then(() => {
+    following.delete(group);
+    if (!following.size) listenPrint("removeEventListener");
+  });
   return group;
 }

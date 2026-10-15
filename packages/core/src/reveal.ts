@@ -11,17 +11,20 @@ function resolveTargets(target: RevealTarget): Element[] {
 function start(target: RevealTarget, options: RevealOptions, interval?: number): RevealHandle {
   let cleanups: (() => void)[] = [];
   const preference = motionPreference();
+  const unlisten = () => preference?.removeEventListener?.("change", onPreference);
   const dispose = () => {
     for (const cleanup of cleanups) cleanup();
     cleanups = [];
-    preference?.removeEventListener?.("change", onPreference);
+    unlisten();
   };
   const onPreference = () => {
     if (preference?.matches) dispose();
   };
   if (preference?.matches) return { dispose };
+  const settled: Promise<unknown>[] = [];
   for (const element of new Set(resolveTargets(target))) {
     const group = motions(element, options, interval);
+    settled.push(group.settled);
     const disconnect = observe(element, options, () =>
       focused(element) ? group.dispose() : group.play(),
     );
@@ -31,6 +34,8 @@ function start(target: RevealTarget, options: RevealOptions, interval?: number):
     });
   }
   preference?.addEventListener?.("change", onPreference);
+  // After every entrance is at rest, reduced motion has nothing to stop.
+  Promise.all(settled).then(unlisten);
   return { dispose };
 }
 

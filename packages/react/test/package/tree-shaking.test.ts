@@ -11,14 +11,14 @@ describe("consumer bundle", () => {
     const { keptExports, bytes } = await bundle("reveal-only.js");
 
     expect(keptExports["core/dist/adapter.js"]).toContain("createReveal");
-    expect(bytes).toBeLessThan(6100);
+    expect(bytes).toBeLessThan(6125);
   });
 
   it("keeps no Reveal component for the hook alone", async () => {
     const { keptExports, bytes } = await bundle("hook-only.js");
 
     expect(keptExports["core/dist/adapter.js"]).toContain("createReveal");
-    expect(bytes).toBeLessThan(5700);
+    expect(bytes).toBeLessThan(5775);
     expect(keptExports).not.toHaveProperty("react/dist/Reveal.js");
   });
 });

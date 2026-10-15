@@ -7,7 +7,7 @@ compatibility: Requires @awesome-reveal/core in a project that runs in the brows
 
 # Add reveal animations
 
-Use `reveal(target, options?)` to animate each target element when it enters the viewport. Use `cascade(container, options?)` to animate the direct element children of a container in sequence. Both functions return only `{ dispose() }`. Call `dispose()` in your teardown code.
+Use `reveal(target, options?)` to animate each target element when it enters the viewport. Use `cascade(container, options?)` to animate the direct element children of a container in sequence. Both functions return only `{ dispose() }`. Call `dispose()` when you remove the targets before they reveal. After all the entrances of a call finish, the call needs no `dispose()`.
 
 Core needs no stylesheet. It creates a paused native animation for each element when you call it. Code that waits for all page animations to finish must skip the paused ones. Core does not hide server-rendered content. Only the framework packages do that.
 

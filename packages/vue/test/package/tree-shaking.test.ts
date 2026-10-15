@@ -18,7 +18,7 @@ describe("consumer bundle", () => {
     const { keptExports, bytes } = await bundle("directive-only.js");
 
     expect(keptExports["core/dist/adapter.js"]).toContain("createReveal");
-    expect(bytes).toBeLessThan(5200);
+    expect(bytes).toBeLessThan(5275);
     expect(keptExports).not.toHaveProperty("vue/dist/Reveal.js");
   });
 });
