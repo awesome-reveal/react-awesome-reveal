@@ -73,7 +73,18 @@ describe("zero-CSS reveal", () => {
       filter: "blur(8px)",
     });
   });
-  it("adds the entrance to the element's own transforms, filter and opacity", () => {
+  // Chromium runs an effect with an additive keyframe on the main thread, where it stutters.
+  it("generates only replace keyframes, so the browser can composite the entrance", () => {
+    track(reveal(target, { from: { opacity: 0, x: 24, scale: 0.9, rotate: 5, blur: 8 } }));
+    const effect = animation().effect as KeyframeEffect;
+    expect(effect.composite).toBe("replace");
+    expect(effect.getKeyframes().map((keyframe) => keyframe.composite)).toEqual([
+      "auto",
+      "auto",
+      "auto",
+    ]);
+  });
+  it("replaces the element's own individual transforms, filter and opacity until the end", () => {
     Object.assign(target.style, {
       transform: "scale(2)",
       translate: "10px 0px",
@@ -85,13 +96,13 @@ describe("zero-CSS reveal", () => {
     const style = getComputedStyle(target);
     expect(style).toMatchObject({
       opacity: "0.2",
-      translate: "34px",
-      rotate: "15deg",
-      filter: "brightness(0.5) blur(8px)",
+      translate: "24px",
+      rotate: "5deg",
+      filter: "blur(8px)",
+      transform: "matrix(2, 0, 0, 2, 0, 0)",
     });
-    animation().currentTime = 500;
-    // The easing is at about 96% of the change at the midpoint, so the fade goes to the element's 0.5.
-    expect(Number(style.opacity)).toBeCloseTo(0.49, 2);
+    animation().currentTime = 999;
+    expect(Number(style.opacity)).toBeCloseTo(1, 2);
     animation().currentTime = 1000;
     expect(style).toMatchObject({
       opacity: "0.5",

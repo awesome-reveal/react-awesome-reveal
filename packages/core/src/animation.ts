@@ -18,7 +18,6 @@ function entrance(options: RevealOptions): Keyframe[] {
         };
   const { opacity, x, y, scale, rotate, blur } = state;
   const easing = "cubic-bezier(0.22, 1, 0.36, 1)";
-  const frames: Keyframe[] = [];
   const move: Keyframe = {};
   const rest: Keyframe = {};
   if (x !== undefined || y !== undefined) {
@@ -37,21 +36,18 @@ function entrance(options: RevealOptions): Keyframe[] {
     move.filter = `blur(${unit(blur, "px")})`;
     rest.filter = "blur(0px)";
   }
-  // "add" with neutral values ends at the element's own styles, with no implicit keyframe.
-  const end: Keyframe = { offset: 1, composite: "add", ...rest };
+  // Chromium composites an effect only when no keyframe is additive, so the entrance ends at neutral values.
+  const start: Keyframe = { offset: 0, easing };
+  const end: Keyframe = { offset: 1, ...rest };
   if (opacity !== undefined) {
-    // Additive opacity cannot hide: Firefox and WebKit clamp a negative start before the addition.
-    frames.push({ offset: 0, easing, opacity });
-    end.opacity = 0;
+    start.opacity = opacity;
+    end.opacity = 1;
   }
-  if (Object.keys(move).length) {
-    // The observer measures the transformed box, and an offset can put it outside a clipping ancestor permanently.
-    // A hidden start waits at rest and moves only when it plays, while it is still transparent.
-    const hidden = opacity === 0;
-    if (hidden) frames.push({ offset: 0, composite: "add", ...rest });
-    frames.push({ offset: hidden ? 1e-6 : 0, easing, composite: "add", ...move });
-  }
-  return [...frames, end];
+  if (!Object.keys(move).length) return [start, end];
+  // The observer measures the transformed box, and an offset can put it outside a clipping ancestor permanently.
+  // A hidden start waits at rest and moves only when it plays, while it is still transparent.
+  if (opacity === 0) return [{ ...start, ...rest }, { offset: 1e-6, easing, ...move }, end];
+  return [{ ...start, ...move }, end];
 }
 
 export const motionPreference = () =>

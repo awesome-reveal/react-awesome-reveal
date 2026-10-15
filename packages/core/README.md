@@ -61,9 +61,9 @@ reveal(".card", { from: { opacity: 0, x: "-100%", rotate: "-5deg", blur: "0.5rem
 
 `StartState` has the properties `opacity`, `x`, `y`, `scale`, `rotate` and `blur`. A number for `x`, `y` or `blur` is in pixels, and a number for `rotate` is in degrees. A string can contain a CSS value with its unit.
 
-The entrance adds its offset, scale, rotation and blur to the element's own `transform`, `translate`, `scale`, `rotate` and `filter`, with `composite: "add"`. It fades to the element's own opacity. So your styles stay in effect during the entrance, for example the `translate(-50%, -50%)` of a centred dialog. Do not reveal one element in two calls. The offsets add up.
+The entrance animates the individual `translate`, `scale`, `rotate` and `filter` properties and `opacity`, but only the properties that the start state sets. It ends at their neutral values: no offset, no rotation, no blur, a scale of 1 and an opacity of 1. Your `transform` stays in effect during the entrance, for example the `translate(-50%, -50%)` of a centred dialog. While the element waits and during the entrance, the element's own values of the animated properties do not apply. They apply again when the entrance ends. To keep one of these values during the entrance, put it on an inner element, or use native keyframes. Do not reveal one element in two calls. The later entrance overrides the earlier one.
 
-Chromium runs an additive animation on the main thread. For an entrance that the browser can run on the compositor, use native keyframes.
+Each keyframe of the entrance replaces the element's value, so the browser can run the entrance on the compositor. A start state with `blur` is the exception: Chromium runs the full entrance on the main thread, because a blur can move pixels outside the element.
 
 ## Native keyframes
 
@@ -80,7 +80,7 @@ reveal(".logo", {
 });
 ```
 
-You can use the native keyframe properties `easing`, `offset` and `composite`. The browser validates the values. The animation does not keep its last keyframe after it ends, so end your keyframes at the resting style of the element. To end at the element's own value, end with a neutral additive keyframe, for example `{ opacity: 0, composite: "add" }`. Like the generated entrance, an additive keyframe runs on the main thread in Chromium.
+You can use the native keyframe properties `easing`, `offset` and `composite`. The browser validates the values. The animation does not keep its last keyframe after it ends, so end your keyframes at the resting style of the element. To end at the element's own value, end with a neutral additive keyframe, for example `{ opacity: 0, composite: "add" }`. Chromium runs an animation with an additive keyframe on the main thread, so it can stutter when the page is busy.
 
 Animate `opacity`, `transform` and the individual `translate`, `scale` and `rotate` properties when possible. The browser can run them on the compositor. A layout property, such as `width`, `top` or `margin`, causes a layout and a paint on each frame. Do not add `will-change` for a reveal. The browser treats an animated property as if `will-change` already names it.
 
@@ -108,7 +108,7 @@ reveal(".hero p", { from: { opacity: 0 }, delay: 200 });
 
 An element reveals when `threshold` of it is visible. If the viewport is too small to show `threshold` of the element, the element reveals when it enters the viewport. In a scroll container that is too small, it reveals when it leaves the visible area. Keep the default 0 for tall elements and long cascades.
 
-`reveal()` observes the element while it waits. A start state with `opacity: 0`, such as each side, waits at the resting position and moves only when the entrance plays. Other start states and native keyframes wait at their first keyframe, so their offset, scale and rotation change the box that the observer sees. If an ancestor with `overflow` clips that box fully, the element does not reveal. `cascade()` observes the container, which does not move.
+`reveal()` observes the element while it waits. A start state with `opacity: 0`, such as each side, waits at neutral values and moves only when the entrance plays. Other start states and native keyframes wait at their first keyframe, so their offset, scale and rotation change the box that the observer sees. If an ancestor with `overflow` clips that box fully, the element does not reveal. `cascade()` observes the container, which does not move.
 
 ## Manual play
 
@@ -150,7 +150,7 @@ Focus in a waiting element shows it at once, with no entrance, so a keyboard use
 
 The root entry exports only `reveal`, `cascade` and their types: `Side`, `StartState`, `RevealOptions`, `CascadeOptions`, `RevealTarget` and `RevealHandle`. `@awesome-reveal/core/adapter` is the contract that the official framework packages use. It is not an API for imperative animations.
 
-Core needs Chrome 104, Firefox 80 or Safari 16, or later. These versions support individual transform properties and additive keyframes. If IntersectionObserver or `Element.animate` is not available, the content reveals immediately and does not stay hidden. Give explicit values to the first keyframe of your native keyframes. An open WebKit bug ([212409](https://bugs.webkit.org/show_bug.cgi?id=212409)) can take an implicit start value from an earlier animation of the element. You can import the module where there is no DOM, for example on a server.
+Core needs Chrome 104, Firefox 80 or Safari 16, or later. If IntersectionObserver or `Element.animate` is not available, the content reveals immediately and does not stay hidden. Give explicit values to the first keyframe of your native keyframes. An open WebKit bug ([212409](https://bugs.webkit.org/show_bug.cgi?id=212409)) can take an implicit start value from an earlier animation of the element. You can import the module where there is no DOM, for example on a server.
 
 ## Agent skills
 
