@@ -34,6 +34,13 @@ const hidden = (element: HTMLElement) => element.getAttribute("data-awesome-reve
 
 const shown = (element: HTMLElement) => !element.hasAttribute("data-awesome-reveal");
 
+// `:focus-within` needs real focus, so the scenarios focus a child and do not dispatch `focusin`.
+const focusChild = (m: Mounted, index = 0) => {
+  const child = Array.from(m.element().children).at(index) as HTMLElement;
+  child.tabIndex = -1;
+  return m.run(() => child.focus());
+};
+
 const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 // Reports throw from a microtask. The wrapper keeps the microtasks of the framework running.
@@ -291,13 +298,6 @@ export function describeContract(name: string, harness: Harness) {
       expect(element.hasAttribute("data-awesome-reveal-attached")).toBe(false);
     });
 
-    // `:focus-within` needs real focus, so the scenarios focus a child and do not dispatch `focusin`.
-    const focusChild = (m: Mounted, index = 0) => {
-      const child = m.element().children[index] as HTMLElement;
-      child.tabIndex = -1;
-      return m.run(() => child.focus());
-    };
-
     it("focus in the element reveals it at once with no entrance, also below the threshold", async () => {
       const onReveal = vi.fn();
       const m = await mount({ threshold: 0.5, delay: 2000, onReveal });
@@ -489,18 +489,14 @@ export function describeCascadeContract(name: string, harness: Harness) {
 
     it("focus in a later child reveals all the children at once with no entrance", async () => {
       const m = await mount({ interval: 500 });
-      const last = m.element().lastElementChild as HTMLElement;
-      last.tabIndex = -1;
-      await m.run(() => last.focus());
+      await focusChild(m, -1);
       expect(shown(m.element())).toBe(true);
       expect(animations).toHaveLength(0);
     });
 
     it("focus in a child does not reveal the children with when: false", async () => {
       const m = await mount({ when: false, interval: 500 });
-      const last = m.element().lastElementChild as HTMLElement;
-      last.tabIndex = -1;
-      await m.run(() => last.focus());
+      await focusChild(m, -1);
       expect(m.element().getAttribute("data-awesome-reveal")).toBe("cascade");
       expect(animations).toHaveLength(0);
       await m.rerender({ when: true, interval: 500 });

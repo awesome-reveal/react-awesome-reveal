@@ -166,35 +166,31 @@ describe("reveal.css", () => {
 
   // WebKit does not Tab to buttons and links by default, so the tests use inputs.
   describe("keyboard", () => {
-    let before: HTMLInputElement;
-    let target: HTMLElement;
-    let field: HTMLInputElement;
     beforeEach(() => {
       document.body.innerHTML = `<input id="before"><div style="height: 150vh"></div><div id="target" data-awesome-reveal="hidden"><input id="field"></div><div style="height: 150vh"></div>`;
       scrollTo(0, 0);
-      before = document.getElementById("before") as HTMLInputElement;
-      target = document.getElementById("target")!;
-      field = document.getElementById("field") as HTMLInputElement;
     });
 
     it("Tab focuses a transparent control while when is false", async () => {
+      const target = document.getElementById("target")!;
       bind(createReveal({ when: false }), target, "hidden");
-      before.focus();
+      document.getElementById("before")!.focus();
       await userEvent.tab();
-      expect(document.activeElement).toBe(field);
+      expect(document.activeElement?.id).toBe("field");
       await settle();
       expect(opacity(target)).toBe("0");
     });
 
     it("Tab reveals the element at once after when: null", async () => {
+      const target = document.getElementById("target")!;
       const store = createReveal({ when: false, duration: 60_000 });
       bind(store, target, "hidden");
       store.setOptions({ when: null, duration: 60_000 });
       await settle();
       expect(opacity(target)).toBe("0");
-      before.focus();
+      document.getElementById("before")!.focus();
       await userEvent.tab();
-      expect(document.activeElement).toBe(field);
+      expect(document.activeElement?.id).toBe("field");
       expect(opacity(target)).toBe("1");
       expect(target.getAnimations()).toEqual([]);
     });
