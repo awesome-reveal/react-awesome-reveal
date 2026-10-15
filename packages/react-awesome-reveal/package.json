@@ -47,12 +47,18 @@
     "skills"
   ],
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": [
+    "*.css"
+  ],
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./reveal.css": {
+      "types": "./dist/reveal.css.d.ts",
+      "default": "./dist/reveal.css"
     },
     "./package.json": "./package.json"
   },

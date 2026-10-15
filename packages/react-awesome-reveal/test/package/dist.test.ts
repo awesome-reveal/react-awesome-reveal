@@ -1,15 +1,24 @@
 import { readdirSync, readFileSync } from "node:fs";
+import { createRequire } from "node:module";
 
 const root = new URL("../../", import.meta.url);
 const dist = new URL("dist/", root);
 const pkg = JSON.parse(readFileSync(new URL("package.json", root), "utf8"));
 const distFiles = readdirSync(dist, { recursive: true, encoding: "utf8" });
+const { resolve } = createRequire(import.meta.url);
 
 describe("dist", () => {
-  it("ships only the React re-export and its declarations", () => {
-    expect(distFiles.sort()).toEqual(["index.d.ts", "index.js"]);
-    expect(Object.keys(pkg.exports)).toEqual([".", "./package.json"]);
+  it("ships only the React re-export, the React stylesheet and their declarations", () => {
+    expect(distFiles.sort()).toEqual(["index.d.ts", "index.js", "reveal.css", "reveal.css.d.ts"]);
+    expect(Object.keys(pkg.exports)).toEqual([".", "./reveal.css", "./package.json"]);
     expect(readFileSync(new URL("index.js", dist), "utf8")).toContain("@awesome-reveal/react");
+  });
+
+  it("exports the stylesheet of @awesome-reveal/react unchanged", () => {
+    expect(resolve("react-awesome-reveal/reveal.css")).toBe(new URL("reveal.css", dist).pathname);
+    expect(readFileSync(new URL("reveal.css", dist), "utf8")).toBe(
+      readFileSync(new URL("../react/src/reveal.css", root), "utf8"),
+    );
   });
 });
 

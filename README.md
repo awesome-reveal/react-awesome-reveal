@@ -14,7 +14,7 @@ Read the documentation at [awesome-reveal.dev](https://awesome-reveal.dev).
 
 ## Quick start
 
-Install the package for your framework. You do not need to import a stylesheet.
+Install the package for your framework. In most setups, you do not need to import a stylesheet. The README of each package gives the exceptions, such as an Astro island.
 
 ```tsx
 import { Reveal } from "@awesome-reveal/react";
