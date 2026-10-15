@@ -111,7 +111,7 @@ Reduced motion always has priority over the entrance and over `when: false`.
 
 The stylesheet hides the server markup for at most 5 seconds before the script attaches the element. At the attach, the package adds `data-awesome-reveal-attached` to the element, and the element stays hidden until it reveals. So if the script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again until it reveals. This happens with slow hydration, and often with lazy hydration, such as an Astro `client:visible` island, when the user scrolls to the content after 5 seconds. Hydrate reveal content eagerly.
 
-The package writes no `style` attribute and no inline script. A strict Content Security Policy, such as `style-src 'self'; script-src 'self'`, works in a production build when your bundler emits the package CSS as a file. Next.js adds its own inline scripts, so it needs a nonce, as the Next.js docs describe.
+The package writes no `style` attribute and no inline script. A Content Security Policy that blocks inline styles and scripts, such as `style-src 'self'; script-src 'self'`, works in a production build when your bundler emits the package CSS as a file. Next.js adds its own inline scripts, so it needs a nonce, as the Next.js docs describe.
 
 ### Limits
 
