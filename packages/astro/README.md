@@ -33,16 +33,16 @@ const host = document.querySelector("awesome-reveal");
 if (host) host.when = true;
 ```
 
-The `reveal` event fires one time for each reveal, when the reveal starts, not when the entrance ends. It also fires when no entrance plays, for example with reduced motion or focus. After `when: false`, the next reveal fires it again.
+The `reveal` event fires one time for each reveal, when the reveal starts, not when the entrance ends. It also fires when no entrance plays, for example with reduced motion or focus. After `when: false`, the next reveal fires it again. With reduced motion, `when: false` does not reset the reveal, so the event does not fire again.
 
-To wait for the end of the entrance, use the `finished` promises of the animations of the event `target`. The promise waits for each animation of the element and of its descendants, also your own animations, so use it on an element that has no other animations. It resolves at once when no entrance plays. It rejects when the entrance stops early, for example after `when: false`.
+To wait for the end of the entrance, use the `finished` promises of the animations of the event `target`. The promise waits for each animation of the element and of its descendants, also your own animations, so use it on an element that has no other animations. It resolves at once when no entrance plays. It rejects when the entrance stops early, for example after `when: false`. Catch the rejection, or the browser reports an unhandled rejection.
 
 ```ts
 document.addEventListener("reveal", (event) => {
   const element = event.target as Element;
-  Promise.all(element.getAnimations({ subtree: true }).map((animation) => animation.finished)).then(
-    () => element.classList.add("entered"),
-  );
+  Promise.all(element.getAnimations({ subtree: true }).map((animation) => animation.finished))
+    .then(() => element.classList.add("entered"))
+    .catch(() => {});
 });
 ```
 

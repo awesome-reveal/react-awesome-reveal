@@ -41,9 +41,9 @@ The cascade reads the children when the container reveals, so a child that you a
 
 Use `when` for manual control: `true` reveals the element and `false` resets the entrance. `null` or `undefined` returns the control to the viewport. `when` does not show or hide content. With `when: false`, the element is transparent, but screen readers still read it, and the keyboard can focus its controls. To hide content, add the `hidden` attribute, or do not render it. `inert` does not hide the element. It only blocks focus, clicks and assistive technology. With `when: true`, the server still renders the element hidden, and the entrance plays after hydration.
 
-`onReveal` gets the element one time for each reveal, or the container for a cascade. It runs when the reveal starts, not when the entrance ends. It runs also when no entrance plays, such as with reduced motion or focus. After `when: false`, the next reveal calls it again.
+`onReveal` gets the element one time for each reveal, or the container for a cascade. It runs when the reveal starts, not when the entrance ends. It runs also when no entrance plays, such as with reduced motion or focus. After `when: false`, the next reveal calls it again. With reduced motion, `when: false` does not reset the reveal, so `onReveal` does not run again.
 
-To wait for the end of the entrance, use the `finished` promises of the animations in `onReveal`. The promise waits for each animation of the element and of its descendants, also your own animations, so use it on an element that has no other animations. It resolves at once when no entrance plays. It rejects when the entrance stops early, such as after `when: false` or an unmount.
+To wait for the end of the entrance, use the `finished` promises of the animations in `onReveal`. The promise waits for each animation of the element and of its descendants, also your own animations, so use it on an element that has no other animations. It resolves at once when no entrance plays. It rejects when the entrance stops early, such as after `when: false` or an unmount. Catch the rejection, or the browser reports an unhandled rejection.
 
 ```tsx
 import { Reveal } from "@awesome-reveal/react";
@@ -51,9 +51,9 @@ import { Reveal } from "@awesome-reveal/react";
 export const Card = () => (
   <Reveal
     onReveal={(element) =>
-      Promise.all(
-        element.getAnimations({ subtree: true }).map((animation) => animation.finished),
-      ).then(() => element.classList.add("entered"))
+      Promise.all(element.getAnimations({ subtree: true }).map((animation) => animation.finished))
+        .then(() => element.classList.add("entered"))
+        .catch(() => {})
     }
   >
     Hello

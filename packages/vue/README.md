@@ -51,7 +51,7 @@ import "@awesome-reveal/vue/reveal.css";
 
 A change to `when` or `threshold` applies immediately. A change to the other options applies at the next reveal.
 
-The component emits `reveal` with the element, and gives `revealed` to its default slot. The directive accepts `onReveal` in its options. Both run one time for each reveal, when the reveal starts, not when the entrance ends. They also run when no entrance plays, for example with reduced motion or focus. After `when: false`, the next reveal runs them again.
+The component emits `reveal` with the element, and gives `revealed` to its default slot. The directive accepts `onReveal` in its options. Both run one time for each reveal, when the reveal starts, not when the entrance ends. They also run when no entrance plays, for example with reduced motion or focus. After `when: false`, the next reveal runs them again. With reduced motion, `when: false` does not reset the reveal, so they do not run again.
 
 ```ts
 import { h } from "vue";
@@ -60,7 +60,7 @@ import { Reveal } from "@awesome-reveal/vue";
 export const card = h(Reveal, { from: "left", when: true }, () => "Hello");
 ```
 
-To wait for the end of the entrance, use the `finished` promises of the animations of the element that the `reveal` event or `onReveal` gets. The promise waits for each animation of the element and of its descendants, also your own animations, so use it on an element that has no other animations. It resolves at once when no entrance plays. It rejects when the entrance stops early, for example after `when: false` or an unmount.
+To wait for the end of the entrance, use the `finished` promises of the animations of the element that the `reveal` event or `onReveal` gets. The promise waits for each animation of the element and of its descendants, also your own animations, so use it on an element that has no other animations. It resolves at once when no entrance plays. It rejects when the entrance stops early, for example after `when: false` or an unmount. Catch the rejection, or the browser reports an unhandled rejection.
 
 ```ts
 import { h } from "vue";
@@ -70,9 +70,9 @@ export const entered = h(
   Reveal,
   {
     onReveal: (element: Element) =>
-      Promise.all(
-        element.getAnimations({ subtree: true }).map((animation) => animation.finished),
-      ).then(() => element.classList.add("entered")),
+      Promise.all(element.getAnimations({ subtree: true }).map((animation) => animation.finished))
+        .then(() => element.classList.add("entered"))
+        .catch(() => {}),
   },
   () => "Hello",
 );
