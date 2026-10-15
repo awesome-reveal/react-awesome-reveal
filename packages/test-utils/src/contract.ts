@@ -343,6 +343,33 @@ export function describeContract(name: string, harness: Harness) {
       expect(animations).toHaveLength(0);
     });
 
+    it("a change from when: false to null with focus inside shows the element at once with no entrance", async () => {
+      const onReveal = vi.fn();
+      const m = await mount({ when: false, onReveal });
+      await focusChild(m);
+      await rerender(m, { when: null, onReveal });
+      expect(shown(m.element())).toBe(true);
+      expect(observerOf(m.element())).toBeUndefined();
+      expect(animations).toHaveLength(0);
+      expect(onReveal).toHaveBeenCalledOnce();
+    });
+
+    it("a change from when: true to false with focus inside resets the entrance and keeps the focus", async () => {
+      const m = await mount({ when: true });
+      await focusChild(m);
+      await rerender(m, { when: false });
+      expect(hidden(m.element())).toBe(true);
+      expect(runningAnimations()).toHaveLength(0);
+      expect(document.activeElement).toBe(m.element().children[0]);
+    });
+
+    it("reduced motion shows the element with when: false at mount", async () => {
+      vi.stubGlobal("matchMedia", () => ({ matches: true }));
+      const m = await mount({ when: false });
+      expect(shown(m.element())).toBe(true);
+      expect(animations).toHaveLength(0);
+    });
+
     it("with no IntersectionObserver the element shows at once", async () => {
       vi.stubGlobal("IntersectionObserver", undefined);
       const m = await mount();
@@ -465,6 +492,18 @@ export function describeCascadeContract(name: string, harness: Harness) {
       const last = m.element().lastElementChild as HTMLElement;
       last.tabIndex = -1;
       await m.run(() => last.focus());
+      expect(shown(m.element())).toBe(true);
+      expect(animations).toHaveLength(0);
+    });
+
+    it("focus in a child does not reveal the children with when: false", async () => {
+      const m = await mount({ when: false, interval: 500 });
+      const last = m.element().lastElementChild as HTMLElement;
+      last.tabIndex = -1;
+      await m.run(() => last.focus());
+      expect(m.element().getAttribute("data-awesome-reveal")).toBe("cascade");
+      expect(animations).toHaveLength(0);
+      await m.rerender({ when: true, interval: 500 });
       expect(shown(m.element())).toBe(true);
       expect(animations).toHaveLength(0);
     });

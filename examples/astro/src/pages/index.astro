@@ -78,11 +78,11 @@ const sides = ["top", "right", "bottom", "left"] as const;
     </ServerTime>
   </PageSection>
   <PageSection>
-    <button type="button" id="toggle">
+    <button type="button" id="toggle" aria-expanded="false">
       Toggle
     </button>
     <output id="reveal-count">0</output> reveals
-    <Reveal from={{ opacity: 0, scale: 0.9 }} when={false} id="manual">
+    <Reveal from={{ opacity: 0, scale: 0.9 }} when={false} hidden id="manual">
       Manual entrance
     </Reveal>
   </PageSection>
@@ -105,11 +105,16 @@ const sides = ["top", "right", "bottom", "left"] as const;
   document.addEventListener("astro:page-load", () => {
     const toggle = document.querySelector("#toggle");
     const count = document.querySelector("#reveal-count");
-    const manual = document.querySelector("#manual")?.closest("awesome-reveal");
-    toggle?.addEventListener("click", () => {
-      if (manual) manual.when = !manual.when;
+    const content = document.querySelector<HTMLElement>("#manual");
+    const manual = content?.closest("awesome-reveal");
+    if (!toggle || !content || !manual) return;
+    toggle.addEventListener("click", () => {
+      const open = !manual.when;
+      manual.when = open;
+      content.hidden = !open;
+      toggle.setAttribute("aria-expanded", String(open));
     });
-    manual?.addEventListener("reveal", () => {
+    manual.addEventListener("reveal", () => {
       if (count) count.textContent = String(Number(count.textContent) + 1);
     });
   });

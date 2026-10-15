@@ -8,7 +8,7 @@ import type {
 
 /** Configures a declarative entrance and optional manual control. */
 export type RevealOptions = CoreRevealOptions & {
-  /** Controls the reveal manually. `true` reveals, `false` hides, and no value or `null` lets the viewport decide. Reduced motion reveals the element also when `when` is `false`. */
+  /** Controls the entrance manually. `true` reveals, `false` resets the entrance, and no value or `null` lets the viewport decide. It does not show or hide content. With `false`, the element is transparent, but screen readers read it and the keyboard can focus its controls. To hide content, use `hidden` or `inert`, or do not render it. Reduced motion reveals the element also when `when` is `false`. */
   when?: boolean | null;
   /** Runs one time for each reveal, also when no entrance plays, such as with reduced motion or focus. */
   onReveal?: (element: Element) => void;

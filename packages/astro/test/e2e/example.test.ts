@@ -185,9 +185,12 @@ describe.each(
   it("reveals with the `when` property, and dispatches a reveal event", async () => {
     await page.locator("#toggle").scrollIntoViewIfNeeded();
     expect(await isHidden(page, "#manual")).toBe(true);
+    expect(await page.$eval("#manual", (element: HTMLElement) => element.hidden)).toBe(true);
 
     await page.locator("#toggle").click();
 
+    expect(await page.locator("#toggle").getAttribute("aria-expanded")).toBe("true");
+    expect(await page.$eval("#manual", (element: HTMLElement) => element.hidden)).toBe(false);
     await revealed(page, "#manual");
     expect(await page.locator("#reveal-count").textContent()).toBe("1");
   });
