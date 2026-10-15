@@ -28,7 +28,7 @@ const reactPage = `
 </main>
 `;
 
-const browse = (server, options) => async (app) =>
+const browse = (options) => async (app, server) =>
   (await import("./smoke-browser.mjs")).verifyInBrowser(app, server, options);
 
 const nextPage = (id, module, next, extra = "") => `
@@ -47,6 +47,13 @@ export default function Page() {
   );
 }
 `;
+
+// Each page links to the next one, and the last links home.
+const nextRoutes = [
+  { path: "/", id: "#top" },
+  { path: "/about", id: "#about" },
+  { path: "/legacy", id: "#legacy" },
+];
 
 const cases = {
   core: {
@@ -77,7 +84,7 @@ if (typeof reveal !== "function") throw new Error("reveal is not a function");
     packages: ["core", "react"],
     deps: ["react@19", "react-dom@19", "@types/react@19", "@types/react-dom@19"],
     typescript: true,
-    verify: browse("vite"),
+    verify: browse(),
     files: {
       "src/app.tsx": `
 import { Reveal, useReveal } from "@awesome-reveal/react";
@@ -138,7 +145,7 @@ ${hiddenCheck("renderToString(<App />)")}
     plugins: `import vue from "@vitejs/plugin-vue";`,
     pluginCall: "vue()",
     check: ["vue-tsc", "--noEmit"],
-    verify: browse("vite"),
+    verify: browse(),
     files: {
       "src/App.vue": `
 <script setup lang="ts">
@@ -174,7 +181,20 @@ ${hiddenCheck("await renderToString(createSSRApp(App))")}
     deps: ["next@16", "react@19", "react-dom@19", "@types/react@19", "@types/react-dom@19"],
     scaffold: false,
     build: ["next", "build"],
-    verify: async (app) => (await import("./smoke-browser.mjs")).verifyNext(app),
+    verify: browse({
+      paths: nextRoutes.map(({ path }) => path),
+      async more(page) {
+        await page.locator("#card").scrollIntoViewIfNeeded();
+        await page.waitForSelector("#card:not([data-awesome-reveal])");
+
+        // Each page mounts its own reveal after a client navigation.
+        for (const { path, id } of nextRoutes.slice(1)) {
+          await page.locator(`a[href="${path}"]`).click();
+          await page.waitForURL(`**${path}`);
+          await page.waitForSelector(`${id}:not([data-awesome-reveal])`);
+        }
+      },
+    }),
     files: {
       // Next writes the rest. Some Next versions set "node", which cannot resolve the package exports.
       "tsconfig.json": `{ "compilerOptions": { "module": "esnext", "moduleResolution": "bundler" } }\n`,
@@ -240,7 +260,7 @@ export function Card() {
     scaffold: false,
     check: ["astro", "check"],
     build: ["astro", "build"],
-    verify: browse("astro", { paths: ["/"] }),
+    verify: browse({ paths: ["/"] }),
     files: {
       "astro.config.mjs": `import { defineConfig } from "astro/config";\nexport default defineConfig({});\n`,
       "tsconfig.json": `{ "extends": "astro/tsconfigs/strict", "include": [".astro/types.d.ts", "**/*"], "exclude": ["dist"] }\n`,
@@ -263,7 +283,7 @@ import { Reveal } from "@awesome-reveal/astro";
     deps: ["astro@7", "@astrojs/react", "react@19", "react-dom@19"],
     scaffold: false,
     build: ["astro", "build"],
-    verify: browse("astro", { paths: ["/"] }),
+    verify: browse({ paths: ["/"] }),
     files: {
       "astro.config.mjs": `import { defineConfig } from "astro/config";\nimport react from "@astrojs/react";\nexport default defineConfig({ integrations: [react()] });\n`,
       "src/components/Island.jsx": `
@@ -294,7 +314,7 @@ import Island from "../components/Island.jsx";
     deps: ["next@16", "react@19", "react-dom@19", "@types/react@19", "@types/react-dom@19"],
     scaffold: false,
     build: ["next", "build", "--webpack"],
-    verify: browse("next", { paths: ["/"] }),
+    verify: browse({ paths: ["/"] }),
     files: {
       "tsconfig.json": `{ "compilerOptions": { "module": "esnext", "moduleResolution": "bundler" } }\n`,
       "next.config.mjs": `export default { transpilePackages: ["@awesome-reveal/react"] };\n`,
@@ -423,7 +443,7 @@ try {
     );
     run("node", ["dist-ssr/ssr.js"], app);
   }
-  await config.verify?.(app);
+  await config.verify?.(app, config.build?.[0] ?? "vite");
 
   if (config.check && !config.build) run("pnpm", ["exec", ...config.check], app);
   if (config.typescript) {
