@@ -8,17 +8,19 @@ const bundle = (fixture: string) =>
 
 describe("consumer bundle", () => {
   it("keeps only the modules and exports that it imports", async () => {
-    const { keptExports, bytes } = await bundle("reveal-only.js");
+    const { keptExports, bytes, css } = await bundle("reveal-only.js");
 
     expect(keptExports["core/dist/adapter.js"]).toContain("createReveal");
-    expect(bytes).toBeLessThan(5625);
+    expect(css).toBeGreaterThan(0);
+    expect(bytes + css).toBeLessThan(6100);
   });
 
   it("keeps no Reveal component for the directive alone", async () => {
-    const { keptExports, bytes } = await bundle("directive-only.js");
+    const { keptExports, bytes, css } = await bundle("directive-only.js");
 
     expect(keptExports["core/dist/adapter.js"]).toContain("createReveal");
-    expect(bytes).toBeLessThan(5225);
+    expect(css).toBeGreaterThan(0);
+    expect(bytes + css).toBeLessThan(5700);
     expect(keptExports).not.toHaveProperty("vue/dist/Reveal.js");
   });
 });

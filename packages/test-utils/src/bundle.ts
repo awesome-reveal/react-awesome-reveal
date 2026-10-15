@@ -10,7 +10,7 @@ interface BundleOptions {
   external?: string[];
 }
 
-/** Bundles a fixture of `test/package/fixtures` for production, and gives the exports that the bundle keeps for each `<package>/dist/<file>`. */
+/** Bundles a fixture of `test/package/fixtures` for production, and gives the exports that the bundle keeps for each `<package>/dist/<file>`, and the minified bytes of the JavaScript and of the CSS. */
 export async function bundleFixture(
   fixture: URL,
   { resolvePackage, external }: BundleOptions = {},
@@ -36,6 +36,12 @@ export async function bundleFixture(
     },
   })) as Rolldown.RolldownOutput[];
   const chunk = output[0]!.output.find((item) => item.type === "chunk")!;
+  const css = output[0]!.output
+    .filter(
+      (item): item is Rolldown.OutputAsset =>
+        item.type === "asset" && item.fileName.endsWith(".css"),
+    )
+    .reduce((sum, { source }) => sum + Buffer.byteLength(source), 0);
   const keptExports = Object.fromEntries(
     Object.entries(chunk.modules)
       .filter(([id]) => id.includes("/dist/"))
@@ -47,5 +53,5 @@ export async function bundleFixture(
   );
   // Rolldown's //#region comments are not code.
   const code = chunk.code.replace(/^\/\/#(end)?region.*\n/gm, "");
-  return { keptExports, bytes: Buffer.byteLength(code), gzip: gzipSync(code).length };
+  return { keptExports, bytes: Buffer.byteLength(code), gzip: gzipSync(code).length, css };
 }

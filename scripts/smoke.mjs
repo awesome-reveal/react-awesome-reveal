@@ -1,5 +1,6 @@
 // Installs the packed tarballs into a clean project outside the workspace, then builds and type-checks it.
-// Usage: node scripts/smoke.mjs <core|react|compat|vue|astro|next> [dependency@version ...]
+// The cases with a browser check load the build in Chromium.
+// Usage: node scripts/smoke.mjs <core|react|compat|vue|astro|astro-island|next|next-pages> [dependency@version ...]
 // Build the packages first (pnpm build). Extra arguments replace the default framework dependencies.
 import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -18,6 +19,17 @@ const html = ${render};
 if (!html.includes('data-awesome-reveal="hidden"')) throw new Error("The server markup is not hidden: " + html);
 console.log(html);
 `;
+
+const reactPage = `
+<main>
+  <Reveal id="top" from="left">Top</Reveal>
+  <div style={{ height: "200vh" }} />
+  <Reveal id="below" from="bottom">Below</Reveal>
+</main>
+`;
+
+const browse = (server, options) => async (app) =>
+  (await import("./smoke-browser.mjs")).verifyInBrowser(app, server, options);
 
 const nextPage = (id, module, next, extra = "") => `
 import Link from "next/link";
@@ -65,8 +77,9 @@ if (typeof reveal !== "function") throw new Error("reveal is not a function");
     packages: ["core", "react"],
     deps: ["react@19", "react-dom@19", "@types/react@19", "@types/react-dom@19"],
     typescript: true,
+    verify: browse("vite"),
     files: {
-      "src/main.tsx": `
+      "src/app.tsx": `
 import { Reveal, useReveal } from "@awesome-reveal/react";
 
 export function Card() {
@@ -75,15 +88,27 @@ export function Card() {
 }
 
 export const App = () => (
-  <Reveal from="left" onReveal={() => {}}>
-    <Card />
-    <Reveal from="top">Slide</Reveal>
-  </Reveal>
+  <main>
+    <Reveal id="top" from="left" onReveal={() => {}}>
+      <Card />
+      <Reveal from="top">Slide</Reveal>
+    </Reveal>
+    <div style={{ height: "200vh" }} />
+    <Reveal id="below" from="bottom">
+      Below
+    </Reveal>
+  </main>
 );
+`,
+      "src/main.tsx": `
+import { createRoot } from "react-dom/client";
+import { App } from "./app.js";
+
+createRoot(document.getElementById("root")!).render(<App />);
 `,
       "src/ssr.tsx": `
 import { renderToString } from "react-dom/server";
-import { App } from "./main.js";
+import { App } from "./app.js";
 
 ${hiddenCheck("renderToString(<App />)")}
 `,
@@ -113,6 +138,7 @@ ${hiddenCheck("renderToString(<App />)")}
     plugins: `import vue from "@vitejs/plugin-vue";`,
     pluginCall: "vue()",
     check: ["vue-tsc", "--noEmit"],
+    verify: browse("vite"),
     files: {
       "src/App.vue": `
 <script setup lang="ts">
@@ -120,9 +146,11 @@ import { Reveal, vReveal } from "@awesome-reveal/vue";
 </script>
 
 <template>
-  <Reveal from="left" @reveal="() => {}">Component</Reveal>
+  <Reveal id="top" from="left" @reveal="() => {}">Component</Reveal>
   <Reveal from="top" v-slot="{ revealed }">{{ revealed }}</Reveal>
   <p v-reveal="{ from: { opacity: 0 }, onReveal: () => {} }">Directive</p>
+  <div style="height: 200vh"></div>
+  <Reveal id="below" from="bottom">Below</Reveal>
 </template>
 `,
       "src/main.ts": `
@@ -146,7 +174,7 @@ ${hiddenCheck("await renderToString(createSSRApp(App))")}
     deps: ["next@16", "react@19", "react-dom@19", "@types/react@19", "@types/react-dom@19"],
     scaffold: false,
     build: ["next", "build"],
-    verify: async (app) => (await import("./smoke-next.mjs")).verifyNext(app),
+    verify: async (app) => (await import("./smoke-browser.mjs")).verifyNext(app),
     files: {
       // Next writes the rest. Some Next versions set "node", which cannot resolve the package exports.
       "tsconfig.json": `{ "compilerOptions": { "module": "esnext", "moduleResolution": "bundler" } }\n`,
@@ -212,11 +240,7 @@ export function Card() {
     scaffold: false,
     check: ["astro", "check"],
     build: ["astro", "build"],
-    verify: (app) => {
-      const html = readFileSync(join(app, "dist/index.html"), "utf8");
-      if (!html.includes('data-awesome-reveal="hidden"'))
-        throw new Error("The built page has no hidden element");
-    },
+    verify: browse("astro", { paths: ["/"] }),
     files: {
       "astro.config.mjs": `import { defineConfig } from "astro/config";\nexport default defineConfig({});\n`,
       "tsconfig.json": `{ "extends": "astro/tsconfigs/strict", "include": [".astro/types.d.ts", "**/*"], "exclude": ["dist"] }\n`,
@@ -225,9 +249,61 @@ export function Card() {
 import { Reveal } from "@awesome-reveal/astro";
 ---
 
-<Reveal from={{ opacity: 0 }}>Hello</Reveal>
+<Reveal id="top" from={{ opacity: 0 }}>Hello</Reveal>
 <Reveal from="left" when={true}>From the left</Reveal>
 <Reveal from="top">Slide</Reveal>
+<div style="height: 200vh"></div>
+<Reveal id="below" from="bottom">Below</Reveal>
+`,
+    },
+  },
+  // Astro collects the CSS of a page from the server build, so the page imports the stylesheet for the island.
+  "astro-island": {
+    packages: ["core", "react"],
+    deps: ["astro@7", "@astrojs/react", "react@19", "react-dom@19"],
+    scaffold: false,
+    build: ["astro", "build"],
+    verify: browse("astro", { paths: ["/"] }),
+    files: {
+      "astro.config.mjs": `import { defineConfig } from "astro/config";\nimport react from "@astrojs/react";\nexport default defineConfig({ integrations: [react()] });\n`,
+      "src/components/Island.jsx": `
+import { Reveal } from "@awesome-reveal/react";
+
+export default function Island() {
+  return (${reactPage});
+}
+`,
+      "src/pages/index.astro": `
+---
+import "@awesome-reveal/react/reveal.css";
+import Island from "../components/Island.jsx";
+---
+
+<html lang="en">
+  <body>
+    <Island client:load />
+  </body>
+</html>
+`,
+    },
+  },
+  // Webpack rejects global CSS that a module in node_modules imports, unless Next.js transpiles the package.
+  // Turbopack needs no transpilePackages, so the build uses webpack.
+  "next-pages": {
+    packages: ["core", "react"],
+    deps: ["next@16", "react@19", "react-dom@19", "@types/react@19", "@types/react-dom@19"],
+    scaffold: false,
+    build: ["next", "build", "--webpack"],
+    verify: browse("next", { paths: ["/"] }),
+    files: {
+      "tsconfig.json": `{ "compilerOptions": { "module": "esnext", "moduleResolution": "bundler" } }\n`,
+      "next.config.mjs": `export default { transpilePackages: ["@awesome-reveal/react"] };\n`,
+      "pages/index.tsx": `
+import { Reveal } from "@awesome-reveal/react";
+
+export default function Page() {
+  return (${reactPage});
+}
 `,
     },
   },
@@ -308,7 +384,7 @@ try {
   }
   if (config.scaffold !== false) {
     files["index.html"] =
-      `<!doctype html><script type="module" src="/src/main.${name === "react" || name === "compat" ? "tsx" : "ts"}"></script>`;
+      `<!doctype html><div id="root"></div><script type="module" src="/src/main.${name === "react" || name === "compat" ? "tsx" : "ts"}"></script>`;
     files["vite.config.ts"] =
       `${config.plugins ?? ""}\nexport default { plugins: [${config.pluginCall ?? ""}] };\n`;
   }
@@ -328,7 +404,6 @@ try {
   if (config.build) {
     if (config.check) run("pnpm", ["exec", ...config.check], app);
     run("pnpm", ["exec", ...config.build], app);
-    await config.verify(app);
   } else {
     // Runs the dev server pre-bundle, which handles CSS imports differently from the build.
     run("pnpm", ["exec", "vite", "optimize", "--force"], app);
@@ -348,6 +423,7 @@ try {
     );
     run("node", ["dist-ssr/ssr.js"], app);
   }
+  await config.verify?.(app);
 
   if (config.check && !config.build) run("pnpm", ["exec", ...config.check], app);
   if (config.typescript) {
