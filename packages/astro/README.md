@@ -7,7 +7,7 @@ Reveal-on-scroll animations for Astro. Wrap content in `<Reveal>`, and it fades 
 
 > **Preview:** This is a prerelease of version 1.0. The API can change before the stable release. Tell us what works and what does not in [GitHub Discussions](https://github.com/awesome-reveal/awesome-reveal/discussions).
 
-<p align="center"><img src="https://raw.githubusercontent.com/awesome-reveal/awesome-reveal/next/.github/assets/demo.gif" alt="Elements fade, slide, scale and blur in as the page scrolls" width="640"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/awesome-reveal/awesome-reveal/next/.github/assets/demo.gif" alt="Elements fade, slide, scale, blur and rotate in as the page scrolls" width="640"></p>
 
 - **Simple.** Two components and a few options.
 - **Native.** A small custom element, built on IntersectionObserver and the Web Animations API.
