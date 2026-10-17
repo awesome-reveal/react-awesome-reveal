@@ -1,58 +1,110 @@
 # @awesome-reveal/react
 
-`@awesome-reveal/react` adds reveal-on-scroll animations to React 18 and 19. The package loads its stylesheet automatically. Only an Astro island and the Next.js Pages Router with webpack need a [setup step](#stylesheet).
+Reveal-on-scroll animations for React. Wrap content in `<Reveal>`, and it fades and slides in when it enters the viewport.
+
+[![npm version](https://badgen.net/npm/v/@awesome-reveal/react)](https://www.npmjs.com/package/@awesome-reveal/react)
+[![License](https://badgen.net/npm/license/@awesome-reveal/react)](https://github.com/awesome-reveal/awesome-reveal/blob/next/LICENSE)
+
+> **Preview:** This is a prerelease of version 1.0. The API can change before the stable release. Tell us what works and what does not in [GitHub Discussions](https://github.com/awesome-reveal/awesome-reveal/discussions).
+
+<p align="center"><img src="https://raw.githubusercontent.com/awesome-reveal/awesome-reveal/next/.github/assets/demo.gif" alt="Elements fade, slide, scale and blur in as the page scrolls" width="640"></p>
+
+- **Simple.** One component, a hook, and a few options.
+- **Native.** Built on IntersectionObserver and the Web Animations API, with no animation library.
+- **SSR-ready.** Server-rendered content stays hidden until it reveals, with no flash. Works with Next.js Server Components.
+- **Accessible.** Obeys the reduced-motion preference, and shows waiting content on focus and in print.
+- **CSP-friendly.** Writes no inline styles and no inline scripts.
+
+Works with React 18 and 19.
+
+## Install
 
 ```sh
 npm install @awesome-reveal/react
 ```
 
+The package loads its stylesheet automatically. Only [two setups](#stylesheet-setup) need a step.
+
+## Quick start
+
 ```tsx
 import { Reveal } from "@awesome-reveal/react";
 
-<Reveal from="left">
-  <p>Hello</p>
-</Reveal>;
-<Reveal from={{ opacity: 0 }} duration={500}>
-  Pure fade
-</Reveal>;
+export const Hero = () => (
+  <Reveal>
+    <h1>Hello</h1>
+  </Reveal>
+);
+```
+
+The content fades in and moves up one time, when it enters the viewport.
+
+## Usage
+
+### Choose the entrance
+
+`from` sets where the element starts. A side gives a fade and a 24 px movement. The default is `"bottom"`.
+
+```jsx
+<Reveal from="left">From the left</Reveal>
+```
+
+For a different entrance, give a start state. The element animates from this state to its resting style. A start state replaces the default, so add `opacity: 0` if you want a fade.
+
+```jsx
+<Reveal from={{ opacity: 0 }}>Fade only</Reveal>
+<Reveal from={{ scale: 0.9 }}>Scale only</Reveal>
+<Reveal from={{ opacity: 0, x: "-100%", rotate: "-5deg", blur: 8 }}>All together</Reveal>
+```
+
+A start state has the properties `opacity`, `x`, `y`, `scale`, `rotate` and `blur`. A number for `x`, `y` or `blur` is in pixels, and a number for `rotate` is in degrees. A string can contain a CSS value with its unit.
+
+### Use your own keyframes
+
+For full control, such as a custom easing, give native [keyframes](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats) instead of `from`. End them at the resting style of the element.
+
+```jsx
 <Reveal
   keyframes={[
-    { opacity: 0, transform: "scale(.8)" },
+    { opacity: 0, transform: "scale(.8)", easing: "cubic-bezier(.34,1.56,.64,1)" },
     { opacity: 1, transform: "scale(1)" },
   ]}
 >
-  Native keyframes
-</Reveal>;
+  Bounce in
+</Reveal>
 ```
 
-## Stylesheet
+### Change the timing
 
-The modules of the package import its stylesheet. On the server, the `node` import condition resolves this import to an empty module, and the browser build resolves it to the CSS. A client bundler, such as Vite or the Next.js App Router, adds the CSS to the page, so you do not import it. Two setups need a step:
+```jsx
+<Reveal as="h2" from="left" duration={800}>Title</Reveal>
+<Reveal from={{ opacity: 0 }} delay={200}>Starts after the title</Reveal>
+<Reveal threshold={0.5}>Reveals when half of it is visible</Reveal>
+```
 
-- **Astro island.** Astro collects the CSS of a page from the server build, so it does not get the stylesheet. Import the stylesheet in the page or in the layout that renders the island:
+Keep `delay` below about 300 ms. A long delay makes content appear late when the user scrolls quickly.
 
-  ```astro
-  ---
-  import "@awesome-reveal/react/reveal.css";
-  ---
-  ```
+### Reveal a list
 
-- **Next.js Pages Router with webpack.** Next.js does not let a package in `node_modules` import global CSS, and the build fails. Add the package to `transpilePackages`, so that Next.js bundles it:
+`Cascade` reveals its direct children one after the other, when it enters the viewport. `interval` sets the time between two children, and the default is 80 ms.
 
-  ```js
-  // next.config.mjs
-  export default { transpilePackages: ["@awesome-reveal/react"] };
-  ```
+```tsx
+import { Cascade } from "@awesome-reveal/react";
 
-  The App Router and Turbopack need no step.
+export const Features = () => (
+  <Cascade as="ul" from="left" interval={120}>
+    <li>Fast</li>
+    <li>Small</li>
+    <li>Accessible</li>
+  </Cascade>
+);
+```
 
-## Component and hook
+For a long list, a virtualized list, or a grid that is taller than the viewport, wrap each item in `Reveal` instead. A cascade schedules all children at the same time, so the last children start late or out of view.
 
-`Reveal` renders one element around its children. `as` sets the tag, and the component passes the other attributes and `ref` to the element. It accepts the [core reveal options](https://www.npmjs.com/package/@awesome-reveal/core), and also `when` and `onReveal`.
+### Animate your own element
 
-`delay` sets the time between the reveal and the entrance, in milliseconds. The default is 0. Keep `delay` below about 300 ms. A long delay makes content appear late when the user scrolls quickly.
-
-To animate your own element without a wrapper, use `useReveal`:
+`Reveal` renders a `div` around its children. To change the tag, use `as`. To animate your own element with no wrapper, use `useReveal`:
 
 ```tsx
 import { useReveal } from "@awesome-reveal/react";
@@ -63,13 +115,13 @@ export function Card() {
 }
 ```
 
-Spread `getProps()` on one element. Give your own `ref` to `getProps()`, so that the hook can merge it with its ref. The hook does not change your styles. For a custom component, pass the ref and the `data-awesome-reveal` prop to a DOM element. The package reserves `data-awesome-reveal` and `data-awesome-reveal-attached`.
+Spread `getProps()` on one DOM element. If you have your own `ref`, give it to `getProps()`, and the hook merges it. For a custom component, pass the `ref` and the `data-awesome-reveal` prop to a DOM element. `useCascade` does the same for a cascade.
 
-`when: true` reveals the element manually, and `when: false` resets the entrance without an exit animation. To let the viewport control the reveal, omit `when` or set it to `null`. When the viewport controls the reveal, the entrance plays one time, and the observation stops at the reveal. A change of `when` from `false` to `true` plays the entrance again. `when: false` during the `delay` also resets the entrance, and the entrance does not play.
+### Control the reveal
 
-`when` controls the entrance. It does not show or hide content. With `when: false`, the element is transparent. Screen readers still read it, and the keyboard can focus its controls. To hide content, use the `hidden` attribute, or do not render it. `inert` does not hide the element. It only blocks focus, clicks and assistive technology. The example below adds `hidden`.
+`when` controls the entrance from your state. `true` plays it, and `false` resets it with no exit animation. Without `when`, the viewport controls it.
 
-`onReveal` gets the element one time for each reveal, also in React StrictMode. It runs when the reveal starts, not when the entrance ends. It also runs when no entrance plays, for example with reduced motion or focus. After `when: false`, the next reveal calls it again. With reduced motion, `when: false` does not reset the reveal, so `onReveal` does not run again. A change to `when` or `threshold` applies immediately. A change to the other options applies at the next reveal.
+`when` does not show or hide content. With `when={false}`, the element is transparent, but screen readers read it and the keyboard can focus it. `inert` does not hide content: it only blocks focus, clicks and assistive technology. To hide content, also set `hidden`, or do not render it:
 
 ```tsx
 import { useState } from "react";
@@ -90,7 +142,11 @@ export function Details() {
 }
 ```
 
-To wait for the end of the entrance, use the `finished` promises of the animations in `onReveal`. The promise waits for each animation of the element and of its descendants, also your own animations, so use it on an element that has no other animations. It resolves at once when no entrance plays. It rejects when the entrance stops early, for example after `when: false` or an unmount. Catch the rejection, or the browser reports an unhandled rejection.
+To play the entrance again, set `when` to `false`, then to `true`.
+
+### Run code at the reveal
+
+`onReveal` gets the element when the reveal starts. To wait for the end of the entrance, wait for the `finished` promises of its animations:
 
 ```tsx
 import { Reveal } from "@awesome-reveal/react";
@@ -108,79 +164,135 @@ export const Card = () => (
 );
 ```
 
-## Cascade
+The promise rejects when the entrance stops early, for example after `when={false}` or an unmount. Catch the rejection. It resolves at once when no entrance plays, for example with reduced motion. It also waits for your own animations of the element and its descendants.
 
-`Cascade` works like `Reveal`, but it animates each direct child element in sequence when the element enters the viewport. `interval` sets the time between the entrances of two children, in milliseconds, and the default is 80. `delay` moves the start of the whole sequence: the first child starts after `delay`, and `interval` spaces the other children. `useCascade` does the same for your own element. The cascade observes the container, and `onReveal` gets the container.
+## API
 
-```tsx
-import { Cascade, useCascade } from "@awesome-reveal/react";
+### `<Reveal>` and `<Cascade>`
 
-export const Features = () => (
-  <Cascade as="ul" from="left" interval={120}>
-    <li>Fast</li>
-    <li>Small</li>
-    <li>Accessible</li>
-  </Cascade>
-);
+| Prop                        | Type                 | Default    | Description                                                     |
+| --------------------------- | -------------------- | ---------- | --------------------------------------------------------------- |
+| `as`                        | HTML or SVG tag      | `"div"`    | The rendered tag                                                |
+| `from`                      | `Side \| StartState` | `"bottom"` | The side or the start state of the entrance                     |
+| `keyframes`                 | `Keyframe[]`         | —          | Native keyframes. You cannot use them together with `from`      |
+| `duration`                  | `number`             | `600`      | The duration of the entrance, in milliseconds                   |
+| `delay`                     | `number`             | `0`        | The time between the reveal and the entrance, in milliseconds   |
+| `threshold`                 | `number`             | `0`        | The visible fraction, from 0 to 1, that reveals the element     |
+| `when`                      | `boolean \| null`    | —          | `true` plays the entrance, `false` resets it                    |
+| `onReveal`                  | `(element) => void`  | —          | Runs one time for each reveal, when it starts                   |
+| `interval` (`Cascade` only) | `number`             | `80`       | The time between the entrances of two children, in milliseconds |
 
-export function Steps() {
-  const { getProps } = useCascade<HTMLOListElement>();
-  return (
-    <ol {...getProps()}>
-      <li>Install</li>
-      <li>Import</li>
-    </ol>
-  );
-}
-```
+The components pass the other props, such as `className` and `ref`, to the rendered element.
 
-- It reads the children when the container reveals. A child that you add after the reveal shows with no animation.
+### `useReveal(options?)` and `useCascade(options?)`
+
+They accept the same options, except `as`. They return `getProps(props?)`, which gives the props for your element, and `revealed`, which tells if the element is revealed.
+
+### Behavior
+
+- The entrance plays one time. The observation stops at the reveal.
+- `onReveal` also runs when no entrance plays, for example with reduced motion or focus. It runs one time for each reveal, also in StrictMode. After `when={false}`, the next reveal runs it again.
+- A change to `when` or `threshold` applies immediately. A change to the other options applies at the next reveal.
+- `when={false}` during the `delay` resets the entrance, and the entrance does not play.
+
+## Stylesheet setup
+
+The package stylesheet hides server-rendered content until it reveals. The package modules import it, and your bundler adds it to the page. Two setups need a step:
+
+- **Astro island.** Astro does not get the CSS of an island. Import it in the page or in the layout:
+
+  ```astro
+  ---
+  import "@awesome-reveal/react/reveal.css";
+  ---
+  ```
+
+- **Next.js Pages Router with webpack.** Next.js does not let a package import global CSS. Add the package to `transpilePackages`:
+
+  ```js
+  // next.config.mjs
+  export default { transpilePackages: ["@awesome-reveal/react"] };
+  ```
+
+The Next.js App Router and Turbopack need no step.
+
+## Server-side rendering
+
+`Reveal` and `Cascade` are Client Components, so a Server Component can render them with serializable props, also with native keyframes. The hooks and `onReveal` need a Client Component.
+
+The server markup is hidden until the element reveals. If the script fails, the content shows after 5 seconds. Hydrate reveal content eagerly: if the hydration takes more than 5 seconds, the content shows, then hides again until it reveals.
+
+## Accessibility
+
+- With `prefers-reduced-motion: reduce`, all the content shows immediately, with no animation. Reduced motion has priority over the entrance and over `when={false}`, so `onReveal` does not run again.
+- Focus in a waiting element shows it at once, so a keyboard user does not focus invisible content. This does not apply with `when={false}`.
+- Focus during a running entrance or its delay does not shorten it, so keep `delay` and `interval` short.
+- Waiting content shows in print and when JavaScript is off.
+- Hidden content stays in the accessibility tree. Do not make important content depend on decorative motion.
+
+## Good to know
+
+<details>
+<summary>Cascades</summary>
+
+- The cascade reads its children when it reveals. A child that you add after the reveal shows with no animation.
 - Only the direct element children animate. Text and children with `display: contents` show immediately.
-- Do not put a reveal directly inside a cascade. The two entrances combine on the same element.
-- A cascade schedules all children when its container enters the viewport, so the last children of a long list start late or out of view. For a long list, a virtualized list, or a grid that is taller than the viewport, use `Reveal` or `useReveal` on each item.
+- Do not put a `Reveal` directly inside a `Cascade`. The two entrances combine on the same element.
 - A component that returns a fragment gives one child for each element of the fragment.
+- `delay` moves the start of the whole sequence. `onReveal` gets the container.
 
-## SSR and accessibility
+</details>
 
-The server markup has `data-awesome-reveal="hidden"`, or `data-awesome-reveal="cascade"` for a cascade. The package stylesheet hides this element, or the direct children of a cascade, until it reveals. The stylesheet shows the content in these cases:
+<details>
+<summary>How the stylesheet hides content</summary>
 
-- The user prefers reduced motion.
-- The user prints the page.
-- JavaScript is off.
-
-Reduced motion always has priority over the entrance and over `when: false`.
-
-`Reveal` and `Cascade` are Client Component boundaries, so a Next.js Server Component can render them with serializable options. Native keyframes are serializable too. The hook and the callbacks need a Client Component.
-
-The stylesheet hides the server markup for at most 5 seconds before the script attaches the element. At the attach, the package adds `data-awesome-reveal-attached` to the element, and the element stays hidden until it reveals. So if the script fails, the content shows after 5 seconds. If the attach happens after the 5 seconds, the element shows, then hides again until it reveals. This happens with slow hydration, and often with lazy hydration, such as an Astro `client:visible` island, when the user scrolls to the content after 5 seconds. Hydrate reveal content eagerly.
-
-The package writes no `style` attribute and no inline script. A Content Security Policy that blocks inline styles and scripts, such as `style-src 'self'; script-src 'self'`, works in a production build when your bundler emits the package CSS as a file. Next.js adds its own inline scripts, so it needs a nonce, as the Next.js docs describe.
-
-### Limits
-
-- The stylesheet does not reach a shadow root, so it does not hide an element in a shadow root before the reveal.
-- Do not give a hidden element an inline `opacity` with `!important`. It has priority over the stylesheet, so the element shows before the reveal.
-- The stylesheet hides with the `awesome-reveal-hold` CSS animation, which replaces your own `animation` on a hidden element or cascade child until it reveals. If no script reveals the element, such as when the script fails or JavaScript is off, your animation does not run. Put your own animation on an inner element.
-- An `animation` of your own with `!important` can have priority over the hold. Then the element shows until the script attaches it. The hold fires `animationstart` and `animationend` events, and shows in `getAnimations()`.
-- Focus in a waiting element shows it at once, with no entrance, but not with `when: false`. Focus during a running entrance or its delay does not shorten it, so keep `delay` and `interval` short.
+- The server markup has `data-awesome-reveal="hidden"`, or `data-awesome-reveal="cascade"` for a cascade. The package reserves `data-awesome-reveal` and `data-awesome-reveal-attached`.
+- The stylesheet hides with the `awesome-reveal-hold` CSS animation, which replaces your own `animation` on a waiting element until it reveals. Put your own animation on an inner element. The hold fires `animationstart` and `animationend` events, and shows in `getAnimations()`.
+- An inline `opacity` with `!important`, or your own `animation` with `!important`, can show the element before the reveal.
+- The stylesheet does not reach a shadow root.
 - In browsers without the `scripting` media feature, such as Safari 16, content shows after 5 seconds when JavaScript is off.
+- Lazy hydration, such as an Astro `client:visible` island, often attaches after 5 seconds. Then the content shows, and hides again until it reveals.
 
-## Migrating from v4
+</details>
 
-1. Upgrade `react-awesome-reveal` to version 5, or install this package.
-2. If no other code uses Emotion, remove it.
-3. Import `Reveal` as a named export. v4 also had a default export.
-4. Replace each effect component with `Reveal`:
+<details>
+<summary>Content Security Policy</summary>
+
+The package writes no `style` attribute and no inline script. A policy such as `style-src 'self'; script-src 'self'` works in a production build when your bundler emits the package CSS as a file. Next.js adds its own inline scripts, so it needs a nonce, as the Next.js docs describe.
+
+</details>
+
+<details>
+<summary>Entrance details</summary>
+
+The `@awesome-reveal/core` README describes how the entrance works, the thresholds of tall and clipped content, performance and errors. Read it on [npm](https://www.npmjs.com/package/@awesome-reveal/core).
+
+</details>
+
+## Migrate from v4
+
+`react-awesome-reveal` version 5 re-exports this package. Upgrade it, or install `@awesome-reveal/react`. Then do these steps:
+
+1. If no other code uses Emotion, remove it.
+2. Import `Reveal` as a named export. v4 also had a default export.
+3. Replace each effect component with `Reveal`:
    - For a fade, use `from={{ opacity: 0 }}`.
    - For directional motion, set `from` to the side where the element starts. The v4 `up` becomes `from="bottom"`, and `down` becomes `from="top"`.
    - For a more complex effect, use native keyframes.
-5. Replace `fraction` with `threshold`.
-6. Remove `triggerOnce`. In v4 the entrance played each time by default, but now it plays one time. To play it again, set `when` to `false`, then to `true`.
-7. Replace `cascade` with the `Cascade` component. Set `interval` to the v4 `duration * damping`, in milliseconds.
-8. Write the text children yourself. The library does not split text.
+4. Replace `fraction` with `threshold`.
+5. Remove `triggerOnce`. In v4 the entrance played each time by default. Now it plays one time. To play it again, set `when` to `false`, then to `true`.
+6. Replace `cascade` with the `Cascade` component. Set `interval` to the v4 `duration * damping`, in milliseconds.
+7. Write the text children yourself. The library does not split text.
 
-The default duration is 600 ms, and v4 used 1000 ms. The default side is `bottom`. A v4 `<Reveal>` with no `keyframes` entered from the left. To keep that motion, give it `from={{ opacity: 0, x: "-100%" }}`. `Reveal` renders one element around all its children, and v4 wrapped each element child in a `div`. The `migrating-from-v4` skill lists all the changes.
+The default duration is 600 ms, and v4 used 1000 ms. A v4 `<Reveal>` with no `keyframes` entered from the left. To keep that motion, use `from={{ opacity: 0, x: "-100%" }}`. `Reveal` renders one element around all its children, and v4 wrapped each element child in a `div`.
 
-## Agent skills and license
+## Agent skills
 
-The package includes the `adding-reveal-animations` and `migrating-from-v4` agent skills. The license is MIT.
+The package includes two skills for coding agents. pnpm can link them into your project after you approve them.
+
+- `adding-reveal-animations` teaches this API.
+- `migrating-from-v4` lists all the changes from v4.
+
+## License
+
+[MIT](https://github.com/awesome-reveal/awesome-reveal/blob/next/LICENSE)
