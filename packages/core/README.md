@@ -1,46 +1,44 @@
 # @awesome-reveal/core
 
-`@awesome-reveal/core` gives small reveal-on-scroll functions that use IntersectionObserver and the Web Animations API. It needs no stylesheet and no setup.
+Reveal-on-scroll animations in plain JavaScript. Give a selector, and the elements fade and slide in when they enter the viewport.
+
+[![npm version](https://badgen.net/npm/v/@awesome-reveal/core)](https://www.npmjs.com/package/@awesome-reveal/core)
+[![License](https://badgen.net/npm/license/@awesome-reveal/core)](https://github.com/awesome-reveal/awesome-reveal/blob/next/LICENSE)
+
+> **Preview:** This is a prerelease of version 1.0. The API can change before the stable release. Tell us what works and what does not in [GitHub Discussions](https://github.com/awesome-reveal/awesome-reveal/discussions).
+
+<p align="center"><img src="https://raw.githubusercontent.com/awesome-reveal/awesome-reveal/next/.github/assets/demo.gif" alt="Elements fade, slide, scale and blur in as the page scrolls" width="640"></p>
+
+- **Small.** Less than 2 kB gzipped, with no dependencies and no stylesheet.
+- **Native.** Built on IntersectionObserver and the Web Animations API.
+- **Accessible.** Obeys the reduced-motion preference, and shows waiting content on focus and in print.
+- **CSP-friendly.** Writes no inline styles, so it works with a strict Content Security Policy.
+
+Do you use React, Vue or Astro? Use [`@awesome-reveal/react`](https://www.npmjs.com/package/@awesome-reveal/react), [`@awesome-reveal/vue`](https://www.npmjs.com/package/@awesome-reveal/vue) or [`@awesome-reveal/astro`](https://www.npmjs.com/package/@awesome-reveal/astro). They also hide server-rendered content until it reveals.
+
+## Install
 
 ```sh
 npm install @awesome-reveal/core
 ```
 
+## Quick start
+
 ```ts
-import { reveal, cascade } from "@awesome-reveal/core";
+import { cascade, reveal } from "@awesome-reveal/core";
 
-const hero = reveal(".hero");
-reveal(".card", { from: "left" });
-cascade(".features", { from: { opacity: 0, y: 16 }, interval: 80 });
-
-// When you remove this part of the page:
-hero.dispose();
+reveal(".card"); // Fade in and move up
+reveal(".hero", { from: "left" }); // Fade in from the left
+cascade(".features"); // Reveal the children of .features one after the other
 ```
 
-## Targets and handles
+Each element animates one time, when it enters the viewport.
 
-Both functions accept these targets:
+## Usage
 
-- an element
-- a CSS selector
-- an iterable of elements
-- an array-like collection, such as `children`
+### Choose the entrance
 
-The function finds the targets one time, when you call it. Each call returns a `RevealHandle` that has only `dispose()`.
-
-`reveal()` observes each target separately. `cascade()` observes each container separately and reveals only its direct element children. It reads the children one time, when you call it, so a child that you add later does not animate. Text nodes and deeper descendants do not animate. A cascade schedules all children when its container enters the viewport, so the last children of a long list start late or out of view. For a long list, or a grid that is taller than the viewport, use `reveal()` on each item.
-
-The child at position `index` waits `delay + index * interval` milliseconds after the reveal. So with no `delay`, the first child starts immediately. The default interval is 80 ms. A negative interval gives negative delays, so each later child starts further into its entrance. To cascade the words or sentences of a text, wrap each one in an element before you call `cascade()`. A transform needs a transformable element, so give inline children `display: inline-block`.
-
-`dispose()` disconnects the observers and cancels the pending, the active and the delayed animations. It removes the start state of the call, and the elements return to their own styles. You can call it more than one time. After all the entrances of a call finish, core keeps no reference to them, so you do not need `dispose()`. If you remove an element before it reveals, call `dispose()`.
-
-When you call the function, core calls `element.animate(keyframes, { duration, delay, fill: "backwards" })` for each element that it animates. It pauses the animation at its start. It plays the animation when the observed element enters the viewport. If your code finishes or cancels it before the element enters the viewport, the element shows at rest and the entrance does not play.
-
-A paused animation does not finish. If your code waits for all of `document.getAnimations()` to finish, skip the paused animations, for example with `animation.playState !== "paused"`.
-
-## Entrance
-
-The default entrance starts at opacity 0 and 24 px below the resting position, and moves up in 600 ms. You cannot change its easing. For a different easing, use native keyframes.
+`from` sets where the element starts. A side gives a fade and a 24 px movement:
 
 | `from`               | Start offset |
 | -------------------- | ------------ |
@@ -49,25 +47,21 @@ The default entrance starts at opacity 0 and 24 px below the resting position, a
 | `"bottom"` (default) | y: 24 px     |
 | `"left"`             | x: -24 px    |
 
-An object gives the complete start state. It does not get the default fade or direction:
+For a different entrance, give a start state. The element animates from this state to its resting style. A start state replaces the default, so add `opacity: 0` if you want a fade.
 
 ```ts
 import { reveal } from "@awesome-reveal/core";
 
-reveal(".caption", { from: { opacity: 0 } }); // Pure fade
+reveal(".caption", { from: { opacity: 0 } }); // Fade only
 reveal(".logo", { from: { scale: 0.9 } }); // Scale only
 reveal(".card", { from: { opacity: 0, x: "-100%", rotate: "-5deg", blur: "0.5rem" } });
 ```
 
-`StartState` has the properties `opacity`, `x`, `y`, `scale`, `rotate` and `blur`. A number for `x`, `y` or `blur` is in pixels, and a number for `rotate` is in degrees. A string can contain a CSS value with its unit.
+A start state has the properties `opacity`, `x`, `y`, `scale`, `rotate` and `blur`. A number for `x`, `y` or `blur` is in pixels, and a number for `rotate` is in degrees. A string can contain a CSS value with its unit.
 
-The entrance animates the individual `translate`, `scale`, `rotate` and `filter` properties and `opacity`, but only the properties that the start state sets. It ends at their neutral values: no offset, no rotation, no blur, a scale of 1 and an opacity of 1. Your `transform` stays in effect during the entrance, for example the `translate(-50%, -50%)` of a centred dialog. While the element waits and during the entrance, the element's own values of the animated properties do not apply. They apply again when the entrance ends. To keep one of these values during the entrance, put it on an inner element, or use native keyframes. Do not reveal one element in two calls. The later entrance overrides the earlier one.
+### Use your own keyframes
 
-Each keyframe of the entrance replaces the element's value, so the browser can run the entrance on the compositor. A start state with `blur` is the exception: Chromium runs the full entrance on the main thread, because a blur can move pixels outside the element.
-
-## Native keyframes
-
-For a custom animation, give a native `Keyframe[]` in `keyframes`. TypeScript does not let you use `from` and `keyframes` together. If JavaScript code gives both, core uses `keyframes` and ignores `from`.
+For full control, such as a custom easing, give native [keyframes](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Keyframe_Formats) instead of `from`:
 
 ```ts
 import { reveal } from "@awesome-reveal/core";
@@ -80,39 +74,52 @@ reveal(".logo", {
 });
 ```
 
-You can use the native keyframe properties `easing`, `offset` and `composite`. The browser validates the values. The animation does not keep its last keyframe after it ends, so end your keyframes at the resting style of the element. To end at the element's own value, end with a neutral additive keyframe, for example `{ opacity: 0, composite: "add" }`. Chromium runs an animation with an additive keyframe on the main thread, so it can stutter when the page is busy.
+- End the keyframes at the resting style of the element. The animation does not keep its last keyframe after it ends.
+- Give explicit values to the first keyframe. An open WebKit bug ([212409](https://bugs.webkit.org/show_bug.cgi?id=212409)) can take an implicit start value from an earlier animation.
+- To end at the element's own value, end with a neutral additive keyframe, for example `{ opacity: 0, composite: "add" }`.
 
-Animate `opacity`, `transform` and the individual `translate`, `scale` and `rotate` properties when possible. The browser can run them on the compositor. A layout property, such as `width`, `top` or `margin`, causes a layout and a paint on each frame. Do not add `will-change` for a reveal. The browser treats an animated property as if `will-change` already names it.
-
-## Options
-
-| Option                      | Default    | Meaning                                                         |
-| --------------------------- | ---------- | --------------------------------------------------------------- |
-| `from`                      | `"bottom"` | A side, or a complete `StartState`                              |
-| `keyframes`                 | —          | Native `Keyframe[]`, instead of `from`                          |
-| `duration`                  | 600        | The duration of the entrance, in milliseconds                   |
-| `delay`                     | 0          | The time between the reveal and the entrance, in milliseconds   |
-| `threshold`                 | 0          | The visible fraction that reveals the element, from 0 to 1      |
-| `interval` (`cascade` only) | 80         | The time between the entrances of two children, in milliseconds |
-
-The entrance plays one time. The observation stops at the reveal. There is no exit animation.
-
-During the `delay`, the element stays in its start state. Use it to start separate elements at different times, for example a header and its content. Keep `delay` below about 300 ms. A long delay makes content appear late when the user scrolls quickly.
+### Change the timing
 
 ```ts
 import { reveal } from "@awesome-reveal/core";
 
-reveal(".hero h1", { from: "left" });
-reveal(".hero p", { from: { opacity: 0 }, delay: 200 });
+reveal(".hero h1", { from: "left", duration: 800 });
+reveal(".hero p", { from: { opacity: 0 }, delay: 200 }); // Starts after the heading
+reveal(".chart", { threshold: 0.5 }); // Reveals when half of it is visible
 ```
 
-An element reveals when `threshold` of it is visible. If the viewport is too small to show `threshold` of the element, the element reveals when it enters the viewport. In a scroll container that is too small, it reveals when it leaves the visible area. Keep the default 0 for tall elements and long cascades.
+Keep `delay` below about 300 ms. A long delay makes content appear late when the user scrolls quickly.
 
-`reveal()` observes the element while it waits. A start state with `opacity: 0`, such as each side, waits at neutral values and moves only when the entrance plays. Other start states and native keyframes wait at their first keyframe, so their offset, scale and rotation change the box that the observer sees. If an ancestor with `overflow` clips that box fully, the element does not reveal. `cascade()` observes the container, which does not move.
+### Reveal a list
 
-## Manual play
+`cascade()` reveals the direct children of a container one after the other, when the container enters the viewport. The child at position `index` starts after `delay + index * interval` milliseconds.
 
-Core has no manual trigger. Some content does not reach the observer, for example a carousel slide that its track clips. To play the waiting entrance of an element, play its paused animations:
+```ts
+import { cascade } from "@awesome-reveal/core";
+
+cascade(".features", { from: { opacity: 0, y: 16 }, interval: 120 });
+```
+
+For a long list, or a grid that is taller than the viewport, use `reveal(".item")` instead. A cascade schedules all children at the same time, so the last children start late or out of view.
+
+### Clean up
+
+Each call returns a handle. Call `dispose()` when you remove the elements before they reveal, for example when a single-page app changes the route:
+
+```ts
+import { reveal } from "@awesome-reveal/core";
+
+const handle = reveal(".card");
+
+// Later, when you remove the cards:
+handle.dispose();
+```
+
+`dispose()` stops the observers and cancels the animations, and the elements return to their own styles. After all the entrances of a call finish, core keeps no reference to the elements, so you do not need `dispose()`.
+
+### Play an entrance manually
+
+Some content does not reach the observer, for example a carousel slide that its track clips. To play its waiting entrance, play its paused animations:
 
 ```ts
 import { reveal } from "@awesome-reveal/core";
@@ -126,36 +133,123 @@ export function playEntrance(slide: Element) {
 }
 ```
 
-For a cascade, call `getAnimations({ subtree: true })` on the container. The entrance plays one time, so a later entry into the viewport does not play it again. The observer stays connected until the element enters the viewport or gets focus, or until you call `dispose()`. The loop also plays the other paused animations of the element, such as your own.
+For a cascade, call `getAnimations({ subtree: true })` on the container. The loop also plays your own paused animations on the element.
 
-## Errors
+## API
 
-The browser validates the options. If it rejects an easing or a duration, the element shows with no animation. If it rejects the threshold, the entrance plays immediately. `reveal` and `cascade` do not throw for an invalid option, but an invalid CSS selector throws the `SyntaxError` of `querySelectorAll`. The browser ignores an invalid CSS value in a keyframe, and reports nothing.
+### `reveal(target, options?)`
 
-Core throws the browser's error from a microtask, so the console and your error tracker get it. Core throws each error message only one time on a page. WebKit gives the same message to different easing and duration errors. Fix the first error. Then reload the page to see the next error.
+Reveals each target when it enters the viewport. Returns a `RevealHandle`.
 
-## Accessibility and SSR
+### `cascade(target, options?)`
 
-Reduced motion is automatic. With `prefers-reduced-motion: reduce`, all the content shows immediately, with no animation and no delay. This includes each cascade child. If the preference changes to reduced motion, core cancels the pending and the active animations, and the call does not animate again.
+Reveals the direct element children of each target, one after the other, when the target enters the viewport. Returns a `RevealHandle`.
 
-The content that waits for its entrance also shows in print. After the print, it waits for its entrance again. Core uses the `beforeprint` and `afterprint` events. So it does not cover print styles that the browser applies without a print, such as a print emulation in developer tools.
+### Targets
 
-Core creates the paused native animations when you call it. The browser can paint the content before your script runs, because core does not hide server-rendered content. The framework packages hide it with their own stylesheet, which they load automatically. To render reveals declaratively, use the React, Vue or Astro package. Each one has a `Reveal` and a `Cascade` component.
+`target` is one of these:
 
-Core writes no `style` attribute, no inline script and no CSS. It uses `element.animate()`, which Content Security Policy does not restrict. So a policy that blocks inline styles and scripts, such as `style-src 'self'; script-src 'self'`, works with core.
+- an element
+- a CSS selector
+- an iterable of elements
+- an array-like collection, such as `children`
 
-Focus in a waiting element shows it at once, with no entrance, so a keyboard user does not focus invisible content. Focus in a waiting cascade container shows all its children. Focus during a running entrance or its delay does not shorten it, so keep `delay` and `interval` short. Hidden content stays in the accessibility tree. Keep important controls usable. Do not make large parts of a page depend on decorative motion.
+Core finds the targets and the cascade children one time, when you call the function. It does not see elements that you add later.
 
-## Exports and browser support
+### Options
 
-The root entry exports only `reveal`, `cascade` and their types: `Side`, `StartState`, `RevealOptions`, `CascadeOptions`, `RevealTarget` and `RevealHandle`. `@awesome-reveal/core/adapter` is the contract that the official framework packages use. It is not an API for imperative animations.
+| Option                      | Type                 | Default    | Description                                                     |
+| --------------------------- | -------------------- | ---------- | --------------------------------------------------------------- |
+| `from`                      | `Side \| StartState` | `"bottom"` | The side or the start state of the entrance                     |
+| `keyframes`                 | `Keyframe[]`         | —          | Native keyframes. You cannot use them together with `from`      |
+| `duration`                  | `number`             | `600`      | The duration of the entrance, in milliseconds                   |
+| `delay`                     | `number`             | `0`        | The time between the reveal and the entrance, in milliseconds   |
+| `threshold`                 | `number`             | `0`        | The visible fraction, from 0 to 1, that reveals the element     |
+| `interval` (`cascade` only) | `number`             | `80`       | The time between the entrances of two children, in milliseconds |
 
-Core needs Chrome 104, Edge 104, Firefox 74 or Safari 14.1 (iOS 14.5), or later. These versions support the individual transform properties and the JavaScript syntax of the package. A native keyframe with `composite` needs Firefox 80 or Safari 16. If IntersectionObserver or `Element.animate` is not available, the content reveals immediately and does not stay hidden. Give explicit values to the first keyframe of your native keyframes. An open WebKit bug ([212409](https://bugs.webkit.org/show_bug.cgi?id=212409)) can take an implicit start value from an earlier animation of the element. You can import the module where there is no DOM, for example on a server.
+The package also exports the types `Side`, `StartState`, `RevealOptions`, `CascadeOptions`, `RevealTarget` and `RevealHandle`. The `@awesome-reveal/core/adapter` entry is for the official framework packages. It is not a public API.
+
+## Accessibility
+
+- With `prefers-reduced-motion: reduce`, all the content shows immediately, with no animation and no delay. If the preference changes, core cancels the waiting and the running animations.
+- Focus in a waiting element shows it at once, so a keyboard user does not focus invisible content. Focus in a waiting cascade container shows all its children.
+- Focus during a running entrance or its delay does not shorten it, so keep `delay` and `interval` short.
+- Waiting content shows in print. After the print, it waits again. Core uses the `beforeprint` and `afterprint` events, so a print emulation in developer tools does not show the content.
+- Hidden content stays in the accessibility tree. Do not make important content depend on decorative motion.
+
+## Server-side rendering
+
+You can import the package on a server, but call `reveal()` and `cascade()` only in the browser. Core does not hide content before your script runs, so server-rendered content can show, then animate. The React, Vue and Astro packages hide it with a stylesheet.
+
+## Good to know
+
+<details>
+<summary>How the entrance works</summary>
+
+- Core calls `element.animate(keyframes, { duration, delay, fill: "backwards" })` and pauses the animation at its start. It plays the animation when the element enters the viewport. The entrance plays one time, and the observation stops at the reveal. There is no exit animation.
+- The entrance animates `opacity` and the individual `translate`, `scale`, `rotate` and `filter` properties, but only the properties that the start state sets. Your own `transform` stays in effect, for example the `translate(-50%, -50%)` of a centred dialog.
+- While the element waits and during the entrance, the element's own values of the animated properties do not apply. To keep one of these values, put it on an inner element, or use native keyframes.
+- Do not reveal one element in two calls. The later entrance overrides the earlier one.
+- You cannot change the easing of the generated entrance. For a different easing, use native keyframes.
+- If your code finishes or cancels the paused animation before the reveal, the element shows at rest and the entrance does not play.
+- A paused animation does not finish. If your code waits for all of `document.getAnimations()`, skip the animations with `playState === "paused"`.
+
+</details>
+
+<details>
+<summary>Cascades</summary>
+
+- Only the direct element children animate. Text nodes and deeper descendants do not animate.
+- To cascade the words of a text, wrap each word in an element. A transform needs a transformable element, so give inline children `display: inline-block`.
+- A negative `interval` gives negative delays, so each later child starts further into its entrance.
+- `cascade()` observes the container, which does not move.
+
+</details>
+
+<details>
+<summary>Thresholds and clipped content</summary>
+
+- If the viewport is too small to show `threshold` of the element, the element reveals when it enters the viewport. In a scroll container that is too small, it reveals when it leaves the visible area. Keep the default 0 for tall elements and long cascades.
+- A start state with `opacity: 0`, such as each side, waits at its resting position. Other start states and native keyframes wait at their first keyframe, so their offset, scale and rotation change the box that the observer sees.
+- If an ancestor with `overflow` clips the element fully, the element does not reveal. Play the entrance manually.
+
+</details>
+
+<details>
+<summary>Performance</summary>
+
+- The generated entrance runs on the compositor, so a busy main thread does not make it stutter. A start state with `blur` is the exception: Chromium runs it on the main thread.
+- In your own keyframes, animate `opacity`, `transform`, `translate`, `scale` and `rotate` when possible. A layout property, such as `width`, `top` or `margin`, causes a layout and a paint on each frame.
+- Chromium runs an animation with an additive keyframe on the main thread.
+- Do not add `will-change` for a reveal. The browser treats an animated property as if `will-change` already names it.
+
+</details>
+
+<details>
+<summary>Errors</summary>
+
+- `reveal()` and `cascade()` do not throw for an invalid option. The browser validates the options. If it rejects an easing or a duration, the element shows with no animation. If it rejects the threshold, the entrance plays immediately.
+- An invalid CSS selector throws the `SyntaxError` of `querySelectorAll`.
+- The browser ignores an invalid CSS value in a keyframe, and reports nothing.
+- Core reports the browser's errors from a microtask, so the console and your error tracker get them. It reports each message one time on a page. WebKit gives the same message to different easing and duration errors, so fix the first error and reload the page to see the next one.
+
+</details>
+
+<details>
+<summary>Content Security Policy</summary>
+
+Core writes no `style` attribute, no inline script and no CSS. It uses `element.animate()`, which Content Security Policy does not restrict. A policy such as `style-src 'self'; script-src 'self'` works with core.
+
+</details>
+
+## Browser support
+
+Chrome 104, Edge 104, Firefox 74 and Safari 14.1 (iOS 14.5), or later. A native keyframe with `composite` needs Firefox 80 or Safari 16. If IntersectionObserver or `Element.animate()` is not available, the content shows immediately and does not stay hidden.
 
 ## Agent skills
 
-The package includes the `adding-reveal-animations` agent skill. pnpm can link the skill into your project after you approve it. The skill documents the API on this page.
+The package includes the `adding-reveal-animations` skill, which teaches a coding agent this API. pnpm can link it into your project after you approve it.
 
 ## License
 
-MIT
+[MIT](https://github.com/awesome-reveal/awesome-reveal/blob/next/LICENSE)
