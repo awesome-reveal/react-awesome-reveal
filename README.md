@@ -10,7 +10,7 @@ Reveal-on-scroll animations for React, Vue, Astro and plain JavaScript. Content 
 
 > **Preview:** The `@awesome-reveal/*` packages are a prerelease of version 1.0. The API can change before the stable release. Tell us what works and what does not in [GitHub Discussions](https://github.com/awesome-reveal/awesome-reveal/discussions).
 
-<p align="center"><img src="https://raw.githubusercontent.com/awesome-reveal/awesome-reveal/next/.github/assets/demo.gif" alt="Elements fade, slide, scale and blur in as the page scrolls" width="640"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/awesome-reveal/awesome-reveal/next/.github/assets/demo.gif" alt="Elements fade, slide, scale, blur and rotate in as the page scrolls" width="640"></p>
 
 - **Simple.** One component, or one function call, and a few options.
 - **Native.** Built on the [Intersection Observer API](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) and the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API). The core is less than 2 kB gzipped.

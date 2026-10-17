@@ -7,7 +7,7 @@ Reveal-on-scroll animations in plain JavaScript. Give a selector, and the elemen
 
 > **Preview:** This is a prerelease of version 1.0. The API can change before the stable release. Tell us what works and what does not in [GitHub Discussions](https://github.com/awesome-reveal/awesome-reveal/discussions).
 
-<p align="center"><img src="https://raw.githubusercontent.com/awesome-reveal/awesome-reveal/next/.github/assets/demo.gif" alt="Elements fade, slide, scale and blur in as the page scrolls" width="640"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/awesome-reveal/awesome-reveal/next/.github/assets/demo.gif" alt="Elements fade, slide, scale, blur and rotate in as the page scrolls" width="640"></p>
 
 - **Small.** Less than 2 kB gzipped, with no dependencies and no stylesheet.
 - **Native.** Built on IntersectionObserver and the Web Animations API.
