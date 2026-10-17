@@ -26,7 +26,7 @@ Use the Node version in `.nvmrc`. jsdom needs Node `^22.22.2`, `^24.15.0` or `>=
 - `pnpm build`, then `node scripts/smoke.mjs <core|react|compat|vue|astro|astro-island|next|next-pages> [dependency@version ...]`: install the packed tarballs into a clean project and build it. Most cases also load the build in Chromium. CI runs the matrix.
 - `pnpm lint` and `pnpm format`: lint and format the files. CI runs `pnpm format:check`.
 
-The pre-commit hook runs oxlint, oxfmt and the unit and SSR tests related to the staged files.
+The pre-commit hook runs oxlint, oxfmt and the unit and SSR tests related to the staged files. The commit-msg hook runs commitlint with the Conventional Commits rules.
 
 ## Rules
 
